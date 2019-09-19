@@ -1025,14 +1025,18 @@ global class Sales_FCRcontroller {
       Sales_PRA_KAH_2_B__c,Sales_PRA_KAH_3_A__c,Sales_PRA_KAH_3_B__c,Sales_PRA_KAH_4_A__c,Sales_PRA_KAH_4_B__c,Sales_PRA_KAH_5_A__c,
       Sales_PRA_KAH_5_B__c,Sales_PRA_KAH_6_A__c,Sales_PRA_KAH_6_B__c,Sales_PRA_KAH_7_A__c,Sales_PRA_KAH_7_B__c,Sales_PRA_KAH_8_A__c,Sales_PRA_KAH_8_B__c,
       Sales_TAF_KAH_1_Text__c,Sales_TAF_KAH_2_Text__c,Sales_TAF_KAH_3_Text__c,Sales_TAF_KAH_4a_Text__c,Sales_TAF_KAH_4b_Text__c,
-      Sales_TAF_KAH_4c_Text__c, Sales_FCR_KAH_4_Actions_1_Date__c, Sales_FCR_KAH_4_Actions_2_Date__c, Sales_KAH_SA_Acknowledged__c, Sales_KAH_SA_Acknowledged_Date__c from Field_Coaching_Report__c where Id = :fcrId]){
+      Sales_TAF_KAH_4c_Text__c, Sales_FCR_KAH_4_Actions_1_Date__c, Sales_FCR_KAH_4_Actions_2_Date__c, Sales_KAH_SA_Acknowledged__c, Sales_KAH_SA_Acknowledged_Date__c,
+      Sales_Name__c, Sales_Email__c from Field_Coaching_Report__c where Id = :fcrId]){
         if(fcr.Status__c == 'Completed') complete = '<div class="bold" style="color:#89b983;"><i class="fa fa-check-circle"></i> ';
         else{
           if(UserInfo.getUserId() != fcr.OwnerId) html += '<div id="backButton" class="blue" style="cursor:pointer;border-radius:25px;color:white;padding:5px;text-align:center;" onclick="backSave(true, \''+System.URL.getSalesforceBaseURL().toExternalForm()+'/apex/Sales_FCR?fcrId='+fcr.Id+'&userId='+fcr.OwnerId+'\')"><i class="fa fa-chevron-left"></i> Back</div>';
           else html += '<div id="backButton" class="blue" style="cursor:pointer;border-radius:25px;color:white;padding:5px;text-align:center;" onclick="backSave(false, \''+System.URL.getSalesforceBaseURL().toExternalForm()+'/apex/Sales_FCR?fcrId='+fcr.Id+'&userId='+fcr.OwnerId+'\')"><i class="fa fa-chevron-left"></i> Back</div>';
         }
+        String summaryName = fcr.Owner.Name;
+          if(fcr.Sales_Name__c!=null) summaryName = fcr.Sales_Name__c;
         if(fcr.RecordTypeId==kahCrHH.Id){
-          html += '<div class="pageTitle">'+complete+'Home Health Competency Rating</div><div class="regular">'+fcr.Owner.Name+'</div><div class="thin">'+fcr.Date__c.format()+'</div></div>'+
+          
+          html += '<div class="pageTitle">'+complete+'Home Health Competency Rating</div><div class="regular">'+summaryName+'</div><div class="thin">'+fcr.Date__c.format()+'</div></div>'+
           '<div id="sp"></div>'+
           '<div class="fieldTitle bold">SELF STARTER</div>'+
           '<div class="fieldTitle regular">Strong work ethic, willing to work above and beyond the call of duty.</div>'+
@@ -1165,7 +1169,7 @@ global class Sales_FCRcontroller {
           '<div class="threeRow"><div class="fieldInput regular" style="margin-bottom:0px;">COMPLETED DATE'+
           '</div><div class="fieldInput thin" style="margin-bottom:0px;">'+completedDate(fcr.Completed_Date__c)+'</div></div></div>';
         } else if(fcr.RecordTypeId==kahCrHP.Id){
-          html += '<div class="pageTitle">'+complete+'Hospice Competency Rating</div><div class="regular">'+fcr.Owner.Name+'</div><div class="thin">'+fcr.Date__c.format()+'</div></div>'+
+          html += '<div class="pageTitle">'+complete+'Hospice Competency Rating</div><div class="regular">'+summaryName+'</div><div class="thin">'+fcr.Date__c.format()+'</div></div>'+
           '<div id="sp"></div>'+
           '<div class="fieldTitle bold">SELF STARTER</div>'+
           '<div class="fieldTitle regular">Strong work ethic, willing to work above and beyond the call of duty.</div>'+
@@ -1313,7 +1317,7 @@ global class Sales_FCRcontroller {
           '<div class="threeRow"><div class="fieldInput regular" style="margin-bottom:0px;">COMPLETED DATE'+
           '</div><div class="fieldInput thin" style="margin-bottom:0px;">'+completedDate(fcr.Completed_Date__c)+'</div></div></div>';
         } else if(fcr.RecordTypeId==kahFcr.Id){
-          html += '<div class="pageTitle">'+complete+'Field Coaching Report</div><div class="regular">'+fcr.Owner.Name+'</div><div class="thin">'+fcr.Date__c.format()+'</div></div>'+
+          html += '<div class="pageTitle">'+complete+'Field Coaching Report</div><div class="regular">'+summaryName+'</div><div class="thin">'+fcr.Date__c.format()+'</div></div>'+
           '<div id="sp"></div>'+
           '<div class="fieldTitle bold">PRE-CALL PLANNING / ORGANIZATION SKILLS</div>'+
           '<div class="fieldTitle regular">Maintains appropriate call plan, call notes and updates information after each customer visit in CRM.</div>'+
@@ -1458,7 +1462,7 @@ global class Sales_FCRcontroller {
             '<div class="fieldInput thin"><div id="saField">'+nullTextCheck(fcr.Sales_FCR_KAH_4_Rep_Text__c)+'</div></div>';
 
             if(fcr.Sales_KAH_SA_Acknowledged__c){
-              html += '<div style="margin-top: 20px;" class="fieldTitle regular">'+fcr.Owner.Name+' has acknowledged that they thoroughly reviewed this field coaching report.</div><div style="cursor: default;" class="acknowledgeButton green"><i class="fa fa-thumbs-o-up" aria-hidden="true"></i> Acknowledged</div>';
+              html += '<div style="margin-top: 20px;" class="fieldTitle regular">'+summaryName+' has acknowledged that they thoroughly reviewed this field coaching report.</div><div style="cursor: default;" class="acknowledgeButton green"><i class="fa fa-thumbs-o-up" aria-hidden="true"></i> Acknowledged</div>';
             }
           }
 
@@ -1470,7 +1474,7 @@ global class Sales_FCRcontroller {
           '<div class="threeRow"><div class="fieldInput regular" style="margin-bottom:0px;">COMPLETED DATE'+
           '</div><div class="fieldInput thin" style="margin-bottom:0px;">'+completedDate(fcr.Completed_Date__c)+'</div></div></div>';
         } else if(fcr.RecordTypeId==kahFcrAf.Id){
-          html += '<div class="pageTitle">'+complete+'Field Coaching Report - TAF</div><div class="regular">'+fcr.Owner.Name+'</div><div class="thin">'+fcr.Date__c.format()+'</div></div>'+
+          html += '<div class="pageTitle">'+complete+'Field Coaching Report - TAF</div><div class="regular">'+summaryName+'</div><div class="thin">'+fcr.Date__c.format()+'</div></div>'+
           '<div id="sp"></div>'+
           '<div class="fieldTitle bold">PRE-CALL PLANNING / ORGANIZATION SKILLS</div>'+
           '<div class="fieldTitle regular">Maintains appropriate call plan, call notes and updates information after each customer visit in CRM.</div>'+
@@ -1616,7 +1620,7 @@ global class Sales_FCRcontroller {
             '<div class="fieldInput thin"><div id="saField">'+nullTextCheck(fcr.Sales_FCR_KAH_4_Rep_Text__c)+'</div></div>';
 
             if(fcr.Sales_KAH_SA_Acknowledged__c){
-              html += '<div style="margin-top: 20px;" class="fieldTitle regular">'+fcr.Owner.Name+' has acknowledged that they thoroughly reviewed this field coaching report.</div><div style="cursor: default;" class="acknowledgeButton green"><i class="fa fa-thumbs-o-up" aria-hidden="true"></i> Acknowledged</div>';
+              html += '<div style="margin-top: 20px;" class="fieldTitle regular">'+summaryName+' has acknowledged that they thoroughly reviewed this field coaching report.</div><div style="cursor: default;" class="acknowledgeButton green"><i class="fa fa-thumbs-o-up" aria-hidden="true"></i> Acknowledged</div>';
             }
           }
           html += '<div class="line"></div>'+
@@ -1627,7 +1631,7 @@ global class Sales_FCRcontroller {
           '<div class="threeRow"><div class="fieldInput regular" style="margin-bottom:0px;">COMPLETED DATE'+
           '</div><div class="fieldInput thin" style="margin-bottom:0px;">'+completedDate(fcr.Completed_Date__c)+'</div></div></div>';
         } else if(fcr.RecordTypeId==kahSa.Id){
-          html += '<div class="pageTitle">'+complete+'Pre-ride Self Assessment</div><div class="regular">'+fcr.Owner.Name+'</div><div class="thin">'+fcr.Date__c.format()+'</div></div>'+
+          html += '<div class="pageTitle">'+complete+'Pre-ride Self Assessment</div><div class="regular">'+summaryName+'</div><div class="thin">'+fcr.Date__c.format()+'</div></div>'+
           '<div id="sp"></div>'+
           '<div class="fieldTitle bold">CALL PLANNING</div>'+
           '<div class="fieldTitle regular">I\'m best at</div>'+
@@ -1682,7 +1686,7 @@ global class Sales_FCRcontroller {
           '<div class="threeRow"><div class="fieldInput regular" style="margin-bottom:0px;">COMPLETED DATE'+
           '</div><div class="fieldInput thin" style="margin-bottom:0px;">'+completedDate(fcr.Completed_Date__c)+'</div></div></div>';
         } else if(fcr.RecordTypeId==kahAf.Id){
-          html += '<div class="pageTitle">'+complete+'The Asking Formula</div><div class="regular">'+fcr.Owner.Name+'</div><div class="thin">'+fcr.Date__c.format()+'</div></div>'+
+          html += '<div class="pageTitle">'+complete+'The Asking Formula</div><div class="regular">'+summaryName+'</div><div class="thin">'+fcr.Date__c.format()+'</div></div>'+
           '<div id="sp"></div>'+
           '<div class="fieldTitle bold">KNOW</div>'+
           '<div class="fieldTitle regular">Know what you want.</div>'+
@@ -2078,8 +2082,8 @@ global class Sales_FCRcontroller {
       if(!isPrivate) mail.setSubject(subject+' Completed!');
       if(isPrivate) mail.setSubject('PRIVATE: '+subject+' Completed!');
       body += '<b style="font-size: 20px;">'+subject+' Completed!</b></br></br>';
-      if(isPrivate) body += '</br></br><b style="font-size: 15px;color:#bf4c4c;">THIS IS A PRIVATE COMPETENCY RATING FORM! <span style="text-decoration:underline;">'+u[0].Name.toUpperCase()+' SHOULD NOT BE FORWARDED THIS EMAIL!!!</span></b></br></br>';
-      body += 'A coaching assessment form has been completed for '+u[0].Name+'.'+
+      if(isPrivate) body += '</br></br><b style="font-size: 15px;color:#bf4c4c;">THIS IS A PRIVATE COMPETENCY RATING FORM! <span style="text-decoration:underline;">'+salesName+' SHOULD NOT BE FORWARDED THIS EMAIL!!!</span></b></br></br>';
+      body += 'A coaching assessment form has been completed for '+salesName+'.'+
       ' There is a button below that will take you to the necessary form. '+
       'Feel free to reply to this email with any questions that you may have.<br/><br/>'+
       '<a href="'+URL.getSalesforceBaseUrl().toExternalForm()+'/apex/Sales_SummaryFCR?fcrId='+fcrId+'" style="text-decoration:none;font-size:20px; color:white; background-color:'+color+'; border-radius:25px; padding: 5px 15px 5px 15px;"><b>Click to open '+subject+'</b></a><br/><br/>'+

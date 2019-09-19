@@ -3075,7 +3075,7 @@
             if(fcrType == 'fcr') typeText='a field coaching report';
             if(fcrType == 'sa') typeText='a pre-ride self assessment';
             if(fcrType == 'af') typeText='the asking formula';
-            $('#createFCR p').html('Are you sure that you want to start '+typeText+' for '+userName+'?');
+            $('#createFCR p').html('Are you sure that you want to start '+typeText+' for '+document.getElementById('{!$Component.nameEmailForm.selectedName}').value+'?');
             if(!$('#loadCover').is(':visible') && inputCheck()){
               $('#loadCover').css({opacity: 0}).show().animate({opacity: 0.75});
               $('#userGo').hide();
