@@ -2073,7 +2073,7 @@ global class Sales_FCRcontroller {
 
       List<String> emailAddresses = new List<String>();
       for(User usr : toUsers) emailAddresses.add(usr.Email);
-      emailAddresses.add(salesEmail);
+      // emailAddresses.add(salesEmail);
       mail.setToAddresses(emailAddresses);
 
       mail.setReplyTo(UserInfo.getUserEmail());

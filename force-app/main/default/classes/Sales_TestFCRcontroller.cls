@@ -45,7 +45,7 @@ private class Sales_TestFCRcontroller {
     String result;
     Date d = Date.today();
     Test.StartTest();
-    result = Sales_FCRcontroller.createFCR(usr.Id, 'hhCR', mmddyyyy(d), 'Full Day');
+    result = Sales_FCRcontroller.createFCR(usr.Id, 'hhCR', mmddyyyy(d), 'Full Day', 'Test', 'Test@test.com');
     Test.StopTest();
     System.assert(result!=null);
   }
@@ -55,7 +55,7 @@ private class Sales_TestFCRcontroller {
     String result;
     Date d = Date.today();
     Test.StartTest();
-    result = Sales_FCRcontroller.createFCR(usr.Id, 'hhCR', mmddyyyy(d), 'Full Day');
+    result = Sales_FCRcontroller.createFCR(usr.Id, 'hhCR', mmddyyyy(d), 'Full Day', 'Test', 'Test@test.com');
     Test.StopTest();
     System.assert(result!=null);
   }
@@ -65,7 +65,7 @@ private class Sales_TestFCRcontroller {
     String result;
     Date d = Date.today();
     Test.StartTest();
-    result = Sales_FCRcontroller.createFCR(usr.Id, 'fcr', mmddyyyy(d), 'Full Day');
+    result = Sales_FCRcontroller.createFCR(usr.Id, 'fcr', mmddyyyy(d), 'Full Day', 'Test', 'Test@test.com');
     Test.StopTest();
     System.assert(result!=null);
   }
@@ -75,7 +75,7 @@ private class Sales_TestFCRcontroller {
     String result;
     Date d = Date.today();
     Test.StartTest();
-    result = Sales_FCRcontroller.createFCR(usr.Id, 'fcrAF', mmddyyyy(d), 'Full Day');
+    result = Sales_FCRcontroller.createFCR(usr.Id, 'fcrAF', mmddyyyy(d), 'Full Day', 'Test', 'Test@test.com');
     Test.StopTest();
     System.assert(result!=null);
   }
@@ -85,7 +85,7 @@ private class Sales_TestFCRcontroller {
     String result;
     Date d = Date.today();
     Test.StartTest();
-    result = Sales_FCRcontroller.createFCR(usr.Id, 'sa', mmddyyyy(d), 'Full Day');
+    result = Sales_FCRcontroller.createFCR(usr.Id, 'sa', mmddyyyy(d), 'Full Day', 'Test', 'Test@test.com');
     Test.StopTest();
     System.assert(result!=null);
   }
@@ -95,7 +95,7 @@ private class Sales_TestFCRcontroller {
     String result;
     Date d = Date.today();
     Test.StartTest();
-    result = Sales_FCRcontroller.createFCR(usr.Id, 'af', mmddyyyy(d), 'Full Day');
+    result = Sales_FCRcontroller.createFCR(usr.Id, 'af', mmddyyyy(d), 'Full Day', 'Test', 'Test@test.com');
     Test.StopTest();
     System.assert(result!=null);
   }
@@ -103,7 +103,7 @@ private class Sales_TestFCRcontroller {
   @isTest static void getFCRhhCR(){
     User usr = [SELECT id FROM User WHERE Alias='saHH'];
     Date d = Date.today();
-    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'hhCR', mmddyyyy(d), 'Full Day'));
+    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'hhCR', mmddyyyy(d), 'Full Day', 'Test', 'Test@test.com'));
     parser.nextToken();
     parser.nextValue();
     String fcrId = parser.getText();
@@ -118,7 +118,7 @@ private class Sales_TestFCRcontroller {
   @isTest static void getFCRhpCR(){
     User usr = [SELECT id FROM User WHERE Alias='saHP'];
     Date d = Date.today();
-    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'hhCR', mmddyyyy(d), 'Full Day'));
+    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'hhCR', mmddyyyy(d), 'Full Day', 'Test', 'Test@test.com'));
     parser.nextToken();
     parser.nextValue();
     String fcrId = parser.getText();
@@ -133,7 +133,7 @@ private class Sales_TestFCRcontroller {
   @isTest static void getFCRfcr(){
     User usr = [SELECT id FROM User WHERE Alias='saHH'];
     Date d = Date.today();
-    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'fcr', mmddyyyy(d), 'Full Day'));
+    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'fcr', mmddyyyy(d), 'Full Day', 'Test', 'Test@test.com'));
     parser.nextToken();
     parser.nextValue();
     String fcrId = parser.getText();
@@ -148,7 +148,7 @@ private class Sales_TestFCRcontroller {
   @isTest static void getFCRcompletedFcr(){
     User usr = [SELECT id FROM User WHERE Alias='saHH'];
     Date d = Date.today();
-    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'fcr', mmddyyyy(d), 'Full Day'));
+    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'fcr', mmddyyyy(d), 'Full Day', 'Test', 'Test@test.com'));
     parser.nextToken();
     parser.nextValue();
     String fcrId = parser.getText();
@@ -164,7 +164,7 @@ private class Sales_TestFCRcontroller {
   @isTest static void getFCRcompletedFcrAF(){
     User usr = [SELECT id FROM User WHERE Alias='saHH'];
     Date d = Date.today();
-    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'fcrAF', mmddyyyy(d), 'Full Day'));
+    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'fcrAF', mmddyyyy(d), 'Full Day', 'Test', 'Test@test.com'));
     parser.nextToken();
     parser.nextValue();
     String fcrId = parser.getText();
@@ -180,7 +180,7 @@ private class Sales_TestFCRcontroller {
   @isTest static void getFCRfcrAF(){
     User usr = [SELECT id FROM User WHERE Alias='saHH'];
     Date d = Date.today();
-    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'fcrAF', mmddyyyy(d), 'Full Day'));
+    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'fcrAF', mmddyyyy(d), 'Full Day', 'Test', 'Test@test.com'));
     parser.nextToken();
     parser.nextValue();
     String fcrId = parser.getText();
@@ -195,7 +195,7 @@ private class Sales_TestFCRcontroller {
   @isTest static void getFCRaf(){
     User usr = [SELECT id FROM User WHERE Alias='saHH'];
     Date d = Date.today();
-    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'af', mmddyyyy(d), 'Full Day'));
+    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'af', mmddyyyy(d), 'Full Day', 'Test', 'Test@test.com'));
     parser.nextToken();
     parser.nextValue();
     String fcrId = parser.getText();
@@ -210,7 +210,7 @@ private class Sales_TestFCRcontroller {
   @isTest static void getFCRsa(){
     User usr = [SELECT id FROM User WHERE Alias='saHH'];
     Date d = Date.today();
-    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'sa', mmddyyyy(d), 'Full Day'));
+    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'sa', mmddyyyy(d), 'Full Day', 'Test', 'Test@test.com'));
     parser.nextToken();
     parser.nextValue();
     String fcrId = parser.getText();
@@ -243,7 +243,7 @@ private class Sales_TestFCRcontroller {
   @isTest static void updateFCRhhCR(){
     User usr = [SELECT id FROM User WHERE Alias='saHH'];
     Date d = Date.today();
-    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'hhCR', mmddyyyy(d), 'Full Day'));
+    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'hhCR', mmddyyyy(d), 'Full Day', 'Test', 'Test@test.com'));
     parser.nextToken();
     parser.nextValue();
     String fcrId = parser.getText();
@@ -257,7 +257,7 @@ private class Sales_TestFCRcontroller {
   @isTest static void updateFCRhpCR(){
     User usr = [SELECT id FROM User WHERE Alias='saHP'];
     Date d = Date.today();
-    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'hhCR', mmddyyyy(d), 'Full Day'));
+    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'hhCR', mmddyyyy(d), 'Full Day', 'Test', 'Test@test.com'));
     parser.nextToken();
     parser.nextValue();
     String fcrId = parser.getText();
@@ -271,7 +271,7 @@ private class Sales_TestFCRcontroller {
   @isTest static void updateFCRfcr(){
     User usr = [SELECT id FROM User WHERE Alias='saHH'];
     Date d = Date.today();
-    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'hhCR', mmddyyyy(d), 'Full Day'));
+    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'hhCR', mmddyyyy(d), 'Full Day', 'Test', 'Test@test.com'));
     parser.nextToken();
     parser.nextValue();
     String fcrId = parser.getText();
@@ -285,7 +285,7 @@ private class Sales_TestFCRcontroller {
   @isTest static void updateFCRfcrAF(){
     User usr = [SELECT id FROM User WHERE Alias='saHH'];
     Date d = Date.today();
-    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'hhCR', mmddyyyy(d), 'Full Day'));
+    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'hhCR', mmddyyyy(d), 'Full Day', 'Test', 'Test@test.com'));
     parser.nextToken();
     parser.nextValue();
     String fcrId = parser.getText();
@@ -300,7 +300,7 @@ private class Sales_TestFCRcontroller {
   @isTest static void getManagedUsers(){
     User usr = [SELECT id FROM User WHERE Alias='saHH'];
     Date d = Date.today();
-    Sales_FCRcontroller.createFCR(usr.Id, 'hhCR', mmddyyyy(d), 'Full Day');
+    Sales_FCRcontroller.createFCR(usr.Id, 'hhCR', mmddyyyy(d), 'Full Day', 'Test', 'Test@test.com');
     d.toStartofWeek();
     List<String> dates = new List<String>{String.valueOf(d)+' '+String.valueOf(d.addDays(7))};
     String result;
@@ -313,7 +313,7 @@ private class Sales_TestFCRcontroller {
   @isTest static void completeFCRhhCR(){
     User usr = [SELECT id FROM User WHERE Alias='saHH'];
     Date d = Date.today();
-    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'hhCR', mmddyyyy(d), 'Full Day'));
+    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'hhCR', mmddyyyy(d), 'Full Day', 'Test', 'Test@test.com'));
     parser.nextToken();
     parser.nextValue();
     String fcrId = parser.getText();
@@ -366,7 +366,7 @@ private class Sales_TestFCRcontroller {
   @isTest static void completeFCRhpCR(){
     User usr = [SELECT id FROM User WHERE Alias='saHP'];
     Date d = Date.today();
-    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'hhCR', mmddyyyy(d), 'Full Day'));
+    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'hhCR', mmddyyyy(d), 'Full Day', 'Test', 'Test@test.com'));
     parser.nextToken();
     parser.nextValue();
     String fcrId = parser.getText();
@@ -419,7 +419,7 @@ private class Sales_TestFCRcontroller {
   @isTest static void getSummaryHhCR(){
     User usr = [SELECT id FROM User WHERE Alias='saHH'];
     Date d = Date.today();
-    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'hhCR', mmddyyyy(d), 'Full Day'));
+    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'hhCR', mmddyyyy(d), 'Full Day', 'Test', 'Test@test.com'));
     parser.nextToken();
     parser.nextValue();
     String fcrId = parser.getText();
@@ -436,7 +436,7 @@ private class Sales_TestFCRcontroller {
   @isTest static void getSummaryHpCR(){
     User usr = [SELECT id FROM User WHERE Alias='saHP'];
     Date d = Date.today();
-    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'hhCR', mmddyyyy(d), 'Full Day'));
+    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'hhCR', mmddyyyy(d), 'Full Day', 'Test', 'Test@test.com'));
     parser.nextToken();
     parser.nextValue();
     String fcrId = parser.getText();
@@ -453,7 +453,7 @@ private class Sales_TestFCRcontroller {
   @isTest static void getSummaryFCR(){
     User usr = [SELECT id FROM User WHERE Alias='saHH'];
     Date d = Date.today();
-    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'fcr', mmddyyyy(d), 'Full Day'));
+    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'fcr', mmddyyyy(d), 'Full Day', 'Test', 'Test@test.com'));
     parser.nextToken();
     parser.nextValue();
     String fcrId = parser.getText();
@@ -470,7 +470,7 @@ private class Sales_TestFCRcontroller {
   @isTest static void getSummaryFcrAF(){
     User usr = [SELECT id FROM User WHERE Alias='saHH'];
     Date d = Date.today();
-    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'fcrAF', mmddyyyy(d), 'Full Day'));
+    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'fcrAF', mmddyyyy(d), 'Full Day', 'Test', 'Test@test.com'));
     parser.nextToken();
     parser.nextValue();
     String fcrId = parser.getText();
@@ -487,7 +487,7 @@ private class Sales_TestFCRcontroller {
   @isTest static void getSummarySA(){
     User usr = [SELECT id FROM User WHERE Alias='saHH'];
     Date d = Date.today();
-    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'sa', mmddyyyy(d), 'Full Day'));
+    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'sa', mmddyyyy(d), 'Full Day', 'Test', 'Test@test.com'));
     parser.nextToken();
     parser.nextValue();
     String fcrId = parser.getText();
@@ -501,7 +501,7 @@ private class Sales_TestFCRcontroller {
   @isTest static void getSummaryAF(){
     User usr = [SELECT id FROM User WHERE Alias='saHH'];
     Date d = Date.today();
-    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'af', mmddyyyy(d), 'Full Day'));
+    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'af', mmddyyyy(d), 'Full Day', 'Test', 'Test@test.com'));
     parser.nextToken();
     parser.nextValue();
     String fcrId = parser.getText();
@@ -515,7 +515,7 @@ private class Sales_TestFCRcontroller {
   @isTest static void getSummarySPhh(){
     User usr = [SELECT id FROM User WHERE Alias='saHH'];
     Date d = Date.today();
-    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'hhCR', mmddyyyy(d), 'Full Day'));
+    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'hhCR', mmddyyyy(d), 'Full Day', 'Test', 'Test@test.com'));
     parser.nextToken();
     parser.nextValue();
     String fcrId = parser.getText();
@@ -529,7 +529,7 @@ private class Sales_TestFCRcontroller {
   @isTest static void getSummarySPhp(){
     User usr = [SELECT id FROM User WHERE Alias='saHP'];
     Date d = Date.today();
-    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'hhCR', mmddyyyy(d), 'Full Day'));
+    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'hhCR', mmddyyyy(d), 'Full Day', 'Test', 'Test@test.com'));
     parser.nextToken();
     parser.nextValue();
     String fcrId = parser.getText();
@@ -543,7 +543,7 @@ private class Sales_TestFCRcontroller {
   @isTest static void getWeekListHHcr(){
     User usr = [SELECT id FROM User WHERE Alias='saHH'];
     Date d = Date.today();
-    Sales_FCRcontroller.createFCR(usr.Id, 'hhCR', mmddyyyy(d), 'Full Day');
+    Sales_FCRcontroller.createFCR(usr.Id, 'hhCR', mmddyyyy(d), 'Full Day', 'Test', 'Test@test.com');
     d.toStartofWeek();
     String result;
     Test.StartTest();
@@ -555,7 +555,7 @@ private class Sales_TestFCRcontroller {
   @isTest static void getWeekListHPcr(){
     User usr = [SELECT id FROM User WHERE Alias='saHP'];
     Date d = Date.today();
-    Sales_FCRcontroller.createFCR(usr.Id, 'hhCR', mmddyyyy(d), 'Full Day');
+    Sales_FCRcontroller.createFCR(usr.Id, 'hhCR', mmddyyyy(d), 'Full Day', 'Test', 'Test@test.com');
     d.toStartofWeek();
     String result;
     Test.StartTest();
@@ -567,7 +567,7 @@ private class Sales_TestFCRcontroller {
   @isTest static void getWeekListFcr(){
     User usr = [SELECT id FROM User WHERE Alias='saHH'];
     Date d = Date.today();
-    Sales_FCRcontroller.createFCR(usr.Id, 'fcr', mmddyyyy(d), 'Full Day');
+    Sales_FCRcontroller.createFCR(usr.Id, 'fcr', mmddyyyy(d), 'Full Day', 'Test', 'Test@test.com');
     d.toStartofWeek();
     String result;
     Test.StartTest();
@@ -579,7 +579,7 @@ private class Sales_TestFCRcontroller {
   @isTest static void getWeekListFcrAF(){
     User usr = [SELECT id FROM User WHERE Alias='saHH'];
     Date d = Date.today();
-    Sales_FCRcontroller.createFCR(usr.Id, 'fcrAF', mmddyyyy(d), 'Full Day');
+    Sales_FCRcontroller.createFCR(usr.Id, 'fcrAF', mmddyyyy(d), 'Full Day', 'Test', 'Test@test.com');
     d.toStartofWeek();
     String result;
     Test.StartTest();
@@ -591,7 +591,7 @@ private class Sales_TestFCRcontroller {
   @isTest static void getWeekListSa(){
     User usr = [SELECT id FROM User WHERE Alias='saHH'];
     Date d = Date.today();
-    Sales_FCRcontroller.createFCR(usr.Id, 'sa', mmddyyyy(d), 'Full Day');
+    Sales_FCRcontroller.createFCR(usr.Id, 'sa', mmddyyyy(d), 'Full Day', 'Test', 'Test@test.com');
     d.toStartofWeek();
     String result;
     Test.StartTest();
@@ -603,7 +603,7 @@ private class Sales_TestFCRcontroller {
   @isTest static void getWeekListAf(){
     User usr = [SELECT id FROM User WHERE Alias='saHH'];
     Date d = Date.today();
-    Sales_FCRcontroller.createFCR(usr.Id, 'af', mmddyyyy(d), 'Full Day');
+    Sales_FCRcontroller.createFCR(usr.Id, 'af', mmddyyyy(d), 'Full Day', 'Test', 'Test@test.com');
     d.toStartofWeek();
     String result;
     Test.StartTest();
@@ -615,7 +615,7 @@ private class Sales_TestFCRcontroller {
   @isTest static void deleteFCR(){
     User usr = [SELECT id FROM User WHERE Alias='saHH'];
     Date d = Date.today();
-    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'hhCR', mmddyyyy(d), 'Full Day'));
+    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'hhCR', mmddyyyy(d), 'Full Day', 'Test', 'Test@test.com'));
     parser.nextToken();
     parser.nextValue();
     String fcrId = parser.getText();
@@ -627,7 +627,7 @@ private class Sales_TestFCRcontroller {
   @isTest static void saveSummaryTextSa(){
     User usr = [SELECT id FROM User WHERE Alias='saHH'];
     Date d = Date.today();
-    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'hhCR', mmddyyyy(d), 'Full Day'));
+    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'hhCR', mmddyyyy(d), 'Full Day', 'Test', 'Test@test.com'));
     parser.nextToken();
     parser.nextValue();
     String fcrId = parser.getText();
@@ -641,7 +641,7 @@ private class Sales_TestFCRcontroller {
   @isTest static void saveSummaryTextLeader(){
     User usr = [SELECT id FROM User WHERE Alias='saHH'];
     Date d = Date.today();
-    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'hhCR', mmddyyyy(d), 'Full Day'));
+    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'hhCR', mmddyyyy(d), 'Full Day', 'Test', 'Test@test.com'));
     parser.nextToken();
     parser.nextValue();
     String fcrId = parser.getText();
@@ -676,7 +676,7 @@ private class Sales_TestFCRcontroller {
   @isTest static void getFcrListhhCR(){
     User usr = [SELECT id FROM User WHERE Alias='saHH'];
     Date d = Date.today();
-    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'hhCR', mmddyyyy(d), 'Full Day'));
+    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'hhCR', mmddyyyy(d), 'Full Day', 'Test', 'Test@test.com'));
     parser.nextToken();
     parser.nextValue();
     String fcrId = parser.getText();
@@ -691,7 +691,7 @@ private class Sales_TestFCRcontroller {
   @isTest static void getFcrListhpCR(){
     User usr = [SELECT id FROM User WHERE Alias='saHP'];
     Date d = Date.today();
-    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'hhCR', mmddyyyy(d), 'Full Day'));
+    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'hhCR', mmddyyyy(d), 'Full Day', 'Test', 'Test@test.com'));
     parser.nextToken();
     parser.nextValue();
     String fcrId = parser.getText();
@@ -706,7 +706,7 @@ private class Sales_TestFCRcontroller {
   @isTest static void getFcrListfcr(){
     User usr = [SELECT id FROM User WHERE Alias='saHH'];
     Date d = Date.today();
-    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'fcr', mmddyyyy(d), 'Full Day'));
+    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'fcr', mmddyyyy(d), 'Full Day', 'Test', 'Test@test.com'));
     parser.nextToken();
     parser.nextValue();
     String fcrId = parser.getText();
@@ -721,7 +721,7 @@ private class Sales_TestFCRcontroller {
   @isTest static void getFcrListfcrAF(){
     User usr = [SELECT id FROM User WHERE Alias='saHH'];
     Date d = Date.today();
-    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'fcrAF', mmddyyyy(d), 'Full Day'));
+    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'fcrAF', mmddyyyy(d), 'Full Day', 'Test', 'Test@test.com'));
     parser.nextToken();
     parser.nextValue();
     String fcrId = parser.getText();
@@ -736,7 +736,7 @@ private class Sales_TestFCRcontroller {
   @isTest static void getFcrListaf(){
     User usr = [SELECT id FROM User WHERE Alias='saHH'];
     Date d = Date.today();
-    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'af', mmddyyyy(d), 'Full Day'));
+    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'af', mmddyyyy(d), 'Full Day', 'Test', 'Test@test.com'));
     parser.nextToken();
     parser.nextValue();
     String fcrId = parser.getText();
@@ -751,7 +751,7 @@ private class Sales_TestFCRcontroller {
   @isTest static void getFcrListsa(){
     User usr = [SELECT id FROM User WHERE Alias='saHH'];
     Date d = Date.today();
-    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'sa', mmddyyyy(d), 'Full Day'));
+    JSONParser parser = JSON.createParser(Sales_FCRcontroller.createFCR(usr.Id, 'sa', mmddyyyy(d), 'Full Day', 'Test', 'Test@test.com'));
     parser.nextToken();
     parser.nextValue();
     String fcrId = parser.getText();
