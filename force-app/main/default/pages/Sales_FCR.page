@@ -1,4 +1,4 @@
-<apex:page controller="Sales_FCRcontroller" showHeader="false" standardStylesheets="false" docType="html-5.0">
+<apex:page standardController="Field_Coaching_Report__c" extensions="Sales_FCRcontroller" showHeader="false" standardStylesheets="false" docType="html-5.0">
 <html lang="en">
 <head>
   <title>Performance Evaluations</title>
@@ -144,7 +144,7 @@
   }
   .centerBot{
     position: absolute;
-    bottom: 2%;
+    bottom: 0px;
     left: 50%;
     transform: translate(-50%, -50%);
   }
@@ -315,8 +315,7 @@
       #users ul{
         padding-top: 10px;
         -ms-overflow-style:none;
-        max-height:25vh;
-        min-height:25vh;
+        height: 150px;
         width: 300px;
         overflow:auto;
         list-style:none;
@@ -476,7 +475,7 @@
         }
 
         .space{
-          margin: 35px;
+          margin: 15px;
         }
 
         .alert{
@@ -813,7 +812,7 @@
 
           <div id="users" class="section" style="display:none;">
             <div style="cursor:default;" class="centerTop bold pageTitle">Enter your FCR details below</div>
-            <div class="center" style="top:58%;">
+            <div class="center" style="top:50%;">
               <div id="datepicker"/>
               <input id="dateInput" type="text" class="userForm" placeholder="FCR date" readonly="readonly"/>
               <div class="alert" id="dateAlert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> You must select a date.</div>
@@ -840,9 +839,14 @@
               <input id="employeeSearchInput" type="text" class="userForm" onkeyup="employeeSearch();" placeholder="Employee name"/>
               <div class="alert" id="employeeAlert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> You must select an employee.</div>
               <ul id="userList" style="margin-left:-40px;"></ul>
+
+              <apex:form id="nameEmailForm">
+                <apex:inputText id="selectedName" styleClass="userForm" value="{!selectedName}" html-placeholder="Name" />
+                <apex:inputText id="selectedEmail" styleClass="userForm" value="{!selectedEmail}" html-placeholder="Email" />
+              </apex:form>
             </div>
 
-            <div id="userGo" class="button centerBot" style="color:#6699cc; margin-bottom: 30px; display:none;" onclick="areYouSure()">Go</div>
+            <div id="userGo" class="button centerBot" style="color:#6699cc; display:none;" onclick="areYouSure()">Go</div>
             <div class="welcomeText" id="sa-welcome">
               <div>PSA - Prior to your manager ride along, please take a few brief minutes to evaluate yourself on these sections:</div>
               <div>- Call Planning</div>
@@ -2734,7 +2738,7 @@
               $("#userList").remove();
               userId = '{!$User.Id}';
               userName = '{!$User.FirstName}'+' {!$User.LastName}';
-              $('#userGo').show().css({'marginBottom': 50, opacity: 0}).animate({'marginBottom': 30, opacity: 1}, '450');
+              $('#userGo').show().css({'marginBottom': 20, opacity: 0}).animate({'marginBottom': 0, opacity: 1}, '450');
             }
 
             Sales_FCRcontroller.getUsers(function(result, event){
@@ -2764,7 +2768,7 @@
               $("#employeeSearchInput").remove();
               userId = getParameterByName('userId');
               fcrType = getParameterByName('fcrType');
-              $('#userGo').show().css({'marginBottom': 50, opacity: 0}).animate({'marginBottom': 30, opacity: 1}, '450');
+              $('#userGo').show().css({'marginBottom': 20, opacity: 0}).animate({'marginBottom': 0, opacity: 1}, '450');
               welcome();
             }
 
@@ -3016,7 +3020,7 @@
                 li[i].style.display = "none";
               }
             }
-            if(found==1 && !$('#createFCR').is(':visible')) $('#userGo').show().css({'marginBottom': 50, opacity: 0}).animate({'marginBottom': 30, opacity: 1}, '450');
+            if(found==1 && !$('#createFCR').is(':visible')) $('#userGo').show().css({'marginBottom': 20, opacity: 0}).animate({'marginBottom': 0, opacity: 1}, '450');
             else $('#userGo').hide();
           }
 
@@ -3041,13 +3045,30 @@
             return allDone;
           }
 
-          function areYouSure(){
-            if(userId == null){
+          function areYouSure(selectedUserName, selectedUserId){
+            if(selectedUserId){
+              userId = selectedUserId;
+              document.getElementById('{!$Component.nameEmailForm.selectedName}').value = $('#'+selectedUserId).text();
+              document.getElementById('{!$Component.nameEmailForm.selectedEmail}').value = $('#'+selectedUserId).data('email');
+            }
+            if(selectedUserName) userName = selectedUserName;
+            if(userId == null){    
               userId = $('#userList li:not(:hidden)').attr('id');
             } else{
               userName = $('#'+userId).text();
+              if(document.getElementById('{!$Component.nameEmailForm.selectedName}').value==''){
+                document.getElementById('{!$Component.nameEmailForm.selectedName}').value = $('#'+userId).text();
+              }
+              if(document.getElementById('{!$Component.nameEmailForm.selectedEmail}').value==''){
+                document.getElementById('{!$Component.nameEmailForm.selectedEmail}').value = $('#'+userId).data('email');
+              }
+                
             }
-            if(userName == null) userName = $('#userList li:not(:hidden)').text();
+            if(userName == null){
+              userName = $('#userList li:not(:hidden)').text();
+              document.getElementById('{!$Component.nameEmailForm.selectedName}').value = $('#userList li:not(:hidden)').text();
+              document.getElementById('{!$Component.nameEmailForm.selectedEmail}').value = $('#userList li:not(:hidden)').data('email');
+            }
             $("#employeeSearchInput").val(userName);
             var typeText = '';
             if(fcrType == 'hhCR' || fcrType =='hpCR') typeText='a competency rating';
@@ -3088,7 +3109,11 @@
             $('#userGo').html('<i class="fa fa-circle-o-notch fa-spin fa-fw"></i>');
             var spLoaded = false;
             var fcrLoaded = false;
-            Sales_FCRcontroller.createFCR(userId, fcrType, dateSelect, rideLength, function(result, event){
+            Sales_FCRcontroller.createFCR(userId, fcrType, 
+            dateSelect, rideLength, 
+            document.getElementById('{!$Component.nameEmailForm.selectedName}').value,
+            document.getElementById('{!$Component.nameEmailForm.selectedEmail}').value, 
+            function(result, event){
               var json = JSON.parse(result);
               fcrId=json.fcrId;
               $("#profileIcon > img").attr("src", json.usrPhotoURL);

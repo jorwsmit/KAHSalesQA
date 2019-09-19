@@ -9,6 +9,9 @@ global class Sales_FCRcontroller {
   private static Id kahAf = '0121B0000018FvxQAE';
   */
 
+  public String selectedName {get; set;}
+  public String selectedEmail {get; set;}
+
 
   private static recordType kahCrHH = [select id from recordType where developerName='CR_KAH_HH'];
   private static recordType kahCrHP = [select id from recordType where developerName='CR_KAH_HP'];
@@ -188,6 +191,17 @@ global class Sales_FCRcontroller {
     public String Sales_TAF_KAH_4c_Text;
   }
 
+  public Field_Coaching_Report__c thisFcr {get; set;}
+
+  public Sales_FCRcontroller(ApexPages.StandardController stdController) {
+    thisFcr = (Field_Coaching_Report__c)stdController.getRecord();
+
+    for(User u : [select email, name from User where Id=:ApexPages.currentPage().getParameters().get('userId')]){
+      selectedName = u.name;
+      selectedEmail = u.email;
+    }
+  }
+
   public static JSON2Apex parse(String json) {
     return (JSON2Apex) System.JSON.deserialize(json, JSON2Apex.class);
   }
@@ -196,8 +210,8 @@ global class Sales_FCRcontroller {
     Set<Id> allSubRoleIds = getSubRoleIds(new Set<ID>{UserInfo.getUserRoleId()});
     allSubRoleIds.add(UserInfo.getUserRoleId());
     String html='';
-    for(User u : [select id, name from user where userRoleId in :allSubRoleIds]){
-      html+='<li id="'+u.id+'" style="display:none;" class="link" onclick="areYouSure(\''+u.name+'\',\''+u.id+'\')">'+u.name+'</li>';
+    for(User u : [select id, name, email from user where userRoleId in :allSubRoleIds]){
+      html+='<li data-email="'+u.email+'" id="'+u.id+'" style="display:none;" class="link" onclick="areYouSure(\''+u.name+'\',\''+u.id+'\')">'+u.name+'</li>';
     }
     return html;
   }
@@ -212,7 +226,7 @@ global class Sales_FCRcontroller {
   }
 
 
-  @RemoteAction global static String createFCR(String uId, String fcrType, String dates, String rideLength){
+  @RemoteAction global static String createFCR(String uId, String fcrType, String dates, String rideLength, String salesName, String salesEmail){
     Date d = Date.newInstance(Integer.valueOf(dates.substring(6,dates.length())), Integer.valueOf(dates.substring(0,2)), Integer.valueOf(dates.substring(3,5)));
 
     String lob = 'hh';
@@ -235,7 +249,10 @@ global class Sales_FCRcontroller {
     }
 
 
-    Field_Coaching_Report__c fcr = new Field_Coaching_Report__c(Employee__c=uId, OwnerId=uId, RecordTypeId=fcrTypeId, Date__c=d, Status__c='In-process', Length_of_Field_Ride__c=rideLength);
+    Field_Coaching_Report__c fcr = new Field_Coaching_Report__c(
+      Employee__c=uId, OwnerId=uId, RecordTypeId=fcrTypeId, 
+      Date__c=d, Status__c='In-process', Length_of_Field_Ride__c=rideLength,
+      Sales_Name__c=salesName, Sales_Email__c=salesEmail);
     insert fcr;
     return '{"fcrId":"'+fcr.Id+'", "usrName":"'+u.Name+'", "usrPhotoURL":"'+u.MediumPhotoUrl+'", "fcrType":"'+fcrType+'"}';
   }
@@ -732,7 +749,7 @@ global class Sales_FCRcontroller {
       Sales_FCR_KAH_2_E__c,Sales_FCR_KAH_3_A__c,Sales_FCR_KAH_3_B__c,Sales_FCR_KAH_3_C__c,Sales_FCR_KAH_3_D__c,Sales_FCR_KAH_3_E__c,
       Sales_FCR_KAH_3_F__c,Sales_FCR_KAH_3_G__c,Sales_FCR_KAH_3_H__c,Sales_FCR_KAH_TAF_3_A__c,Sales_FCR_KAH_TAF_3_B__c,
       Sales_FCR_KAH_TAF_3_C__c,Sales_FCR_KAH_TAF_3_D1__c,Sales_FCR_KAH_TAF_3_D2__c,Sales_FCR_KAH_TAF_3_D3__c,Sales_FCR_KAH_TAF_3_E__c,Sales_FCR_KAH_TAF_3_F__c,
-      Sales_FCR_KAH_TAF_3_G__c from Field_Coaching_Report__c where Id=:fcrId];
+      Sales_FCR_KAH_TAF_3_G__c, Sales_Name__c, Sales_Email__c from Field_Coaching_Report__c where Id=:fcrId];
       for(Field_Coaching_Report__c fcr : fcrs){
 
         if(fcr.RecordTypeId == kahCrHP.Id){
@@ -978,7 +995,8 @@ global class Sales_FCRcontroller {
         }
       }
       update fcrs;
-      if(completed) completedEmail(fcrs[0].OwnerId, fcrs[0].RecordTypeId, fcrs[0].Id, isPrivate);
+      if(completed) completedEmail(fcrs[0].OwnerId, fcrs[0].RecordTypeId,
+      fcrs[0].Id, isPrivate, fcrs[0].Sales_Name__c, fcrs[0].Sales_Email__c);
       return completed;
     }
 
@@ -2020,7 +2038,8 @@ global class Sales_FCRcontroller {
       Messaging.sendEmail(new Messaging.SingleEmailMessage[] {mail});
     }
 
-    @RemoteAction global static void completedEmail(Id usrId, String fcrType, String fcrId, Boolean isPrivate){
+    @RemoteAction global static void completedEmail(Id usrId, String fcrType,
+    String fcrId, Boolean isPrivate, String salesName, String salesEmail){
 
       List<User> u = [select Id, Email, Name, UserRoleId from user where id = :usrId];
       String subject='', color='';
@@ -2050,6 +2069,7 @@ global class Sales_FCRcontroller {
 
       List<String> emailAddresses = new List<String>();
       for(User usr : toUsers) emailAddresses.add(usr.Email);
+      emailAddresses.add(salesEmail);
       mail.setToAddresses(emailAddresses);
 
       mail.setReplyTo(UserInfo.getUserEmail());
