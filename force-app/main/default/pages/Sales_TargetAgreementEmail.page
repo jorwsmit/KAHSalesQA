@@ -1,0 +1,73 @@
+<apex:page controller="Sales_TargetAgreementController" renderAs="pdf" showHeader="false" sidebar="false" standardStylesheets="false" applyBodyTag="false" applyHtmlTag="false">
+<html>
+<head>
+	<link href="//fonts.googleapis.com/css?family=Roboto:100,400,700" rel="stylesheet"/>
+	<style>
+	@page:first{
+		size: letter;
+		margin: 0mm;
+		margin-bottom: 8mm;
+	}
+	@page{
+		size: letter;
+		margin: 0mm;
+		margin-top: 8mm;
+		margin-bottom: 8mm;
+	}
+	body{
+		font-family: 'Roboto', sans-serif;
+		margin: 0px;
+	}
+	.btn{
+		border-radius: 25px;
+		cursor: pointer;
+	}
+	.header{
+		width: 100%;
+		color: white;
+		padding: 20px;
+	}
+	.holder{
+		width: 90%;
+		margin: auto;
+		margin-top: 15px;
+		padding: 15px;
+		border-bottom: 1px solid black;
+	}
+	.red{
+		background-color: #d9534f !important;
+	}
+	.yellow{
+		background-color: #ffc107 !important;
+	}
+	.green{
+		background-color: #5cb85c !important;
+	}
+	.pages{
+		width: 100%;
+		margin: auto;
+		margin-bottom: 50px;
+	}
+	.back{
+		display: none;
+	}
+	.months{
+		display: inline-block;
+		width: 8%;
+	}
+	.error{
+		width: 100%;
+		height: 500px;
+		color: white;
+		font-weight: bold;
+		font-size: 25px;
+		text-align: center;
+		padding-top: 500px;
+	}
+	</style>
+</head>
+<body>
+	<apex:outputText escape="false" value="{!AgreementEmailHtml}" ></apex:outputText>
+</body>
+</html>
+</apex:page>

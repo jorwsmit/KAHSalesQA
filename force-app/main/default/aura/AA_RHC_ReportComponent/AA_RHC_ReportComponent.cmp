@@ -1,0 +1,1036 @@
+<aura:component controller="AA_RHCReportController" implements="force:appHostable,flexipage:availableForAllPageTypes,force:hasRecordId" access="global" >
+    <aura:attribute name="selReports" type="String[]" />
+    <aura:attribute name="selAccounts" type="String[]" />
+    <aura:attribute name="paginationList" type="string[]"/>
+    <aura:attribute name="tableData" type="string[]"/>
+    <aura:attribute name="pageSize" type="Integer" default="20"/>
+    <aura:attribute name="pageSize2" type="Integer" default="30"/>
+    <aura:attribute name="totalSize" type="Integer"/>
+    <aura:attribute name="start" type="Integer" />
+    <aura:attribute name="end" type="Integer"/>
+    <aura:attribute name="facility" type="Account"/>
+    <aura:attribute name="dvpList" type="string[]"/>
+    <aura:attribute name="paginationListDVP" type="string[]"/>
+    <aura:attribute name="rvpList" type="string[]"/>
+    <aura:attribute name="paginationListRVP" type="string[]"/>
+    <aura:attribute name="adoList" type="string[]"/>
+    <aura:attribute name="paginationListADO" type="string[]"/>
+    <aura:attribute name="report1" type="boolean"/>
+    <aura:attribute name="report2" type="boolean"/>
+    <aura:attribute name="report3" type="boolean"/>
+    <aura:attribute name="report4" type="boolean"/>
+    <aura:attribute name="dvpListAct" type="string[]"/>
+    <aura:attribute name="paginationListDVPAct" type="object"/>
+    <aura:attribute name="rvpListAct" type="string[]"/>
+    <aura:attribute name="paginationListRVPAct" type="object"/>
+    <aura:attribute name="adoListAct" type="string[]"/>
+    <aura:attribute name="paginationListADOAct" type="object"/>
+    <aura:attribute name="letterStart" type="string"/>
+    <aura:attribute name="letterEnd" type="string"/>
+    <aura:attribute name="adoListChoose" type="string[]"/>
+    <aura:attribute name="rvpListChoose" type="string[]"/>
+    <aura:attribute name="dvpListChoose" type="string[]"/>
+    
+    <aura:attribute name="showAlpha" type="boolean" default="false"/>
+    
+    <aura:attribute name="aList" type="sObject[]"/>
+    <aura:attribute name="bList" type="sObject[]"/>
+    <aura:attribute name="cList" type="sObject[]"/>
+    <aura:attribute name="dList" type="sObject[]"/>
+    <aura:attribute name="eList" type="sObject[]"/>
+    <aura:attribute name="fList" type="sObject[]"/>
+    <aura:attribute name="gList" type="sObject[]"/>
+    <aura:attribute name="hList" type="sObject[]"/>
+    <aura:attribute name="iList" type="sObject[]"/>
+    <aura:attribute name="jList" type="sObject[]"/>
+    <aura:attribute name="kList" type="sObject[]"/>
+    <aura:attribute name="lList" type="sObject[]"/>
+    <aura:attribute name="mList" type="sObject[]"/>
+    <aura:attribute name="nList" type="sObject[]"/>
+    <aura:attribute name="oList" type="sObject[]"/>
+    <aura:attribute name="pList" type="sObject[]"/>
+    <aura:attribute name="qList" type="sObject[]"/>
+    <aura:attribute name="rList" type="sObject[]"/>
+    <aura:attribute name="sList" type="sObject[]"/>
+    <aura:attribute name="tList" type="sObject[]"/>
+    <aura:attribute name="uList" type="sObject[]"/>
+    <aura:attribute name="vList" type="sObject[]"/>
+    <aura:attribute name="wList" type="sObject[]"/>
+    <aura:attribute name="xList" type="sObject[]"/>
+    <aura:attribute name="yList" type="sObject[]"/>
+    <aura:attribute name="zList" type="sObject[]"/>
+    <aura:attribute name="processingFinished" type="boolean"/>
+    
+    <aura:attribute name="accountTeamAndADO" type="sObject[]"/>
+    <aura:attribute name="accountTeamAndADODownloadList" type="sObject[]"/>
+    
+    <aura:attribute name="NPSActivityList" type="sObject[]"/>
+    
+    <aura:attribute name="accountDownloadPieceList" type="sObject[]"/>
+    
+    <aura:attribute name="exportCapture" type="sObject[]"/>
+    
+    <aura:attribute name="sortAscContact" type="Boolean"/>
+    
+    <aura:attribute name="sortFieldContact" type="string"/>
+    <aura:attribute name="sortFieldDVP" type="string"/>
+    <aura:attribute name="sortFieldRVP" type="string"/>
+    <aura:attribute name="sortFieldADO" type="string"/>
+    
+    <aura:attribute name="selectedADO" type="string[]"/>
+    <aura:attribute name="selectedRVP" type="string[]"/>
+    <aura:attribute name="selectedDVP" type="string[]"/>
+    
+    <aura:attribute name="sortAscDVP" type="Boolean"/>
+    <aura:attribute name="sortAscRVP" type="Boolean"/>
+    <aura:attribute name="sortAscADO" type="Boolean"/>
+    <aura:attribute name="selectedADOList" type="string[]"/>
+    <aura:attribute name="selectedRVPList" type="string[]"/>
+    <aura:attribute name="selectedDVPList" type="string[]"/>
+    
+    <aura:attribute name="showExtraFilters" type="Boolean"/>
+    
+    <aura:attribute name="Spinner" type="boolean" default="false"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <aura:if isTrue="{!v.Spinner}">
+        <div aura:id="spinnerId" class="slds-spinner_container">
+            <div class="slds-spinner--brand  slds-spinner slds-spinner--large slds-is-relative" role="alert">
+                <span class="slds-assistive-text">Loading</span>
+                <div class="slds-spinner__dot-a"></div>
+                <div class="slds-spinner__dot-b"></div>
+            </div>
+        </div>
+    </aura:if>
+    
+    <div class="slds-col"> 
+        <div class="slds-form-element reportDiv paddingleft" style="width: 200px">
+            <div class="slds-form-element__label">Report:</div>
+            <div>
+                <ui:inputSelect class="slds-select" change="{!c.onReportChange}" aura:id="InputSelectReport">
+                    <aura:iteration items="{!v.selReports}" var="reportVal"> 
+                        <ui:inputSelectOption text="{!reportVal}"/> 
+                    </aura:iteration>
+                </ui:inputSelect>
+                <br/>
+            </div>
+        </div>
+    </div>
+    
+    <div class="slds-col">
+        <div class="slds-form-element roleDiv" style="width: 300px">
+            <div class="slds-form-element__label">Accounts: </div>
+            <div>
+                <ui:inputSelect class="slds-select" aura:id="InputSelectAccount" disabled="true" >
+                    <aura:iteration items="{!v.selAccounts}" var="accountName"> 
+                        <ui:inputSelectOption text="{!accountName}"/> 
+                    </aura:iteration>
+                </ui:inputSelect>
+            </div>
+        </div>
+    </div>
+    
+    <aura:if isTrue="{!v.showExtraFilters}">
+        <br/>
+    
+    <table>
+        <tr>
+        <td>
+        
+                <lightning:dualListbox name="languages"  
+                           label= "Select ADOs (Optional)" 
+                           sourceLabel="Available" 
+                           selectedLabel="Selected" 
+                           options="{!v.adoListChoose}" 
+                           onchange="{!c.handleADOChange}"/>
+                
+        </td>
+    <td>
+                <lightning:dualListbox name="languages"  
+                           label= "Select RVPs (Optional)" 
+                           sourceLabel="Available" 
+                           selectedLabel="Selected" 
+                           options="{!v.rvpListChoose}" 
+                           onchange="{!c.handleRVPChange}"/>
+        </td>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    
+    <td>
+                <lightning:dualListbox name="languages"  
+                           label= "Select DVPs (Optional)" 
+                           sourceLabel="Available" 
+                           selectedLabel="Selected" 
+                           options="{!v.dvpListChoose}" 
+                           onchange="{!c.handleDVPChange}"/>
+        </td>        
+            </tr>
+        </table>
+    
+    </aura:if>
+    
+    <br/>
+    <div class="slds-col paddingleft paddingTop">
+        <div class="slds-form-element">
+            
+            <lightning:button aura:id="reportButton" label="Go" onclick="{!c.runReport}"/>
+        </div>
+    </div>
+    <br/>
+    
+    <div>
+        <aura:if isTrue="{!v.facility != null}">
+            <table class="slds-table slds-table--bordered slds-table--cell-buffer">
+                <thead>
+                    <tr class="slds-text-title--caps">
+                        <th scope="row">
+                            <div class="slds-truncate" >Account Name: {!v.facility.Name}</div>
+                        </th>
+                        <th scope="row">
+                            <div class="slds-truncate" >Product Type: {!v.facility.PF_Product_Type__c}</div>
+                        </th>
+                        <th scope="row">
+                            <div class="slds-truncate" >Smart #: {!v.facility.PF_Smart_ID__c}</div>
+                        </th>
+                        <th scope="row">
+                            <div class="slds-truncate" >SAP ID: {!v.facility.PF_SAP_ID__c}</div>
+                        </th>
+                    </tr>
+                </thead>
+            </table>
+        </aura:if>
+        <aura:if isTrue="{!v.report1}">
+            <table class="slds-table slds-table--bordered slds-table--cell-buffer">
+                <th>
+                    <table class="slds-table slds-table--bordered slds-table--cell-buffer">
+                        <thead>
+                            <tr class="slds-text-title--caps">
+                                <th scope="row">
+                                    <div class="slds-truncate" >DVPs: </div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <aura:iteration items="{!v.paginationListDVP}" var="con">  
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!con.firstName}">{!con.FirstName}&nbsp;{!con.LastName}</div>
+                                    </th>
+                                </aura:iteration>        
+                            </tr>
+                        </tbody>
+                    </table>
+                </th>
+                <th>
+                    <table class="slds-table slds-table--bordered slds-table--cell-buffer">
+                        <thead>
+                            <tr class="slds-text-title--caps">
+                                <th scope="row">
+                                    <div class="slds-truncate" >RVPs: </div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <aura:iteration items="{!v.paginationListRVP}" var="con">  
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!con.firstName}">{!con.FirstName}&nbsp;{!con.LastName}</div>
+                                    </th>
+                                </aura:iteration>        
+                            </tr>
+                        </tbody>
+                    </table>
+                </th>
+                <th>
+                    <table class="slds-table slds-table--bordered slds-table--cell-buffer">
+                        <thead>
+                            <tr class="slds-text-title--caps">
+                                <th scope="row">
+                                    <div class="slds-truncate" >ADOs: </div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <aura:iteration items="{!v.paginationListADO}" var="con">  
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!con.firstName}">{!con.FirstName}&nbsp;{!con.LastName}</div>
+                                    </th>
+                                </aura:iteration>        
+                            </tr>
+                        </tbody>
+                    </table>
+                </th>
+            </table>
+            <table class="slds-table slds-table--bordered slds-table--cell-buffer">
+                <thead>
+                    <tr class="slds-text-title--caps">
+                        
+                        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortName}">
+                            <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                <span class="slds-assistive-text">Sort</span>
+                                <span class="slds-truncate" title="accountName">Name</span>  
+                            </a>
+                        </th>
+                        
+                        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortTitle}">
+                            <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                <span class="slds-assistive-text">Sort</span>
+                                <span class="slds-truncate" title="ownerName">Title</span>
+                            </a>
+                        </th>
+                        
+                        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortAddress}">
+                            <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                <span class="slds-assistive-text">Sort</span>
+                                <span class="slds-truncate" title="activity">Address</span>
+                            </a>
+                        </th>
+                        
+                        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortCity}">
+                            <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                <span class="slds-assistive-text">Sort</span>
+                                <span class="slds-truncate" title="activity">City</span>
+                            </a>
+                        </th>
+                        
+                        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortState}">
+                            <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                <span class="slds-assistive-text">Sort</span>
+                                <span class="slds-truncate" title="activity">State</span>
+                            </a>
+                        </th>
+                        
+                        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortZip}">
+                            <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                <span class="slds-assistive-text">Sort</span>
+                                <span class="slds-truncate" title="activity">Zip</span>
+                            </a>
+                        </th>
+                        
+                        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortPhone}">
+                            <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                <span class="slds-assistive-text">Sort</span>
+                                <span class="slds-truncate" title="Department">Phone</span>
+                            </a>
+                        </th>
+                    </tr>
+                </thead>
+                
+                <tbody>
+                    <aura:iteration items="{!v.paginationList}" var="con">  
+                        <tr>
+                            <aura:if isTrue="{!con != null}">      
+                                <th scope="row">
+                                    <div class="slds-truncate" title="{!con.Name}"><ui:outputURL value="{!'/'+con.Id}" label="{!con.Name}" target="_blank"/></div>
+                                </th>
+                                
+                                <th scope="row">
+                                    <div class="slds-truncate" title="{!con.Title}">{!con.Title}</div>
+                                </th>
+                                
+                                <th scope="row">
+                                    <div class="slds-truncate" title="{!con.MailingStreet}">{!con.MailingStreet}</div>
+                                </th>
+                                
+                                <th scope="row">
+                                    <div class="slds-truncate" title="{!con.MailingCity}">{!con.MailingCity}</div>
+                                </th>
+                                
+                                <th scope="row">
+                                    <div class="slds-truncate" title="{!con.MailingState}">{!con.MailingState}</div>
+                                </th>
+                                
+                                <th scope="row">
+                                    <div class="slds-truncate" title="{!con.MailingPostalCode}">{!con.MailingPostalCode}</div>
+                                </th>
+                                
+                                <th scope="row">
+                                    <div class="slds-truncate" title="{!con.Phone}">{!con.Phone}</div>
+                                </th>  
+                            </aura:if>  
+                        </tr>
+                    </aura:iteration>
+                </tbody>
+            </table>
+            <lightning:button label="Previous" onclick="{!c.previous}" />
+			<lightning:button label="Next" onclick="{!c.next}" /><br/>
+        </aura:if>
+        
+        <aura:if isTrue="{!v.report2}">
+            <aura:if isTrue="{!v.paginationListDVPAct != null}">
+                <div class="slds-p-around--large">
+                    DVPs
+                    <table class="slds-table slds-table--bordered slds-table--cell-buffer">
+                        <thead>
+                            <tr class="slds-text-title--caps">
+                                <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortDVPName}">
+                                    <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                        <div class="slds-truncate" title="First Name">Activity Owner</div>
+                                    </a>
+                                </th>
+                                
+                                <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortDVPType}">
+                                    <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                        
+                                        <div class="slds-truncate" title="First Name">Activity Type</div>
+                                    </a>
+                                </th>
+                                
+                                <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortDVPDate}">
+                                    <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                        <div class="slds-truncate" title="First Name">Date</div>
+                                    </a>
+                                </th>
+                                <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortDVPDescription}">
+                                    <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                        <div class="slds-truncate" title="Department">Description</div>
+                                    </a>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <aura:iteration items="{!v.paginationListDVPAct}" var="dvp">
+                                <aura:if isTrue="{!dvp != null}">
+                                    <tr>
+                                        <th >
+                                            
+                                            <div class="slds-truncate" title="{!dvp.name}"><ui:outputURL value="{!'/'+dvp.Owner.Id}" label="{!dvp.Owner.Name}" target="_blank"/></div>
+                                            
+                                        </th>
+                                        
+                                        <th >
+                                            
+                                            <div class="slds-truncate" title="{!dvp.Type}">{!dvp.Type}</div>
+                                            
+                                        </th>
+                                        
+                                        <th >
+                                            
+                                            <div class="slds-truncate" title="{!dvp.StartDateTime}"><ui:outputDate aura:id="dvpDate" value="{!dvp.StartDateTime}"/></div>
+                                            
+                                        </th>
+                                        
+                                        <th >
+                                            <div class="slds-truncate" title="{!dvp.Description}">{!dvp.Description}</div>
+                                            
+                                        </th>
+                                    </tr>
+                                </aura:if>
+                            </aura:iteration>    
+                        </tbody>
+                    </table>
+                </div>
+            </aura:if>
+            <aura:if isTrue="{!v.paginationListRVPAct != null}">
+                <div class="slds-p-around--large">
+                    RVPs
+                    <table class="slds-table slds-table--bordered slds-table--cell-buffer">
+                        <thead>
+                            <tr class="slds-text-title--caps">
+                                
+                                <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortRVPName}">
+                                    <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                        <div class="slds-truncate" title="First Name">Activity Owner</div>
+                                    </a>
+                                </th>
+                                <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortRVPType}">
+                                    <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                        
+                                        <div class="slds-truncate" title="First Name">Activity Type</div>
+                                    </a>
+                                </th>
+                                
+                                <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortRVPDate}">
+                                    <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                        <div class="slds-truncate" title="First Name">Date</div>
+                                    </a>
+                                </th>
+                                
+                                <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortRVPDescription}">
+                                    <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                        <div class="slds-truncate" title="Department">Description</div>
+                                    </a>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <aura:iteration items="{!v.paginationListRVPAct}" var="rvp">
+                                <aura:if isTrue="{!rvp != null}">
+                                    <tr>
+                                        <th>
+                                            <div class="slds-truncate" title="{!rvp.name}"><ui:outputURL value="{!'/'+rvp.Owner.Id}" label="{!rvp.Owner.Name}" target="_blank"/></div>
+                                        </th>
+                                        
+                                        <th>
+                                            <div class="slds-truncate" title="{!rvp.Type}">{!rvp.Type}</div>
+                                        </th>
+                                        
+                                        <th>
+                                            <div class="slds-truncate" title="{!rvp.StartDateTime}"><ui:outputDate aura:id="rvpDate" value="{!rvp.StartDateTime}"/></div>
+                                            
+                                        </th>
+                                        
+                                        <th >
+                                            <div class="slds-truncate" title="{!rvp.Description}">{!rvp.Description}</div>
+                                        </th>
+                                    </tr>
+                                </aura:if>
+                            </aura:iteration>    
+                        </tbody>
+                    </table>
+                </div>
+            </aura:if>
+            <aura:if isTrue="{!v.paginationListADOAct != null}">
+                <div class="slds-p-around--large">
+                    ADOs
+                    <table class="slds-table slds-table--bordered slds-table--cell-buffer">
+                        <thead>
+                            <tr class="slds-text-title--caps">
+                                <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortADOName}">
+                                    <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                        <div class="slds-truncate" title="First Name">Activity Owner</div>
+                                    </a>
+                                </th>
+                                
+                                <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortADOType}">
+                                    <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                        <div class="slds-truncate" title="First Name">Activity Type</div>
+                                    </a>
+                                </th>
+                                
+                                <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortADODate}">
+                                    <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                        <div class="slds-truncate" title="First Name">Date</div>
+                                    </a>
+                                </th>
+                                
+                                <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortADODescription}">
+                                    <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                        <div class="slds-truncate" title="Department">Description</div>
+                                    </a>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <aura:iteration items="{!v.paginationListADOAct}" var="ado">
+                                <aura:if isTrue="{!ado != null}">
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="slds-truncate" title="{!ado.name}"><ui:outputURL value="{!'/'+ado.Owner.Id}" label="{!ado.Owner.Name}" target="_blank"/></div>
+                                        </th>
+                                        <th scope="row">
+                                            <div class="slds-truncate" title="{!ado.Type}">{!ado.Type}</div>
+                                        </th>
+                                        <th scope="row">
+                                            <div class="slds-truncate" title="{!ado.StartDateTime}"><ui:outputDate aura:id="adoDate" value="{!ado.StartDateTime}"/></div>
+                                        </th>
+                                        <th scope="row">
+                                            <div class="slds-truncate" title="{!ado.Description}">{!ado.Description}</div>
+                                        </th>
+                                    </tr>
+                                </aura:if>
+                            </aura:iteration>    
+                        </tbody>
+                    </table>
+                </div>
+            </aura:if>
+        </aura:if>
+        
+        <aura:if isTrue="{!v.showAlpha}">
+            <lightning:Tabset>
+                <lightning:tab label="A" aura:id="detailTabA" onactive="{!c.onTabChangeA}"/>
+                <lightning:tab label="B" aura:id="detailTabB" onactive="{!c.onTabChangeB}"/>
+                <lightning:tab label="C" aura:id="detailTabC" onactive="{!c.onTabChangeC}"/>
+                <lightning:tab label="D" aura:id="detailTabD" onactive="{!c.onTabChangeD}"/>
+                <lightning:tab label="E" aura:id="detailTabE" onactive="{!c.onTabChangeE}"/>
+                <lightning:tab label="F" aura:id="detailTabF" onactive="{!c.onTabChangeF}"/>
+                <lightning:tab label="G" aura:id="detailTabG" onactive="{!c.onTabChangeG}"/>
+                <lightning:tab label="H" aura:id="detailTabH" onactive="{!c.onTabChangeH}"/>
+                <lightning:tab label="I" aura:id="detailTabI" onactive="{!c.onTabChangeI}"/>
+                <lightning:tab label="J" aura:id="detailTabJ" onactive="{!c.onTabChangeJ}"/>
+                <lightning:tab label="K" aura:id="detailTabK" onactive="{!c.onTabChangeK}"/>
+                <lightning:tab label="L" aura:id="detailTabL" onactive="{!c.onTabChangeL}"/>
+                <lightning:tab label="M" aura:id="detailTabM" onactive="{!c.onTabChangeM}"/>
+                <lightning:tab label="N" aura:id="detailTabN" onactive="{!c.onTabChangeN}"/>
+                <lightning:tab label="O" aura:id="detailTabO" onactive="{!c.onTabChangeO}"/>
+                <lightning:tab label="P" aura:id="detailTabP" onactive="{!c.onTabChangeP}"/>
+                <lightning:tab label="Q" aura:id="detailTabQ" onactive="{!c.onTabChangeQ}"/>
+                <lightning:tab label="R" aura:id="detailTabR" onactive="{!c.onTabChangeR}"/>
+                <lightning:tab label="S" aura:id="detailTabS" onactive="{!c.onTabChangeS}"/>
+                <lightning:tab label="T" aura:id="detailTabT" onactive="{!c.onTabChangeT}"/>
+                <lightning:tab label="U" aura:id="detailTabU" onactive="{!c.onTabChangeU}"/>
+                <lightning:tab label="V" aura:id="detailTabV" onactive="{!c.onTabChangeV}"/>
+                <lightning:tab label="W" aura:id="detailTabW" onactive="{!c.onTabChangeW}"/>
+                <lightning:tab label="X" aura:id="detailTabX" onactive="{!c.onTabChangeX}"/>
+                <lightning:tab label="Y" aura:id="detailTabY" onactive="{!c.onTabChangeY}"/>
+                <lightning:tab label="Z" aura:id="detailTabZ" onactive="{!c.onTabChangeZ}"/>
+                </lightning:Tabset>
+            <lightning:button aura:id="exportButton" label="Export" onclick="{!c.downloadCsvAllAccount}" />
+            <br/>
+            <br/>
+            <aura:iteration items="{!v.accountTeamAndADO}" var="con">
+                <aura:if isTrue="{!con.accSize > 0}">
+            <table class="slds-table slds-table--bordered slds-table--cell-buffer">
+                	<thead>
+                    	<tr class="slds-text-title--caps">
+                        	<th scope="row">
+                            	<div class="slds-truncate" title="{!con.a.Name}">Account: <ui:outputURL value="{!'/'+con.a.Id}" label="{!con.a.Name}" target="_blank"/></div>
+                        	</th>
+                            <th scope="row">
+                            	<div class="slds-truncate" title="{!con.a.PF_Product_Type__c}">Product Type: <ui:outputText value="{!con.a.PF_Product_Type__c}"/></div>
+                            </th>
+                            <th scope="row">
+                            	<div class="slds-truncate" title="{!con.a.PF_Start_Date__c}">Start Date: <ui:outputDateTime value="{!con.a.PF_Start_Date__c}" format="MM/dd/yyyy"/></div>
+                            </th>
+                            <th scope="row">
+                            	<div class="slds-truncate" title="{!con.a.Last_Date_of_Service__c}">Last Date of Service: <ui:outputDateTime value="{!con.a.PF_Start_Date__c}" format="MM/dd/yyyy"/></div>
+                            </th>
+                            <th scope="row">
+                            	<div class="slds-truncate" title="{!con.a.PF_SAP_ID__c}">SAP: <ui:outputText value="{!con.a.PF_SAP_ID__c}"/></div>
+                            </th>
+                            <th scope="row">
+                            	<div class="slds-truncate" title="{!con.a.PF_Smart_ID__c}">SMART: <ui:outputText value="{!con.a.PF_Smart_ID__c}"/></div>
+                            </th>
+                    	</tr>
+                	</thead>
+            	</table>
+                    </aura:if>
+            	<aura:if isTrue="{!con.adoSize > 0}">
+                ADOs
+            	<table class="slds-table slds-table--bordered slds-table--cell-buffer">
+                    <thead>
+                        <tr class="slds-text-title--caps">
+                            <th scope="row">
+                                <span title="Name">Name</span>
+                            </th>
+                            <th scope="row">
+                                <span title="Name">Title</span>
+                            </th>
+                            <th scope="row">
+                                <span title="Name">Email</span>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <aura:iteration items="{!con.ados}" var="add">  
+                            <aura:if isTrue="{!add != null}">
+                                <tr>
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!add.Name}"><ui:outputURL value="{!'/'+add.Id}" label="{!add.Name}" target="_blank"/></div>
+                                    </th>
+                                    
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!add.Title}"><ui:outputText value="{!add.Title}"/></div>
+                                    </th>
+                                    
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!add.Email}"><ui:outputText value="{!add.Email}"/></div>
+                                    </th>
+                                </tr>
+                            </aura:if>
+                        </aura:iteration>
+                    </tbody>
+                </table>
+            	</aura:if>
+                <aura:if isTrue="{!con.dvpSize > 0}">
+                DVPs
+            	<table class="slds-table slds-table--bordered slds-table--cell-buffer">
+                    <thead>
+                        <tr class="slds-text-title--caps">
+                            <th scope="row">
+                                <span title="Name">Name</span>
+                            </th>
+                            <th scope="row">
+                                <span title="Name">Title</span>
+                            </th>
+                            <th scope="row">
+                                <span title="Name">Email</span>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <aura:iteration items="{!con.dvps}" var="add">  
+                            <aura:if isTrue="{!add != null}">
+                                <tr>
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!add.Name}"><ui:outputURL value="{!'/'+add.Id}" label="{!add.Name}" target="_blank"/></div>
+                                    </th>
+                                    
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!add.Title}"><ui:outputText value="{!add.Title}"/></div>
+                                    </th>
+                                    
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!add.Email}"><ui:outputText value="{!add.Email}"/></div>
+                                    </th>
+                                </tr>
+                            </aura:if>
+                        </aura:iteration>
+                    </tbody>
+                </table>
+            	</aura:if>
+                <aura:if isTrue="{!con.rvpSize > 0}">
+                RVPs
+            	<table class="slds-table slds-table--bordered slds-table--cell-buffer">
+                    <thead>
+                        <tr class="slds-text-title--caps">
+                            <th scope="row">
+                                <span title="Name">Name</span>
+                            </th>
+                            <th scope="row">
+                                <span title="Name">Title</span>
+                            </th>
+                            <th scope="row">
+                                <span title="Name">Email</span>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <aura:iteration items="{!con.rvps}" var="add">  
+                            <aura:if isTrue="{!add != null}">
+                                <tr>
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!add.Name}"><ui:outputURL value="{!'/'+add.Id}" label="{!add.Name}" target="_blank"/></div>
+                                    </th>
+                                    
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!add.Title}"><ui:outputText value="{!add.Title}"/></div>
+                                    </th>
+                                    
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!add.Email}"><ui:outputText value="{!add.Email}"/></div>
+                                    </th>
+                                </tr>
+                            </aura:if>
+                        </aura:iteration>
+                    </tbody>
+                </table>
+            	</aura:if>
+                <aura:if isTrue="{!con.cTeamSize > 0}">
+                Contact Team
+                <table class="slds-table slds-table--bordered slds-table--cell-buffer">
+                    <thead>
+                        <tr class="slds-text-title--caps">
+                            <th scope="row">
+                                <span title="Name">Name</span>
+                            </th>
+                            <th scope="row">
+                                <span title="Name">Title</span>
+                            </th>
+                            <th scope="row">
+                                <span title="Name">Email</span>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <aura:iteration items="{!con.cTeam}" var="add">  
+                            <aura:if isTrue="{!add != null}">
+                                <tr>
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!add.Name}"><ui:outputURL value="{!'/'+add.Id}" label="{!add.Name}" target="_blank"/></div>
+                                    </th>
+                                    
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!add.Title}"><ui:outputText value="{!add.Title}"/></div>
+                                    </th>
+                                    
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!add.Email}"><ui:outputText value="{!add.Email}"/></div>
+                                    </th>
+                                </tr>
+                            </aura:if>
+                        </aura:iteration>
+                    </tbody>
+                </table>
+                </aura:if>
+                <aura:if isTrue="{!con.conSize > 0}">
+                Contacts
+                <table class="slds-table slds-table--bordered slds-table--cell-buffer">
+                    <thead>
+                        <tr class="slds-text-title--caps">
+                            <th scope="row">
+                                <span title="Name">Name</span>
+                            </th>
+                            <th scope="row">
+                                <span title="Name">Title</span>
+                            </th>
+                            <th scope="row">
+                                <span title="Name">Email</span>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <aura:iteration items="{!con.cons}" var="add">  
+                            <aura:if isTrue="{!add != null}">
+                                <tr>
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!add.Name}"><ui:outputURL value="{!'/'+add.Id}" label="{!add.Name}" target="_blank"/></div>
+                                    </th>
+                                    
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!add.Title}"><ui:outputText value="{!add.Title}"/></div>
+                                    </th>
+                                    
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!add.Email}"><ui:outputText value="{!add.Email}"/></div>
+                                    </th>
+                                </tr>
+                            </aura:if>
+                        </aura:iteration>
+                    </tbody>
+                </table>
+                </aura:if>
+                <br/>
+                <br/>
+                    
+            </aura:iteration>
+        </aura:if>
+        
+        <aura:if isTrue="{!v.report4}">
+            <br/>
+            <br/>
+            <aura:iteration items="{!v.NPSActivityList}" var="con">
+                <aura:if isTrue="{!con.accSize > 0}">
+            <table class="slds-table slds-table--bordered slds-table--cell-buffer">
+                	<thead>
+                    	<tr class="slds-text-title--caps">
+                        	<th scope="row">
+                            	<div class="slds-truncate" title="{!con.a.Name}">Account: <ui:outputURL value="{!'/'+con.a.Id}" label="{!con.a.Name}" target="_blank"/></div>
+                        	</th>
+                            <th scope="row">
+                            	<div class="slds-truncate" title="{!con.a.PF_Product_Type__c}">Product Type: <ui:outputText value="{!con.a.PF_Product_Type__c}"/></div>
+                            </th>
+                            <th scope="row">
+                            	<div class="slds-truncate" title="{!con.a.PF_Start_Date__c}">Start Date: <ui:outputDateTime value="{!con.a.PF_Start_Date__c}" format="MM/dd/yyyy"/></div>
+                            </th>
+                            <th scope="row">
+                            	<div class="slds-truncate" title="{!con.a.Last_Date_of_Service__c}">Last Date of Service: <ui:outputDateTime value="{!con.a.PF_Start_Date__c}" format="MM/dd/yyyy"/></div>
+                            </th>
+                            <th scope="row">
+                            	<div class="slds-truncate" title="{!con.a.PF_SAP_ID__c}">SAP: <ui:outputText value="{!con.a.PF_SAP_ID__c}"/></div>
+                            </th>
+                            <th scope="row">
+                            	<div class="slds-truncate" title="{!con.a.PF_Smart_ID__c}">SMART: <ui:outputText value="{!con.a.PF_Smart_ID__c}"/></div>
+                            </th>
+                    	</tr>
+                	</thead>
+            	</table>
+                    </aura:if>
+            	<aura:if isTrue="{!con.adoSize > 0}">
+                ADOs
+            	<table class="slds-table slds-table--bordered slds-table--cell-buffer">
+                    <thead>
+                        <tr class="slds-text-title--caps">
+                            <th scope="row">
+                                <span title="Name">Name</span>
+                            </th>
+                            <th scope="row">
+                                <span title="Name">Title</span>
+                            </th>
+                            <th scope="row">
+                                <span title="Name">Email</span>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <aura:iteration items="{!con.ados}" var="add">  
+                            <aura:if isTrue="{!add != null}">
+                                <tr>
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!add.Name}"><ui:outputURL value="{!'/'+add.Id}" label="{!add.Name}" target="_blank"/></div>
+                                    </th>
+                                    
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!add.Title}"><ui:outputText value="{!add.Title}"/></div>
+                                    </th>
+                                    
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!add.Email}"><ui:outputText value="{!add.Email}"/></div>
+                                    </th>
+                                </tr>
+                            </aura:if>
+                        </aura:iteration>
+                    </tbody>
+                </table>
+            	</aura:if>
+                <aura:if isTrue="{!con.dvpSize > 0}">
+                DVPs
+            	<table class="slds-table slds-table--bordered slds-table--cell-buffer">
+                    <thead>
+                        <tr class="slds-text-title--caps">
+                            <th scope="row">
+                                <span title="Name">Name</span>
+                            </th>
+                            <th scope="row">
+                                <span title="Name">Title</span>
+                            </th>
+                            <th scope="row">
+                                <span title="Name">Email</span>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <aura:iteration items="{!con.dvps}" var="add">  
+                            <aura:if isTrue="{!add != null}">
+                                <tr>
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!add.Name}"><ui:outputURL value="{!'/'+add.Id}" label="{!add.Name}" target="_blank"/></div>
+                                    </th>
+                                    
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!add.Title}"><ui:outputText value="{!add.Title}"/></div>
+                                    </th>
+                                    
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!add.Email}"><ui:outputText value="{!add.Email}"/></div>
+                                    </th>
+                                </tr>
+                            </aura:if>
+                        </aura:iteration>
+                    </tbody>
+                </table>
+            	</aura:if>
+                <aura:if isTrue="{!con.rvpSize > 0}">
+                RVPs
+            	<table class="slds-table slds-table--bordered slds-table--cell-buffer">
+                    <thead>
+                        <tr class="slds-text-title--caps">
+                            <th scope="row">
+                                <span title="Name">Name</span>
+                            </th>
+                            <th scope="row">
+                                <span title="Name">Title</span>
+                            </th>
+                            <th scope="row">
+                                <span title="Name">Email</span>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <aura:iteration items="{!con.rvps}" var="add">  
+                            <aura:if isTrue="{!add != null}">
+                                <tr>
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!add.Name}"><ui:outputURL value="{!'/'+add.Id}" label="{!add.Name}" target="_blank"/></div>
+                                    </th>
+                                    
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!add.Title}"><ui:outputText value="{!add.Title}"/></div>
+                                    </th>
+                                    
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!add.Email}"><ui:outputText value="{!add.Email}"/></div>
+                                    </th>
+                                </tr>
+                            </aura:if>
+                        </aura:iteration>
+                    </tbody>
+                </table>
+            	</aura:if>
+                <aura:if isTrue="{!con.taskSize > 0}">
+                Activities
+                <table class="slds-table slds-table--bordered slds-table--cell-buffer">
+                    <thead>
+                        <tr class="slds-text-title--caps">
+                            <th scope="row">
+                                <span title="Name">Assigned</span>
+                            </th>
+                            <th scope="row">
+                                <span title="Name">Subject</span>
+                            </th>
+                            <th scope="row">
+                                <span title="Name">NPS Score</span>
+                            </th>
+                            <th scope="row">
+                                <span title="Name">Product Type</span>
+                            </th>
+                            <th scope="row">
+                                <span title="Name">Date</span>
+                            </th>
+                            <th scope="row">
+                                <span title="Name">Priority</span>
+                            </th>
+                            <th scope="row">
+                                <span title="Name">Status</span>
+                            </th>
+                            <th scope="row">
+                                <span title="Name">Full Comments</span>
+                            </th>
+                            <th scope="row">
+                                <span title="Name">Last Modified Date</span>
+                            </th>
+                            <th scope="row">
+                                <span title="Name">Company/Account</span>
+                            </th>
+                            <th scope="row">
+                                <span title="Name">Contact</span>
+                            </th>
+                            <th scope="row">
+                                <span title="Name">Title</span>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <aura:iteration items="{!con.tasks}" var="add">  
+                            <aura:if isTrue="{!add != null}">
+                                <tr>
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!add.Owner.Name}"><ui:outputURL value="{!'/'+add.Owner.Id}" label="{!add.Owner.Name}" target="_blank"/></div>
+                                    </th>
+                                    
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!add.Subject}"><ui:outputURL value="{!'/'+add.Id}" label="{!add.Subject}" target="_blank"/></div>
+                                    </th>
+                                    
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!add.PF_NPS_Score__c}"><ui:outputText value="{!add.PF_NPS_Score__c}"/></div>
+                                    </th>
+                                    
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!add.PF_Product_Type__c}"><ui:outputText value="{!add.PF_Product_Type__c}"/></div>
+                                    </th>
+                                    
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!add.ActivityDate}"><ui:outputDate value="{!add.ActivityDate}" format="MM/dd/yyyy"/></div>
+                                    </th>
+                                    
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!add.Priority}"><ui:outputText value="{!add.Priority}"/></div>
+                                    </th>
+                                    
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!add.Status}"><ui:outputText value="{!add.Status}"/></div>
+                                    </th>
+                                    
+                                    <th scope="row" >
+                                        <div class="slds-truncate" style="width:100px" title="{!add.Description}"><ui:outputText value="{!add.Description}"/></div>
+                                    </th>
+                                    
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!add.LastModifiedDate}"><ui:outputDateTime value="{!add.LastModifiedDate}" format="MM/dd/yyyy hh:mm a"/></div>
+                                    </th>
+                                    
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!add.What.Name}"><ui:outputURL value="{!'/'+add.WhatId}" label="{!add.What.Name}" target="_blank"/></div>
+                                    </th>
+                                    
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!add.Who.Name}"><ui:outputURL value="{!'/'+add.WhoId}" label="{!add.Who.Name}" target="_blank"/></div>
+                                    </th>
+                                    
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!add.Who.Title}"><ui:outputText value="{!add.Who.Title}"/></div>
+                                    </th>
+                                </tr>
+                            </aura:if>
+                        </aura:iteration>
+                    </tbody>
+                </table>
+                </aura:if>
+                <br/>
+                <br/>
+                    
+            </aura:iteration>
+        </aura:if>
+    </div>
+</aura:component>

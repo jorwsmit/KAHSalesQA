@@ -1,0 +1,20 @@
+<apex:page sidebar="false" showHeader="true" standardController="Opportunity">
+    <apex:includeScript value="/lightning/lightning.out.js"/>
+
+    <apex:includeLightning />
+    <div class="slds">
+        <!-- Target div for the Lightning component -->
+        <div id="customObjectEdit"></div>
+        </div> 
+    <script>
+        var recordId = '{!Opportunity.id}';    
+        $Lightning.use("c:AA_KRS_OppStageHistoryApp", function(){
+            var attributes = {
+                recordId: recordId
+                };
+            var targetElementId = 'customObjectEdit';
+            $Lightning.createComponent("c:AA_KRS_OppStageHistoryApp",  attributes, targetElementId, function(components, status){
+            });
+        });
+    </script>
+</apex:page>

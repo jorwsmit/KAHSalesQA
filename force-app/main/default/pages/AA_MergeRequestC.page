@@ -1,0 +1,21 @@
+<apex:page sidebar="false" showHeader="true" standardController="Contact">
+    <apex:includeScript value="/lightning/lightning.out.js"/>
+
+    <apex:includeLightning />
+    <div class="slds">
+        <!-- Target div for the Lightning component -->
+        <div id="customObjectEdit"></div>
+        </div> 
+    <script>
+        var recordId = '{!Contact.id}';    
+        $Lightning.use("c:AA_MergeRequestApp", function(){
+            var attributes = {
+                recordId: recordId,
+                objType: 'contact'
+            	};
+            var targetElementId = 'customObjectEdit';
+            $Lightning.createComponent("c:AA_MergeRequest",  attributes, targetElementId, function(components, status){
+            });
+        });
+    </script>
+</apex:page>

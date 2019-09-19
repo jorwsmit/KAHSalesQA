@@ -1,0 +1,19 @@
+<apex:page sidebar="false" showHeader="true" >
+    <apex:includeScript value="/lightning/lightning.out.js"/>
+
+    <apex:includeLightning />
+    
+    <div id = "dashboardDivId"/> 
+    <script>
+        $Lightning.use("c:TBN_DashboardApp", function(){
+            
+            $Lightning.createComponent("c:TBN_Dashboard",  {}, "dashboardDivId", function(components, status){
+                
+                if (status === "SUCCESS") { 
+                     
+                     console.log('=====comp====');
+                }
+            });
+        });
+    </script>
+</apex:page>

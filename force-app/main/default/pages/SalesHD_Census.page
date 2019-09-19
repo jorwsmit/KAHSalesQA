@@ -1,0 +1,326 @@
+<apex:page showHeader="false" lightningStyleSheets="true" standardController="Unit_Census__c" extensions="SalesHD_Census"
+    standardStylesheets="false" sidebar="false" applyHtmlTag="false" applyBodyTag="false" docType="html-5.0">
+
+    <html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" lang="en">
+
+    <head>
+        <title>Census Page</title>
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/"
+            crossorigin="anonymous" />
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4"
+            crossorigin="anonymous" />
+        <link rel="stylesheet" href="https://cdn.linearicons.com/free/1.0.0/icon-font.min.css" />
+        <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.0/themes/smoothness/jquery-ui.css" />
+        <meta name="viewport" content="width=device-width, initial-scale=1,minimum-scale=1, maximum-scale=1, user-scalable=no" />
+        <apex:slds />
+        <style>
+            .nav-container {
+                width: 100%;
+                height: 50px;
+                padding: 3px !important;
+                margin-bottom: 15px !important;
+                z-index: 11;
+                position: fixed;
+                padding-left: 70px !important;
+            }
+
+            .blue-bg {
+                background-color: #157DFA !important;
+            }
+
+            .back-btn {
+                color: #fff;
+                z-index: 100;
+                position: fixed;
+                top: 0px;
+                left: 10px;
+                font-size: 48px !important;
+                cursor: pointer;
+            }
+
+            table,
+            table tr,
+            table tr td {
+                border: 1px solid rgb(8, 7, 7);
+            }
+
+            table tr td {
+                padding-left: 5px !important;
+                padding-right: 5px !important;
+                font-size: 16px;
+            }
+
+            .blue-link {
+                cursor: pointer;
+                color: #208FFF !important;
+                text-decoration: underline !important;
+                padding-right: 10px;
+            }
+
+            .blue-link:hover {
+                color: #1773d1 !important;
+            }
+
+            .btn-primary {
+                background-color: #157DFA !important;
+            }
+
+            .btn {
+                border: none !important;
+                color: #FFFFFF !important;
+                padding: 8px 12px !important;
+                font-size: 20px !important;
+                border-radius: 7px !important;
+            }
+
+            .modal {
+                font-family: "Salesforce Sans", Arial, sans-serif !important;
+                color: #3E3E3C !important;
+            }
+
+            .modal ul li {
+                border-bottom: 1px solid #e9ecef;
+                padding: 10px;
+                font-size: 18px;
+                font-weight: bold;
+            }
+
+            .modal-body {
+                font-size:16px;
+                max-height: 375px;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .modal-title {
+                font-weight: normal !important;
+                color: #157DFA !important;
+            }
+
+            .modal-subtitle {
+                font-weight: lighter !important;
+            }
+
+            .modal-content {
+                border-radius: 7px;
+            }
+
+            .modal-header {
+                font-weight: bold;
+                font-size: 25px;
+                background-color: #157DFA;
+                color: white !important;
+            }
+
+            label {
+                font-size: 20px !important;
+                font-weight: bold !important;
+                margin-bottom: 5px;
+                margin-top: 10px;
+            }
+
+            .form-control {
+                color: #495057 !important;
+                margin-left: 0px !important;
+            }
+
+            .messageTable,
+            .messageTable tr,
+            .messageTable tr td {
+                border: none;
+            }
+
+            #census-alert {
+                display: none;
+                padding: 60px 10px 10px 10px;
+                color: #fff;
+                font-size: 18px;
+                text-align: center;
+            }
+
+            .header h1 {
+				z-index: 10;
+				position: fixed;
+				padding-top: 10px;
+				padding-bottom: 10px;
+				top: 49px;
+				width: 100%;
+			}
+
+            h1 {
+                text-align: center;
+                color: #fff;
+				font-size: 25px !important;
+				font-weight: bold !important;
+			}
+        </style>
+    </head>
+
+    <body>
+        <div class="slds-scope">
+            <div class="nav-container blue-bg">
+                <h1 style="padding-top:8px!important;">Unit Census</h1>
+                <span class="lnr lnr-arrow-left back-btn" onclick="window.history.back();"></span>
+            </div>
+            <div id="census-alert" class="bg-danger">
+                You must favorite an account and activate at least one unit in that account before using this tool.
+            </div>
+
+            <div class="slds-spinner_container" id="spinner" style="position:fixed; width:100vw; height:100vh;">
+                <div class="slds-spinner slds-spinner--large slds-spinner--brand">
+                    <div class="slds-spinner__dot-a"></div>
+                    <div class="slds-spinner__dot-b"></div>
+                </div>
+            </div>
+
+            <div style="padding:60px 10px 10px 10px;">
+                <apex:outputPanel style="width: 100%;" id="censusTable">
+                    <table>
+                        <tbody id="accountsList">
+                        </tbody>
+                    </table>
+                </apex:outputPanel>
+            </div>
+
+            <div class="modal fade" id="censusModal">
+                <div class="modal-dialog modal-dialog-centered">
+                    <apex:outputPanel style="width: 100%;" id="censusBlock">
+                        <apex:form style="width: 100%;" id="censusForm">
+                            <div class="modal-content">
+                                <div class="modal-header bg-primary">
+                                    <h3 class="bold">
+                                        <i aria-hidden="true" class="fa fa-users"></i> Edit Census</h3>
+                                </div>
+                                <div class="modal-body" style="overflow:hidden;">
+                                    <form>
+                                        <apex:inputHidden value="{!unitId}" id="unitId" required="true" />
+                                        <label style="width: 100%;">Census</label>
+                                        <apex:input type="number" styleClass="form-control" id="census" value="{!census}" html-placeholder="Census" required="true"
+                                        />
+                                        <label style="width: 100%;">Beds</label>
+                                        <apex:input type="number" styleClass="form-control" id="beds" value="{!beds}" html-placeholder="Beds" required="true" />
+                                        <label style="width: 100%;">Census Date</label>
+                                        <apex:input type="date" styleClass="form-control" id="censusDate" value="{!censusDate}" html-placeholder="Census Date" required="true"
+                                        />
+
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+
+                                    <apex:actionStatus id="statusSpinner">
+                                        <apex:facet name="start">
+
+                                            <div class="slds-spinner slds-spinner--medium slds-spinner--brand" style="margin-top:170px;">
+                                                <div class="slds-spinner__dot-a"></div>
+                                                <div class="slds-spinner__dot-b"></div>
+                                            </div>
+
+                                        </apex:facet>
+                                    </apex:actionStatus>
+
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                    <!-- <button type="button" class="btn btn-primary" id="removeNote">Save</button> -->
+                                    <!-- <apex:commandButton styleClass="btn btn-primary" status="statusSpinner" action="{!saveCensus}" oncomplete="updateCensus();"
+									 value="Save" rerender="censusBlock" id="saveNew" style="padding:6px 12px;font-size:20px;vertical-align:bottom;border-radius:7px;margin-top:0px!important;"
+									/> -->
+                                    <apex:commandButton styleClass="btn btn-primary" status="statusSpinner" action="{!saveCensus}" value="Save" rerender="censusForm, censusScripts"
+                                        id="saveNew" style="padding-top:10px!important;padding-bottom:10px!important;vertical-align:bottom;margin-top:0px!important;" oncomplete="loadTable();"
+                                    />
+                                </div>
+                                <apex:pageMessages />
+                            </div>
+
+                        </apex:form>
+                    </apex:outputPanel>
+                </div>
+            </div>
+        </div>
+    </body>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+    <script src="//code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+
+            loadTable();
+
+            $(document).on("click", ".unit-census", function () {
+                document.getElementById('{!$Component.censusForm.unitId}').value = $(this).data('unitid');
+                SalesHD_Census.getCensus($(this).data('unitid'), function (callback, event) {
+                    var data = JSON.parse(callback);
+
+                    document.getElementById('{!$Component.censusForm.census}').value = data.census;
+                    document.getElementById('{!$Component.censusForm.beds}').value = data.beds;
+                    document.getElementById('{!$Component.censusForm.censusDate}').value = data.censusDate;
+
+                    $('#censusModal').modal('show');
+                }, { escape: false });
+            });
+        });
+
+        function convertUTCDateToLocalDate(date) {
+            var newDate = new Date(date.getTime() + date.getTimezoneOffset() * 60 * 1000);
+
+            var offset = date.getTimezoneOffset() / 60;
+            var hours = date.getHours();
+
+            newDate.setHours(hours - offset);
+
+            return newDate;
+        }
+
+        function isEmpty(obj) {
+            for (var key in obj) {
+                if (obj.hasOwnProperty(key))
+                    return false;
+            }
+            return true;
+        }
+
+
+    </script>
+
+    <apex:outputPanel id="censusScripts">
+        <script>
+            function loadTable() {
+                $("#accountsList").html('');
+                var accountUnits = {!accountUnits
+            };
+            if (isEmpty(accountUnits)) $("#census-alert").show();
+            else $("#census-alert").hide();
+
+            for (var accountId in accountUnits) {
+                var html = '<tr><td style="font-size:18px; font-weight:bold;">' + accountUnits[accountId][0].Account__r.Name + '</td></tr><tr><td></td>';
+                for (var unit of accountUnits[accountId]) {
+                    // SalesHD_Unit_Census_Date__c, SalesHD_Unit_Census__c, SalesHD_Unit_Beds__c
+                    if (unit.SalesHD_Unit_Census_Date__c) {
+                        var d = convertUTCDateToLocalDate(new Date(unit.SalesHD_Unit_Census_Date__c));
+                        html += '<td><div data-unitid="' + unit.Id + '" class="blue-link unit-census">' + unit.Unit__r.Name + ' <i class="far fa-edit"></i></div>' +
+                            '<div><b>Census Date: </b>' + moment(d).format('MM/DD/YYYY') + '</div>' +
+                            '<div><b>Census: </b>' + unit.SalesHD_Unit_Census__c + '</div><div><b>Beds: </b>' + unit.SalesHD_Unit_Beds__c + '</div></td>';
+                    } else {
+                        html += '<td><div data-unitid="' + unit.Id + '" class="blue-link unit-census">' + unit.Unit__r.Name + ' <i class="far fa-edit"></i></div>' +
+                            '<div><b>Census Date: </b><i class="fa fa-times"></i></div>' +
+                            '<div><b>Census: </b><i class="fa fa-times"></i></div><div><b>Beds: </b><i class="fa fa-times"></i></div></td>';
+                    }
+                }
+                html += '</tr><tr style="height:10px;"></tr>';
+                $("#accountsList").append(html);
+            }
+            $("#spinner").hide();
+            if ({!censusModal}) $('#censusModal').modal('hide');
+        }
+
+        </script>
+
+    </apex:outputPanel>
+
+    </html>
+
+</apex:page>

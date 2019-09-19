@@ -1,0 +1,85 @@
+<apex:page >
+
+    <apex:includeScript value="/support/console/35.0/integration.js"/>
+    <apex:includeScript value="/soap/ajax/28.0/connection.js"/>
+
+    <script type="text/javascript">
+        // Variable to store primary tab id
+        var tabId = '';
+        var subtabId = '';
+        
+        function fetchTabDetails() {
+            
+            //Find the ID of the current tab
+            sforce.console.getEnclosingTabId(fetchSubTabDetails);
+            
+            //First find the ID of the current tab to close it
+            sforce.console.getEnclosingPrimaryTabId(fetchPrimaryTabDetails);
+        }
+        
+        var fetchSubTabDetails = function fetchSubTabDetails(result) {
+            
+            // Fetch tab Id for primary tab
+            subtabId = result.id;
+            console.log('>subtabId >>>>',subtabId);
+        };
+        
+        var fetchPrimaryTabDetails = function fetchPrimaryTabDetails(result) {
+            
+            // Fetch tab Id for primary tab
+            tabId = result.id;
+            
+            var pageInfo = sforce.console.getPageInfo(tabId, showPageInfo);
+        };
+        
+        var showPageInfo = function(result) {
+            
+            // Fetch primary tab's related page info
+            var pageInfo = JSON.parse(result.pageInfo);
+            console.log('>>>>>>>>pageInfo>>>>>>>>>>>', pageInfo);
+            console.log('=====tabId=========',tabId);
+            console.log('=====subtabId=========',subtabId);
+            
+            // Open New subtab for the primary tab 
+            sforce.console.openSubtab(tabId, '/apex/AA_LacunaInterface?&transcriptId='+pageInfo.objectId+'&tabId='+tabId, true, 'Create Case', subtabId, callback, '');
+        }      
+        
+        var callback = function () {
+            if (result.error) {
+               console.log("Error message is " + result.error);
+            }
+        };
+        
+        var focusedTabId = "";
+        var eventHandler = function (result) {
+            sforce.console.getEnclosingPrimaryTabId(function(result) { 
+                focusedTabId=result.id;
+                thereCanBeOnlyOne();
+            });
+        }        
+        
+        eventHandler();
+        
+        var thereCanBeOnlyOne = function() { 
+           console.log('>>>>>>>' + focusedTabId);
+            sforce.console.getSubtabIds(focusedTabId, function(result) { 
+                for(i=0;i<result.ids.length;i++){
+                    console.log('>>>>>>>' + result.ids[i]);
+                    if(i == (result.ids.length-1)) {
+                       sforce.console.closeTab(result.ids[i], callback); 
+                    }
+                }
+        
+            });
+        }
+        
+        var callback = function callback() {
+            if (result.error) {
+               console.log("Error message is " + result.error);
+            }
+        };
+                 
+        fetchTabDetails();
+    </script>
+    
+</apex:page>

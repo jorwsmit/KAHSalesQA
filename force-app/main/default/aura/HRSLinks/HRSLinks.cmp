@@ -1,0 +1,30 @@
+<aura:component access="global"
+	implements="force:appHostable,flexipage:availableForAllPageTypes">
+	<ui:outputURL value="{!'http://kindredqv.ipc-global.com/qlikview/FormLogin.htm'}"
+		label="RHB View"
+		target="_blank"/>
+	<br/>
+	<ui:outputURL value="{!'https://www.clearslide.com/auth/login'}"
+		label="Clearside"
+		target="_blank"/>
+	<br/>
+	<ui:outputURL value="{!'http://www.ache.org/'}"
+		label="American College of Healthcare Executives"
+		target="_blank"/>
+	<br/>
+	<ui:outputURL value="{!'https://www.ahd.com/'}"
+		label="American Hospital Directory"
+		target="_blank"/>
+	<br/>
+	<ui:outputURL value="{!'https://www.google.com/'}"
+		label="Google"
+		target="_blank"/>
+	<br/>
+	<ui:outputURL value="{!'http://www.mapquest.com/'}"
+		label="MapQuest"
+		target="_blank"/>
+	<br/>
+	<ui:outputURL value="{!'https://www.linkedin.com/'}"
+		label="LinkedIn"
+		target="_blank"/>
+</aura:component>

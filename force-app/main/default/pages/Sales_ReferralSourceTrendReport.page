@@ -1,0 +1,1077 @@
+<apex:page controller="Sales_ReferralSourceTrendReport" showHeader="false" standardStylesheets="false" sidebar="false" applyHtmlTag="true" applyBodyTag="false" docType="html-5.0">
+
+<html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<head>
+  <title>Referral Source Trend Report</title>
+  <apex:stylesheet value="{!URLFOR($Resource.LightningDesign, 'assets/styles/salesforce-lightning-design-system-vf.css')}"/>
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
+  <link rel="stylesheet" href="https://cdn.linearicons.com/free/1.0.0/icon-font.min.css"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+</head>
+
+<style>
+body{
+  background-color: #e2cc73;
+  margin: 0px;
+}
+
+.yellow{
+  background-color: #e2cc73;
+}
+
+.orange{
+  background-color: #e5a949;
+}
+.orange:hover{
+  background-color: #c19041;
+}
+
+.red{
+  background-color: #dd786c;
+}
+.red:hover{
+  background-color: #b26259;
+}
+
+.green{
+  background-color: #6bba76;
+}
+
+.green:hover{
+  background-color: #57935f;
+}
+
+textarea[type="text"]{
+  outline: 0;
+  border-radius: 25px;
+  border-color: #d8dde6;
+  border-width: 1px;
+  border-style: solid;
+  height: 100px;
+  width: 100%;
+  font-size: 14px;
+  padding:10px;
+}
+
+textarea[type="text"]::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+  color: #b7b7b7;
+  font-size: 14px;
+}
+
+textarea[type="text"]::-moz-placeholder { /* Firefox 19+ */
+  color: #b7b7b7;
+  font-size: 14px;
+}
+
+textarea[type="text"]:-ms-input-placeholder { /* IE 10+ */
+  color: #b7b7b7;
+  font-size: 14px;
+}
+
+#employeeSearch > input[type="text"]{
+  outline: 0;
+  border-radius: 0px 25px 25px 0px;
+  border: none;
+  height: 50px;
+  width: 260px;
+  font-size: 22px;
+  padding:10px;
+}
+
+
+#employeeSearch > input[type="text"]::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+  color: #b7b7b7;
+  font-size: 20px;
+}
+#employeeSearch > input[type="text"]::-moz-placeholder { /* Firefox 19+ */
+  color: #b7b7b7;
+  font-size: 20px;
+}
+#employeeSearch > input[type="text"]:-ms-input-placeholder { /* IE 10+ */
+  color: #b7b7b7;
+  font-size: 20px;
+}
+
+#employeeSearch{
+  margin-right: 10px;
+  width: 540px;
+  height: 50px;
+}
+
+#employeeSearch > input{
+  position: absolute;
+  top: 10px;
+  left: 255px;
+  display: inline-block;
+  height: 50px;
+  width: 260px;
+}
+
+#searchHelpText{
+  position: absolute;
+  top: 10px;
+  cursor: pointer;
+  display: inline-block;
+  border-radius: 25px 0px 0px 25px;
+  text-align: center;
+  color: white;
+  font-size: 20px;
+  padding: 5px;
+  padding-top: 10px;
+  overflow: hidden;
+  height: 50px;
+  width: 260px;
+}
+
+.blue{
+  background-color: #64a3e5;
+}
+
+.blue:hover{
+  background-color: #5484b7;
+}
+
+.searchbutton:hover{
+  background-color: #5283b7;
+}
+
+#employeeList{
+  background-color: white;
+  width: 530px;
+  max-height: 530px;
+  margin-top: 8px;
+  border-radius: 25px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+#employeeList > li{
+  padding-left: 20px;
+  text-align: left;
+  font-size: 15px;
+}
+
+.top-controls{
+  display: inline-block;
+  margin-top: 10px;
+}
+.roundButton{
+  display: inline-block;
+  height: 50px;
+  width: 170px;
+  border-radius: 25px;
+  padding: 3px;
+  padding-top: 10px;
+  text-align: center;
+  font-size: 18px;
+  color: white;
+  cursor: pointer;
+  margin-right: 10px;
+  margin-bottom: 5px;
+}
+.halfWidth{
+  width: 80px;
+}
+#focusAccts{
+  font-size:15px;
+  padding-top: 14px;
+}
+.inactive{
+  background-color: #b7b7b7;
+}
+.inactive:hover{
+  background-color: #999999;
+}
+
+#trendReport{
+  padding: 0px;
+}
+
+#trendReportTable > thead{
+  position: sticky;
+  top:0;
+  z-index:1;
+  font-size: 14px;
+  color: white;
+  background-color: #64a3e5;
+}
+#trendReportTable > thead > tr > th{
+  background-color: #64a3e5;
+  padding: 10px;
+  height: 35px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.slds-text-title--caps{
+  background-color: #64a3e5;
+  border-color: white;
+  color: white;
+}
+#trendReportTable > tbody > tr > td{
+  padding-left: 10px;
+  height: 35px;
+  text-align: left;
+}
+
+.borderleft{
+  padding-top: 10px;
+  padding-left: 20px;
+  height: 100%;
+  border-left: 1px solid #64a3e5;
+}
+
+.tableEmpty{
+  font-size: 25px;
+  text-align: center;
+  background-color: #dd786c;
+  color: white;
+  width: 100%;
+}
+
+#yearList{
+  background-color: white;
+  border-radius: 25px;
+  width: 530px;
+  height: 50px;
+  margin-top: 8px;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  white-space: nowrap;
+}
+#yearList > li{
+  font-size: 20px;
+  padding: 10px;
+  color: #64a3e5;
+  display: inline-block;
+  border-width: 0px 1px 0px 0px;
+  border-color: #64a3e5;
+  border-style: solid;
+  cursor: pointer;
+}
+#yearList > li:hover{
+  text-decoration: underline;
+}
+.selected{
+  color: white;
+  background-color: #6bba76;
+}
+
+.fixedAlerts{
+  position: fixed;
+  bottom: 50px;
+  left: 50%;
+  margin-left: -200px;
+}
+.fixedAlerts>div{
+  cursor: default;
+  width: 350px;
+  background-color: #64a3e5;
+}
+
+#ratingButtons{
+  position: fixed;
+  bottom: 50px;
+  left: 50%;
+  margin-left: -508px;
+}
+.ratingButtonsIn{
+  animation-name: bounceIn;
+  animation-duration: 450ms;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+.ratingButtonsOut{
+  animation-name: bounceOut;
+  animation-duration: 300ms;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+.whiteLink{
+  color: white;
+  cursor: pointer;
+}
+.whiteLink:hover{
+  text-decoration: underline;
+}
+
+@keyframes bounceIn{
+  0%{
+    opacity: 0;
+    transform: scale(0.3) translate3d(0,0,0);
+  }
+  50%{
+    opacity: 0.9;
+    transform: scale(1.1);
+  }
+  80%{
+    opacity: 1;
+    transform: scale(0.89);
+  }
+  100%{
+    opacity: 1;
+    transform: scale(1) translate3d(0,0,0);
+  }
+}
+
+@keyframes bounceOut{
+  0%{
+    opacity: 1;
+    transform: scale(1) translate3d(0,0,0);
+  }
+  20%{
+    opacity: 1;
+    transform: scale(1.1);
+  }
+  70%{
+    opacity: 0.9;
+    transform: scale(0.89);
+  }
+  100%{
+    opacity: 0;
+    transform: scale(0.3) translate3d(0,0,0);
+  }
+}
+
+.lnr-cloud-download{
+  position: relative;
+  top: 5px;
+  font-size: 25px;
+}
+
+#swotDeleted > div{
+  width: 500px;
+  margin-right: 100px;
+  background-color: #dd786c;
+}
+
+#closeButton{
+  color: #64a3e5;
+  background-color: white;
+  border: 2px #64a3e5 solid;
+  width: 150px;
+}
+#closeButton:hover{
+  color: #5484b7;
+  background-color: #e2e2e2;
+  border: 2px #5484b7 solid;
+}
+
+.dropdown{
+  border-radius: 0px 0px 25px 25px;
+  background-color: #64a3e5;
+  width: 160px;
+}
+
+.dropdown > li:hover{
+  color: #efefef;
+}
+
+.ulBorder{
+  border: 1px solid #d8dde6;
+  border-radius: 25px;
+  width: 100%;
+  display: inline-block;
+  overflow-x: scroll;
+  white-space: nowrap;
+}
+
+.ulBorder>li{
+  font-size: 14px;
+  padding: 12px;
+  color: #16325C;
+  display: inline-block;
+  border-width: 0px 1px 0px 0px;
+  border-color: #d8dde6;
+  border-style: solid;
+  cursor: pointer;
+}
+
+.ulBorder>li:hover{
+  text-decoration: underline;
+}
+
+#closeReport{
+  cursor: pointer;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: #64a3e5;
+  background-color: white;
+  border: 2px #64a3e5 solid;
+  font-size: 18px;
+  padding: 10px 15px 10px 15px;
+  border-radius: 25px;
+}
+#closeReport:hover{
+  color: #5484b7;
+  background-color: #e2e2e2;
+  border: 2px #5484b7 solid;
+}
+#closeText{
+  display: inline-block;
+}
+
+
+@media only screen and (max-width: 700px) {
+  #employeeSearch > input{
+    top: 10px;
+    left: 41vw;
+  }
+  #employeeSearch > input, #searchHelpText, #employeeSearch > input[type="text"]{
+    width: 40vw;
+    font-size: 14px;
+  }
+  #searchHelpText{
+    padding-top:14px;
+  }
+  #employeeSearch > input[type="text"]::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+    font-size: 14px;
+  }
+  #employeeSearch > input[type="text"]::-moz-placeholder {
+    font-size: 14px;
+  }
+  #employeeSearch > input[type="text"]:-ms-input-placeholder {
+    font-size: 14px;
+  }
+  .roundButton{
+    display: inline-block;
+    height: 50px;
+    width: 27vw;
+    border-radius: 25px;
+    padding-top:14px;
+    text-align: center;
+    font-size: 12px;
+    color: white;
+    cursor: pointer;
+    margin-right: 5px;
+  }
+
+  #closeButton{
+    display: inline-block;
+    height: 50px;
+    width: 27vw;
+    border-radius: 25px;
+    padding-top:14px;
+    text-align: center;
+    font-size: 12px;
+    cursor: pointer;
+    margin-right: 5px;
+  }
+
+  .dropdown{
+    width: 27vw;
+  }
+  .halfWidth{
+    width: 13.5vw;
+  }
+  #focusAccts{
+    padding: 0px;
+    font-size: 10px;
+    padding-top: 20px;
+  }
+  .lnr-cloud-download{
+    position: relative;
+    top: 3px;
+    font-size: 20px;
+  }
+  #trendReport{
+    width:99vw;
+    overflow-x: scroll;
+  }
+  #yearList, #employeeList{
+    width: 84vw;
+  }
+  #ratingButtons{
+    margin-left: -28vw;
+  }
+  #swotDeleted > div{
+    width: 84vw;
+  }
+  #closeText{
+    display: none;
+  }
+}
+</style>
+
+<body>
+
+  <!-- REQUIRED SLDS WRAPPER -->
+  <div class="LightningDesign">
+
+    <div class="yellow">
+      <div style="margin:10px;">
+        <div id="closeReport" onclick="window.location='{!LEFT($CurrentPage.URL,FIND('/',$CurrentPage.URL,9))}'"><span class="lnr lnr-cross"></span><span id="closeText"> Close</span></div>
+        <div id="employeeSearch">
+          <div id="searchHelpText" class="blue">Employee Name</div>
+          <input placeholder="Search by name" type="text"></input>
+        </div>
+
+        <div class="top-controls">
+          <div id="year" class="roundButton blue"><span class="lnr lnr-calendar-full"></span> Year</div>
+          <div id="selectRAC" class="roundButton blue"><i class="lnr lnr-users"></i><span style="padding-left:5px;">Qualified Admit</span>
+            <div style="display:none;">
+              <ul style="margin-left:-3px;" class="dropdown">
+                <li class="selected" style="border-top: 1px solid white;">Qualified Admit</li>
+                <li>Admit</li>
+                <li>Referral</li>
+                <li>Conversion %</li>
+                <li>Sales Calls</li>
+                <li style="border-radius: 0px 0px 25px 25px;">Admits / Calls</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="top-controls">
+          <div id="focusAccts" class="roundButton inactive"><span class="lnr lnr-apartment"></span> Focus Accounts</div>
+          <div id="HH" style="margin-right:0px;border-radius:25px 0px 0px 25px;border-right:1px solid white;" class="roundButton halfWidth selected">HH</div><div id="HP" style="border-radius:0px 25px 25px 0px;" class="roundButton halfWidth inactive">HP</div>
+          <div id="save" class="roundButton blue"><span class="lnr lnr-cloud-download"></span> Export</div>
+        </div>
+
+        <ul id="yearList" style="display:none;">
+        </ul>
+
+        <ul id="employeeList" style="display:none;">
+          <li>No employees found</li>
+        </ul>
+      </div>
+
+      <div id="trendReport">
+        <table class="slds-table slds-table--bordered slds-table--cell-buffer" id="trendReportTable">
+          <thead>
+            <tr class="slds-text-title--caps" style="z-index:2;">
+              <th class="slds-is-resizable" scope="col" data-sortable-type="alpha">
+                <div style="text-align:left;" class="slds-truncate" title="effectiveDate"><b>ACCOUNT / CONTACT</b></div>
+              </th>
+              <th class="slds-is-resizable" scope="col" data-sortable-type="numeric">
+                <div class="slds-truncate" title="effectiveDate"><b>JAN</b></div>
+              </th>
+              <th class="slds-is-resizable" scope="col" data-sortable-type="numeric">
+                <div class="slds-truncate" title="effectiveDate"><b>FEB</b></div>
+              </th>
+              <th class="slds-is-resizable" scope="col" data-sortable-type="numeric">
+                <div class="slds-truncate" title="effectiveDate"><b>MAR</b></div>
+              </th>
+              <th class="slds-is-resizable" scope="col" data-sortable-type="numeric">
+                <div class="slds-truncate" title="effectiveDate"><b>Q1</b></div>
+              </th>
+              <th class="slds-is-resizable" scope="col" data-sortable-type="numeric">
+                <div class="slds-truncate" title="effectiveDate"><b>APR</b></div>
+              </th>
+              <th class="slds-is-resizable" scope="col" data-sortable-type="numeric">
+                <div class="slds-truncate" title="effectiveDate"><b>MAY</b></div>
+              </th>
+              <th class="slds-is-resizable" scope="col" data-sortable-type="numeric">
+                <div class="slds-truncate" title="effectiveDate"><b>JUN</b></div>
+              </th>
+              <th class="slds-is-resizable" scope="col" data-sortable-type="numeric">
+                <div class="slds-truncate" title="effectiveDate"><b>Q2</b></div>
+              </th>
+              <th class="slds-is-resizable" scope="col" data-sortable-type="numeric">
+                <div class="slds-truncate" title="effectiveDate"><b>JUL</b></div>
+              </th>
+              <th class="slds-is-resizable" scope="col" data-sortable-type="numeric">
+                <div class="slds-truncate" title="effectiveDate"><b>AUG</b></div>
+              </th>
+              <th class="slds-is-resizable" scope="col" data-sortable-type="numeric">
+                <div class="slds-truncate" title="effectiveDate"><b>SEP</b></div>
+              </th>
+              <th class="slds-is-resizable" scope="col" data-sortable-type="numeric">
+                <div class="slds-truncate" title="effectiveDate"><b>Q3</b></div>
+              </th>
+              <th class="slds-is-resizable" scope="col" data-sortable-type="numeric">
+                <div class="slds-truncate" title="effectiveDate"><b>OCT</b></div>
+              </th>
+              <th class="slds-is-resizable" scope="col" data-sortable-type="numeric">
+                <div class="slds-truncate" title="effectiveDate"><b>NOV</b></div>
+              </th>
+              <th class="slds-is-resizable" scope="col" data-sortable-type="numeric">
+                <div class="slds-truncate" title="effectiveDate"><b>DEC</b></div>
+              </th>
+              <th class="slds-is-resizable" scope="col" data-sortable-type="numeric">
+                <div class="slds-truncate" title="effectiveDate"><b>Q4</b></div>
+              </th>
+              <th class="slds-is-resizable" scope="col" data-sortable-type="numeric">
+                <div class="slds-truncate" title="effectiveDate"><b>YTD</b></div>
+              </th>
+              <th class="slds-is-resizable" scope="col" data-sortable-type="numeric">
+                <div class="slds-truncate" title="effectiveDate"><b>TOTAL</b></div>
+              </th>
+            </tr>
+          </thead>
+          <tbody id="trendReportBody">
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tableEmpty"><span class="lnr lnr-cross-circle"></span> No data found <span class="lnr lnr-cross-circle"></span></div>
+
+      <div id="ratingButtons" style="display:none;">
+        <div class="roundButton green" id="topButton" onclick="rate('Top')"><span class="fa fa-star"></span> TOP</div>
+        <div class="roundButton orange" id="flatButton" onclick="rate('Flat')"><span class="fa fa-star-half-o"></span> FLAT</div>
+        <div class="roundButton red" id="bottomButton" onclick="rate('Bottom')"><span class="fa fa-star-o"></span> BOTTOM</div>
+        <div class="roundButton inactive" id="bottomButton" onclick="rate('Remove')"><span class="lnr lnr-cross-circle"></span> REMOVE</div>
+        <div class="roundButton blue" id="swotButton" onclick="openSwot()"><span class="lnr lnr-license"></span> PLAN</div>
+        <div id="closeButton" class="roundButton" onclick="$('#ratingButtons').removeClass('ratingButtonsIn').addClass('ratingButtonsOut').delay(300).fadeOut(0);"><span class="lnr lnr-cross"></span> Close</div>
+      </div>
+
+      <div id="swotModal" class="slds-modal slds-fade-in-open" style="display:none;">
+        <div class="slds-modal__container" style="z-index:200;">
+          <div style="color:white;background-color:#64a3e5; border-radius: 25px 25px 0px 0px;" class="slds-modal__header">
+            <h2 id="planTitle" class="slds-text-heading--medium" style="font-size:22px;font-weight:bold;"><span class="lnr lnr-license"></span> ACCOUNT PLAN</h2>
+            <h3 id="swotAccount" class="slds-text-heading--small" style="font-size:18px;font-weight:bold;"></h3>
+          </div>
+          <div class="slds-modal__content slds-p-around--medium">
+            <div class="roundButton" style="width:100%;">
+              <ul id="planPages" class="ulBorder">
+                <li class="selected" style="color:white;" data-page="planForm">ACCOUNT PLAN</li>
+                <li data-page="swotForm">SWOT</li>
+                <li data-page="competitorForm">COMPETITORS</li>
+              </ul>
+            </div>
+            <div id="swotSpinner" style="height: 100px;">
+              <div class="slds-spinner slds-spinner--medium slds-spinner--brand">
+                <div class="slds-spinner__dot-a"></div>
+                <div class="slds-spinner__dot-b"></div>
+              </div>
+            </div>
+
+            <div id="planForm" style="display:none;">
+              <p style="padding-left:12px;padding-top:10px;" class="font-size-text-large">Plan Summary</p>
+              <textarea id="plan" placeholder="Plan Summary" type="text"></textarea>
+            </div>
+
+            <div id="swotForm" style="display:none;">
+              <p style="padding-left:12px;padding-top:10px;" class="font-size-text-large">Strengths</p>
+              <textarea id="strength" placeholder="Strengths" type="text"></textarea>
+              <p style="padding-left:12px;" class="font-size-text-large">Weaknesses</p>
+              <textarea id="weakness" placeholder="Weaknesses" type="text"></textarea>
+              <p style="padding-left:12px;" class="font-size-text-large">Opportunities</p>
+              <textarea id="opportunity" placeholder="Opportunities" type="text"></textarea>
+              <p style="padding-left:12px;" class="font-size-text-large">Threats</p>
+              <textarea id="threat" placeholder="Threats" type="text"></textarea>
+            </div>
+
+            <div id="competitorForm" style="display:none;">
+              <p style="padding-left:12px;padding-top:10px;" class="font-size-text-large">Competitors</p>
+              <textarea id="competitor" placeholder="Competitors" type="text"></textarea>
+            </div>
+
+          </div>
+          <div class="slds-modal__footer" style="text-align:center; border-radius: 0px 0px 25px 25px;">
+            <a onclick="closeSwot()" style="padding:4px;height:30px;width:120px;font-size:14px;margin:0px;margin-right:50px;"><span class="lnr lnr-cross"></span> Close</a>
+            <div id="saveSwotButton" onclick="saveSwot();" class="roundButton blue" style="padding:4px;height:30px;width:120px;font-size:14px;margin:0px;">
+              <div id="saveSwot"><span class="lnr lnr-cloud-upload"></span> Save</div>
+              <div style="position:relative; top:11px; display:none;" id="saveSwotSpinner">
+                <div>
+                  <div style="width: 15px;" class="slds-spinner slds-spinner--small slds-spinner--inverse">
+                    <div class="slds-spinner__dot-a"></div>
+                    <div class="slds-spinner__dot-b"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div onclick="deleteSwot();" class="roundButton red" style="padding:4px;height:30px;width:120px;font-size:14px;margin:0px;margin-left:50px;"><span class="lnr lnr-cross-circle"></span> Remove</div>
+          </div>
+        </div>
+        <div class="slds-backdrop slds-backdrop--open" style="z-index:1;"></div>
+      </div>
+
+      <div class="fixedAlerts" id="yearsAlert" style="display:none;">
+        <div class="roundButton">Deselect another year first</div>
+      </div>
+      <div class="fixedAlerts" id="selectYear" style="display:none;">
+        <div class="roundButton" style="width:200px;margin-left:100px;">Select a year</div>
+      </div>
+      <div class="fixedAlerts" id="selectUser" style="display:none;">
+        <div class="roundButton" style="width:200px;margin-left:100px;">Select a user</div>
+      </div>
+      <div id="swotDeleted" class="fixedAlerts" style="display:none;">
+        <div class="roundButton">The SWOT analysis has been removed.</div>
+      </div>
+    </div>
+
+    <div class="slds-spinner_container" id="spinner" style="position:fixed; width:100vw; height:100vh;">
+      <div class="slds-spinner slds-spinner--large slds-spinner--brand">
+        <div class="slds-spinner__dot-a"></div>
+        <div class="slds-spinner__dot-b"></div>
+      </div>
+    </div>
+
+
+
+    <div id="errorModal" class="slds-modal slds-fade-in-open" style="display:none;">
+      <div class="slds-modal__container" style="z-index:2;">
+        <div style="color:white;background-color:#dd786c;" class="slds-modal__header">
+          <h2 class="slds-text-heading--medium" style="font-size:22px;font-weight:bold;"><span class="lnr lnr-thumbs-down"></span> AN ERROR HAS OCCURED!</h2>
+        </div>
+        <div class="slds-modal__content slds-p-around--medium">
+          <h3 style="text-align:center;font-size:14px;text-decoration:underline;">ERROR INFORMATION</h3>
+          <p id="errorMessage" style="text-align:center;font-size:12px;"></p>
+        </div>
+        <div class="slds-modal__footer" style="text-align:center;">
+          <div onclick="$('#errorModal').fadeOut()" class="roundButton red" style="padding:4px;height:30px;width:120px;font-size:14px;margin:0px;"><span class="lnr lnr-cross"></span> Close</div>
+        </div>
+      </div>
+      <div class="slds-backdrop slds-backdrop--open" style="z-index:1;"></div>
+    </div>
+
+    <div id="warningModal" class="slds-modal slds-fade-in-open" style="display:none;">
+      <div class="slds-modal__container" style="z-index:2;">
+        <div style="color:white;background-color:#e2cc73;" class="slds-modal__header">
+          <h2 class="slds-text-heading--medium" style="font-size:22px;font-weight:bold;"><span class="lnr lnr-warning"></span> WARNING!</h2>
+        </div>
+        <div class="slds-modal__content slds-p-around--medium">
+          <h3 style="text-align:center;font-size:14px;text-decoration:underline;">WARNING INFORMATION</h3>
+          <p id="warningMessage" style="text-align:center;font-size:12px;"></p>
+        </div>
+        <div class="slds-modal__footer" style="text-align:center;">
+          <div onclick="$('#warningModal').fadeOut()" class="roundButton yellow" style="padding:4px;height:30px;width:120px;font-size:14px;margin:0px;"><span class="lnr lnr-cross"></span> Close</div>
+        </div>
+      </div>
+      <div class="slds-backdrop slds-backdrop--open" style="z-index:1;"></div>
+    </div>
+
+  </div>
+  <!-- / REQUIRED SLDS WRAPPER -->
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/sortable/0.8.0/js/sortable.min.js"></script>
+  <!--<script src="//cdnjs.cloudflare.com/ajax/libs/floatthead/2.1.2/jquery.floatThead.min.js"></script>-->
+  <script>
+  Visualforce.remoting.timeout = 120000;
+  var referralId, referralName, selectedUserId, selectedUserName, years=[], selectedRAC='Qualified Admit', selectedLob='HH', detectIEregexp;
+  $(document).ready(function() {
+    Sortable.initTable(document.querySelector('#trendReportTable'));
+
+    if('{!$User.ProfileId}'=='00e1300000225C9AAI'){
+      $("#employeeSearch").remove();
+      selectUser('{!JSENCODE($User.FirstName)}'+' '+'{!JSENCODE($User.LastName)}', '{!$User.Id}', '{!TEXT($User.Line_of_Business__c)}');
+    }
+
+    if (navigator.userAgent.indexOf('MSIE') != -1) detectIEregexp = /MSIE (\d+\.\d+)/;
+    else detectIEregexp = /Trident.*rv[ :]*(\d+\.\d+)/;
+
+    if (detectIEregexp.test(navigator.userAgent)){
+      $("#warningMessage").text('You are using Internet Explorer. It is highly recommended that you use Google Chrome for this report.');
+      $("#warningModal").fadeIn();
+      $("#save").removeClass("blue").addClass("inactive").css("cursor", "not-allowed");
+    }
+
+    //for(var i=2015; i<=2025; i++){
+    for(var i=2015; i<=new Date().getFullYear(); i++){
+      $("#yearList").append('<li>'+i+'</li>');
+    }
+
+    Sales_ReferralSourceTrendReport.getUsers('{!$User.UserRoleId}', function(result, event){
+      if(result!='') $("#employeeList").html(result);
+      $("#spinner").hide();
+    }, {escape:false});
+
+    $(document).click(function(e){
+      if ($("#yearList").is(e.target) || $("#yearList").children().is(e.target) || $("#year").is(e.target) || $("#year").children().is(e.target)) {
+        $("#yearList").slideDown();
+      } else{
+        $("#yearList").slideUp();
+      }
+
+      if ($("#employeeSearch").children().is(e.target) || $("#employeeList").children().is(e.target)) {
+        $("#employeeList").slideDown();
+      } else{
+        $("#employeeList").slideUp();
+      }
+
+      if ($("#selectRAC").is(e.target) || $("#selectRAC > i").is(e.target) || $("#selectRAC > span").is(e.target)) {
+        if(!$("#selectRAC").find("div").is(':animated')){
+          $("#selectRAC").find("div").slideDown();
+          $("#selectRAC").removeClass("blue").css({borderRadius: "25px 25px 0px 0px", backgroundColor: "#64a3e5"});
+        }
+      } else {
+        $("#selectRAC > div").slideUp();
+        $("#selectRAC").addClass("blue").css({borderRadius: "25px"});
+      }
+
+
+    });
+
+    $("#year").click(function(){
+      $("#yearList").slideDown();
+    });
+
+    $("#planPages > li").click(function(){
+      if(!$(this).hasClass("selected")){
+        $('#'+$(this).siblings(".selected").data('page')).hide();
+        $("#planTitle").html('<span class="lnr lnr-license"></span> '+$(this).text());
+        $('#'+$(this).data('page')).show();
+        $("#planPages > li").removeClass("selected").css("color","#16325C");
+        $(this).addClass("selected").css("color", "white");
+      }
+
+    });
+
+    $("#focusAccts").click(function(){
+      $(this).toggleClass("inactive green");
+      filterAccts();
+    });
+
+    $("#yearList > li").click(function(){
+      if(!$(this).hasClass("selected") && $("#yearList .selected").length<3){
+        $(this).addClass("selected").css({color : 'white', borderColor : 'white'});
+        years.push($(this).text());
+        getData(selectedUserId, years);
+      } else if(!$(this).hasClass("selected")){
+        if(!$("#yearsAlert").is(":visible")){
+          $("#yearsAlert").show().removeClass("ratingButtonsOut").addClass("ratingButtonsIn");
+          setTimeout(function(){
+            $("#yearsAlert").removeClass("ratingButtonsIn").addClass("ratingButtonsOut").delay(300).fadeOut(0);
+          }, 3500);
+        }
+      }else{
+        years.splice(years.indexOf($(this).text()), 1);
+        $(this).removeClass("selected").css({color : '#64a3e5', borderColor : '#64a3e5'});
+        getData(selectedUserId, years);
+      }
+    });
+
+
+    $("#employeeSearch > input").keyup(function(){
+
+      $("#employeeList > li").each(function() {
+        var li = $(this).text();
+        if(li.toUpperCase().indexOf($("#employeeSearch > input").val().toUpperCase()) > -1) {
+          $(this).show();
+        } else {
+          $(this).hide();
+        }
+      });
+    });
+
+    $("#HH").click(function(){
+      selectedLob = 'HH';
+      $(this).addClass("selected").removeClass("inactive");
+      $("#HP").removeClass("selected").addClass("inactive");
+      getData(selectedUserId, years);
+    });
+
+    $("#HP").click(function(){
+      selectedLob = 'HP';
+      $(this).addClass("selected").removeClass("inactive");
+      $("#HH").removeClass("selected").addClass("inactive");
+      getData(selectedUserId, years);
+    });
+
+    /*
+    $("#selectRAC").click(function(){
+      if(!$(this).find("div").is(':visible') && !$(this).find("div").is(':animated')){
+        $(this).find("div").slideDown();
+        $(this).removeClass("blue").css({borderRadius: "25px 25px 0px 0px", backgroundColor: "#64a3e5"});
+      }
+    });
+    */
+
+    $("#selectRAC li").click(function(){
+      selectedRAC = $(this).text();
+      $(this).closest("ul").find("li").removeClass("selected");
+      $(this).addClass("selected");
+      $("#selectRAC span").text($(this).text());
+      $("#selectRAC").addClass("blue").css({borderRadius: "25px"});
+      $(this).closest("div").slideUp();
+      getData(selectedUserId, years);
+    });
+
+    $("#save").click(function(e) {
+      if (detectIEregexp.test(navigator.userAgent)){
+        $("#warningMessage").text('The export feature has been disabled in Internet Explorer. Please use Google Chrome for this feature.');
+        $("#warningModal").fadeIn();
+      } else {
+        e.preventDefault();
+        var data_type = 'data:application/vnd.ms-excel';
+        var table_div = document.getElementById('trendReportTable');
+        var table_html = table_div.outerHTML.replace(/<div class="lnr lnr-cross"><\/div>/g, '0').replace('<table', '<table border=\'1px\'').replace(/ /g, '%20');
+        var a = document.createElement('a');
+        a.href = data_type + ', ' + table_html;
+        var d = new Date();
+        var s = '';
+        if(d.getMonth()+1<10==1) s += '0'+(d.getMonth()+1).toString();
+        else s += (d.getMonth()+1).toString();
+
+        if(d.getDate()<10) s += '0'+(d.getDate()).toString();
+        else s += (d.getDate()).toString();
+
+        s += (d.getFullYear()).toString();
+
+        a.download = selectedUserName+'_ReferralSourceTrendReport_'+s+'.xls';
+        a.click();
+      }
+    });
+  });
+
+
+  function filterAccts(){
+    if($("#focusAccts").hasClass("green")){
+      $("#trendReportBody > tr").each(function() {
+        if(!$(this).data("five")) $(this).hide();
+      });
+    } else {
+      $("#trendReportBody > tr").show();
+    }
+  }
+
+  function selectUser(userName, userId, lob){
+    selectedUserId = userId;
+    selectedUserName = userName;
+    if(lob!=null && (lob=='HH'||lob=='HP')){
+      if(lob=='HH'){
+        $("#HH").addClass("selected").addClass("inactive");
+        $("#HP").removeClass("selected").addClass("inactive");
+      }
+      if(lob=='HP'){
+        $("#HP").addClass("selected").addClass("inactive");
+        $("#HH").removeClass("selected").addClass("inactive");
+      }
+      selectedLob = lob;
+    }
+    $("#searchHelpText").text(userName).css({fontSize: '18px', paddingTop: '12px'});
+    getData(selectedUserId, years);
+  }
+
+  function openRating(id, name){
+    referralId = id;
+    referralName = name;
+    $("#ratingButtons").show().removeClass("ratingButtonsOut").addClass("ratingButtonsIn");
+  }
+
+  function rate(rating){
+    $("#ratingButtons").removeClass("ratingButtonsIn").addClass("ratingButtonsOut").delay(300).fadeOut(0);
+    Sales_ReferralSourceTrendReport.rateReferral(referralId, selectedUserId, rating, function(result, event){
+      if(!result){
+        $("#errorMessage").text('The referral source rating was not saved. Please try again later, or if the problem persists contact sales support.');
+        $("#errorModal").fadeIn();
+      }
+      selectUser(selectedUserName, selectedUserId, selectedLob);
+    }, {escape:false});
+
+  }
+
+  function getData(userId, years){
+    if(userId==null){
+      if(!$("#selectUser").is(":visible")){
+        $("#selectUser").show().removeClass("ratingButtonsOut").addClass("ratingButtonsIn");
+        setTimeout(function(){
+          $("#selectUser").removeClass("ratingButtonsIn").addClass("ratingButtonsOut").delay(300).fadeOut(0);
+        }, 3500);
+      }
+    } else if(years.length==0){
+      if(!$("#selectYear").is(":visible")){
+        $("#selectYear").show().removeClass("ratingButtonsOut").addClass("ratingButtonsIn");
+        setTimeout(function(){
+          $("#selectYear").removeClass("ratingButtonsIn").addClass("ratingButtonsOut").delay(300).fadeOut(0);
+        }, 3500);
+      }
+      $("#trendReportBody").empty();
+      $(".tableEmpty").fadeIn();
+    } else {
+      $("#spinner").show();
+      Sales_ReferralSourceTrendReport.getData(userId, years, selectedLob, selectedRAC, function(result, event){
+        if(!event.message && result!=''){
+          $("#trendReportBody").html(result);
+          // $("#trendReportTable").floatThead();
+          $(".tableEmpty").fadeOut();
+          filterAccts();
+        } else if(!event.message) {
+          $(".tableEmpty").fadeIn();
+          $("#trendReportBody").empty();
+        } else{
+          $("#errorMessage").text(event.message);
+          $("#errorModal").fadeIn();
+        }
+        $("#spinner").hide();
+      }, {escape:false});
+    }
+  }
+
+  function openSwot(){
+    $("#saveSwot").html('<span class="lnr lnr-cloud-upload"></span> Save');
+    $("#planPages > li").removeClass('selected').css('color','#16325c');
+    $("#planPages li:first").addClass('selected').css('color','white');
+    $("#saveSwotButton").removeClass('green').addClass('blue');
+    $("#saveSwot").show();
+    $("#swotForm").hide();
+    $("#swotSpinner").show();
+    $("#swotAccount").html('<a style="color:white;" class="whiteLink" target="_blank" href="/'+referralId+'">'+referralName+'</a>');
+    $("#swotModal").show();
+    Sales_ReferralSourceTrendReport.getSwot(referralId, selectedUserId, function(result, event){
+      var swot = JSON.parse(result);
+      if(swot.hasSwot){
+        $("#strength").val(swot.strength);
+        $("#weakness").val(swot.weakness);
+        $("#opportunity").val(swot.opportunity);
+        $("#threat").val(swot.threat);
+        $("#competitor").val(swot.competitor);
+        $("#plan").val(swot.plan);
+      } else{
+        $("#strength").val('');
+        $("#weakness").val('');
+        $("#opportunity").val('');
+        $("#threat").val('');
+        $("#competitor").val('');
+        $("#plan").val('');
+      }
+      $("#swotSpinner").hide();
+      $("#planForm").fadeIn();
+    }, {escape:false});
+  }
+
+  function saveSwot(){
+    $("#saveSwot").hide();
+    $("#saveSwotSpinner").show();
+
+    Sales_ReferralSourceTrendReport.saveSwot(referralId, selectedUserId, $("#strength").val(), $("#weakness").val(), $("#opportunity").val(), $("#threat").val(), $("#competitor").val(), $("#plan").val(), function(result, event){
+      if(!result){
+        $("#errorMessage").text('The swot analysis was not saved. Please try again later, or if the problem persists contact sales support.');
+        $("#errorModal").fadeIn();
+      } else{
+        $("#saveSwotButton").removeClass('blue').addClass('green');
+        $("#saveSwot").html('<span class="lnr lnr-checkmark-circle"></span> Saved')
+      }
+      $("#saveSwotSpinner").hide();
+      $("#saveSwot").fadeIn();
+    }, {escape:false});
+
+  }
+
+  function closeSwot(){
+    $('#swotModal').fadeOut();
+    selectUser(selectedUserName, selectedUserId, selectedLob);
+    $('#planPages > li').removeClass("selected").css("color", "#16325C");
+    $('#planPages > [data-page="swotForm"]').addClass("selected").css("color", "white");
+    $("#planForm").hide();
+    $("#competitorForm").hide();
+    $("#swotForm").hide();
+    $("#planTitle").html('<span class="lnr lnr-license"></span> SWOT ANALYSIS');
+  }
+
+  function deleteSwot(){
+    $("#swotModal").fadeOut();
+    $("#spinner").show();
+    Sales_ReferralSourceTrendReport.deleteSwot(referralId, selectedUserId, function(result, event){
+      if(!result){
+        $("#errorMessage").text('The swot analysis was not deleted. Please try again later, or if the problem persists contact sales support.');
+        $("#errorModal").fadeIn();
+      } else{
+        $("#swotDeleted").show().removeClass("ratingButtonsOut").addClass("ratingButtonsIn");
+        setTimeout(function(){
+          $("#swotDeleted").removeClass("ratingButtonsIn").addClass("ratingButtonsOut").delay(300).fadeOut(0);
+        }, 3500);
+      }
+      $("#spinner").hide();
+    }, {escape:false});
+  }
+
+  </script>
+</body>
+</html>
+</apex:page>

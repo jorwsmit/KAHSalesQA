@@ -1,0 +1,305 @@
+<aura:component controller="AA_MEDPARController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+	<aura:attribute name="mData" type="HRS_MEDPAR__c" access="public"/>
+    <aura:attribute name="recordId" type="Id" access="public"/>
+    <aura:attribute name="dateVal"	type="string"/>
+    <aura:attribute name="newEntry" type="boolean" default ='false'/>
+    <aura:attribute name="fields" type="String[]" default="['Type_of_Facility_Secondary__c','Shared_CMS_Provider_ID__c','HIH_Indicator__c','HCRIS_Reporting_Months__c', 'HCRIS_Reporting_End_Date__c', 'HRS_Affiliate_1__c', 'HRS_Affiliate_2__c', 'HRS_Affiliate_3__c', 'Acute_Beds__c', 'Acute_ADC__c', 'ICU_Beds__c', 'ICU_ADC__c', 'IRF_Beds__c', 'IRF_ADC__c', 'IRF_Potential_ADC__c', 'IRF_Difference_in_Potential_ADC__c', 'SNF_Beds__c', 'SNF_ADC__c', 'LTACH_Beds__c', 'LTACH_ADC__c', 'IP_Cost_PPD__c', 'IP_LOS__c', 'CON_State_New_Business__c', 'CON_State_Existing_Business__c','Do_Not_Call_Date__c','KHRS_Services__c','Non_Compete__c']" />
+    
+    <lightning:workspaceAPI aura:id="workspace" />
+    <lightning:navigation aura:id="navService"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:if isTrue="{!v.newEntry}">
+    	<span style="font-size: 18px; color:red">This account does not have current MEDPAR data, you may create a record for this year and quarter by completing the form below.</span>	
+        <lightning:recordForm
+             aura:id="myform"
+             objectApiName="HRS_MEDPAR__c"
+             onsuccess="{!c.handleNewSuccess}"
+             mode="edit"
+             fields="{!v.fields}"
+             columns="2"
+             onsubmit="{!c.submitNewRecord}">
+    	    </lightning:recordForm>
+    </aura:if>
+    
+    <aura:if isTrue="{!v.newEntry == false}">
+    <span style="font-size: 22px">MEDPAR Data Last Update:  <ui:outputDate value="{!v.mData.LastModifiedDate}"/></span>
+    <div class="slds-grid slds-wrap" id="reportSec">
+        <div class="slds-grid paddingTop">
+            <lightning:recordEditForm
+             recordId="{!v.mData.Id}"
+             objectApiName="HRS_MEDPAR__c"
+             onsuccess="{!c.handleSuccess}">
+    	<div>
+             <div class="slds-form-element__label" style="font-size: 16px; font-weight:bold">Demographic Data</div><br/>
+            <div class="slds-form-element discussionDiv">    		
+            <table >
+                		<tr>
+                            <td>
+                                <ui:outputText value="CMS Provider ID" />
+                            </td>
+                            <td>
+                                <ui:outputText value="{!v.mData.CMS_Provider_ID__c}" />
+                            </td>
+                            <td>
+                                
+                                </td>
+                            <td>
+                            	
+                            </td>
+                        </tr>
+                		<tr>
+                            <td>
+                                <ui:outputText value="Master ID" />
+                            </td>
+                            <td>
+                                <ui:outputText value="{!v.mData.Account__r.KRS_MEDPAR_Master_ID__c}" />
+                            </td>
+                            <td>
+                                <ui:outputText value="MSA Micro" />
+                            </td>
+                            <td>
+                            	<lightning:inputField fieldName="MSA_Micro_A__c" variant="label-hidden"/>
+                            </td>
+                		</tr>
+                    </table>
+                <br/>
+                <table>
+                        	<tr style="border-top: 1px solid black">
+                                <td>
+                                <span style="color:white">____________________________________________________________________________________</span>
+                                    </td>
+                            </tr>
+                        </table>
+                    <div class="slds-form-element__label" style="font-size: 16px; font-weight:bold">Facility Details </div><br/>
+                	<div class="slds-form-element discussionDiv">
+            		<table>
+        				<tr>
+                            <td>
+                                <ui:outputText value="Type of Facility (Secondary)" />
+                            </td>
+                            <td>
+                            	<lightning:inputField fieldName="Type_of_Facility_Secondary__c" variant="label-hidden"/>    
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <ui:outputText value="Shared CMS Provider ID" />
+                            </td>
+                            <td>
+                            	<lightning:inputField fieldName="Shared_CMS_Provider_ID__c" variant="label-hidden"/>    
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <ui:outputText value="HIH Indicator" />
+                            </td>
+                            <td>
+                            	<lightning:inputField fieldName="HIH_Indicator__c" variant="label-hidden"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <ui:outputText value="HCRIS Reporting Months" />
+                            </td>
+                            <td>
+                            	<lightning:inputField fieldName="HCRIS_Reporting_Months__c" variant="label-hidden"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <ui:outputText value="HCRIS Reporting End Date" />
+                            </td>
+                            <td>
+                            	<lightning:inputField fieldName="HCRIS_Reporting_End_Date__c" variant="label-hidden"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <ui:outputText value="HRS Affiliate 1" />
+                            </td>
+                            <td>
+                            	<lightning:inputField fieldName="HRS_Affiliate_1__c" variant="label-hidden"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <ui:outputText value="HRS Affiliate 2" />
+                            </td>
+                            <td>
+                            	<lightning:inputField fieldName="HRS_Affiliate_2__c" variant="label-hidden"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <ui:outputText value="HRS Affiliate 3" />
+                            </td>
+                            <td>
+                            	<lightning:inputField fieldName="HRS_Affiliate_3__c" variant="label-hidden"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                            	<lightning:inputField fieldName="Buds_Notes__c"/>
+                            </td>
+                        </tr>
+                        </table>
+                        <br/>
+                        <table>
+                        	<tr style="border-top: 1px solid black">
+                                <td>
+                                <span style="color:white">____________________________________________________________________________________</span>
+                                    </td>
+                            </tr>
+                        </table>
+                        <table>
+                        <tr>
+                            <td>
+                            <lightning:inputField fieldName="Acute_Beds__c" />
+                            </td>
+                            
+                            <td>
+                            <lightning:inputField fieldName="Acute_ADC__c" />
+                            </td>
+                            
+                            <td>
+                            <lightning:inputField fieldName="Acute_Occupancy__c" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                            <lightning:inputField fieldName="ICU_Beds__c" />
+                            </td>
+                            
+                            <td>
+                            <lightning:inputField fieldName="ICU_ADC__c" />
+                            </td>
+                            
+                            <td>
+                            <lightning:inputField fieldName="ICU_Occupancy__c" />
+                            </td>
+                        </tr>    
+                        <tr>
+                            <td>
+                            <lightning:inputField fieldName="IRF_Beds__c" />
+                            </td>
+                            
+                            <td>
+                            <lightning:inputField fieldName="IRF_ADC__c" />
+                            </td>
+                            
+                            <td>
+                            <lightning:inputField fieldName="IRF_Occupancy__c" />
+                            </td>
+                        </tr>
+                            <tr>
+                            <td>
+                            <lightning:inputField fieldName="IRF_Potential_ADC__c" />
+                            </td>
+                            
+                            <td>
+                            <lightning:inputField fieldName="IRF_Difference_in_Potential_ADC__c" />
+                            </td>
+                            
+                            <td>
+                            
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                            <lightning:inputField fieldName="SNF_Beds__c" />
+                            </td>
+                            
+                            <td>
+                            <lightning:inputField fieldName="SNF_ADC__c" />
+                            </td>
+                            
+                            <td>
+                            <lightning:inputField fieldName="SNF_Occupancy__c" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                            <lightning:inputField fieldName="LTACH_Beds__c" />
+                            </td>
+                            
+                            <td>
+                            <lightning:inputField fieldName="LTACH_ADC__c" />
+                            </td>
+                            
+                            <td>
+                            <lightning:inputField fieldName="LTACH_Occupancy__c" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                            <lightning:inputField fieldName="IP_Cost_PPD__c" />
+                            </td>
+                            
+                            <td>
+                            <lightning:inputField fieldName="IP_LOS__c" />
+                            </td>
+                            
+                            <td>
+                            
+                            </td>
+                        </tr>     
+                        </table>
+                        <br/>
+                        <table>
+                        	<tr style="border-top: 1px solid black">
+                                <td>
+                                <span style="color:white">____________________________________________________________________________________</span>
+                                    </td>
+                            </tr>
+                        </table>
+                        <table>
+                            <tr>
+                            <td>
+                                <ui:outputText value="CON State New Business" />
+                            </td>
+                            <td>
+                            	<lightning:inputField fieldName="CON_State_New_Business__c" variant="label-hidden"/>
+                            </td>
+        				</tr>
+                        <tr>
+                            <td>
+                                <ui:outputText value="CON State Existing Business" />
+                            </td>
+                            <td>
+                            	<lightning:inputField fieldName="CON_State_Existing_Business__c" variant="label-hidden"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <ui:outputText value="Do Not Call (Date)" />
+                            </td>
+                            <td>
+                            	<lightning:inputField fieldName="Do_Not_Call_Date__c" variant="label-hidden"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <ui:outputText value="KHRS Services" />
+                            </td>
+                            <td>
+                            	<lightning:inputField fieldName="KHRS_Services__c" variant="label-hidden"/>
+                            </td>
+                        </tr>
+                            <tr>
+                            <td>
+                            	<lightning:inputField fieldName="Non_Compete__c"/>
+                            </td>
+                        </tr>
+                        </table>
+                        <br/>
+                        <lightning:button type="submit" name="save" label="Save" />
+            		</div>
+                	</div>
+        			</div>
+        		
+            </lightning:recordEditForm>
+    	</div>
+    	</div>
+    </aura:if>
+</aura:component>

@@ -1,0 +1,1087 @@
+<apex:page controller="Sales_AssignmentsController" showHeader="true" standardStylesheets="false" sidebar="false" applyHtmlTag="true" applyBodyTag="false" docType="html-5.0">
+    
+    <html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" lang="en">
+        <head>
+            <meta charset="utf-8" />
+            <meta http-equiv="x-ua-compatible" content="ie=edge" />
+            <title>Target Assignments Tool</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1" />
+            <apex:stylesheet value="{!URLFOR($Resource.LightningDesign, 'assets/styles/salesforce-lightning-design-system-vf.min.css')}" />
+            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
+        </head>
+        <style>
+            .searchButton{
+                background-color: #0070d2;
+                color:white;
+                text-decoration: none;
+                cursor: pointer;
+                text-align: center;
+                padding:5px 0px 5px 0px;
+                padding-left:-5px;
+                border-radius:5px;
+                font-size:20px;
+                width:200px;
+                margin-right:10px;
+                display:inline-block;
+            }
+            .searchButton:hover{
+                background-color: #0058a5;
+            }
+            
+            .backButton{
+                background-color: #e86166;
+                color:white;
+                text-decoration: none;
+                cursor: pointer;
+                padding:5px 0px 5px 60px;
+                border-radius:5px;
+                font-size:20px;
+                width:200px;
+                margin-right:10px;
+                display:inline-block;
+            }
+            .backButton:hover{
+                background-color: #ce5256;
+            }
+            
+            .searchButtonSelect{
+                background-color: #4AB471;
+                color:white;
+                text-decoration: none;
+                cursor: pointer;
+                text-align: center;
+                padding:5px 0px 5px 0px;
+                border-radius:5px;
+                font-size:20px;
+                width:200px;
+                margin-right:10px;
+                display:inline-block;
+            }
+            
+            .searchButtonSelect:hover{
+                background-color: #3a8e59;
+            }
+            
+            .drilldownNav{
+                border-style: solid;
+                border-color: #0070d2;
+                border-width:2px;
+                color:#0070d2;
+                text-decoration: none;
+                cursor: pointer;
+                padding:5px 0px 5px 35px;
+                border-radius:5px;
+                font-size:15px;
+                width:200px;
+                margin-right:10px;
+                display:inline-block;
+            }
+            
+            .drilldownNav:hover{
+                border-color: #0070d2;
+                color:#0070d2;
+                background-color: #e0e0e0;
+            }
+                        
+            .dropdownNav{
+                background-color:white;
+                border-style: solid;
+                border-color: #0070d2;
+                border-width:2px;
+                color:#0070d2;
+                text-decoration: none;
+                text-align:center;
+                padding:5px;
+                border-radius:5px;
+                font-size:15px;
+                width:200px;
+                margin-right:10px;
+                display:block;
+            }
+            
+            .dropdownNavLi{
+                cursor:pointer;
+            }
+            .dropdownNavLi:hover{
+                background-color: #e0e0e0;
+            }
+           
+            .space{
+                margin:10px;
+            }
+            
+            .columnPadding{
+                padding-left:18px;
+            }
+            
+            .infoHeader{
+                color: white;
+                padding: 10px;
+                text-align: center;
+                margin:auto;
+                font-weight:bold;
+                background-color:#0070d2;
+            }
+
+            input#toggleAdded, input#toggleDeleted {
+              max-height: 0;
+              max-width: 0;
+              opacity: 0;
+            }
+            
+            input#toggleAdded + label,  input#toggleDeleted + label{
+              display: block;
+              cursor: pointer;
+              position: absolute;
+              left: 865px;
+              top: 156px;
+              box-shadow: inset 0 0 0px 1px #d5d5d5;
+              height: 35px;
+              width: 63px;
+              border-radius: 17.5px;
+            }
+            
+            input#toggleAdded + label:before, input#toggleDeleted + label:before {
+              content: "";
+              position: absolute;
+              display: block;
+              height: 35px;
+              width: 35px;
+              top: 0;
+              left: 0;
+              border-radius: 17.5px;
+              background: rgba(19, 191, 17, 0);
+              -moz-transition: .25s ease-in-out;
+              -webkit-transition: .25s ease-in-out;
+              transition: .25s ease-in-out;
+            }
+            
+            input#toggleAdded + label:after, input#toggleDeleted + label:after{
+              content: "";
+              position: absolute;
+              display: block;
+              height: 35px;
+              width: 35px;
+              top: 0;
+              left: 0px;
+              border-radius: 17.5px;
+              background: white;
+              box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .2), 0 2px 4px rgba(0, 0, 0, .2);
+              -moz-transition: .25s ease-in-out;
+              -webkit-transition: .25s ease-in-out;
+              transition: .25s ease-in-out;
+            }
+            
+            input#toggleAdded:checked + label:before, input#toggleDeleted:checked + label:before {
+              width: 63px;
+              background: #4AB471;
+            }
+            
+            input#toggleAdded:checked + label:after, input#toggleDeleted:checked + label:after {
+              left: 28px;
+              box-shadow: inset 0 0 0 1px rgba(19, 191, 17, 1), 0 2px 4px rgba(0, 0, 0, .2);
+            }
+            
+            .spinIn{
+                position: absolute;
+                z-index:10000;
+                animation: spinInFrames ease-in-out 5.0s;
+                animation-iteration-count: 1;
+                transform-origin: 50% 50%;
+                -webkit-animation: spinInFrames ease-in-out 5.0s;
+                -webkit-animation-iteration-count: 1;
+                -webkit-transform-origin: 50% 50%;
+                -moz-animation: spinInFrames ease-in-out 5.0s;
+                -moz-animation-iteration-count: 1;
+                -moz-transform-origin: 50% 50%;
+                -o-animation: spinInFrames ease-in-out 5.0s;
+                -o-animation-iteration-count: 1;
+                -o-transform-origin: 50% 50%;
+                -ms-animation: spinInFrames ease-in-out 5.0s;
+                -ms-animation-iteration-count: 1;
+                -ms-transform-origin: 50% 50%;
+            }
+            
+            @keyframes spinInFrames{
+            0% {
+            transform:  translate(-1500px,0px)  rotate(-200deg) ;
+            }
+            12% {
+            transform:  translate(0px,0px)  rotate(0deg) ;
+            }
+            22% {
+            transform:  translate(0px,0px)  rotate(0deg) ;
+            }
+            34% {
+            transform:  translate(1500px,0px)  rotate(200deg) ;
+            }
+            100% {
+            transform:  translate(1500px,0px)  rotate(200deg) ;
+            }
+            }
+            
+            @-moz-keyframes spinInFrames{
+            0% {
+            -moz-transform:  translate(-1500px,0px)  rotate(-200deg) ;
+            }
+            12% {
+            -moz-transform:  translate(0px,0px)  rotate(0deg) ;
+            }
+            22% {
+            -moz-transform:  translate(0px,0px)  rotate(0deg) ;
+            }
+            34% {
+            -moz-transform:  translate(1500px,0px)  rotate(200deg) ;
+            }
+            100% {
+            -moz-transform:  translate(1500px,0px)  rotate(200deg) ;
+            }
+            }
+            
+            @-webkit-keyframes spinInFrames {
+            0% {
+            -webkit-transform:  translate(-1500px,0px)  rotate(-200deg) ;
+            }
+            12% {
+            -webkit-transform:  translate(0px,0px)  rotate(0deg) ;
+            }
+            22% {
+            -webkit-transform:  translate(0px,0px)  rotate(0deg) ;
+            }
+            34% {
+            -webkit-transform:  translate(1500px,0px)  rotate(200deg) ;
+            }
+            100% {
+            -webkit-transform:  translate(1500px,0px)  rotate(200deg) ;
+            }
+            }
+            
+            @-o-keyframes spinInFrames {
+            0% {
+            -o-transform:  translate(-1500px,0px)  rotate(-200deg) ;
+            }
+            12% {
+            -o-transform:  translate(0px,0px)  rotate(0deg) ;
+            }
+            22% {
+            -o-transform:  translate(0px,0px)  rotate(0deg) ;
+            }
+            34% {
+            -o-transform:  translate(1500px,0px)  rotate(200deg) ;
+            }
+            100% {
+            -o-transform:  translate(1500px,0px)  rotate(200deg) ;
+            }
+            }
+            
+            @-ms-keyframes spinInFrames {
+            0% {
+            -ms-transform:  translate(-1500px,0px)  rotate(-200deg) ;
+            }
+            12% {
+            -ms-transform:  translate(0px,0px)  rotate(0deg) ;
+            }
+            22% {
+            -ms-transform:  translate(0px,0px)  rotate(0deg) ;
+            }
+            34% {
+            -ms-transform:  translate(1500px,0px)  rotate(200deg) ;
+            }
+            100% {
+            -ms-transform:  translate(1500px,0px)  rotate(200deg) ;
+            }
+            }
+            
+            .dataBlock{
+                font-size:20px;
+                width: 110px;
+                background-color: #717ECD;
+                color: white;
+                text-align:center;
+                padding: 30px 0px 30px 0px;
+                border-radius: 15px;
+                position: fixed;
+                top:34%;
+                left:47%;
+            }
+            
+        </style>        
+        <body>        
+            <!-- REQUIRED SLDS WRAPPER -->
+            <div class="LightningDesign">
+                
+                <!-- BANNER -->
+                
+                <div class="slds-page-header" role="banner">
+                    <div class="slds-grid">
+                        <div class="slds-col slds-has-flexi-truncate">
+                            <div class="slds-media slds-no-space slds-grow">
+                                <i class="fa fa-pencil-square-o fa-4x" aria-hidden="true" style="margin-right:10px;"></i>
+                                <div class="slds-media__body">
+                                    <h1 class="slds-page-header__title slds-m-right--small slds-align-middle slds-truncate" title="this should match the Record Title">Assignment Audit Tool</h1>
+                                    <p class="slds-text-title--caps slds-line-height--reset" id="helpText">Select one of the options below to drill down, employee search, all added assignments, or all deleted assignments respectively.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- END BANNER -->
+                <div class="space"></div>
+                
+                <!-- NAV -->
+                <div id="assignmentNav" style="display:none;">
+                    <div class="backButton" onclick="backToStart();"><i class="fa fa-arrow-left" style="font-size:22px;" aria-hidden="true"></i> Back</div>
+                    <a class="slds-button--brand searchButton" style="text-decoration: none; margin-top:-8px; padding:5px 0px 4px;" id="saveButton" onclick="javascript:fnExcelReport();"><i class="fa fa-cloud-download" aria-hidden="true"></i> Save file</a>    
+                </div>
+                <div id="drilldownButton" class="searchButton" onclick="backToYourRole();"><i class="fa fa-arrow-circle-o-down" style="font-size:22px;" aria-hidden="true"></i> Drill Down</div>
+                <div id="employeeButton" class="searchButton" onclick="selectEmployee();"><i class="fa fa-user-circle-o" aria-hidden="true"></i> Employees</div>
+                <div id="addedButton" class="searchButton" onclick="selectAdded();"><i class="fa fa-plus-circle" style="font-size:22px;" aria-hidden="true"></i> Added</div>
+                <div id="deletedButton" class="searchButton" onclick="selectDeleted();"><i class="fa fa-minus-circle" style="font-size:22px;" aria-hidden="true"></i> Deleted</div>
+                
+                <!-- END NAV -->
+                <div class="space"></div>
+                <!-- DRILLDOWN -->
+                
+                <div id="drilldown" style="display:none;">
+                    <div class="drilldownNav" onclick="backOneRole();"><i class="fa fa-angle-left" style="font-size:18px;" aria-hidden="true"></i> Back One Role</div>
+                    <div class="drilldownNav" onclick="backToYourRole();"><i class="fa fa-angle-double-left" style="font-size:18px;" aria-hidden="true"></i> Back to Your Role</div>
+                    <div style="padding:3px;"></div>
+                    <div class="slds-box slds-box--small slds-text-align--center" style="width:410px;"><h1 class="slds-page-header__title slds-m-right--small slds-align-middle slds-truncate">Roles to Drill Down Into</h1>
+                        <div class="slds-grid"><div class="slds-col"></div><div class="slds-col"><div id="rolesUnderCurrent"></div></div></div>
+                    </div>
+                    <div class="space"></div>
+                    <div class="slds-box slds-box--small slds-text-align--center" style="width:410px;"><h1 class="slds-page-header__title slds-m-right--small slds-align-middle slds-truncate" id="currentRoleText">{!$UserRole.Name} Employees</h1>
+                        <div class="slds-grid"><div class="slds-col"></div><div class="slds-col"><div id="employeesUnderCurrent"></div></div></div>
+                    </div>
+                </div>
+                
+                <!-- END DRILLDOWN -->
+                
+                <!-- EMPLOYEE SEARCH -->
+                <div id="employees" style="display:none;">
+                    <div class="slds-grid">
+                        <div class="slds-col">
+                            <i class="fa fa-search" style="font-size:16px; position:absolute; left:14px; top:163px;" aria-hidden="true"></i><input id="employeeSearchInput" type="text" class="slds-input" onkeyup="employeeSearch();" placeholder="Search by Employee Name" style="padding: 2px 2px 2px 24px; font-size: 16px; width:410px;"/>
+                            <div class="space"></div>
+                            <div class="slds-box slds-box--small" style="width:410px;">
+                                <ul id="allUsers" style="max-height:60vh; min-height:60vh; overflow:scroll;"></ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- END EMPLOYEE SEARCH -->
+               
+                <div id="filters" style="display:none;">
+                    <div style="display:inline-block;">
+                        <input id="dateFilter" type="text" class="dropdownNav" onkeyup="dateFilter();" placeholder="Filter by Request Date" style="text-align:center; padding: 5px; font-size: 16px; width:200px;"/>
+                        <div id="dateSelection" class="dropdownNav" style="display:none; position:absolute;border-width: 0px 2px 2px 2px; border-radius: 0px 0px 5px 5px; z-index: 1000;"><ul id="dateSelectionUl"></ul></div>
+                    </div>
+                    
+                    <span id="addDelFilters" style="display:none;">
+                        <div style="display:inline-block; margin-left:10px;">
+                            <input id="employeeFilter" type="text" class="dropdownNav" onkeyup="employeeFilter();" placeholder="Filter by Sales Associate" style="text-align:center; padding: 5px; font-size: 16px; width:200px;"/>
+                        </div>
+                    </span>
+                    
+                    <span id="userFilters" style="display:none;">
+                        <div style="display:inline-block; margin-left:10px;">
+                            <input id="accountFilter" type="text" class="dropdownNav" onkeyup="accountFilter();" placeholder="Filter by Referral Source" style="text-align:center; padding: 5px; font-size: 16px; width:200px;"/>
+                        </div>
+                        
+                        <div style="display:inline-block; margin-left:10px;">
+                            <input id="unityFilter" type="text" class="dropdownNav" onkeyup="unityFilter();" placeholder="Filter by Unity ID" style="text-align:center; padding: 5px; font-size: 16px; width:200px;"/>
+                        </div>
+                        <div style="display:inline-block; margin-left:10px;">
+                            <input id="horizonFilter" type="text" class="dropdownNav" onkeyup="horizonFilter();" placeholder="Filter by Horizon ID" style="text-align:center; padding: 5px; font-size: 16px; width:200px;"/>
+                        </div>
+                        <div id="toggles" style="display: none;">
+                            <div style="display:inline-block; margin-left:10px;">
+                                <input type="checkbox" name="toggleAdded" id="toggleAdded" checked="checked"/>
+                                <label onclick="added=!added;addedDeletedFilter();" for="toggleAdded"><h3 style="margin-top:-25px; color:#4AB471;"><i class="fa fa-plus-circle" aria-hidden="true"></i> Added</h3></label>
+                            </div>
+                            <div style="display:inline-block; margin-left:10px;">
+                                <input type="checkbox" name="toggleDeleted" id="toggleDeleted" checked="checked"/>
+                                <label onclick="deleted=!deleted;addedDeletedFilter();" style="left: 940px;" for="toggleDeleted"><h3 style="margin-top:-25px; color:#e86166;"><i class="fa fa-minus-circle" aria-hidden="true"></i> Deleted</h3></label>
+                            </div>
+                        </div>
+                    </span>
+                </div>
+                <div class="space"></div>
+                
+                <div id="assignmentTable" class="slds-box" style="padding:0px; display: none;">
+                    <table class="slds-table slds-table--bordered slds-table--cell-buffer slds-table--striped" id="mainTable">
+                        <thead>
+                            <tr class="slds-text-title--caps">
+                                <th style="padding:10px; padding-left:25px;" class="slds-is-sortable slds-is-resizable" scope="col">
+                                    <div class="slds-truncate" title="effectiveDate"><b>EFFECTIVE DATE<i style="padding-left:20px;" class="fa fa-sort" aria-hidden="true"></i></b></div>
+                                </th>
+                                <th style="padding:10px; padding-left:25px;" class="slds-is-sortable slds-is-resizable" scope="col">
+                                    <div class="slds-truncate" title="requestDate"><b>REQUEST DATE<i style="padding-left:20px;" class="fa fa-sort" aria-hidden="true"></i></b></div>
+                                </th>
+                                <th style="padding:8px;" class="slds-is-sortable slds-is-resizable" scope="col">
+                                    <div class="slds-truncate" title="status"><b>STATUS<i style="padding-left:20px;" class="fa fa-sort" aria-hidden="true"></i></b></div>
+                                </th>
+                                <th style="padding:10px; padding-left:25px;" class="slds-is-sortable slds-is-resizable" scope="col">
+                                    <div class="slds-truncate" title="referralSource"><b>REFERRAL SOURCE<i style="padding-left:20px;" class="fa fa-sort" aria-hidden="true"></i></b></div>
+                                </th>
+                                <th style="padding:10px; padding-left:25px;" class="slds-is-sortable slds-is-resizable" scope="col">
+                                    <div class="slds-truncate" title="salesAssociate"><b>SALES ASSOCIATE<i style="padding-left:20px;" class="fa fa-sort" aria-hidden="true"></i></b></div>
+                                </th>
+                                <th style="padding:8px;" class="slds-is-sortable slds-is-resizable" scope="col">
+                                    <div class="slds-truncate" title="unityId"><b>UNITY ID<i style="padding-left:20px;" class="fa fa-sort" aria-hidden="true"></i></b></div>
+                                </th>
+                                <th style="padding:8px;" class="slds-is-sortable slds-is-resizable" scope="col">
+                                    <div class="slds-truncate" title="horizonId"><b>HORIZON ID<i style="padding-left:20px;" class="fa fa-sort" aria-hidden="true"></i></b></div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="mainTableBody">
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div id="addDelTable" class="slds-box" style="padding:0px; display: none;">
+                    <table class="slds-table slds-table--bordered slds-table--cell-buffer slds-table--striped" id="mainTable2">
+                        <thead>
+                            <tr class="slds-text-title--caps">
+                                <th style="padding:10px; padding-left:25px;" class="slds-is-sortable slds-is-resizable" scope="col">
+                                    <div class="slds-truncate" title="salesAssociate"><b>SALES ASSOCIATE<i style="padding-left:20px;" class="fa fa-sort" aria-hidden="true"></i></b></div>
+                                </th>
+                                <th style="padding:10px; padding-left:25px;" class="slds-is-sortable slds-is-resizable" scope="col">
+                                    <div class="slds-truncate" title="totalAssignments"><b>TOTAL ASSIGNMENTS<i style="padding-left:20px;" class="fa fa-sort" aria-hidden="true"></i></b></div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="addDelTableBody">
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="slds-spinner_container" id="spinner" style="display:none;">
+                    <div role="status" class="slds-spinner slds-spinner--medium slds-spinner--brand">
+                        <span class="slds-assistive-text">Loading</span>
+                        <div class="slds-spinner__dot-a"></div>
+                        <div class="slds-spinner__dot-b"></div>
+                    </div>
+                </div>
+                
+                <div id="alert" style="display:none;">
+                    <div role="dialog" tabindex="-1" aria-labelledby="header43" class="slds-modal slds-fade-in-open">
+                        <div class="slds-modal__container">
+                            <div id="modal">
+                                <div class="slds-modal__header">
+                                    <h2 class="slds-text-heading--medium">No Assignments</h2>
+                                </div>
+                                <div class="slds-modal__content slds-p-around--medium">
+                                    <p><b id="alertUserName">This user</b> has not assigned any referral sources. If you believe that this is by mistake, then check the user's assignments in the Territory Selection Tool.
+                                        If you still feel like there is a problem with the assignments, then contact Sales Support.</p>
+                                </div>
+                                <div class="slds-modal__footer slds-text-align--center">
+                                    <button onclick="backToStart();" class="slds-button slds-button--brand" style="font-size:15px;"><i style="font-size:17px;" class="fa fa-times" aria-hidden="true"></i> Close and Go Back</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="outsideAlert" class="slds-backdrop slds-backdrop--open"></div>
+                </div>
+                
+                <div id="addedDelAlert" style="display:none;">
+                    <div role="dialog" tabindex="-1" aria-labelledby="header43">
+                        <div>
+                            <div id="addedModal">
+                                <div class="infoHeader">
+                                    <h2 class="slds-text-heading--medium"><i style="font-size:24px;" class="fa fa-info-circle" aria-hidden="true"></i> No Added or Deleted Assignments</h2>
+                                </div>
+                                <div class="slds-modal__content slds-p-around--medium slds-text-align--center">
+                                    <p>There are no added or deleted assignments for the selected range! Try changing the date range and see if that fixes the issue, if not contact Sales Support.</p>
+                                </div>
+                                <div class="slds-modal__footer slds-text-align--center">
+                                    <button onclick="$('#dateSelection').slideDown('fast');" class="slds-button slds-button--brand" style="font-size:15px;"><i style="font-size:17px;" class="fa fa-calendar" aria-hidden="true"></i> Select Request Date</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div></div>
+                </div>
+                
+                <div id="addedAlert" style="display:none;">
+                    <div role="dialog" tabindex="-1" aria-labelledby="header43">
+                        <div>
+                            <div id="addedModal">
+                                <div class="infoHeader">
+                                    <h2 class="slds-text-heading--medium"><i style="font-size:24px;" class="fa fa-info-circle" aria-hidden="true"></i> No Added Assignments</h2>
+                                </div>
+                                <div class="slds-modal__content slds-p-around--medium slds-text-align--center">
+                                    <p>There are no added assignments for the selected range! Try changing the date range and see if that fixes the issue, if not contact Sales Support.</p>
+                                </div>
+                                <div class="slds-modal__footer slds-text-align--center">
+                                    <button onclick="$('#dateSelection').slideDown('fast');" class="slds-button slds-button--brand" style="font-size:15px;"><i style="font-size:17px;" class="fa fa-calendar" aria-hidden="true"></i> Select Request Date</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div></div>
+                </div>
+
+                <div id="delAlert" style="display:none;">
+                    <div role="dialog" tabindex="-1" aria-labelledby="header43">
+                        <div>
+                            <div id="addedModal">
+                                <div class="infoHeader">
+                                    <h2 class="slds-text-heading--medium"><i style="font-size:24px;" class="fa fa-info-circle" aria-hidden="true"></i> No Deleted Assignments</h2>
+                                </div>
+                                <div class="slds-modal__content slds-p-around--medium slds-text-align--center">
+                                    <p>There are no deleted assignments for the selected range! Try changing the date range and see if that fixes the issue, if not contact Sales Support.</p>
+                                </div>
+                                <div class="slds-modal__footer slds-text-align--center">
+                                    <button onclick="$('#dateSelection').slideDown('fast');" class="slds-button slds-button--brand" style="font-size:15px;"><i style="font-size:17px;" class="fa fa-calendar" aria-hidden="true"></i> Select Request Date</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div></div>
+                </div>
+                
+                <div id="dataBlockHolder" style="z-index: 2000;">
+                    <div id="dataBlock" class="dataBlock" style="display:none;">
+                        <h1 class="slds-text-heading--medium"><i class="fa fa-code" aria-hidden="true"></i> Data Loaded</h1>
+                    </div>
+                </div>
+                
+            </div>
+            <!-- / REQUIRED SLDS WRAPPER -->    
+            
+            <!-- JAVASCRIPT -->
+            <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/tinysort/2.3.6/tinysort.js"></script>
+            <script>
+            var usrId = '{!$User.Id}';
+            var roleId = '{!$User.UserRoleId}';
+            var roleNav = [];
+            var selectedTab = '';
+            var usrName = '';
+            var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            var usrId='';
+            var handleHTML='';
+            var countNum = 1000;
+            var handleDate = '';
+            var numberOfRuns=0;
+            $( document ).ready(function() {
+                Sales_AssignmentsController.getUsersUnderRoleId('{!$User.UserRoleId}', function(result, event){
+                        document.getElementById("allUsers").innerHTML = result;
+                }, {escape:false});
+                
+                var date = new Date();
+                $("#dateSelectionUl").append('<li id="allTime" class="dropdownNavLi" style="display:none;" onclick="dateSelect(null)">All Time</li>');
+                $("#dateSelectionUl").append('<li class="dropdownNavLi" onclick="dateSelect(\'Today\')">Today</li>');
+                $("#dateSelectionUl").append('<li class="dropdownNavLi" onclick="dateSelect(\'Yesterday\')">Yesterday</li>');
+                $("#dateSelectionUl").append('<li class="dropdownNavLi" onclick="dateSelect(\'This Week\')">This Week</li>');
+                $("#dateSelectionUl").append('<li class="dropdownNavLi" onclick="dateSelect(\'Last Week\')" style="border-style: solid; border-color: #0070d2;border-width: 0px 0px 2px 0px;">Last Week</li>');
+                for(var i=0; i<=date.getMonth()+12; i++){
+                    if(i>=12) $("#dateSelectionUl").append('<li class="dropdownNavLi" onclick="dateSelect(\''+months[i-12]+' '+date.getFullYear()+'\')">'+months[i-12]+' '+date.getFullYear()+'</li>');
+                    else $("#dateSelectionUl").append('<li class="dropdownNavLi" onclick="dateSelect(\''+months[i]+' '+(date.getFullYear()-1)+'\')">'+months[i]+' '+(date.getFullYear()-1)+'</li>');   
+                }
+            });
+            
+            var sorts = ['asc', 'asc', 'asc', 'asc', 'asc', 'asc','asc'];
+            $('#mainTable thead tr th').on('click', function () {
+                if($(this).find("i").hasClass("fa-sort")){
+                    
+                    $('#mainTable').find("i").removeClass("fa-sort-asc fa-sort-desc").addClass("fa-sort");
+                    if(sorts[$(this).index()]=='asc'){
+                        $(this).find("i").toggleClass("fa-sort fa-sort-asc");
+                        sorts[$(this).index()] = 'desc';
+                    }
+                    else if(sorts[$(this).index()]=='desc') {
+                        $(this).find("i").toggleClass("fa-sort fa-sort-desc");
+                        sorts[$(this).index()] = 'asc';
+                    }
+                } else {
+                    $(this).find("i").toggleClass("fa-sort-asc fa-sort-desc");
+                    if(sorts[$(this).index()]=='asc') sorts[$(this).index()]='desc';
+                    else if(sorts[$(this).index()]=='desc') sorts[$(this).index()]='asc';
+                }
+            });
+            
+            var table = document.getElementById('mainTable')
+            ,tableHead = table.querySelector('thead')
+            ,tableHeaders = tableHead.querySelectorAll('th')
+            ,tableBody = table.querySelector('tbody');
+            
+            tableHead.addEventListener('click',function(e){
+                var tableHeader = e.target
+                ,textContent = tableHeader.textContent
+                ,tableHeaderIndex,isAscending,order;
+
+                if (textContent!=='add row') {
+                    while (tableHeader.nodeName!=='TH') {
+                        tableHeader = tableHeader.parentNode;
+                    }
+                    tableHeaderIndex = Array.prototype.indexOf.call(tableHeaders,tableHeader);
+                    isAscending = tableHeader.getAttribute('data-order')==='asc';
+                    order = isAscending?'desc':'asc';
+                    tableHeader.setAttribute('data-order',order);
+                    tinysort(
+                        tableBody.querySelectorAll('tr')
+                        ,{
+                            selector:'td:nth-child('+(tableHeaderIndex+1)+')'
+                            ,order: order
+                        }
+                    );
+                }
+            });
+            
+            var sorts2 = ['asc', 'asc'];
+            $('#mainTable2 thead tr th').on('click', function () {
+                if($(this).find("i").hasClass("fa-sort")){
+                    
+                    $('#mainTable2').find("i").removeClass("fa-sort-asc fa-sort-desc").addClass("fa-sort");
+                    if(sorts2[$(this).index()]=='asc'){
+                        $(this).find("i").toggleClass("fa-sort fa-sort-asc");
+                        sorts2[$(this).index()] = 'desc';
+                    }
+                    else if(sorts2[$(this).index()]=='desc') {
+                        $(this).find("i").toggleClass("fa-sort fa-sort-desc");
+                        sorts2[$(this).index()] = 'asc';
+                    }
+                } else {
+                    $(this).find("i").toggleClass("fa-sort-asc fa-sort-desc");
+                    if(sorts2[$(this).index()]=='asc') sorts2[$(this).index()]='desc';
+                    else if(sorts2[$(this).index()]=='desc') sorts2[$(this).index()]='asc';
+                }
+            });
+            
+            var table2 = document.getElementById('mainTable2')
+            ,tableHead2 = table2.querySelector('thead')
+            ,tableHeaders2 = tableHead2.querySelectorAll('th')
+            ,tableBody2 = table2.querySelector('tbody');
+            
+            tableHead2.addEventListener('click',function(e){
+                var tableHeader = e.target
+                ,textContent = tableHeader.textContent
+                ,tableHeaderIndex,isAscending,order;
+
+                if (textContent!=='add row') {
+                    while (tableHeader.nodeName!=='TH') {
+                        tableHeader = tableHeader.parentNode;
+                    }
+                    tableHeaderIndex = Array.prototype.indexOf.call(tableHeaders2,tableHeader);
+                    isAscending = tableHeader.getAttribute('data-order')==='asc';
+                    order = isAscending?'desc':'asc';
+                    tableHeader.setAttribute('data-order',order);
+                    tinysort(
+                        tableBody2.querySelectorAll('tr')
+                        ,{
+                            selector:'td:nth-child('+(tableHeaderIndex+1)+')'
+                            ,order: order
+                        }
+                    );
+                }
+            });
+            
+            function fnExcelReport() {
+                var tab_text = '<html xmlns:x="urn:schemas-microsoft-com:office:excel">';
+                tab_text = tab_text + '<head><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>';
+                
+                tab_text = tab_text + '<x:Name>Assignment Audit Tool - '+usrName+' {!MONTH(TODAY())}-{!DAY(TODAY())}-{!YEAR(TODAY())}</x:Name>';
+                
+                tab_text = tab_text + '<x:WorksheetOptions><x:Panes></x:Panes></x:WorksheetOptions></x:ExcelWorksheet>';
+                tab_text = tab_text + '</x:ExcelWorksheets></x:ExcelWorkbook></xml></head><body>';
+                
+                tab_text = tab_text + "<table border='1px'>";
+                tab_text = tab_text + $('#mainTable').html();
+                tab_text = tab_text + '</table></body></html>';
+                
+                var data_type = 'data:application/vnd.ms-excel';
+                
+                var ua = window.navigator.userAgent;
+                var msie = ua.indexOf("MSIE ");
+                
+                if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./)) {
+                    if (window.navigator.msSaveBlob) {
+                        var blob = new Blob([tab_text], {
+                            type: "application/csv;charset=utf-8;"
+                        });
+                        navigator.msSaveBlob(blob, 'Assignment Audit Tool - '+usrName+' {!MONTH(TODAY())}-{!DAY(TODAY())}-{!YEAR(TODAY())}.xls');
+                    }
+                } else {
+                    var blob = new Blob([tab_text], {
+                        type: "application/csv;charset=utf-8;"
+                    });
+                    var url = URL.createObjectURL(blob);
+                    //$('#saveButton').attr('href', data_type + ', ' + encodeURIComponent(tab_text));
+                    $('#saveButton').attr('href', url);
+                    $('#saveButton').attr('download', 'Assignment Audit Tool - '+usrName+' {!MONTH(TODAY())}-{!DAY(TODAY())}-{!YEAR(TODAY())}.xls');
+                }
+                
+            }
+            
+            function selectDrill(){
+                var loaded = false;
+                selectedTab = 'drilldown';
+                $("#employees").hide();
+                $("#assignmentTable").hide();
+                $("#spinner").show();
+                document.getElementById("helpText").innerHTML = 'Select employees to pull up their assignments, or select roles to drill down.';
+                $("#employeeButton").removeClass( "searchButtonSelect" ).addClass( "searchButton" );
+                $("#addedButton").removeClass( "searchButtonSelect" ).addClass( "searchButton" );
+                $("#drilldownButton").removeClass( "searchButton" ).addClass( "searchButtonSelect" );
+                Sales_AssignmentsController.getUsersByRoleId(roleId, function(result, event){
+                    document.getElementById("employeesUnderCurrent").innerHTML = result;
+                    if(loaded) $("#spinner").hide();
+                    loaded = true;
+                }, {escape:false});
+                Sales_AssignmentsController.getChildRoles(roleId, function(result, event){
+                    document.getElementById("rolesUnderCurrent").innerHTML = result;
+                    if(loaded) $("#spinner").hide();
+                    loaded = true;
+                }, {escape:false});
+                $("#drilldown").show();
+            }
+            
+            function backToYourRole(){
+                roleId='{!$UserRole.Id}';
+                roleNav=[];
+                document.getElementById('currentRoleText').innerHTML='{!$UserRole.Name} Employees';
+                selectDrill();
+            }
+            
+            function backOneRole(){
+                if(roleNav.length>0){
+                    var roleNavHolder = roleNav.pop();
+                    roleId = roleNavHolder[0];
+                    document.getElementById('currentRoleText').innerHTML=roleNavHolder[1];
+                    selectDrill();
+                }
+            }
+            
+            function selectEmployee(){
+                selectedTab = 'employee';
+                $("#assignmentTable").hide();
+                $("#drilldown").hide();
+                document.getElementById("helpText").innerHTML = 'Select employees to pull up their assignments.';
+                $("#employees").show();
+                $("#drilldownButton").removeClass( "searchButtonSelect" ).addClass( "searchButton" );
+                $("#addedButton").removeClass( "searchButtonSelect" ).addClass( "searchButton" );
+                $("#employeeButton").removeClass( "searchButton" ).addClass( "searchButtonSelect" );
+            }
+            
+            function selectAdded(dateRng){
+                handleHTML = '';
+                selectedTab = 'added';
+                $("#assignmentNav > .backButton").attr("onclick", "backToStart()");
+                $("#spinner").show();
+                $("#toggles").hide();
+                $("#allTime").hide();
+                $("#drilldownButton").hide();
+                $("#employeeButton").hide();
+                $("#addedButton").hide();
+                $("#assignmentTable").hide();
+                $("#deletedButton").hide();
+                $("#assignmentNav").show();
+                $("#filters").show();
+                $("#addDelFilters").show();
+                $("#userFilters").hide();
+                $("#addDelTable").hide();
+                $("#drilldown").hide();
+                $("#employees").hide();
+                $("#addDelTableBody").empty();
+                $("#addDelTable > #addedAlert").remove();
+                $("#addDelTable > #delAlert").remove();
+                $("#drilldownButton").removeClass( "searchButtonSelect" ).addClass( "searchButton" );
+                $("#deleteButton").removeClass( "searchButtonSelect" ).addClass( "searchButton" );
+                $("#employeeButton").removeClass( "searchButtonSelect" ).addClass( "searchButton" );
+                document.getElementById("helpText").innerHTML = 'This table shows the total added assignments by employee for a certain date range.';
+                if(dateRng==null){
+                    $("#addedAlert").clone().appendTo('#addDelTable');
+                    $("#addDelTable > #addedAlert").show();
+                    $("#addDelTable").show();
+                    $("#spinner").hide();
+                } else{
+                    Sales_AssignmentsController.getAdded(dateRng, function(result, event){
+                        if(result != ''){
+                            document.getElementById("addDelTableBody").innerHTML = result;
+                            $("#addDelTable").show();
+                        } else{
+                            $("#addedAlert").clone().appendTo('#addDelTable');
+                            $("#addDelTable > #addedAlert").show();
+                            $("#addDelTable").show();
+                        }
+                        $("#spinner").hide();
+                    }, {escape:false, timeout:120000});
+                    
+                }
+            }
+            
+            function selectDeleted(dateRng){
+                selectedTab = 'deleted';
+                handleHTML='';
+                handleDate = dateRng;
+                $("#spinner").show();
+                $("#toggles").hide();
+                $("#allTime").hide();
+                $("#drilldownButton").hide();
+                $("#employeeButton").hide();
+                $("#addedButton").hide();
+                $("#deletedButton").hide();
+                $("#assignmentNav").show();
+                $("#filters").show();
+                $("#addDelFilters").show();
+                $("#userFilters").hide();
+                $("#assignmentTable").hide();
+                $("#drilldown").hide();
+                $("#employees").hide();
+                $("#assignmentNav > .backButton").attr("onclick", "backToStart()");
+                $("#addDelTableBody").empty();
+                $("#addDelTable").show();
+                $("#addDelTable > #addedAlert").remove();
+                $("#addDelTable > #delAlert").remove();
+                $("#drilldownButton").removeClass( "searchButtonSelect" ).addClass( "searchButton" );
+                $("#deleteButton").removeClass( "searchButtonSelect" ).addClass( "searchButton" );
+                $("#employeeButton").removeClass( "searchButtonSelect" ).addClass( "searchButton" );
+                document.getElementById("helpText").innerHTML = 'This table shows the total deleted assignments by employee for a certain date range.';
+                if(dateRng==null){
+                    $("#delAlert").clone().appendTo('#addDelTable');
+                    $("#addDelTable > #delAlert").show();
+                    $("#addDelTableBody").show();
+                    $("#spinner").hide();
+                } else{
+                    Sales_AssignmentsController.getDeleted(dateRng, function(result, event){
+                        if(result != ''){
+                            document.getElementById("addDelTableBody").innerHTML = result;
+                            $("#addDelTable").show();
+                        } else{
+                            $("#delAlert").clone().appendTo('#addDelTable');
+                            $("#addDelTable > #delAlert").show();
+                            $("#addDelTable").show();
+                        } 
+                        $("#spinner").hide();
+                    }, {escape:false, timeout:120000});
+                    
+                }
+            }
+            
+            function employeeSearch() {
+                var input, filter, ul, li, a, i;
+                input = document.getElementById('employeeSearchInput');
+                filter = input.value.toUpperCase();
+                ul = document.getElementById("allUsers");
+                li = ul.getElementsByTagName('li');
+                for (i = 0; i < li.length; i++) {
+                    a = li[i].getElementsByTagName("a")[0];
+                    if (a.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                        li[i].style.display = "";
+                    } else {
+                        li[i].style.display = "none";
+                    }
+                }
+            }
+            
+            function selectUser(userId, dateRng){
+                var loaded = false;
+                handleHTML='';
+                document.getElementById("mainTableBody").innerHTML = handleHTML;
+                usrId=userId;
+                handleDate = dateRng;
+                $("#spinner").show();
+                $("#allTime").show();
+                $("#drilldownButton").hide();
+                $("#employeeButton").hide();
+                $("#addedButton").hide();
+                $("#deletedButton").hide();
+                $("#assignmentNav").show();
+                $("#userFilters").show();
+                $("#addDelFilters").hide();
+                $("#toggles").show();
+                $("#filters").show();
+                $("#drilldown").hide();
+                $("#employees").hide();
+                $("#addDelTable").hide();
+                $("#assignmentTable > #addedDelAlert").remove();
+                numberOfRuns=1;
+                {!$RemoteAction.Sales_AssignmentsController.getAssignments}(usrId, dateRng, null, countNum, handleAssignments, {escape:false, timeout:120000});
+                Sales_AssignmentsController.getUserName(usrId, function(result, event){
+                    usrName = result;
+                    document.getElementById("alertUserName").innerHTML = result;
+                    document.getElementById("helpText").innerHTML = 'Use the table to review when '+result+' changed their assignments. ';
+                    if(loaded) $("#spinner").hide();
+                    loaded = true;
+                }, {escape:false});
+            }
+            
+
+            function handleAssignments(object, event){
+                var obj = JSON.parse(object);
+                if(obj.count!=0) handleHTML+=obj.html;
+                if(obj.count==countNum){
+                    $("#dataBlock").clone().prop('id', 'dataBlock'+numberOfRuns).appendTo('#dataBlockHolder');
+                    
+                    $("#dataBlock"+numberOfRuns).show();
+                    $('#dataBlock'+numberOfRuns).delay(2500).fadeOut('fast');
+                    $("#dataBlock"+numberOfRuns).addClass('spinIn');
+                    {!$RemoteAction.Sales_AssignmentsController.getAssignments}(usrId, handleDate, obj.offsetId, countNum, handleAssignments, {escape:false, timeout:120000});
+                } else {
+                    if(handleHTML!=''){
+                        document.getElementById("mainTableBody").innerHTML = handleHTML;
+                        $("#assignmentTable").show();
+                        $("#spinner").hide();
+                    } else{
+                        $("#addedDelAlert").clone().appendTo('#assignmentTable');
+                        $("#assignmentTable > #addedDelAlert").show();
+                        $("#assignmentTable").show();
+                        $("#spinner").hide();
+                    }
+                }     
+            }
+                                                           
+            function backToStart(){
+                $('#alert').hide();
+                $("#assignmentNav").hide();
+                $("#toggles").hide();
+                $("#filters").hide();
+                $("#assignmentTable").hide();
+                $("#drilldownButton").show();
+                $("#employeeButton").show();
+                $("#addedButton").show();
+                $("#deletedButton").show();
+                $("#addDelTable").hide();
+                $("#dateFilter").val('');
+                if (selectedTab == 'drilldown'){
+                    $("#drilldown").show();
+                    document.getElementById("helpText").innerHTML = 'Select employees to pull up their assignments, or select roles to drill down.';
+                } else if (selectedTab == 'employee'){
+                    $("#employees").show();
+                    document.getElementById("helpText").innerHTML = 'Select employees to pull up their assignments.';
+                } else {
+                    document.getElementById("helpText").innerHTML = 'Select one of the options below to drill down, employee search, all added assignments, or all deleted assignments respectively.';
+                }
+                $('#mainTable').find("i").removeClass("fa-sort-asc fa-sort-desc").addClass("fa-sort");
+            }
+            
+            $(document).mouseup(function (e){
+                if ($("#modal").is(":visible") && !$("#modal").is(e.target) && $("#modal").has(e.target).length === 0) backToStart();
+            });
+            
+            $("#dateFilter").click(function() {
+                $("#dateFilter").css("border-radius", "5px 5px 0px 0px");
+                $("#dateSelection").slideDown("fast");
+            });
+             
+            $(document).mouseup(function (e){
+                if ($("#dateSelection").is(":visible") && !$("#dateFilter").is(e.target) && $("#dateFilter").has(e.target).length === 0 && !$("#dateFilter").is(e.target) && $("#dateFilter").has(e.target).length === 0){
+                    $("#dateFilter").css("border-radius", "5px");
+                    $("#dateSelection").slideUp("fast");
+                }
+            });
+
+            function dateFilter(){
+                var input, a;
+                input = document.getElementById("dateFilter").value.toUpperCase();
+                $("#dateSelectionUl li").each(function() {
+                    var li = $(this).text();
+                    if(li.toUpperCase().indexOf(input) > -1) {
+                        $(this).show();
+                    } else {
+                        $(this).hide()
+                    }
+                });
+            }
+            
+            function dateSelect(dateRng){
+                if(dateRng!=null) {
+                    $("#dateFilter").val(dateRng);
+                    if(months.indexOf(dateRng.substr(0, dateRng.indexOf(' ')>-1))){
+                        var date = new Date();
+                        if(dateRng.substr(dateRng.indexOf(' ')+1, dateRng.length-1).indexOf((date.getFullYear()).toString())>-1) dateRng=months.indexOf(dateRng.substr(0, dateRng.indexOf(' ')));
+                        else if(dateRng.substr(dateRng.indexOf(' ')+1, dateRng.length-1).indexOf((date.getFullYear()-1).toString())>-1) dateRng=parseInt(months.indexOf(dateRng.substr(0, dateRng.indexOf(' '))))+12;
+                    }
+                    
+                }
+                else $("#dateFilter").val(dateRng);
+                handleDate = dateRng;
+                
+                if (selectedTab == 'drilldown' || selectedTab == 'employee'){
+                    selectUser(usrId, dateRng);
+                } else if (selectedTab == 'added'){
+                    selectAdded(dateRng);
+                } else if (selectedTab == 'deleted'){
+                    selectDeleted(dateRng);
+                }
+            }
+            
+            function employeeFilter(){
+                var input, a;
+                input = document.getElementById("employeeFilter").value.toUpperCase();
+                $("#addDelTableBody tr td div a").each(function() {
+                    var a = $(this).text();
+                    if(a.toUpperCase().indexOf(input) > -1) {
+                        $(this).closest("tr").show();
+                    } else {
+                        $(this).closest("tr").hide()
+                    }
+                });
+            }
+            
+            function unityFilter(){
+                var input, a;
+                input = document.getElementById("unityFilter").value.toUpperCase();
+                $("#mainTableBody tr td:nth-child(6)").each(function() {
+                    var td = $(this).text();
+                    if(td!=null && td.toUpperCase().indexOf(input) > -1) {
+                        $(this).closest("tr").show();
+                    } else {
+                        $(this).closest("tr").hide()
+                    }
+                });
+            }
+            
+            function horizonFilter(){
+                var input, a;
+                input = document.getElementById("horizonFilter").value.toUpperCase();
+                $("#mainTableBody tr td:nth-child(7)").each(function() {
+                    var td = $(this).text();
+                    if(td.toUpperCase().indexOf(input) > -1) {
+                        $(this).closest("tr").show();
+                    } else {
+                        $(this).closest("tr").hide()
+                    }
+                });
+            }
+            
+            function accountFilter(){
+                var input, a;
+                input = document.getElementById("accountFilter").value.toUpperCase();
+                $("#mainTableBody tr td:nth-child(4)").each(function() {
+                    var td = $(this).text();
+                    if(td.toUpperCase().indexOf(input) > -1) {
+                        $(this).closest("tr").show();
+                    } else {
+                        $(this).closest("tr").hide()
+                    }
+                });
+            }
+            
+            var added=true;
+            var deleted=true;
+            function addedDeletedFilter(){
+                $("#mainTableBody tr td:nth-child(3)").each(function() {
+                    var td = $(this).text();
+                    if(added && !deleted && td.toUpperCase().indexOf('ADDED') > -1) {
+                        $(this).closest("tr").show();
+                    } else if(added && deleted && (td.toUpperCase().indexOf('ADDED') > -1 || td.toUpperCase().indexOf('DELETED') > -1)){
+                        $(this).closest("tr").show();
+                    } else if(!added && deleted && td.toUpperCase().indexOf('DELETED') > -1){
+                        $(this).closest("tr").show();
+                    } else {
+                        $(this).closest("tr").hide()
+                    }
+                });
+            }
+            
+            </script>
+            <!-- / JAVASCRIPT -->
+            
+        </body>
+    </html>
+</apex:page>

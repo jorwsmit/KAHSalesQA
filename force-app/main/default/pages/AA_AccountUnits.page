@@ -1,0 +1,20 @@
+<apex:page sidebar="false" showHeader="true" standardController="Account">
+    <apex:includeScript value="/lightning/lightning.out.js"/>
+
+    <apex:includeLightning />
+    <div class="slds">
+        <!-- Target div for the Lightning component -->
+        <div id="customObjectEdit"></div>
+        </div> 
+    <script>
+        var recordId = '{!Account.id}';    
+        $Lightning.use("c:AA_HD_UnitApp", function(){
+            var attributes = {
+                recordId: recordId
+                };
+            var targetElementId = 'customObjectEdit';
+            $Lightning.createComponent("c:AA_HD_UnitComponent",  attributes, targetElementId, function(components, status){
+            });
+        });
+    </script>
+</apex:page>

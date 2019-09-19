@@ -1,0 +1,22 @@
+<apex:page controller="SALES_Follow_Up">
+    <head>
+        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css"/>
+    </head>
+    <div class="container" id="alert" style="padding:10px;">
+        <div class="alert alert-info" role="alert">
+            <span class="fa fa-refresh fa-spin fa-fw" aria-hidden="true"></span><b> A new follow-up event is being created. </b>Please wait for the event to be created.
+        </div>
+    </div>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <script src="https://www.google.com/jsapi"></script>
+    <script>
+        var eventId = '';
+        SALES_Follow_Up.insertEvent('{!$CurrentPage.parameters.eventId}', function(result, event){
+            sforce.one.editRecord(result);
+            setTimeout(function(){ document.getElementById("alert").innerHTML = '<div class="alert alert-success" role="alert">' +
+            '<i class="fa fa-thumbs-o-up" aria-hidden="true"></i><b> Your follow-up event has been created successfully. </b>' +
+            'Hit the back arrow (at the top left) to navigate to the original event.</div>'; }, 500);
+        }, {escape:false});
+    </script>
+</apex:page>

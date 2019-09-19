@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ApexPage xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>40.0</apiVersion>
+    <availableInTouch>true</availableInTouch>
+    <confirmationTokenRequired>false</confirmationTokenRequired>
+    <description>For HD, this page has a picklist of markets that then remotes into StacICUAccountsQueryExt for querying accounts and ICU codes.</description>
+    <label>StacICUListAccounts_2</label>
+</ApexPage>

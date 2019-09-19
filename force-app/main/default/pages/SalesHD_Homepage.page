@@ -1,0 +1,863 @@
+<apex:page showHeader="false" controller="SalesHD_Homepage" lightningStyleSheets="true" standardStylesheets="false" sidebar="false" applyHtmlTag="false" applyBodyTag="false" docType="html-5.0">
+<html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<head>
+	<title>Home</title>
+
+	<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/> -->
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+	integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous"/>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"
+	integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous"/>
+	<link rel="stylesheet" href="https://cdn.linearicons.com/free/1.0.0/icon-font.min.css"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1,minimum-scale=1, maximum-scale=1, user-scalable=no"/>
+	<apex:slds />
+	<style>
+	a{
+		color: #208FFF !important;
+		text-decoration: underline !important;
+	}
+	a:hover{
+		color: #1773d1 !important;
+	}
+	div{
+		font-size: 20px;
+	}
+	body{
+		font-family: "Salesforce Sans", Arial, sans-serif !important;
+		margin: 0px;
+		background-color: #E0E2E7;
+	}
+	input{
+		display: block;
+	}
+	form{
+		width: 100%;
+	}
+	form label{
+		font-size: 24px !important;
+		font-weight: bold !important;
+	}
+	textarea, input{
+		color: #3E3E3C !important;
+		font-size: 18px !important;
+	}
+	textarea::placeholder, input::placeholder{
+		font-size: 18px !important;
+	}
+	.LightningDesign{
+		color: #3E3E3C !important;
+	}
+	.LightningDesign::selection{
+		color: #3E3E3C !important;
+	}
+	.reassignButton{
+		position: fixed;
+		bottom: 0px;
+		left: 50%;
+		margin-left: -250px;
+	}
+	.reassignButton button{
+		width: 500px !important;
+	}
+	.l-space{
+		margin: 20px;
+	}
+	.s-space{
+		margin: 10px;
+	}
+	.spinner{
+		text-align: center;
+		color: #157DFA;
+		position: relative;
+		left: 50%;
+	}
+	.tableCheck{
+		position: relative;
+		left: 45%;
+	}
+	.btn{
+		border: none !important;
+		color: #FFFFFF !important;
+	}
+	.row{
+		margin-left: 0px !important;
+		margin-right: 0px !important;
+	}
+	table{
+		overflow: hidden;
+	}
+	table td, table th{
+		border: 1px solid #ddd;
+		padding-left: 4px !important;
+		padding-right: 4px !important;
+	}
+	table thead th{
+		text-align: center !important;
+	}
+	table tbody td{
+		text-align: center !important;
+		vertical-align: middle !important;
+	}
+	.userList{
+		border: 1px solid #ced4da !important;
+		border-radius: 7px;
+		max-height: 450px;
+		overflow: auto;
+		display: none;
+	}
+	.userList li{
+		cursor: pointer;
+		padding-left: 5px;
+		padding-right: 5px;
+		border-bottom:  1px solid #ced4da !important;
+	}
+	.shadow{
+		-webkit-box-shadow: 0px 3px 7px 0px rgba(0,0,0,0.25);
+		-moz-box-shadow: 0px 3px 7px 0px rgba(0,0,0,0.25);
+		box-shadow: 0px 3px 7px 0px rgba(0,0,0,0.25);
+	}
+	.header{
+		padding-top: 80px;
+		padding-bottom: 20px;
+		width: 100vw;
+		color: white;
+		text-align: center;
+		background-color: #817FE1;
+	}
+	.header h1{
+		z-index: 10;
+		position: fixed;
+		background-color: #817FE1;
+		padding-top: 10px;
+		padding-bottom: 10px;
+		top: 0px;
+		width: 100%;
+	}
+	.back-btn{
+		z-index: 100;
+		position: fixed;
+		top: 10px;
+		left: 10px;
+		font-size: 48px !important;
+		cursor: pointer;
+	}
+	.modal{
+		font-family: "Salesforce Sans", Arial, sans-serif !important;
+		color: #3E3E3C !important;
+	}
+	.modal ul li{
+		border-bottom: 1px solid #e9ecef;
+		padding: 10px;
+		font-size: 18px;
+		font-weight: bold;
+	}
+	.modal-body{
+		max-height: 375px;
+		overflow-y: auto;
+		-webkit-overflow-scrolling: touch;
+	}
+	.modal-title{
+		font-weight: normal !important;
+		color: #157DFA !important;
+	}
+	.modal-subtitle{
+		font-weight: lighter !important;
+	}
+	.btn-primary{
+		background-color: #157DFA !important;
+	}
+	.btn-primary:active{
+		background-color: #1f6bc6 !important;
+	}
+	.btn-secondary{
+		background-color: #808285 !important;
+	}
+	.btn-secondary:active{
+		background-color: #6c6e70 !important;
+	}
+	#profilePhoto, #profilePhoto img{
+		z-index: 200;
+		position: fixed;
+		right: 10px;
+		top: 10px;
+		width: 58px;
+		height: 58px;
+		border-radius: 100%;
+		border: 2px solid #FFFFFF;
+		background-color: #E0E2E7;
+		cursor: pointer;
+	}
+	h1{
+		font-size: 48px !important;
+		font-weight: bold !important;
+	}
+	.name{
+		font-weight: lighter !important;
+	}
+	h2{
+		font-size: 36px !important;
+		font-weight: lighter !important;
+	}
+	h3{
+		font-size: 29px !important;
+		font-weight: bold !important;
+	}
+	h4{
+		font-size: 22px !important;
+		font-weight: normal !important;
+	}
+	h5{
+		font-size: 18px !important;
+		font-weight: lighter !important;
+	}
+	.thin{
+		font-weight: lighter !important;
+	}
+	.italic{
+		font-style: italic !important;
+	}
+	.icon{
+		color: white;
+		margin-left: 10px;
+		border-radius: 7px;
+	}
+	.icon-green{
+		background-color: #2BC100;
+	}
+	.icon-purple{
+		background-color: #A644D2;
+	}
+	.icon-pink{
+		background-color: #FF74C0;
+	}
+	.icon-lightblue{
+		background-color: #37D5EC;
+	}
+	.icon-blue{
+		background-color: #157DFA;
+	}
+	.icon-yellow{
+		background-color: #FFD000;
+	}
+	.icon-red{
+		background-color: #FF0036;
+	}
+	.icon-grey{
+		background-color: #808285;
+	}
+	.bg-danger{
+		background-color: #FF3B39 !important;
+	}
+	.card{
+		border-radius: 7px;
+		cursor: pointer;
+	}
+	.card-header i{
+		font-size: 50px;
+	}
+	.card-body{
+		height: 200px;
+		overflow: auto;
+	}
+	.ppt{
+		color: #FF6600;
+	}
+	.col-md-4{
+		padding: 0px 10px 0px 10px;
+		margin-bottom: 20px;
+	}
+
+	.white-bg{
+		background-color: #FFFFFF !important;
+	}
+	.blue-bg{
+		background-color: #157DFA !important;
+	}
+	.rounded{
+		padding: 15px 0px 15px 0px !important;
+		border-radius: 7px !important;
+	}
+
+	.inner-container{
+		padding: 0px !important;
+	}
+	.inner-container div:not(:last-child):not(.progress){
+		padding-right: 10px !important;
+	}
+
+	.container{
+		padding: 10px !important;
+		margin-top: 10px !important;
+		margin-bottom: 10px !important;
+		border-radius: 7px;
+	}
+	.container:last-of-type{
+		margin-top: 10px;
+		margin-bottom: 20px;
+	}
+	.no-bg-container{
+		background-color: transparent !important;
+	}
+	.action-item-label{
+		font-size: 20px !important;
+		font-weight: bold !important;
+	}
+	.action-items, .action-items div{
+		font-size: 18px !important;
+		padding: 5px !important;
+	}
+	.action-items .row{
+		border: 1px solid #d8dde6;
+	}
+	.action-items .row:first-child{
+		border-radius: .25rem .25rem 0px 0px;
+		border-bottom: 0px;
+	}
+	.action-items .row:not(:first-child):not(:last-child){
+		border-top: 1px solid #d8dde6;
+		border-bottom: 0px;
+	}
+	.action-items .row:last-child{
+		border-radius: 0px 0px .25rem .25rem;
+	}
+	.action-items .row:only-child{
+		border: 1px solid #d8dde6;
+		border-radius: .25rem;
+	}
+	.no-padding{
+		padding: 0px !important;
+	}
+	.no-margin{
+		margin: 0px !important;
+	}
+	.incomplete{
+		text-decoration: underline;
+		cursor: pointer;
+		color: #FF3B39 !important;
+	}
+	.complete{
+		text-decoration: underline;
+		cursor: pointer;
+		color: #25D96B !important;
+	}
+	.red{
+		color: #FF3B39 !important;
+	}
+	.grey{
+		color: #808285 !important;
+	}
+	.green{
+		color: #4CD964 !important;
+	}
+	.blue{
+		color: #208FFF !important;
+	}
+	.round-icon-blue{
+		padding: 5px;
+		margin-right: 5px;
+		border-radius: 100%;
+		border: 1px solid #208FFF;
+	}
+	.round-icon-red{
+		padding: 5px;
+		margin-right: 5px;
+		border-radius: 100%;
+		border: 1px solid #FF3B39;
+	}
+	.round-icon-green{
+		padding: 5px;
+		margin-right: 5px;
+		border-radius: 100%;
+		border: 1px solid #4CD964;
+	}
+	.contact-blue{
+		color: #00A6FF !important;
+	}
+	.purple{
+		color: #817FE1 !important;
+	}
+	.no-pad{
+		padding: 0px !important;
+	}
+	@media only screen
+	and (min-device-width : 768px)
+	and (max-device-width : 1024px)
+	and (orientation : landscape) {
+		.container{
+			max-width: 1004px !important;
+			margin: 20px 10px 20px 10px;
+		}
+		.container:nth-of-type(2){
+			margin: 20px 10px 10px 10px;
+		}
+		.container:last-of-type{
+			margin: 10px 10px 20px 10px;
+		}
+	}
+
+	.upcoming-events{
+		display: inline-block !important;
+	}
+	#new-event{
+		width: 200px;
+		padding: 5px !important;
+		display: inline-block;
+		float: right;
+	}
+
+	@media (max-width:499px){
+		.upcoming-events{
+			display: block;
+		}
+		#new-event{
+			margin-top: 10px;
+			margin-left: 10px;
+			float: none;
+		}
+
+		.inner-container div:not(:last-child){
+			padding-right: 0px !important;
+		}
+
+		.container{
+			padding: 2px !important;
+		}
+
+	}
+
+	/* Calendar styling */
+	#ui-datepicker-div{
+		border-radius: 0.25rem;
+	}
+	.ui-datepicker-calendar, .ui-datepicker-header{
+		background-color: white;
+		padding: 5px;
+		border: 1px solid #d8dde6;
+	}
+	.ui-datepicker-header{
+		margin-top: 5px;
+		border-radius: 0.25rem 0.25rem 0 0;
+	}
+
+	.ui-datepicker-calendar{
+		border-radius: 0 0 0.25rem 0.25rem;
+	}
+
+	.ui-datepicker-next{
+		position: relative;
+		left: 90px;
+	}
+	.ui-datepicker-calendar th, .ui-datepicker-calendar td{
+		padding: 2px 5px 2px 5px;
+	}
+	/* End calendar styling */
+
+	.round-border{
+		border: 1px solid #ddd;
+		padding: 5px 7px 5px 7px;
+		border-radius: 100%;
+	}
+	.border-blue{
+		border-color: #208FFF !important;
+	}
+	ul{
+		padding-left: 0px;
+	}
+	ul li{
+		font-size: 15px;
+		line-height: 23px;
+		padding: 10px 0px 10px 0px;
+		margin-left: 10px !important;
+		margin-right: 10px !important;
+		border-bottom: 1px solid #ddd;
+		cursor: pointer;
+		list-style: none;
+	}
+	.cursor-default{
+		cursor: default;
+	}
+	ul li:hover{
+		border-bottom: 1px solid #afafaf;
+	}
+
+	.nav-list li{
+		font-size: 20px;
+		display: inline-block;
+		border: none;
+		font-style: italic;
+		color: #FFFFFF;
+		padding: 10px 15px 10px 15px;
+		margin: 0px !important;
+		border-radius: 25px;
+	}
+	.nav-list li:hover{
+		border: none;
+	}
+	.nav-list li:hover:not(.selected){
+		background-color: #afafaf;
+	}
+	.nav-list .selected{
+		background-color: #FFFFFF;
+		color: #157DFA;
+	}
+	.nav-container{
+		width: 100%;
+		padding: 3px !important;
+		margin-bottom: 15px !important;
+		z-index: 11;
+		position: fixed;
+		top: 0px;
+		padding-left: 70px !important;
+	}
+	.progress{
+		margin-top: 10px;
+		margin-left: 10px;
+		padding-right: 0px !important;
+		height: 50px;
+		border-radius: 7px;
+	}
+	#directorySearch{
+		margin-top: 10px;
+		padding:10px;
+		border:1px solid #ddd; width:100%;
+		border-radius: 25px;
+	}
+	#corporateMessages, #notifications{
+		cursor: default;
+		max-height: 300px;
+		overflow: auto;
+	}
+	#corporateMessages li, #notifications li{
+		cursor: default;
+	}
+	</style>
+</head>
+
+<body>
+
+	<div class="slds-scope">
+
+		<div class="nav-container blue-bg">
+			<div class="row">
+				<ul class="nav-list">
+					<li class="selected">
+						<i class="fas fa-home"></i> HOME
+					</li>
+					<!-- <li>
+					<i class="fas fa-phone"></i> EVENTS
+				</li> -->
+				<li onclick="window.location.href='/apex/saleshd_accounts'">
+					<i class="fas fa-hospital"></i> MY ACCOUNTS
+				</li>
+				<li onclick="window.location.href='/apex/saleshd_contacts'">
+					<i class="fas fa-user-md"></i> MY CONTACTS
+				</li>
+				<li onclick="window.location.href='/apex/saleshd_encounters'">
+					<i class="fas fa-phone"></i> ENCOUNTERS
+				</li>
+			</ul>
+		</div>
+	</div>
+
+	<div class="container white-bg shadow" style="margin-top:60px!important;">
+		<div class="row inner-container">
+			<div class="col-md-12 no-pad">
+				<h3 class="thin italic"><i class="fas fa-bell icon icon-blue" style="margin-left:0px;padding:10px 12px 10px 12px;" aria-hidden="true"></i> Notifications</h3>
+				<ul id="notifications">
+					<div class="grey" style="padding:10px;">
+						<i class="fa fa-times-circle" aria-hidden="true"></i> You have no notifications at this time.
+					</div>
+				</ul>
+			</div>
+		</div>
+	</div>
+
+	<div class="container white-bg shadow">
+		<div class="row inner-container">
+			<div class="col-md-12 no-pad">
+				<h3 class="thin italic"><i class="fas fa-bullhorn icon icon-red" style="margin-left:0px;padding:10px 8px 10px 8px;" aria-hidden="true"></i> Messages</h3>
+				<ul id="corporateMessages">
+					<div class="grey" style="padding:10px;">
+						<i class="fa fa-times-circle" aria-hidden="true"></i> You have no messages at this time.
+					</div>
+				</ul>
+			</div>
+		</div>
+	</div>
+
+	<div class="container no-pad"  style="margin-top:0px;margin-bottom:0px;">
+		<div class="row inner-container">
+			<div class="col-md-6 no-pad">
+				<div class="shadow white-bg rounded" style="margin-bottom:10px; {!IF (CONTAINS($Profile.Name, 'Manager'), "display:none;", "")}">
+					<h3 class="thin italic"><i class="fas fa-chart-line icon icon-purple" style="padding:10px;" aria-hidden="true"></i> My Performance</h3>
+					<div class="row" style="text-align:center; margin-top:5px;">
+						<div class="col-md-6">
+							<div>
+								<b>ACTUAL ADMITS</b>
+							</div>
+							<div>
+								{!actualAdmits}
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div>
+								<b>ADMITS TO TARGET</b>
+							</div>
+							<div>
+								{!admitsTotarget}
+							</div>
+						</div>
+					</div>
+					<div class="progress">
+						<div class="progress-bar" id="performanceGraph" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+					</div>
+					<div class="row" style="text-align:center; margin-top:5px;">
+						<p style="font-size:15px; text-align:center; width:100%; margin-top:5px;" id="performanceText">
+
+						</p>
+					</div>
+				</div>
+				<div class="shadow white-bg rounded">
+					<h3 class="thin italic"><i class="fas fa-crown icon icon-yellow" style="padding:10px 7px 10px 7px;" aria-hidden="true"></i> CL Leaderboard</h3>
+					<ul id="leaderboard" style="max-height:500px;overflow:auto;">
+						<div style="position:relative; height:50px;">
+							<div role="status" class="slds-spinner slds-spinner_medium slds-spinner_brand">
+								<span class="slds-assistive-text">Loading</span>
+								<div class="slds-spinner__dot-a"></div>
+								<div class="slds-spinner__dot-b"></div>
+							</div>
+						</div>
+					</ul>
+					<p style="padding-top:5px; padding-left:10px; font-size:12px;">
+						*Previous month percent of revenue target.
+					</p>
+				</div>
+
+				<div style="padding:10px 0px 10px 0px!important;">
+					<button class="btn btn-primary btn-block rounded" onclick="window.location='{!IF (NOT(ISBLANK($User.State)), "/apex/SalesHD_Medpar?state="+$User.State, "/apex/SalesHD_Medpar")}'"><i class="fas fa-file-medical-alt"></i> MedPar</button>
+				</div>
+
+				<apex:outputPanel rendered="{!IF(CONTAINS($Profile.Name, 'Manager'), true, false)}">
+				<div style="padding:0px 0px 10px 0px!important;">
+					<button class="btn btn-primary btn-block rounded" onclick="window.open('/apex/Sales_MissedOpportunityHD', '_blank')"><i class="fas fa-cart-arrow-down"></i> Missed Opportunites</button>
+				</div>
+				</apex:outputPanel>
+
+				<div style="padding:0px 0px 10px 0px!important;">
+					<button class="btn btn-primary btn-block rounded" onclick="window.open('/apex/SalesHD_LMS', '_blank')"><i class="fas fa-graduation-cap"></i> LMS</button>
+				</div>
+
+				<div style="padding:0px 0px 10px 0px!important;">
+						<button class="btn btn-primary btn-block rounded" onclick="window.location='/apex/SalesHD_Census';"><i class="fa fa-users"></i> Unit Census</button>
+					</div>
+
+			</div>
+			<div class="col-md-6 no-pad">
+
+				<div class="shadow white-bg rounded" style="margin-bottom:10px;">
+					<h3 class="thin italic"><i class="fas fa-address-book icon icon-pink" style="padding:10px 12px 10px 12px;" aria-hidden="true"></i> Directory</h3>
+					<div style="margin-left:10px;">
+						<input placeholder="Directory Search" class="form-control" id="directorySearch"/>
+					</div>
+					<ul id="directory" style="max-height:500px;overflow:auto;">
+						<div style="position:relative; height:50px;">
+							<div role="status" class="slds-spinner slds-spinner_medium slds-spinner_brand">
+								<span class="slds-assistive-text">Loading</span>
+								<div class="slds-spinner__dot-a"></div>
+								<div class="slds-spinner__dot-b"></div>
+							</div>
+						</div>
+					</ul>
+				</div>
+
+				<div class="shadow white-bg rounded" style="margin-bottom:10px;">
+					<h3 class="thin italic"><i class="fas fa-chart-pie icon icon-lightblue" style="padding:10px 9px 10px 9px;" aria-hidden="true"></i> Reports</h3>
+					<div style="margin-left:10px;" id="reports">
+						<!-- <div>
+							<a onclick="window.location='/00O13000008mTqN?isdtp=vw';">My Sales Performance</a>
+						</div>
+						<div>
+							<a onclick="window.location='/00Oc0000000l7HT?isdtp=vw';">Encounters</a>
+						</div>
+						<div>
+							<a onclick="window.location='/00Oc0000000l7Hn?isdtp=vw';">Encounters by Unit</a>
+						</div> -->
+
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+</div>
+<!-- Lightning Wrapper -->
+
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"
+integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script src="//code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>
+<script>
+Visualforce.remoting.timeout = 120000;
+$(document).ready(function(){
+
+	myPerformance();
+
+	sessionStorage.removeItem("hdBreadcrumb");
+
+	SalesHD_Homepage.getReports(function(callback, event){
+		var reports = JSON.parse(callback);
+		for(report of reports){
+			$("#reports").append('<div><a onclick="window.location=\'/'+report.Id+'?isdtp=vw\';">'+report.Name+'</a></div>');
+		}
+		$("#reports").append('<div><a onclick="window.location=\'/00O/o?isdtp=vw\';"><b>All Reports</b></a></div>');
+	}, {escape:false});
+
+	SalesHD_Homepage.getDischargeDisposition(function(dischargeId, event){
+		if(dischargeId){
+			$('#reports').append('<div><a onclick="openResource(\''+dischargeId+'\')">Discharge Disposition</a></div>');
+		}
+	}, {escape:false});
+
+	SalesHD_Homepage.getDirectory(function(callback, event){
+		$("#directory").html('');
+		var directory = JSON.parse(callback);
+		for(directoryItem of directory){
+			var icon = '';
+			var link = '';
+			if(directoryItem.type=='Account'){
+				icon = '<i class="fas fa-hospital purple"></i>';
+				link = 'onclick="navToAccount(\''+directoryItem.directoryId+'\')"';
+			} else if(directoryItem.type=='Contact'){
+				icon = '<i class="fas fa-user contact-blue"></i>';
+				if(directoryItem.isPhysician) icon = '<i class="fas fa-user-md contact-blue"></i>';
+				link = 'onclick="navToContact(\''+directoryItem.directoryId+'\')"';
+			}
+			$("#directory").append('<li '+link+'><div class="row"><div class="col-md-1" style="font-size:40px;text-align:center;width:100%;">'+
+			icon+'</div><div class="col-md-11 directory-name"><div><b class="name-search">'+directoryItem.name+'</b> '+ directoryItem.title +' </div><div style="font-size:14px;font-weight:bold;">'+directoryItem.lastCalled+'</div></div></div></li>');
+		}
+		var mylist = $('#directory');
+		var listitems = mylist.children('li').get();
+		listitems.sort(function(a, b) {
+			return $(a).find(".directory-name").find(".name-search").text().toUpperCase().localeCompare($(b).find(".directory-name").find(".name-search").text().toUpperCase());
+		})
+		$.each(listitems, function(idx, itm) { mylist.append(itm); });
+
+	}, {escape:false});
+
+	SalesHD_Homepage.getLeaderboard(function(callback, event){
+		$("#leaderboard").html('');
+		var leaderboard = JSON.parse(callback);
+		for(user of leaderboard){
+			$("#leaderboard").append('<li><div class="row"><div class="col-md-1" style="font-size:35px;padding-top:12px;">'+user.ranking+'</div>'+
+			'<div class="col-md-1" style="padding:0px!important;"><img style="border-radius:25px;border:2px solid #157DFA;" src="'+user.photoUrl+'"/></div>'+
+			'<div class="col-md-7"><div><b>'+user.name+'</b></div><div style="font-weight:lighter;">'+user.market+'</div></div>'+
+			'<div class="col-md-3" style="text-align:right;padding-top:12px;">'+user.revenue.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")+'</div></div></li>');
+		}
+	}, {escape:false});
+
+	$('#directorySearch').keyup(function(){
+		$("#directory li").each(function() {
+			if($(this).find(".directory-name div:first-child").text().toUpperCase().replace(/\s/g, '').indexOf($("#directorySearch").val().toUpperCase().replace(/\s/g, '')) > -1) {
+				$(this).show();
+			} else {
+				$(this).hide();
+			}
+		});
+	});
+
+	SalesHD_Homepage.getMessages(function(callback, event){
+		var messages = JSON.parse(callback);
+		if(messages.length>0) $('#corporateMessages').html('');
+		for(message of messages){
+			$('#corporateMessages').append('<li><h5 style="font-size:15px;"><b>'+message.author+'</b> '+message.authorTitle+'</h5>'+message.message+'</li>')
+		}
+	}, {escape:false});
+
+	SalesHD_Homepage.getNotifications(function(callback, event){
+		var notifications = JSON.parse(callback);
+		if(notifications.length>0) $('#notifications').html('');
+		for(notification of notifications){
+			$('#notifications').append('<li data-type='+notification.n_type+' id="'+notification.n_id+'"><h5 style="font-size:15px;">'+notification.icon+notification.body+'</li>');
+		}
+
+		$("#notifications li").click(function(){
+			if($(this).data('type')=='event') window.location.href='/apex/SalesHD_Encounter?id='+$(this).attr('id');
+			else if($(this).data('type')=='physician' && $(this).attr('id')) window.location.href='/apex/SalesHD_Contact?id='+$(this).attr('id');
+		});
+	}, {escape:false});
+
+
+
+});
+
+function openResource(id){
+	if( (typeof sforce != 'undefined') && sforce && (!!sforce.one) ) {
+		sforce.one.navigateToSObject(id);
+	} else {
+		window.open('/sfc/servlet.shepherd/version/download/'+id+'?asPdf=false');
+	}
+}
+
+function navToAccount(accountId){
+	breadcrumbStateSaver('/apex/SalesHD_Homepage', 'Home');
+	window.location='/apex/SalesHD_Account?id='+accountId;
+}
+
+function navToContact(contactId){
+	breadcrumbStateSaver('/apex/SalesHD_Homepage', 'Home');
+	window.location='/apex/SalesHD_Contact?id='+contactId;
+}
+
+function breadcrumbStateSaver(link, text) {
+	if (typeof (Storage) != "undefined") {
+		if (sessionStorage.hdBreadcrumb) {
+			var breadcrumb = sessionStorage.hdBreadcrumb;
+			sessionStorage.hdBreadcrumb = breadcrumb + '<span>></span> <a class="blue-link" data-link="' + link + '">' + text + '</a>';
+		} else {
+			sessionStorage.hdBreadcrumb = '<a class="blue-link" data-link="' + link + '">' + text + '</a>';
+		}
+	}
+}
+
+function myPerformance(){
+	var actualAdmits = '{!actualAdmits}';
+	var admitTarget = '{!admitTarget}';
+	if(actualAdmits!='' && admitTarget!=''){
+		actualAdmits = Number(actualAdmits);
+		admitTarget = Number(admitTarget);
+
+		var percent = (actualAdmits / admitTarget) * 100;
+		$('#performanceGraph').css('width', percent+'%').attr("aria-valuenow", percent);
+		if(percent<=50){
+			$('#performanceGraph').addClass('bg-danger');
+		} else if(percent<100){
+			$('#performanceGraph').addClass('bg-warning');
+		} else if(percent<125){
+			$('#performanceGraph').addClass('bg-success');
+		} else{
+			$('#performanceGraph').addClass('bg-primary');
+		}
+
+		if(actualAdmits<admitTarget){
+			$('#performanceText').text('You are '+percent+'% of the way there to your target of '+admitTarget+' admissions.');
+		} else if(actualAdmits==admitTarget){
+			$('#performanceText').text('You have hit your target of '+admitTarget+' admissions.');
+		} else{
+			var difference = actualAdmits - admitTarget;
+			$('#performanceText').text('You have exceeded your target of '+admitTarget+' by '+difference+' admissions.');
+		}
+	}else{
+		$('#performanceText').text('Contact sales support to get your performance setup.');
+	}
+}
+
+
+
+
+</script>
+</body>
+</html>
+</apex:page>

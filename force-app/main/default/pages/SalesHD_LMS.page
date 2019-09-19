@@ -1,0 +1,756 @@
+<apex:page showHeader="false" controller="SalesHD_LMS" standardStylesheets="false" sidebar="false" applyHtmlTag="false" applyBodyTag="false" docType="html-5.0">
+
+<html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<head>
+  <title>LMS Home</title>
+  <apex:stylesheet value="{!URLFOR($Resource.LightningDesign, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"
+  integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous"/>
+  <link rel="stylesheet" href="https://cdn.linearicons.com/free/1.0.0/icon-font.min.css"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1,minimum-scale=1, maximum-scale=1, user-scalable=no"/>
+</head>
+<style>
+html, body, .container-fluid {
+  height: 100%;
+  overflow: auto;
+  -webkit-overflow-scrolling:touch;
+}
+.sidebar{
+  overflow: auto;
+  -webkit-overflow-scrolling:touch;
+}
+.sidebar ul{
+  padding: 0px;
+}
+.sidebar ul li{
+  padding: 0px;
+  list-style: none;
+  margin-top: 15px;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  margin-bottom: 15px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+.btn{
+  font-size: 30px !important;
+  color: white !important;
+}
+li{
+  list-style: none;
+}
+.sidebar ul li span{
+  display: block;
+  text-align: center;
+  font-size: 20px;
+}
+.disabled{
+  cursor: default !important;
+}
+.sidebar ul li .fa{
+  position: relative;
+  left: 50%;
+  margin-left:-27.5px;
+  font-size: 55px;
+}
+.sidebar ul li .lnr{
+  font-size: 55px;
+}
+.assignment{
+  border-top: 1px solid rgba(0,0,0,.125);
+  font-size: 20px;
+  padding: 0px;
+  padding-top: 5px;
+  margin: 0px;
+  margin-top: 0px !important;
+  cursor: pointer;
+}
+.assignment .row{
+  margin: 0px;
+}
+.due-date{
+  font-size: 15px;
+}
+.assignment .lnr{
+  color: #8d9096;
+  font-size: 50px;
+}
+.complete{
+  color: #5ada67 !important;
+}
+.overdue{
+  color: #f14f4c !important;
+}
+h1{
+  color: #007EF5;
+  background-color: #fff;
+  padding: 3px !important;
+  margin-top: 10px !important;
+  border-radius: 19px;
+  font-size: 25px !important;
+  font-weight: bold !important;
+}
+.nav-selected{
+  background-color: #fff;
+  color: #007EF5;
+}
+.sidebar {
+  color: #fff;
+  background-color: #007EF5;
+}
+.calendar-content, .resources-content, .homework-content{
+  display: none;
+}
+.card-header{
+  background-color: #007EF5;
+  color: #fff;
+  font-size: 40px;
+  border-radius: 20px 20px 0px 0px !important;
+}
+.filters{
+  padding: 2px 10px 2px 10px;
+  border-radius: 25px;
+  font-size: 12px !important;
+  color: #007EF5 !important;
+  border: 1px solid #007EF5;
+  background-color: #fff;
+}
+.filter-selected{
+  color: #fff !important;
+  background-color: #007EF5;
+}
+.dropdown-selected{
+  color: #fff !important;
+  background-color: #007EF5 !important;
+  border-radius: 25px;
+}
+.dropdown-menu{
+  padding: 5px !important;
+}
+#date{
+  background-color: #f4f6f9;
+}
+.card-text{
+  font-size: 20px;
+  text-align: center;
+  font-weight: thin;
+}
+.modal{
+  font-size: 18px;
+}
+.modal-title{
+  font-size: 25px !important;
+}
+.card{
+  cursor: pointer;
+  border-radius: 20px;
+}
+.container{
+  padding: 0px;
+}
+.courses-content .col-md-4{
+  margin-top: 10px;
+}
+
+#date{
+  text-align: center;
+  font-size: 20px;
+}
+#calendar thead tr th{
+  width: 14%;
+  height: 30px;
+  text-align: center;
+  border: 1px solid #d8dde6;
+  background-color: white;
+}
+.today{
+  border: 2px solid #007bff !important;
+}
+.day{
+  text-align: left;
+  padding-left: 5px;
+}
+.resource-icon{
+  font-size: 45px;
+}
+.event{
+  cursor: pointer;
+  border: 1px solid #d8dde6;
+  background-color: #efefef;
+  margin: 0px 2px 1px 2px;
+  border-radius: 3px;
+  padding-left: 1px;
+}
+.training-date{
+  background-color: #007bff;
+  border: 1px solid #0063cc;
+  color: white;
+}
+#search{
+  width: 100%;
+  font-size: 20px;
+  padding: 5px;
+  border-radius: 20px;
+  padding-left: 35px;
+}
+#search::placeholder{
+  font-size: 20px;
+}
+#calendar tbody tr td{
+  vertical-align: top;
+  width: 14%;
+  height: 100px;
+  text-align: center;
+  background-color: white;
+  border: 1px solid #d8dde6;
+}
+.complete{
+  color: #04844B;
+}
+.hideDay{
+  background-color: transparent !important;
+}
+.slds-card{
+  border-radius: 20px 20px 0px 0px !important;
+  margin: 0px !important;
+}
+.slds-page-header{
+  width: 100%;
+  position: fixed;
+}
+
+#search-row{
+  position: fixed;
+  z-index: 100;
+  width: 720px;
+  margin-top: 20px;
+  width: 825px
+}
+@media (min-width: 1200px) {
+  #search-row{
+    width: 975px;
+  }
+}
+@media (min-width: 975px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 1000;
+    display: block;
+    background-color: #007EF5;
+  }
+}
+#smartDropdown{
+  display: inline-block;
+}
+</style>
+<body>
+
+  <!-- REQUIRED SLDS WRAPPER -->
+  <div class="LightningDesign">
+    <div class="slds-spinner_container" id="spinner" style="position:fixed; width:100vw; height:100vh;">
+      <div class="slds-spinner slds-spinner--large slds-spinner--brand">
+        <div class="slds-spinner__dot-a"></div>
+        <div class="slds-spinner__dot-b"></div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="row">
+
+        <div class="col-md-2 sidebar">
+          <h1 style="display:none;"><i class="fa fa-graduation-cap" aria-hidden="true"></i> CL Training</h1>
+          <ul>
+            <li class="nav-selected courses">
+              <span class="lnr lnr-home"></span>
+              <span>Courses</span>
+            </li>
+            <li class="homework">
+              <span class="lnr lnr-pencil"></span>
+              <span>Homework</span>
+            </li>
+            <li class="final">
+              <span class="lnr lnr-license"></span>
+              <span>Final Exam</span>
+            </li>
+            <li class="resources">
+              <span class="lnr lnr-enter"></span>
+              <span>Resource Library</span>
+            </li>
+            <li class="calendar">
+              <span class="lnr lnr-calendar-full"></span>
+              <span>Training Calendar</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="col-md-10 offset-md-2 content courses-content">
+          <div class="row" style="height:160px;">
+            <div class="col-md-4 quicklooks" style="margin-top:20px;">
+              <div class="card">
+                <div class="card-header">
+                  <span id="todo"></span><span class="lnr lnr-book float-right" style="margin-top:10px;"></span>
+                </div>
+                <div class="card-body">
+                  <p class="card-text">TO-DO</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4" style="margin-top:20px;">
+              <div class="card">
+                <div class="card-header" style="background-color:#f14f4c !important;">
+                  <span id="overdue"></span><span class="lnr lnr-clock float-right" style="margin-top:10px;"></span>
+                </div>
+                <div class="card-body">
+                  <p class="card-text">OVERDUE</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4" style="margin-top:20px;">
+              <div class="card">
+                <div class="card-header" style="background-color:#5ada67 !important;">
+                  <span id="complete"></span><span class="lnr lnr-checkmark-circle float-right" style="margin-top:10px;"></span>
+                </div>
+                <div class="card-body">
+                  <p class="card-text">COMPLETION</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="container" style="margin-top:20px;margin-bottom:10px;">
+            <div class="row">
+              <div class="col-md-12" id="assignments">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-10 offset-md-2 content calendar-content" style="margin-top: 20px; margin-bottom: 20px;">
+          <div class="row">
+            <div class="col">
+              <article class="slds-card">
+                <div id="calendarHeader">
+                  <span style="cursor:pointer;padding:10px;float:left;" class="lnr lnr-chevron-left" id="previousDate"></span>
+                  <h1 style="padding:5px;" id="date"></h1>
+                  <span id="nextDate" style="cursor:pointer;padding:10px;float:right;margin-top:-35px;" class="lnr lnr-chevron-right"></span>
+                </div>
+                <table id="calendar">
+                  <thead>
+                    <tr>
+                      <th>
+                        Mon
+                      </th>
+                      <th>
+                        Tues
+                      </th>
+                      <th>
+                        Wed
+                      </th>
+                      <th>
+                        Thur
+                      </th>
+                      <th>
+                        Fri
+                      </th>
+                      <th>
+                        Sat
+                      </th>
+                      <th>
+                        Sun
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  </tbody>
+                </table>
+              </article>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-10 offset-md-2 content resources-content">
+          <div class="row" style="position:fixed;z-index:100;width:100%;background-color:white;height:40px;">
+          </div>
+          <div id="search-row" class="row">
+            <div class="col-md-12">
+              <div class="input-group input-group-lg">
+                <span style="position:relative;top:11px;left:10px;z-index:100;height:0px;font-size:20px;" class="lnr lnr-magnifier"></span>
+                <input id="search" type="text" class="form-control" placeholder="search" />
+              </div>
+            </div>
+          </div>
+          <div id="filter-row" class="row" style="margin-top:70px;">
+            <div class="col-md-12">
+              <button type="button" class="btn filters filter-selected">All</button>
+              <button type="button" class="btn filters">Clinical Videos</button>
+              <button type="button" class="btn filters">Sales Videos</button>
+              <button type="button" class="btn filters">Marketing Collaterals</button>
+              <!-- <button type="button" class="btn filters">Post SMART Powerpoint</button> -->
+              <div class="dropdown" id="smartDropdown">
+                <button class="btn filters dropdown-toggle" type="button" id="smartDropdownButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Post SMART Powerpoint
+                </button>
+                <div class="dropdown-menu" aria-labelledby="smartDropdown" id="smartDropdownItems">
+                  <a class="dropdown-item" href="#">Selling Skills</a>
+                  <a class="dropdown-item" href="#">Territory Management</a>
+                  <a class="dropdown-item" href="#">Value Proposition / Messaging</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row" style="margin-top:10px;margin-bottom:10px;">
+            <div class="col-md-12">
+              <ul id="resource-list">
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-10 offset-md-2 content homework-content">
+          <div class="row" style="margin-top:80px;margin-bottom:10px;">
+            <div class="col-md-12">
+              <ul id="homework-list">
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal fade" id="notReady">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h1 class="modal-title">Final Exam Unavailable</h1>
+              </div>
+              <div class="modal-body">
+                You are unable to take the final exam at this time. Please finish the remaining assignments before attempting the final.
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+  <!-- / REQUIRED SLDS WRAPPER -->
+
+</body>
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"
+integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script src="//code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
+<script>
+var canTakeFinal = false;
+var finalId;
+var selectedFilter;
+$(document).ready(function(){
+
+  $(".filters:not(.dropdown-toggle)").click(function(){
+    $(".filters").removeClass('filter-selected');
+    $(this).addClass('filter-selected');
+    selectedFilter = $(this).text();
+    $("#smartDropdownButton").text('Post SMART Powerpoint').removeClass('filter-selected');
+    $("#smartDropdownItems a").removeClass('dropdown-selected');
+    $("#resource-list li").each(function() {
+      if(($(this).data("filter").toUpperCase().replace(/\s/g, '').indexOf(selectedFilter.toUpperCase().replace(/\s/g, '')) > -1) || selectedFilter=='All') {
+        $(this).show();
+      } else {
+        $(this).hide();
+      }
+    });
+  });
+
+  $("#smartDropdownItems a").click(function(){
+    $(".filters").removeClass('filter-selected');
+    $("#smartDropdownItems a").removeClass('dropdown-selected');
+    $(this).addClass('dropdown-selected');
+    selectedFilter = 'Post SMART Powerpoint - '+$(this).text();
+    $("#smartDropdownButton").text(selectedFilter).addClass('filter-selected');
+    $("#resource-list li").each(function() {
+      if(($(this).data("filter").toUpperCase().replace(/\s/g, '').indexOf(selectedFilter.toUpperCase().replace(/\s/g, '')) > -1) || selectedFilter=='All') {
+        $(this).show();
+      } else {
+        $(this).hide();
+      }
+    });
+  });
+
+
+
+  loadDashboard();
+  SalesHD_LMS.getResources(function(callback, event){
+    var resources = JSON.parse(callback);
+    for(resource of resources){
+      var filter = 'data-filter=""';
+      if(resource.category!=null) filter = 'data-filter="'+resource.category+'"'
+      $("#resource-list").append('<li data-id="'+resource.resourceId+'" data-name="'+resource.name+'" '+filter+'>'+
+      '<div class="row assignment">'+
+      '<div class="col-md-1">'+
+      resource.icon+
+      '</div>'+
+      '<div class="col-md-11">'+
+      '<div class="row">'+
+      '<div class="col-md-12">'+resource.name+'</div>'+
+      '<div class="col-md-12 due-date">'+resource.type+'</div></div></div></div></li>');
+    }
+    $("#resource-list li").click(function(){
+      openResource($(this).data("id"));
+    });
+  }, {escape:false});
+
+  SalesHD_LMS.getHomework(function(callback, event){
+    var resources = JSON.parse(callback);
+    for(resource of resources){
+      $("#homework-list").append('<li data-id="'+resource.resourceId+'" data-name="'+resource.name+'">'+
+      '<div class="row assignment">'+
+      '<div class="col-md-1">'+
+      resource.icon+
+      '</div>'+
+      '<div class="col-md-11">'+
+      '<div class="row">'+
+      '<div class="col-md-12">'+resource.name+'</div>'+
+      '<div class="col-md-12 due-date">'+resource.type+'</div></div></div></div></li>');
+    }
+    $("#homework-list li").click(function(){
+      openResource($(this).data("id"));
+    });
+  }, {escape:false});
+
+
+  $(".sidebar ul li").click(function(){
+    if($(this).hasClass('final')){
+      if(canTakeFinal){
+        // navTo(\''+getUrl(assignment)+'\')
+        // '/apex/SalesHD_LmsQuiz?assignmentId='+assignment.assignmentId;
+        if(finalId) navTo('/apex/SalesHD_LmsQuiz?assignmentId='+finalId);
+      } else{
+        $("#notReady").modal("show");
+      }
+    } else {
+      $(".sidebar ul li").removeClass("nav-selected");
+      $(this).addClass("nav-selected");
+      if($(this).hasClass("dashboard")) navDashboard();
+      else if($(this).hasClass("courses")) navCourses();
+      else if($(this).hasClass("calendar")) navCalendar();
+      else if($(this).hasClass("resources")) navResources();
+      else if($(this).hasClass("homework")) navHomework();
+      else navDashboard();
+    }
+  });
+
+  $("#search").keyup(function(){
+    $("#resource-list li").each(function() {
+      if($(this).data("name").toUpperCase().replace(/\s/g, '').indexOf($("#search").val().toUpperCase().replace(/\s/g, '')) > -1 || !$("#search").val()) {
+        if(selectedFilter){
+          if($(this).data("filter").toUpperCase().replace(/\s/g, '').indexOf(selectedFilter.toUpperCase().replace(/\s/g, '')) > -1  || selectedFilter=='All'){
+            $(this).show();
+          }
+        } else {
+          $(this).show();
+        }
+      } else {
+        $(this).hide();
+      }
+    });
+  });
+
+  $("#previousDate").click(function(){
+    monthOffset--;
+    getCalendar();
+  });
+
+  $("#nextDate").click(function(){
+    monthOffset++;
+    getCalendar();
+  });
+});
+
+function loadDashboard(){
+  SalesHD_LMS.loadDashboard(function(callback, event){
+    var data = JSON.parse(callback);
+    $("#todo").text(data.todo);
+    $("#overdue").text(data.overdue);
+    $("#complete").text(data.completionPercent + '%');
+    $("#assignments").html('');
+    canTakeFinal = data.canTakeFinal;
+    finalId = data.finalId;
+    for(var course of data.courses){
+      $("#assignments").append('<h1>'+course.name+'</h1>');
+      $("#assignments").append('<ul>');
+      for(var assignment of course.assignments){
+        var html = '';
+        if(assignment.type != 'Document') html+= '<li onclick="navTo(\''+getUrl(assignment)+'\')">';
+        else html += '<li onclick="openAssignedFile(\''+assignment.fileId+'\', \''+assignment.assignmentId+'\')">';
+        html += '<div class="row assignment">'+
+        '<div class="col-md-1">'+
+        '<span class="lnr lnr-checkmark-circle '+checkColor(assignment.overdue, assignment.complete)+'"></span>'+
+        '</div>'+
+        '<div class="col-md-11">'+
+        '<div class="row">'+
+        '<div class="col-md-12"><b>'+assignment.name+'</b> '+assignment.type+'</div>'+
+        '<div class="col-md-12 due-date">'+assignment.dueDate+'</div></div></div></div></li>'
+        $("#assignments").append(html);
+      }
+      $("#assignments").append('</ul>');
+    }
+    $("#spinner").hide();
+  }, {escape:false});
+  getCalendar();
+}
+
+function randomCheckColor(){
+  var i = Math.floor(Math.random() * 3) + 1;
+  if(i==1) return 'complete';
+  else if(i==2) return 'overdue';
+  else return '';
+}
+
+function checkColor(overdue, complete){
+  if(complete) return 'complete';
+  else if(overdue && !complete) return 'overdue';
+  else return '';
+}
+
+// function randomAssignment(){
+//   var i = Math.floor(Math.random() * 3) + 1;
+//   if(i==1) return 'Video';
+//   else if(i==2) return 'Homework';
+//   else return 'Quiz';
+// }
+
+function navDashboard(){
+  $(".content").hide();
+  $(".dashboard-content").show();
+}
+function navCourses(){
+  $(".content").hide();
+  $(".courses-content").show();
+}
+function navCalendar(){
+  $(".content").hide();
+  $(".calendar-content").show();
+}
+function navResources(){
+  $(".content").hide();
+  $(".resources-content").show();
+}
+function navHomework(){
+  $(".content").hide();
+  $(".homework-content").show();
+}
+
+var monthOffset = 0;
+var days;
+
+function getCalendar(){
+  $("#spinner").show();
+  days = 1;
+  var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  var d = new Date();
+  d.setMonth(d.getMonth() + monthOffset);
+  $("#date").text(months[d.getMonth()] + ' '+ d.getFullYear());
+  SalesHD_LMS.getCalendar(monthOffset, function(calendarJson, event){
+    var data = JSON.parse(calendarJson);
+    var dayOfWeekIndex = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    var html = '';
+    html += '<tr>';
+    for(var i=0; i<dayOfWeekIndex.indexOf(data.startDay); i++){
+      html += '<td class="hideDay"></td>';
+    }
+    for(var i=days; i<7-dayOfWeekIndex.indexOf(data.startDay)+1; i++){
+      html += calendarHtml(data);
+    }
+    html += '</tr>';
+    while(days<=data.numberOfDays){
+      html += '<tr>';
+      for(var i=0; i<7; i++){
+        html += calendarHtml(data);
+      }
+      html += '</tr>';
+    }
+    $("#calendar tbody").html(html);
+    $(".event").click(function(){
+      if($(this).data("type")=='Document'){
+        openAssignedFile($(this).data("fileid"), $(this).attr("id"));
+      } else if($(this).data("type")=='Quiz' || $(this).data("type")=='Video'){
+        var temp = {};
+        temp.type=$(this).data("type");
+        temp.assignmentId=$(this).attr("id");
+        navTo(getUrl(temp));
+      } else {
+        if( (typeof sforce != 'undefined') && sforce && (!!sforce.one) ) {
+          // $("#page").hide();
+          sforce.one.navigateToSObject(this.id);
+        } else {
+          window.open('/'+this.id);
+        }
+      }
+    });
+
+    $("#spinner").hide();
+  }, {escape:false});
+}
+
+function calendarHtml(data){
+  var html = '';
+  if(days<=data.numberOfDays){
+    var today='';
+    var d = new Date();
+    if(monthOffset==0 && days==d.getDate()) today=' class="today"';
+    if(data.traingingDates.hasOwnProperty(days)){
+      html += '<td'+today+'><div class="day">'+days+'</div>';
+      for(var td of data.traingingDates[days]){
+        if(td.type=='Training Date') html += '<div class="event training-date" id="'+td.trainingDateId+'"><b>'+td.name+' - '+td.type+'</b></br>'+moment(td.trainingTime).format('LT')+'</div>';
+        else html += '<div data-fileid="'+td.fileId+'" data-type="'+td.type+'" class="event '+td.colorClass+'" id="'+td.trainingDateId+'"><b>'+td.name+' - '+td.type+'</b></br>'+moment(td.trainingTime).format('LT')+'</div>';
+      }
+      html += '</td>';
+    } else{
+      html += '<td'+today+'><div class="day">'+days+'</div></td>';
+    }
+  } else{
+    html += '<td class="hideDay"></td>';
+  }
+  days++;
+  return html;
+}
+
+function navTo(url){
+  window.location.href = url;
+}
+
+function getUrl(assignment){
+  if(assignment.type=='Quiz') return '/apex/SalesHD_LmsQuiz?assignmentId='+assignment.assignmentId;
+  else if(assignment.type=='Video') return '/apex/SalesHD_LmsVideo?assignmentId='+assignment.assignmentId;
+}
+
+function openAssignedFile(id, assignmentId){
+  if( (typeof sforce != 'undefined') && sforce && (!!sforce.one) ) {
+    sforce.one.navigateToSObject(id);
+  } else {
+    window.open('/sfc/servlet.shepherd/version/download/'+id+'?asPdf=false');
+  }
+  SalesHD_LMS.submitFileOpen(assignmentId, function(callback, event){
+    loadDashboard();
+  }, {escape:false});
+
+}
+
+function openResource(id){
+  if( (typeof sforce != 'undefined') && sforce && (!!sforce.one) ) {
+    sforce.one.navigateToSObject(id);
+  } else {
+    window.open('/sfc/servlet.shepherd/version/download/'+id+'?asPdf=false');
+  }
+}
+</script>
+</html>
+</apex:page>

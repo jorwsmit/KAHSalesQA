@@ -1,0 +1,110 @@
+<aura:component controller="AA_CMSData" implements="force:appHostable,force:LightningQuickAction,flexipage:availableForAllPageTypes,force:hasRecordId" access="global" >
+
+    <aura:attribute name="cmsData" type="CMS_Data__c" access="public"/>
+    <aura:attribute name="recordId" type="Id" access="public"/>
+    <aura:attribute name="dateVal"	type="string"/>
+    <aura:attribute name="cmsID" type="Id" access="public"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <lightning:button label="Printer-Friendly Document" 
+        onclick="{!c.displayDocument}"/>
+    <br/>
+    <span style="font-size: 22px">CMS.gov Data: Last Updated <aura:if isTrue="{!v.dateVal != undefined}">1/1/{!v.dateVal}</aura:if></span>
+    <div class="slds-grid slds-wrap" id="reportSec">
+        <div class="slds-grid paddingTop">
+    	<div class="slds-col slds-size--1-of-1 slds-small-size--1-of-1 slds-medium-size--1-of-2">
+                <div class="slds-form-element__label" style="font-size: 16px; font-weight:bold">Facility Details</div><br/>
+            	<div class="slds-form-element discussionDiv">    		
+            		<table class="slds-table slds-table--bordered slds-table--cell-buffer" width="400px">
+                		<tr>
+                            <td><ui:outputText value="County Name: "/><br/>
+                                <ui:outputText class="textClass" aura:ID="countyN" value="{!v.cmsData.CMS_County_Name__c}" /></td>
+                		</tr>
+                        <tr>    
+                            <td><ui:outputText value="Ownership: "/><br/>
+                                <ui:outputText class="textClass" aura:ID="ownership" value="{!v.cmsData.CMS_Ownership__c}" /></td>
+                		</tr>
+                        <tr>    
+                            <td><ui:outputText value="CCRC: "/><br/>
+                                <ui:outputCheckbox value="{!v.cmsData.CMS_ContCare_Fac__c}" /></td>
+                        </tr>
+                        <tr>    
+                            <td><ui:outputText value="Certified Beds: "/><br/>
+                                <ui:outputText class="textClass" aura:ID="bedNum" value="{!v.cmsData.CMS_Cert_Beds__c}" /></td>
+                        </tr>
+                        <tr>    
+                            <td><ui:outputText value="Bed Occupancy: "/><br/>
+                                <ui:outputText class="textClass" aura:ID="occupancy" value="{!v.cmsData.CMS_Bed_Occupancy2__c}" />%</td>
+                		</tr>
+                        <tr>
+                            <td><ui:outputText value="Average Length of Stay: "/><br/>
+                                <ui:outputText class="textClass" aura:ID="avgLofStay" value="{!v.cmsData.CMS_Average_Length_of_Stay__c}" /></td>
+        				</tr>
+                    </table>
+                    <div class="slds-form-element__label" style="font-size: 16px; font-weight:bold">Patient Star Rating </div><br/>
+                	<div class="slds-form-element discussionDiv">
+            		<table class="slds-table slds-table--bordered slds-table--cell-buffer" style="width:300px">
+        				<tr>
+                            <td><ui:outputText value="Overall Rating: "/><br/>
+                                <ui:outputText class="textClass" aura:ID="overallRate" value="{!v.cmsData.CMS_Overall_Rating__c}" /></td>
+                        </tr>
+                        <tr>
+                            <td><ui:outputText value="Health Inspection Rating: "/><br/>
+                                <ui:outputText class="textClass" aura:ID="healthRate" value="{!v.cmsData.CMS_Health_Insp_Rating__c}" /></td>
+        				</tr>
+                        <tr>
+                            <td><ui:outputText value="Quality Rating: "/><br/>
+                                <ui:outputText class="textClass" aura:ID="qmRate" value="{!v.cmsData.CMS_QM_Rating__c}" /></td>
+                        </tr>
+                        <tr>
+                            <td><ui:outputText value="Staffing Rating: "/><br/>
+                                <ui:outputText class="textClass" aura:ID="staffRate" value="{!v.cmsData.CMS_Staffing_Rating__c}" /></td>
+                        </tr>
+        				</table>
+            		</div>
+                	</div>
+        			</div>
+        <div class="slds-col slds-size--2-of-2 slds-small-size--1-of-1 slds-medium-size--2-of-2">
+        	<div class="slds-form-element__label" style="font-size: 16px; font-weight:bold">Therapy Details</div><br/>
+                	<div class="slds-form-element discussionDiv">
+            <table class="slds-table slds-table--bordered slds-table--cell-buffer" style="width:300px">
+                        <tr>
+                            <td><ui:outputText value="RU Days: "/><br/>
+                                <ui:outputText class="textClass" aura:ID="ruDays" value="{!v.cmsData.CMS_RU_Days__c}" /></td>
+                        </tr>
+                        <tr>
+                            <td><ui:outputText value="RU Prcnt: "/><br/>
+                                <ui:outputText class="textClass" aura:ID="ruPrcnt" value="{!v.cmsData.CMS_RU_Prcnt__c}"/></td>
+                        </tr>
+                        <tr>
+                            <td><ui:outputText value="RV Days: "/><br/>
+                                <ui:outputText class="textClass" aura:ID="rvDays" value="{!v.cmsData.CMS_RV_Days__c}" /></td>
+                        </tr>
+                        <tr>
+                            <td><ui:outputText value="RV Prcnt: "/><br/>
+                                <ui:outputText class="textClass" aura:ID="rvPrcnt" value="{!v.cmsData.CMS_RV_Prcnt__c}" /></td>
+                        </tr>
+                        <tr>
+                            <td><ui:outputText value="RH Days: "/><br/>
+                                <ui:outputText class="textClass" aura:ID="rhDays" value="{!v.cmsData.CMS_RH_Days__c}" /></td>
+                        </tr>
+                        <tr>
+                            <td><ui:outputText value="RH Prcnt: "/><br/>
+                                <ui:outputText class="textClass" aura:ID="rhPrcnt" value="{!v.cmsData.CMS_RH_Prcnt__c}" /></td>
+                        </tr>
+                        <tr>
+                            <td><ui:outputText value="RM Days: "/><br/>
+                                <ui:outputText class="textClass" aura:ID="rmDays" value="{!v.cmsData.CMS_RM_Days__c}" /></td>
+                        </tr>
+                        <tr>
+                            <td><ui:outputText value="RM Prcnt: "/><br/>
+                                <ui:outputText class="textClass" aura:ID="rmPrcnt" value="{!v.cmsData.CMS_RM_Prcnt__c}"/></td>
+                        </tr>
+                    </table>
+            </div>
+        </div>		
+    
+    </div>
+    </div>
+</aura:component>

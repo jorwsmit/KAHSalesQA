@@ -1,0 +1,45 @@
+.THIS .inputSelect {
+    
+  padding-top:10px;
+}
+.THIS .dashboardDiv{
+    
+    width:550px;
+}
+.THIS .roleDiv{
+    padding-left:24px;
+    width:120px;
+}
+
+.THIS .hierarchyDiv{
+    
+    width:180px; 
+}
+
+.THIS .reportDiv {
+    
+    width:280px; 
+}
+.THIS .paddingleft{
+    
+   padding-left : 4px;
+}
+
+.THIS .paddingTop{
+    
+   padding-top:22px; 
+}
+
+.THIS {
+background-color: #fff;
+}
+
+.THIS .displayNone {
+            
+    display: none;
+}
+        
+.THIS .displayBlock {
+            
+    display: block;
+}

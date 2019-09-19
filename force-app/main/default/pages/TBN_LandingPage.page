@@ -1,0 +1,148 @@
+<apex:page controller="TBN_LandingPageController" sidebar="false" showHeader="true">
+    
+    <style>
+        
+        .pageIcons {
+            
+            width: 234px;
+            margin: 40px;
+            border: 1px solid #cfd4d9;
+            border-radius: 3px;
+            -moz-border-radius: 3px;
+            -webkit-border-radius: 3px;
+            box-shadow: 0 1px 1px 1px #d7d6d5;
+            -moz-box-shadow: 0 1px 1px 1px #d7d6d5;
+            -webkit-box-shadow: 0 1px 1px 1px #d7d6d5;
+            float: left;
+        }
+        
+        .iconImage {
+            
+            margin-left: 17px;
+            margin-right: 17px;
+            margin-top: 10px;
+            margin-bottom: 5px;
+            display: table;
+            table-layout: fixed;
+            width: 200px;
+            height: 125px;
+        }
+        
+        .iconImageInner {
+            
+            overflow: hidden;
+            display: table-cell;
+            text-align: center;
+            vertical-align: middle;
+            border: 0;
+            width: 200px;
+            height: 125px;
+        }
+        
+        .iconLabel {
+            
+            font-family: Arial,Helvetica,Sans-serif;
+            font-size: 16px;
+            color: #696e71;
+            background-color: #e8eaeb;
+            height: 28px;
+            padding-top: 14px;
+            text-align: center;
+            text-decoration: none;
+            overflow: hidden;
+            display: block;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .iconLabel a{
+            
+            text-decoration: none;
+            color: grey;
+        }
+        
+         .iconLabel a:hover {
+            text-decoration: none;
+            color: grey;
+        }
+        
+        .headerDiv {
+            
+            margin-left: 40px;
+            margin-top: 30px;
+        }
+        
+        .headerLabel {
+            
+            text-align: left;
+            font-size: x-large;
+            color: #8B8589;
+        }
+        
+        .iconsMainDiv {
+            
+            margin-left: 150px;
+        }
+    </style>
+    
+    <apex:form id="theForm">
+        
+        <div class="headerDiv">
+            <apex:outputpanel rendered="{!IF(isS2Available||objS2CustomPermissions.Target_Assignment_Available__c||objS2CustomPermissions.User_Create__c,true,false)}" >
+                <!-- <apex:outputpanel rendered="{!objS2CustomPermissions.Target_Assignment_Available__c}"> -->
+                    <h1 class="headerLabel">Select An App:</h1>
+                <!-- </apex:outputpanel> -->
+            </apex:outputpanel>
+            <apex:outputpanel rendered="{!IF(isS2Available||objS2CustomPermissions.Target_Assignment_Available__c||objS2CustomPermissions.User_Create__c,false,true)}" >
+                <!-- <apex:outputpanel rendered="{!!objS2CustomPermissions.Target_Assignment_Available__c}"> -->
+                    <h1 class="headerLabel">Sorry, Currently no Apps available</h1>
+                <!-- </apex:outputpanel> -->
+            </apex:outputpanel>
+        </div>
+        <div class="iconsMainDiv">
+            <apex:outputPanel rendered="{!isS2Available}">
+                <div class="pageIcons">
+                    <a href="/apex/AA_AssociateDataManagementPg" style="text-decoration:none !important;">
+                        <div class="iconImage">
+                            <span class="iconImageInner">
+                                <img src="{!URLFOR($Resource.TBN_Supporting_JS_CSS, '/LandingPageIcons/ReferralAssignmentRevised.png')}" style="height: 100%;"/>
+                            </span>
+                        </div>
+                        <div class="iconLabel">
+                            <span>Territory Management</span>
+                        </div>
+                    </a>
+                </div>
+            </apex:outputPanel>
+            <apex:outputPanel rendered="{!objS2CustomPermissions.Target_Assignment_Available__c}">
+                <div class="pageIcons">
+                    <a href="/apex/TBN_AssociateTargetAssignment" style="text-decoration:none !important;">
+                        <div class="iconImage">
+                            <span class="iconImageInner">
+                                <img src="{!URLFOR($Resource.TBN_Supporting_JS_CSS, '/LandingPageIcons/TargetRevised.png')}" style="height: 100%;"/>
+                            </span>
+                        </div>
+                        <div class="iconLabel">
+                            <span>Target Assignment</span>
+                        </div>
+                    </a>
+                </div>
+            </apex:outputPanel>
+            <apex:outputPanel rendered="{!objS2CustomPermissions.User_Create__c}">
+                <div class="pageIcons">
+                    <a href="/apex/TBN_CreateUser" style="text-decoration:none !important;">
+                        <div class="iconImage">
+                            <span class="iconImageInner">
+                                <img src="{!URLFOR($Resource.TBN_Supporting_JS_CSS, '/LandingPageIcons/UserMaintenanceRevised.png')}" style="height: 100%;"/>
+                            </span>
+                        </div>
+                        <div class="iconLabel">
+                            <span>Create User</span>
+                        </div>
+                    </a>
+                </div>
+            </apex:outputPanel>
+            
+        </div>
+    </apex:form>
+</apex:page>

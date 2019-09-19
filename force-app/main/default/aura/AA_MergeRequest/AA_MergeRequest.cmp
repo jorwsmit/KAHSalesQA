@@ -1,0 +1,445 @@
+<aura:component controller="AA_MergeRequest" access="global" implements="force:appHostable,flexipage:availableForAllPageTypes,force:hasRecordId" >
+	
+    <aura:attribute name="acc" type="Account" access="public"/>
+    <aura:attribute name="ctc" type="Contact" access="public"/>
+    <aura:attribute name="lead" type="Lead" access="public"/>
+    <aura:attribute name="accID" type="string" access="public"/>
+    <aura:attribute name="ctcID" type="string" access="public"/>
+    <aura:attribute name="leadID" type="string" access="public"/>
+    <aura:attribute name="item2ID" type="string" access="public"/>
+    <aura:attribute name="isKHRS" type="boolean" default="false"/>
+    
+    <aura:attribute name="checkedItems" type="String[]" access="public"/>
+    <aura:attribute name="checkedTypes" type="String[]" access="public"/>
+    <aura:attribute name="objectLst" type="sObject[]" access="public"/>
+    <aura:attribute name="accList" type="Account[]" access="public"/>
+    <aura:attribute name="ctcList" type="Contact[]" access="public"/>
+    <aura:attribute name="leadList" type="Lead[]" access="public"/>
+    <aura:attribute name="stateSelectList" type="string[]" access="public"/>
+    <aura:attribute name="cityFilter" type="string" access="public"/>
+    <aura:attribute name="steFilter" type="string" access="public"/>
+    
+    <aura:attribute name="recordId" type="Id" access="public"/>
+    <aura:attribute name="objType" type="string" access="public"/>
+        
+    <aura:attribute name="additionalInstruct" type="string" access="public"/>
+    <aura:attribute name="objectName" type="string" access="public"/>
+    <aura:attribute name="id" type="ID"	access="public"/>
+    <aura:attribute name="SHOWA" type="boolean" access="public"/>
+    <aura:attribute name="SHOWALST" type="boolean" access="public"/>
+    <aura:attribute name="SHOWC" type="boolean" access="public"/>
+    <aura:attribute name="SHOWCLST" type="boolean" access="public"/>
+    <aura:attribute name="SHOWL" type="boolean" access="public"/>
+    <aura:attribute name="SHOWLLST" type="boolean" access="public"/>
+    <aura:attribute name="searchStr" type="string" access="public"/>
+    
+    <aura:attribute name="arrowDirection" type="string" default="arrowup" description="Use for change arrow sign direction on header based on click"/>
+    <aura:attribute name="isAsc" type="boolean" default="true" description="boolean flag for pass sorting condition to apex class"/> 
+    <aura:attribute name="selectedTabsoft" type="string" default="firstName" description="Use for show/hide arraow sign on header based on conditions"/>
+    <aura:attribute name="paginationList" type="string[]"/>
+    <aura:attribute name="pageSize" type="Integer" default="20"/>
+ 	<aura:attribute name="totalSize" type="Integer"/>
+    <aura:attribute name="start" type="Integer" />
+ 	<aura:attribute name="end" type="Integer"/>
+    <aura:attribute name="Spinner" type="boolean" default="false"/>
+    <aura:attribute name="rightBusUnit" type="boolean" default="true"/>
+    
+    <aura:attribute name="sortAsc" type="Boolean"/>
+    <aura:attribute name="sortField" type="string"/>
+    
+    <aura:handler event="aura:waiting" action="{!c.showSpinner}"/>
+    <aura:handler event="aura:doneWaiting" action="{!c.hideSpinner}"/>
+  
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <aura:if isTrue="{!v.rightBusUnit == false}">
+        <div><span style="font-weight:bold; color:red">*You may only start/submit merge requests from records which belong to a Business Unit under your purview.  This record does not match your operational business unit, either contact that group's leadership to make a change to place the record under your control, or try your request again from a record under your group.*</span></div><br/>
+    </aura:if>
+    
+    <aura:if isTrue="{!v.rightBusUnit}">
+    <h1 style="font-weight:bold; font-size: 14px">Self Service Merge Request</h1>
+    <div><span style="font-weight:bold; color:red">*Please note, this record will be designated the 'winner' in any merge request with any records selected during the search.  <br/>If you would prefer a different winning record please conduct your search from that record.*</span></div><br/>
+    <table >
+    <tr style="border-top: 2px solid black;">
+        <td>
+        	<div class="slds-form-element__label">Name:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <span style="font-weight:bold"><ui:outputText aura:ID="aNameTitle" value="{!v.acc.Name}" /></span>
+                <span style="font-weight:bold"><ui:outputText aura:ID="cNameTitle" value="{!v.ctc.Name}" /></span>
+                <span style="font-weight:bold"><ui:outputText aura:ID="lNameTitle" value="{!v.lead.Name}" /></span>
+                </div>
+        </td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        </tr>
+       <tr>
+        <td>    	<div class="slds-form-element__label">Address: &nbsp;&nbsp;&nbsp;
+            <aura:if isTrue="{!!v.isKHRS}"><span style="font-weight:bold"><ui:outputText aura:ID="aAddress" value="{!v.acc.ShippingStreet}"/></span></aura:if>
+            <aura:if isTrue="{!v.isKHRS}"><span style="font-weight:bold"><ui:outputText aura:ID="aAddress" value="{!v.acc.BillingStreet}"/></span></aura:if>
+            <span style="font-weight:bold"><ui:outputText aura:ID="cAddress" value="{!v.ctc.MailingStreet}"/></span>
+            <span style="font-weight:bold"><ui:outputText aura:ID="cAddress" value="{!v.lead.Street}"/></span>
+                    </div>
+        </td>
+        <td>
+            <div class="slds-form-element__label">City: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <aura:if isTrue="{!!v.isKHRS}"><span style="font-weight:bold"><ui:outputText aura:ID="aAddressC" value="{!v.acc.ShippingCity}"/></span></aura:if>
+                <aura:if isTrue="{!v.isKHRS}"><span style="font-weight:bold"><ui:outputText aura:ID="aAddressC" value="{!v.acc.BillingCity}"/></span></aura:if>
+                <span style="font-weight:bold"><ui:outputText aura:ID="cAddressC" value="{!v.ctc.MailingCity}"/></span>
+                <span style="font-weight:bold"><ui:outputText aura:ID="lAddressC" value="{!v.lead.City}"/></span>
+                    </div>
+        </td>
+        <td>
+                	<div class="slds-form-element__label">State: &nbsp;&nbsp;&nbsp;&nbsp;
+                        <aura:if isTrue="{!!v.isKHRS}"><span style="font-weight:bold"><ui:outputText aura:ID="aAddressC" value="{!v.acc.ShippingState}"/></span></aura:if>
+                        <aura:if isTrue="{!v.isKHRS}"><span style="font-weight:bold"><ui:outputText aura:ID="aAddressC" value="{!v.acc.BillingState}"/></span></aura:if>
+                        <span style="font-weight:bold"><ui:outputText aura:ID="cAddressC" value="{!v.ctc.MailingState}"/></span>
+                        <span style="font-weight:bold"><ui:outputText aura:ID="lAddressC" value="{!v.lead.MailingState}"/></span>
+                    </div>
+        </td>
+        <td>
+                	<div class="slds-form-element__label">Zip: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <aura:if isTrue="{!!v.isKHRS}"><span style="font-weight:bold"><ui:outputText aura:ID="aAddressC" value="{!v.acc.ShippingPostalCode}"/></span></aura:if>
+                        <aura:if isTrue="{!v.isKHRS}"><span style="font-weight:bold"><ui:outputText aura:ID="aAddressC" value="{!v.acc.BillingPostalCode}"/></span></aura:if>
+                        <span style="font-weight:bold"><ui:outputText aura:ID="cAddressC" value="{!v.ctc.MailingPostalCode}"/></span>
+                        <span style="font-weight:bold"><ui:outputText aura:ID="lAddressC" value="{!v.lead.PostalCode}"/></span>
+                    </div>
+           </td>
+           <td>
+           <span style="color:white">___________________________________________</span>
+           </td>
+    </tr>
+        <tr>
+        <td>
+                	<div class="slds-form-element__label">Phone: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <span style="font-weight:bold"><ui:outputText aura:ID="aAddress" value="{!v.acc.Phone}"/></span>
+                        <span style="font-weight:bold"><ui:outputText aura:ID="cAddress" value="{!v.ctc.Phone}"/></span>
+                        <span style="font-weight:bold"><ui:outputText aura:ID="lAddress" value="{!v.lead.Phone}"/></span>
+                    </div>
+            </td>
+            <td>
+                	<div class="slds-form-element__label">Email: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <span style="font-weight:bold"><ui:outputText aura:ID="cAddress" value="{!v.ctc.Email}"/></span>
+                        <span style="font-weight:bold"><ui:outputText aura:ID="lAddress" value="{!v.lead.Email}"/></span>
+                    </div>
+            </td>
+        
+        </tr>
+     <tr>
+        <td>
+        <div class="slds-form-element__label">Type:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <span style="font-weight:bold"><ui:outputText aura:ID="aNameTitle" value="{!v.acc.Type}" /></span>
+            <span style="font-weight:bold"><ui:outputText aura:ID="cNameTitle" value="{!v.ctc.Type}" /></span>
+                </div>
+        </td>
+        <td>
+        
+                	<div class="slds-form-element__label">Record Owner: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <span style="font-weight:bold"><ui:outputText aura:ID="aOwn" value="{!v.acc.Owner.Name}"/></span>
+                        <span style="font-weight:bold"><ui:outputText aura:ID="cOwn" value="{!v.ctc.Owner.Name}"/></span>
+                        <span style="font-weight:bold"><ui:outputText aura:ID="cOwn" value="{!v.lead.Owner.Name}"/></span>
+                    </div>
+            </td>
+        
+    </tr>
+    </table>
+    <br/>
+    <table >
+        <tr style="border-top: 2px solid black;">
+            <td>
+                	<div class="slds-form-element__label">NPI: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <span style="font-weight:bold"><ui:outputText aura:ID="aNPI" value="{!v.acc.NPI__c}"/></span>
+                        <span style="font-weight:bold"><ui:outputText aura:ID="cNPI" value="{!v.ctc.NPI__c}"/></span>
+                    </div>
+            </td>
+        
+            <td>
+                	<div class="slds-form-element__label">Unity ID: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <span style="font-weight:bold"><ui:outputText aura:ID="aUnity" value="{!v.acc.Unity_ID__c}"/></span>
+                        <span style="font-weight:bold"><ui:outputText aura:ID="cUnity" value="{!v.ctc.Unity_ID__c}"/></span>
+                    </div>
+            </td>
+            <td>
+           <span style="color:white">___________________________________________</span>
+           </td>
+        </tr>
+        <tr>
+        <td>
+        <div class="slds-form-element__label">CMS Provider ID: &nbsp;&nbsp;&nbsp; 
+            <span style="font-weight:bold"><ui:outputText aura:ID="aMedi" value="{!v.acc.CMS_Provider_ID__c}"/></span>
+                    </div>
+            </td>
+            <td>
+                	<div class="slds-form-element__label">Horizon ID: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <span style="font-weight:bold"><ui:outputText aura:ID="aHorizon" value="{!v.acc.Horizon_ID__c}"/></span>
+                        <span style="font-weight:bold"><ui:outputText aura:ID="cHorizon" value="{!v.ctc.Horizon_ID__c}"/></span>
+                    </div>
+            </td>
+            <td>
+           <span style="color:white">___________________________________________</span>
+           </td>
+        </tr>    
+        <tr>
+        <td>
+        <div class="slds-form-element__label">Salesforce ID: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+            <span style="font-weight:bold"><ui:outputText aura:ID="aMedi" value="{!v.acc.Id}"/></span>
+            <span style="font-weight:bold"><ui:outputText aura:ID="cMedi" value="{!v.ctc.Id}"/></span>
+                    </div>
+            </td>
+            <td>
+        <div class="slds-form-element__label">Meditech ID: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <span style="font-weight:bold"><ui:outputText aura:ID="aMedi" value="{!v.acc.Meditech_ID__c}"/></span>
+            <span style="font-weight:bold"><ui:outputText aura:ID="cMedi" value="{!v.ctc.Meditech_Contact_ID__c}"/></span>
+                    </div>
+            </td>
+            <td>
+           <span style="color:white">___________________________________________</span>
+           </td>
+        </tr>
+    <tr>
+        <td>
+        
+        </td>
+        <td>
+        
+                	<div class="slds-form-element__label">Definitive ID : &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <span style="font-weight:bold"><ui:outputText aura:ID="aDefID" value="{!v.acc.KRS_Definitive_ID__c}"/></span>
+					</div>
+            </td>
+        <td>
+           <span style="color:white">___________________________________________</span>
+           </td>
+    </tr>
+    </table>
+    <br/>
+    	<table style="border-top: 2px solid black">
+            <br/>
+        	<tr>
+            <ui:outputText value="Search for records to merge with by name: "/>
+        	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<ui:inputText aura:ID="searchText" value="{!v.searchStr}"/>
+            </tr>
+            <br/>
+            <tr ><div class="form-item-container">
+                <ui:outputText value="Filter results by State (Optional): "/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                            <ui:inputSelect class="inputSelect" aura:id="InputSelectState" change="{!c.setSte}">
+                                                                <aura:iteration items="{!v.stateSelectList}" var="stateLst" > 
+                                                                    <ui:inputSelectOption text="{!stateLst}"/> 
+                                                                </aura:iteration>
+                                                            </ui:inputSelect>
+            </div>
+                </tr>
+            <br/>
+            <tr>
+            <ui:outputText value="Filter by city name (Optional): "/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        	<ui:inputText aura:ID="cityFilter" value="{!v.cityFilter}"/>
+            </tr>
+            <br/>
+            <tr>
+            <lightning:button aura:id="searchButton" label="Search" onclick="{!c.searchRecords}"/>
+                </tr>
+        </table>
+    <br/>
+    <aura:if isTrue="{!v.Spinner}">
+    <div aura:id="spinnerId" class="slds-spinner_container">
+       <div class="slds-spinner--brand  slds-spinner slds-spinner--large slds-is-relative" role="alert">
+         <span class="slds-assistive-text">Loading</span>
+         <div class="slds-spinner__dot-a"></div>
+         <div class="slds-spinner__dot-b"></div>
+       </div>
+    </div>
+ 	</aura:if>
+    <aura:If isTrue="{!v.paginationList.length > 0}">
+    <div class="slds-grid slds-wrap" id="reportSec">
+        <br/>
+    <table class="slds-table slds-table--bordered slds-table--cell-buffer">
+  	<thead>
+    <tr class="slds-text-title--caps">
+       
+        <th class="slds-is-sortable slds-text-title--caps" scope="col">
+          <span class="slds-truncate" title="accountName">Select</span>  
+       </th>        
+        
+        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortName}">
+        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+            <span class="slds-assistive-text">Sort</span>
+          <span class="slds-truncate" title="accountName">Name</span>  
+        </a>
+       </th>
+        
+       <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortAddress}">
+        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+            <span class="slds-assistive-text">Sort</span>
+          <span class="slds-truncate" title="accountName">Address</span>  
+        </a>
+       </th>
+        
+        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortCity}">
+        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+            <span class="slds-assistive-text">Sort</span>
+          <span class="slds-truncate" title="activity">City</span>
+        </a>
+       </th>
+        
+        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortState}">
+        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+            <span class="slds-assistive-text">Sort</span>
+          <span class="slds-truncate" title="Department">State</span>
+        </a>
+       </th>
+       
+       <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortZip}">
+        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+            <span class="slds-assistive-text">Sort</span>
+          <span class="slds-truncate" title="Department">Postal Code</span>
+        </a>
+       </th> 
+        
+       <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortPhone}">
+        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+            <span class="slds-assistive-text">Sort</span>
+          <span class="slds-truncate" title="Department">Phone</span>
+        </a>
+       </th>        
+       
+        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortEmail}">
+        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+            <span class="slds-assistive-text">Sort</span>
+          <span class="slds-truncate" title="Department">Email</span>
+        </a>
+       </th> 
+        
+        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortNPI}">
+        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+            <span class="slds-assistive-text">Sort</span>
+          <span class="slds-truncate" title="Department">NPI</span>
+        </a>
+       </th>
+        
+        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortCMS}">
+        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+            <span class="slds-assistive-text">Sort</span>
+          <span class="slds-truncate" title="Department">CMS ID</span>
+        </a>
+       </th>
+       
+        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortSFID}">
+        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+            <span class="slds-assistive-text">Sort</span>
+          <span class="slds-truncate" title="Department">Salesforce ID</span>
+        </a>
+       </th>
+        
+        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortHorizon}">
+        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+            <span class="slds-assistive-text">Sort</span>
+          <span class="slds-truncate" title="Department">Horizon ID</span>
+        </a>
+       </th>
+        
+        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortUnity}">
+        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+            <span class="slds-assistive-text">Sort</span>
+          <span class="slds-truncate" title="Department">Unity ID</span>
+        </a>
+       </th>
+        
+        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortMeditech}">
+        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+            <span class="slds-assistive-text">Sort</span>
+          <span class="slds-truncate" title="Department">Meditech ID</span>
+        </a>
+       </th>
+        
+    </tr>
+  </thead>
+    
+  <tbody>
+    <aura:iteration items="{!v.paginationList}" var="con">  
+    <tr>
+      <aura:if isTrue="{!con != null}">
+      <th scope="row">
+       <ui:inputCheckbox aura:id="checkbox" text="{!con.itemID + con.rType}" value="{!con.selected}" change="{!c.onCheck}" />
+      </th>
+        
+      <th scope="row">
+          <div class="slds-truncate" title="{!con.name}"><ui:outputURL value="{!'/'+con.itemID}" label="{!con.name}" target="_blank"/><br/>
+              <aura:if isTrue="{!con != null}">
+              	  Owner: <br/>
+                  <ui:outputText value="{!con.owner}" /><br/>
+                  Record Type:<br/>
+                  <ui:outputText value="{!con.rType}" />
+              </aura:if>    
+          </div>
+      </th>
+       
+      <th scope="row">
+        <div class="slds-truncate" title="{!con.shippingStreet}">{!con.shippingStreet}</div>
+		</th>
+       
+      <th scope="row">
+        <div class="slds-truncate" title="{!con.shippingCity}">{!con.shippingCity}</div>
+		</th>
+       
+        <th scope="row">
+        <div class="slds-truncate" title="{!con.shippingState}">{!con.shippingState}</div>
+     	</th>
+        
+      <th scope="row">
+        <div class="slds-truncate" title="{!con.shippingPostalCode}">{!con.shippingPostalCode}</div>
+      </th>  
+        
+      <th scope="row">
+        <div class="slds-truncate" title="{!con.phone}">{!con.Phone}</div>
+      </th>
+          
+      <th scope="row">
+        <div class="slds-truncate" title="{!con.email}">{!con.Email}</div>
+      </th>    
+      
+      <th scope="row">
+        <div class="slds-truncate" title="{!con.npi}">{!con.npi}</div>
+      </th> 
+          
+      <th scope="row">
+        <div class="slds-truncate" title="{!con.cms}">{!con.cms}</div>
+      </th> 
+          
+      <th scope="row">
+        <div class="slds-truncate" title="{!con.itemID}">{!con.itemID}</div>
+      </th>     
+          
+      <th scope="row">
+        <div class="slds-truncate" title="{!con.horizon}">{!con.horizon}</div>
+      </th>
+        
+      <th scope="row">
+        <div class="slds-truncate" title="{!con.unity}">{!con.unity}</div>
+      </th>
+        
+      <th scope="row">
+        <div class="slds-truncate" title="{!con.meditech}">{!con.meditech}</div>
+      </th>
+        
+       
+        </aura:if>    
+    </tr>
+       
+    </aura:iteration>
+    <lightning:button label="Previous" disabled="{!v.start == 0}"  onclick="{!c.previous}" />
+    <lightning:button label="Next" disabled="{!v.end >= v.totalSize}" onclick="{!c.next}" /><br/>
+  </tbody>
+</table> 
+    </div>
+        
+    <br/>
+    	<div style="width: 500px">
+            <ui:outputText value="Any Additional Instructions/Comments to add regarding the merge?: "/>
+        	<ui:inputTextArea aura:ID="instructions" value="{!v.additionalInstruct}" rows="4"/>
+            <br/>
+            <lightning:button aura:id="submitButton" label="Submit Request" onclick="{!c.submitRequest}" disabled="true"/>
+        </div>
+    <br/>    
+    </aura:If>
+        </aura:if>
+</aura:component>

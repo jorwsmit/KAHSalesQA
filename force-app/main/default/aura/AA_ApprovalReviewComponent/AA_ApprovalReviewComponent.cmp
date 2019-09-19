@@ -1,0 +1,79 @@
+<aura:component controller="AA_ApprovalReviewController" access="global" implements="force:appHostable,flexipage:availableForAllPageTypes,force:hasRecordId" >
+    <aura:attribute name="objectLst" type="sObject[]" access="public"/>
+    <aura:attribute name="paginationList" type="string[]"/>
+    <aura:attribute name="pageSize" type="Integer" default="20"/>
+ 	<aura:attribute name="totalSize" type="Integer"/>
+    <aura:attribute name="start" type="Integer" />
+ 	<aura:attribute name="end" type="Integer"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <div>
+        Currently Pending Approvals<br/>
+        
+        <table class="slds-table slds-table--bordered slds-table--cell-buffer">
+            <thead>
+                <tr class="slds-text-title--caps">
+                    <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortAssignName}">
+                        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                            <span class="slds-assistive-text">Sort</span>
+                            <span class="slds-truncate" title="accountName">Submitted By</span>  
+                        </a>
+                        <br/>
+                    </th>
+                
+                    <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortName}">
+                        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                            <span class="slds-assistive-text">Sort</span>
+                            <span class="slds-truncate" title="accountName">Account Name</span>  
+                        </a>
+                        <br/>
+                    </th>
+                    
+                    <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortDays}">
+                        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                            <span class="slds-assistive-text">Sort</span>
+                            <span class="slds-truncate" title="ownerName">Requested<br/>Date</span>
+                        </a>
+                        <br/>
+                    </th>
+                    
+                    <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortMaster}">
+                        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                            <span class="slds-assistive-text">Sort</span>
+                            <span class="slds-truncate" title="ownerName">Requested Merge<br/>Master</span>
+                        </a>
+                        <br/>
+                    </th>
+                    
+                </tr>
+            </thead>
+            <tbody>
+                <aura:iteration items="{!v.paginationList}" var="con">  
+                    <tr>
+                        <th scope="row">
+                            <ui:outputText value="{!con.assignedTo}" />
+                        </th>
+                        
+                        <th scope="row">
+                            <div class="slds-truncate" title="{!con.itemName}"><ui:outputURL value="{!'/'+con.itemID}" label="{!con.itemName}" target="_blank"/></div>
+                        </th>
+                        
+                        <th scope="row">
+                            <div class="slds-truncate" title="{!con.requestedDate}">{!con.requestedDate}</div>
+                        </th>
+                        
+                        <th scope="row">
+                            <div class="slds-truncate" title="{!con.requestedMergeWith}"><ui:outputURL value="{!'/'+con.mergeMasterID}" label="{!con.requestedMergeWith}" target="_blank"/></div>
+                        </th>
+                        
+                        </tr>
+                </aura:iteration>
+            </tbody>
+        </table>
+        <lightning:button label="Previous" disabled="{!v.start == 0}"  onclick="{!c.previous}" />
+		<lightning:button label="Next" disabled="{!v.end >= v.totalSize}" onclick="{!c.next}" /><br/>
+    </div>
+    
+    
+</aura:component>

@@ -1,0 +1,1 @@
+<apex:page standardStylesheets="true" showHeader="false" sidebar="false" action="{!URLFOR('/apex/mkto_si__DashboardLoader?isdtp=p1')}"/>

@@ -1,0 +1,5 @@
+<apex:page >
+<script>
+   window.open('/00O13000008Uydp?isdtp=p1' );
+</script>
+</apex:page>

@@ -1,0 +1,397 @@
+<apex:page showHeader="false" controller="SalesHD_SalesTrainingController" standardStylesheets="false" sidebar="false" applyHtmlTag="false" applyBodyTag="false" docType="html-5.0">
+
+<html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<head>
+  <title>Sales Training Powerpoints</title>
+  <apex:stylesheet value="{!URLFOR($Resource.LightningDesign, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css"/>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"
+  integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous"/>
+  <link rel="stylesheet" href="https://cdn.linearicons.com/free/1.0.0/icon-font.min.css"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1,minimum-scale=1, maximum-scale=1, user-scalable=no"/>
+
+  <style>
+  html,html body{
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    body{
+      position:absolute;left:0;right:0;top:0;bottom:0;
+      margin:0;
+    }
+  div{
+    font-size: 20px;
+  }
+  body{
+    font-family: "Salesforce Sans", Arial, sans-serif !important;
+    margin: 0px;
+    background-color: #E0E2E7;
+  }
+  input{
+    display: block;
+  }
+  form{
+    width: 100%;
+  }
+  form label{
+    font-size: 24px !important;
+    font-weight: bold !important;
+  }
+  textarea, input{
+    color: #3E3E3C !important;
+    font-size: 18px !important;
+  }
+  textarea::placeholder, input::placeholder{
+    font-size: 18px !important;
+  }
+  .LightningDesign{
+    color: #3E3E3C !important;
+  }
+  .LightningDesign::selection{
+    color: #3E3E3C !important;
+  }
+  .reassignButton{
+    position: fixed;
+    bottom: 0px;
+    left: 50%;
+    margin-left: -250px;
+  }
+  .reassignButton button{
+    width: 500px !important;
+  }
+  .l-space{
+    margin: 20px;
+  }
+  .s-space{
+    margin: 10px;
+  }
+  .tableCheck{
+    position: relative;
+    left: 45%;
+  }
+  .btn{
+    border: none !important;
+    color: #FFFFFF !important;
+  }
+  .row{
+    margin-left: 0px !important;
+    margin-right: 0px !important;
+  }
+  table td, table th{
+    border: 1px solid #ddd;
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+  }
+  table thead th{
+    text-align: center !important;
+  }
+  table tbody td{
+    text-align: center !important;
+    vertical-align: middle !important;
+  }
+  .userList{
+    border: 1px solid #ced4da !important;
+    border-radius: 7px;
+    max-height: 450px;
+    overflow: auto;
+    display: none;
+  }
+  .userList li{
+    cursor: pointer;
+    padding-left: 5px;
+    padding-right: 5px;
+    border-bottom:  1px solid #ced4da !important;
+  }
+  .shadow{
+    -webkit-box-shadow: 0px 3px 7px 0px rgba(0,0,0,0.25);
+    -moz-box-shadow: 0px 3px 7px 0px rgba(0,0,0,0.25);
+    box-shadow: 0px 3px 7px 0px rgba(0,0,0,0.25);
+  }
+  .header{
+    padding-top: 80px;
+    padding-bottom: 20px;
+    width: 100vw;
+    color: white;
+    text-align: center;
+    background-color: #157DFA;
+  }
+  .header h1{
+    z-index: 10;
+    position: fixed;
+    background-color: #157DFA;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    top: 0px;
+    width: 100%;
+  }
+  .back-btn{
+    z-index: 100;
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    font-size: 48px !important;
+    cursor: pointer;
+  }
+  .modal{
+    font-family: "Salesforce Sans", Arial, sans-serif !important;
+    color: #3E3E3C !important;
+  }
+  .modal ul li{
+    border-bottom: 1px solid #e9ecef;
+    padding: 10px;
+    font-size: 18px;
+    font-weight: bold;
+  }
+  .modal-body{
+    max-height: 375px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .modal-title{
+    font-weight: normal !important;
+    color: #157DFA !important;
+  }
+  .modal-subtitle{
+    font-weight: lighter !important;
+  }
+  .btn-primary{
+    background-color: #157DFA !important;
+  }
+  .btn-primary:active{
+    background-color: #1f6bc6 !important;
+  }
+
+  .btn-secondary{
+    background-color: #808285 !important;
+  }
+  .btn-secondary:active{
+    background-color: #6c6e70 !important;
+  }
+  #profilePhoto, #profilePhoto img{
+    z-index: 200;
+    position: fixed;
+    right: 10px;
+    top: 10px;
+    width: 58px;
+    height: 58px;
+    border-radius: 100%;
+    border: 2px solid #FFFFFF;
+    background-color: #E0E2E7;
+    cursor: pointer;
+  }
+  h1{
+    font-size: 48px !important;
+    font-weight: bold !important;
+  }
+  h2{
+    font-size: 36px !important;
+    font-weight: lighter !important;
+  }
+  h3{
+    font-size: 29px !important;
+    font-weight: bold !important;
+  }
+  h4{
+    font-size: 22px !important;
+    font-weight: normal !important;
+  }
+  h5{
+    font-size: 18px !important;
+    font-weight: lighter !important;
+  }
+  .card{
+    border-radius: 7px;
+    cursor: pointer;
+  }
+  .card-header i{
+    font-size: 50px;
+  }
+  .card-body{
+    height: 200px;
+    overflow: auto;
+  }
+  .ppt{
+    color: #FF6600;
+  }
+  .col-md-4{
+    padding: 0px 10px 0px 10px;
+    margin-bottom: 20px;
+  }
+
+  .container{
+    padding: 15px !important;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border-radius: 7px;
+    /* background-color: #FFFFFF; */
+  }
+  .container:nth-of-type(2){
+    margin-top: 20px;
+    margin-bottom: 10px;
+  }
+  .container:last-of-type{
+    margin-top: 10px;
+    margin-bottom: 20px;
+  }
+  .no-bg-container{
+    background-color: transparent !important;
+  }
+  .action-item-label{
+    font-size: 20px !important;
+    font-weight: bold !important;
+  }
+  .action-items, .action-items div{
+    font-size: 18px !important;
+    padding: 5px !important;
+  }
+  .action-items .row{
+    border: 1px solid #d8dde6;
+  }
+  .action-items .row:first-child{
+    border-radius: .25rem .25rem 0px 0px;
+    border-bottom: 0px;
+  }
+  .action-items .row:not(:first-child):not(:last-child){
+    border-top: 1px solid #d8dde6;
+    border-bottom: 0px;
+  }
+  .action-items .row:last-child{
+    border-radius: 0px 0px .25rem .25rem;
+  }
+  .action-items .row:only-child{
+    border: 1px solid #d8dde6;
+    border-radius: .25rem;
+  }
+  .no-padding{
+    padding: 0px !important;
+  }
+  .no-margin{
+    margin: 0px !important;
+  }
+  .incomplete{
+    text-decoration: underline;
+    cursor: pointer;
+    color: #FF3B39 !important;
+  }
+  .complete{
+    text-decoration: underline;
+    cursor: pointer;
+    color: #25D96B !important;
+  }
+  .red{
+    color: #FF3B39 !important;
+  }
+  .green{
+    color: #25D96B !important;
+  }
+  @media only screen
+  and (min-device-width : 768px)
+  and (max-device-width : 1024px)
+  and (orientation : landscape) {
+    .container{
+      max-width: 1004px !important;
+      margin: 20px 10px 20px 10px;
+    }
+    .container:nth-of-type(2){
+      margin: 20px 10px 10px 10px;
+    }
+    .container:last-of-type{
+      margin: 10px 10px 20px 10px;
+    }
+  }
+
+  /* Calendar styling */
+  #ui-datepicker-div{
+    border-radius: 0.25rem;
+  }
+  .ui-datepicker-calendar, .ui-datepicker-header{
+    background-color: white;
+    padding: 5px;
+    border: 1px solid #d8dde6;
+  }
+  .ui-datepicker-header{
+    margin-top: 5px;
+    border-radius: 0.25rem 0.25rem 0 0;
+  }
+
+  .ui-datepicker-calendar{
+    border-radius: 0 0 0.25rem 0.25rem;
+  }
+
+  .ui-datepicker-next{
+    position: relative;
+    left: 90px;
+  }
+  .ui-datepicker-calendar th, .ui-datepicker-calendar td{
+    padding: 2px 5px 2px 5px;
+  }
+  /* End calendar styling */
+
+
+  </style>
+</head>
+
+<body>
+
+  <!-- REQUIRED SLDS WRAPPER -->
+  <div class="LightningDesign">
+
+    <div class="header">
+      <span class="lnr lnr-arrow-left back-btn"></span>
+      <div id="profilePhoto"></div>
+      <h1>Sales Training</h1>
+      <h2>Powerpoints</h2>
+    </div>
+
+    <div class="container">
+      <div class="row" id="powerpoint">
+      </div>
+    </div>
+
+  </div>
+  <!-- / REQUIRED SLDS WRAPPER -->
+
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js"
+  integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+  integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  <script src="//code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>
+  <script>
+  var currentUser;
+  $(document).ready(function(){
+    $(".back-btn").click(function(){
+      document.location.href = '/';
+    });
+    $("#profilePhoto").click(function(){
+      document.location.href = '/'+currentUser;
+    });
+
+    SalesHD_SalesTrainingController.loadPowerpoint(function(callback, event){
+      var data = JSON.parse(callback);
+      currentUser = data.user.id;
+      $("#profilePhoto").append('<img src="'+data.user.photoUrl+'"/>');
+      for(powerpointId in data.powerpoint){
+        var description = '';
+        if(data.powerpoint[powerpointId].Description) description = data.powerpoint[powerpointId].Description;
+        $("#powerpoint").append('<div class="col-md-4 col-sm-12">'+
+        '<div class="card text-center shadow" onclick="openPowerpoint(\''+powerpointId+'\')">'+
+        '<div class="card-header"><i class="fa fa-file-powerpoint-o ppt" aria-hidden="true"></i></div>'+
+        '<div class="card-body"><h5 class="card-title">'+data.powerpoint[powerpointId].Title+'</h5><p class="card-text">'+description+''+'</p></div>'+
+        '</div>'+
+        '</div>');
+      }
+    }, {escape:false});
+  });
+
+  function openPowerpoint(id){
+    if( (typeof sforce != 'undefined') && sforce && (!!sforce.one) ) {
+      sforce.one.navigateToSObject(id);
+    } else {
+      window.open('/sfc/servlet.shepherd/version/download/'+id+'?asPdf=false');
+    }
+  }
+  </script>
+</body>
+</html>
+</apex:page>

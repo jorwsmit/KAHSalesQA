@@ -1,0 +1,85 @@
+<apex:page showHeader="true" standardStylesheets="false" sidebar="false" applyHtmlTag="true" applyBodyTag="false" docType="html-5.0">
+
+<html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<head>
+  <title>Incentive Forms</title>
+  <apex:stylesheet value="{!URLFOR($Resource.LightningDesign, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+  <link rel="stylesheet" href="https://cdn.linearicons.com/free/1.0.0/icon-font.min.css"/>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1,minimum-scale=1, maximum-scale=1, user-scalable=no"/>
+
+    <style>
+    .noSidebarCell{
+        padding: 0px;
+        padding-bottom:20px;
+    }
+    .slds-card{
+        width: 500px;
+        cursor: pointer;
+    }
+    .slds-card:hover{
+        border-color: #bfc4cc !important;
+        background-color: #eff1f4;
+    }
+    .option{
+        color: white;
+        font-size: 30px;
+        padding: 5px 18px 5px 18px;
+    }
+  @media only screen and (max-width: 375px) {
+    .form-group{
+      width: 80vw;
+    }
+  }
+  </style>
+</head>
+
+<body style="margin:0px;">
+
+  <!-- REQUIRED SLDS WRAPPER -->
+  <div class="LightningDesign">
+
+    <!-- MASTHEAD -->
+    <div class="slds-page-header">
+      <div class="slds-media">
+        <div class="slds-media__figure">
+          <span class="slds-icon_container slds-icon-standard-opportunity" title="Description of icon when needed">
+            <i style="color:white; padding:10px 12px 10px 10px; font-size: 30px;" class="fa fa-cart-arrow-down" aria-hidden="true"></i>
+          </span>
+        </div>
+        <div class="slds-media__body">
+          <h1 class="slds-page-header__title slds-truncate slds-align-middle" title="Rohde Corp - 80,000 Widgets">Incentive Forms</h1>
+          <p class="slds-text-body_small slds-line-height_reset">Choose one of the form options below</p>
+        </div>
+      </div>
+    </div>
+    <!-- / MASTHEAD -->
+
+    <!-- PRIMARY CONTENT WRAPPER -->
+    <div class="slds-grid">
+      <article class="slds-card" style="margin:auto;margin-top:20px;padding:10px;" onclick="window.open('/apex/Sales_MissedOpportunityHD')">
+        <div class="slds-card__body slds-card__body_inner">
+                    <div class="slds-media">
+                <div class="slds-media__figure">
+                  <span class="slds-icon_container slds-icon-standard-account option" title="Description of icon when needed">
+                    1
+                  </span>
+                </div>
+                <div class="slds-media__body">
+                  <h1 class="slds-page-header__title slds-truncate slds-align-middle" title="Rohde Corp - 80,000 Widgets">Missed Opportunities</h1>
+                  <p class="slds-text-body_small slds-line-height_reset">Submission request for missed referrals or delayed admissions due to Kindred issues.</p>
+                </div>
+              </div>
+        </div>
+        <footer class="slds-card__footer">
+        </footer>
+      </article>
+        </div>
+    <!-- / PRIMARY CONTENT WRAPPER -->
+
+  </div>
+  <!-- / REQUIRED SLDS WRAPPER -->
+</body>
+</html>
+</apex:page>

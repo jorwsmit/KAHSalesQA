@@ -1,0 +1,145 @@
+<apex:page controller="ContentSearchPageController">
+   
+
+   <script type='text/javascript'>
+    
+        // This script assists the search bar functionality
+        // It will execute a search only after the user has stopped typing for more than 1 second
+        // To raise the time between when the user stops typing and the search, edit the following variable:
+        
+        var waitTime = 1;
+        var countDown = waitTime+1;
+        var started = false;
+        function resetTimer(){
+            countDown=waitTime+1;
+            if(started==false){
+                started=true;
+                runCountDown();
+            }
+        }
+        function runCountDown(){
+            countDown--;
+            if(countDown<=0){
+                fetchResults();
+                started=false;
+            }
+            else{
+                window.setTimeout(runCountDown,1000);
+            }
+        }
+    </script>
+    
+    <apex:form id="theform">
+        <apex:actionFunction name="fetchResults" action="{!updateAvailableList}" reRender="step3" />
+        <apex:pageBlock id="documentSearchBlock">
+           
+            <apex:pageMessages id="showmsg"></apex:pageMessages>
+                <c:PageBlockTableEnhancer targetPbTableIds="documenttable,linktable" paginate="true"  defaultPageSize="5" pageSizeOptions="5,10,20,30,40,50,100"/>
+         
+<style>
+            body .bPageBlock .pbBody .blue .pbSubheader{
+                background-color:#5d5dff;
+            }
+            
+ </style>
+                <apex:outputPanel styleClass="blue">
+                <apex:pageBlockSection Title="Search and Select the Document" collapsible="true" columns="1" >
+                    <apex:pageBlock id="theresultBlock">
+                                                <apex:outputLabel ><b>Search Here</b></apex:outputLabel>&nbsp;&nbsp;
+                        <apex:inputText value="{!searchString}" label="Document Title"/>&nbsp;
+    
+                        <apex:commandButton action="{!searchByDocumentTitle}" value="Search Document" reRender=""/>
+                        <apex:commandButton action="{!searchByDocumentCenter}" value="Search by Center" reRender=""/>
+                        <apex:commandButton action="{!onReset}"  value="Reset" reRender=""/>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                
+                        <apex:outputLink value="/sfc/#search"  target="_blank">Master Content</apex:outputLink>
+                        <br/>
+                            <apex:outputText rendered="{!availablecenters.size>0}"><b>Available Accounts :</b></apex:outputText>
+                            
+                            <apex:selectList value="{!selectedCenter}" size="1" rendered="{!availablecenters.size>0}" > 
+                                <apex:selectOptions value="{!availablecenters}" />
+                                 
+                            </apex:selectList>
+                            <apex:commandButton action="{!checkAssociation}" value="Check Association" rendered="{!availablecenters.size>0}" reRender=""/>
+                        <apex:actionStatus id="myStatus2" startText="Please Wait..." />
+                        <apex:pageBlockTable var="v" value="{!documentwrapperList}" rendered="{!documentwrapperList.size>0}" id="documenttable" title="Documents">
+                            <apex:column width="20px">
+                                <apex:inputCheckbox value="{!v.selected}" />
+                             </apex:column>
+                             <apex:column headerValue="Title">
+                                <apex:outputLink value="/sfc/#version?selectedDocumentId={!v.con.ContentDocumentID}"  target="_blank">{!v.con.Title}</apex:outputLink>
+                            </apex:column>
+                        <apex:column value="{!v.con.Audience_Tag__c}" headerValue="Audience" />
+                        <apex:column value="{!v.con.LOB__c}" headerValue="LOB" />
+                        <apex:column value="{!v.con.FileExtension}" headerValue="Type" />
+                        </apex:pageBlockTable>
+                        
+                        <apex:commandButton action="{!checkAssociation}" value="Check Association" rendered="{!documentwrapperList.size>0}" reRender=""/>
+                    </apex:pageBlock>
+            </apex:pageBlockSection>
+             </apex:outputPanel>
+            <apex:pageBlockSection rendered="{!contentLinkListtoshow.size>0}" title="Review Existing Association" collapsible="true" columns="1">
+            <apex:pageBlock id="contentLink">
+                <apex:pageBlockSection columns="1">
+                <apex:pageblockTable value="{!lineInnerClassList}" var="v" id="linktable">
+                    <apex:column width="30px" value="{!v.serialnumber}" headerValue="Serial Number"/>
+                    <!--<apex:column rendered="{!searchbyCenter}">
+                        <apex:inputCheckbox value="{!v.selected}" />
+                    </apex:column>-->
+                    <apex:column headerValue="Document Name">
+                        <apex:outputLink value="/{!v.cl.Document_Id__c}/e?retURL={!v.cl.Document_Id__c}"  target="_blank">{!v.cl.Document_Name__c}</apex:outputLink>
+                    </apex:column>
+                    <apex:column value="{!v.cl.Account__c}"/>
+                    <apex:column value="{!v.cl.Program__c}"/>
+                    <apex:column headerValue="Action" >
+                        <apex:commandLink style="font-size:15px; font-weight:bold; text-align:center;color:red;" value="X" action="{!delRow}" reRender="">
+                            <apex:param value="{!v.serialnumber}" name="serialnumber" />
+                        </apex:commandLink>&nbsp;
+                        <apex:outputLink value="/{!v.cl.id}/e?retURL={!v.cl.id}"  target="_blank">Edit</apex:outputLink>   
+                    </apex:column>
+                </apex:pageblockTable>
+                
+            </apex:pageBlockSection>
+            <!-- <apex:commandButton action="{!generateLinkTable}" value="Associate Document" reRender=""/>-->
+                                
+        </apex:pageBlock>
+     </apex:pageBlockSection>
+     <apex:pageBlockSection collapsible="true" id="step3" columns="1" title="{!IF(NOT(searchbyCenter),'Select Center and Program to Associate','Select Documents to Associate')}" rendered="{!(documentwrapperList.size>0 && lineInnerClassList.size>0) || doassociate || (searchbyCenter && step3)}">
+        <apex:pageBlock id="Link" rendered="{!(documentwrapperList.size>0 && lineInnerClassList.size>0) || doassociate || searchbyCenter }">
+            <apex:pageBlockSection Columns="2" rendered="{!NOT(searchbyCenter)}">
+            
+                   <apex:inputText label="Search Center" value="{!searchCenter}" onkeydown="if(event.keyCode==13){this.blur();}else{resetTimer();}"/>
+                   <apex:inputText label="Search Program" value="{!searchProgram}" onkeydown="if(event.keyCode==13){this.blur();}else{resetTimer();}"/>
+                    <c:MultiselectPicklist leftLabel="Available Centers"
+                        leftOptions="{!allCenters}"
+                        rightLabel="Selected Centers"
+                        rightOptions="{!selectedCenters}"
+                        size="14"
+                        width="150px"/>
+                    <c:MultiselectPicklist leftLabel="Available Programs"
+                        leftOptions="{!allPrograms}"
+                        rightLabel="Selected Programs"
+                        rightOptions="{!selectedPrograms}"
+                        size="14"
+                        width="150px"/>
+               
+                </apex:pageBlockSection>
+                <apex:pageBlockSection Columns="1" rendered="{!(searchbyCenter)}">
+                    <apex:inputText value="{!searchDocumnet}" label="Search Document " onkeydown="if(event.keyCode==13){this.blur();}else{resetTimer();}" id="searchDocument" />
+                        <c:MultiselectPicklist leftLabel="Available Documents"
+                            leftOptions="{!allDocuments}"
+                            rightLabel="Selected Documents"
+                            rightOptions="{!selectedDocuments}"
+                            size="14"
+                            width="150px"/>
+                    </apex:pageBlockSection>
+                <apex:commandButton action="{!onConfirm}" onclick="alert('Documents have been linked');" value="Associate"  disabled="{!IF(selectedDocuments.size>0,true,false)}" rerender=""/>
+               
+             </apex:pageBlock>
+          </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+        
+    
+</apex:page>

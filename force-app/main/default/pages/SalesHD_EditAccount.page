@@ -1,0 +1,605 @@
+<apex:page showHeader="false" lightningStyleSheets="true" standardController="Account" extensions="SalesHD_Account" standardStylesheets="false" sidebar="false" applyHtmlTag="false" applyBodyTag="false" docType="html-5.0">
+
+<html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<head>
+	<title>Edit Account</title>
+
+	<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/> -->
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+	integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous"/>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"
+	integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous"/>
+	<link rel="stylesheet" href="https://cdn.linearicons.com/free/1.0.0/icon-font.min.css"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1,minimum-scale=1, maximum-scale=1, user-scalable=no"/>
+	<apex:slds />
+	<style>
+	a{
+		color: #FFFFFF !important;
+		text-decoration: underline !important;
+	}
+	a:hover{
+		color: #E0E2E7 !important;
+	}
+	div{
+		font-size: 20px;
+	}
+	body{
+		font-family: "Salesforce Sans", Arial, sans-serif !important;
+		margin: 0px;
+		background-color: #E0E2E7;
+	}
+	input{
+		display: block;
+	}
+	form{
+		width: 100%;
+	}
+	form label{
+		font-size: 20px !important;
+		font-weight: bold !important;
+	}
+	textarea, input{
+		color: #3E3E3C !important;
+		font-size: 18px !important;
+	}
+	textarea::placeholder, input::placeholder{
+		font-size: 18px !important;
+	}
+	.LightningDesign{
+		color: #3E3E3C !important;
+	}
+	.LightningDesign::selection{
+		color: #3E3E3C !important;
+	}
+	.reassignButton{
+		position: fixed;
+		bottom: 0px;
+		left: 50%;
+		margin-left: -250px;
+	}
+	.reassignButton button{
+		width: 500px !important;
+	}
+	.l-space{
+		margin: 20px;
+	}
+	.s-space{
+		margin: 10px;
+	}
+	.spinner{
+		text-align: center;
+		color: #157DFA;
+		position: relative;
+		left: 50%;
+	}
+	.tableCheck{
+		position: relative;
+		left: 45%;
+	}
+	.btn{
+		border: none !important;
+		color: #FFFFFF !important;
+	}
+	.row{
+		margin-left: 0px !important;
+		margin-right: 0px !important;
+	}
+	table{
+		overflow: hidden;
+	}
+	table td, table th{
+		border: 1px solid #ddd;
+		padding-left: 4px !important;
+		padding-right: 4px !important;
+	}
+	table thead th{
+		text-align: center !important;
+	}
+	table tbody td{
+		text-align: center !important;
+		vertical-align: middle !important;
+	}
+	.userList{
+		border: 1px solid #ced4da !important;
+		border-radius: 7px;
+		max-height: 450px;
+		overflow: auto;
+		display: none;
+	}
+	.userList li{
+		cursor: pointer;
+		padding-left: 5px;
+		padding-right: 5px;
+		border-bottom:  1px solid #ced4da !important;
+	}
+	.shadow{
+		-webkit-box-shadow: 0px 3px 7px 0px rgba(0,0,0,0.25);
+		-moz-box-shadow: 0px 3px 7px 0px rgba(0,0,0,0.25);
+		box-shadow: 0px 3px 7px 0px rgba(0,0,0,0.25);
+	}
+	.header{
+		padding-top: 120px;
+		padding-bottom: 20px;
+		width: 100vw;
+		color: white;
+		text-align: center;
+		background-color: #817FE1;
+	}
+	.header h1{
+		z-index: 10;
+		position: fixed;
+		background-color: #817FE1;
+		padding-top: 10px;
+		padding-bottom: 10px;
+		top: 49px;
+		width: 100%;
+	}
+	.back-btn{
+		z-index: 100;
+		position: fixed;
+		top: 0px;
+		left: 10px;
+		font-size: 48px !important;
+		cursor: pointer;
+	}
+	.modal{
+		font-family: "Salesforce Sans", Arial, sans-serif !important;
+		color: #3E3E3C !important;
+	}
+	.modal ul li{
+		border-bottom: 1px solid #e9ecef;
+		padding: 10px;
+		font-size: 18px;
+		font-weight: bold;
+	}
+	.modal-body{
+		max-height: 375px;
+		overflow-y: auto;
+		-webkit-overflow-scrolling: touch;
+	}
+	.modal-title{
+		font-weight: normal !important;
+		color: #157DFA !important;
+	}
+	.modal-header{
+		color: #FFFFFF !important;
+	}
+	.modal-subtitle{
+		font-weight: lighter !important;
+	}
+	.btn-primary{
+		background-color: #157DFA !important;
+	}
+	.btn-primary:active{
+		background-color: #1f6bc6 !important;
+	}
+
+	.btn-secondary{
+		background-color: #808285 !important;
+	}
+	.btn-secondary:active{
+		background-color: #6c6e70 !important;
+	}
+	#profilePhoto, #profilePhoto img{
+		z-index: 200;
+		position: fixed;
+		right: 10px;
+		top: 3px;
+		width: 42px;
+		height: 42px;
+		border-radius: 100%;
+		border: 2px solid #FFFFFF;
+		background-color: #E0E2E7;
+		cursor: pointer;
+	}
+	#star{
+		color: #157DFA;
+		z-index: 200;
+		position: fixed;
+		right: 10px;
+		bottom: 10px;
+		font-size: 40px;
+		width: 58px;
+		height: 58px;
+		cursor: pointer;
+	}
+	h1{
+		font-size: 38px !important;
+		font-weight: bold !important;
+	}
+	.name{
+		font-weight: lighter !important;
+	}
+	h2{
+		font-size: 36px !important;
+		font-weight: lighter !important;
+	}
+	h3{
+		font-size: 29px !important;
+		font-weight: bold !important;
+	}
+	h4{
+		font-size: 22px !important;
+		font-weight: normal !important;
+	}
+	h5{
+		font-size: 18px !important;
+		font-weight: lighter !important;
+	}
+	.thin{
+		font-weight: lighter !important;
+	}
+	.italic{
+		font-style: italic !important;
+	}
+	.icon{
+		color: white;
+		margin-left: 10px;
+		border-radius: 7px;
+	}
+	.icon-green{
+		background-color: #2BC100;
+	}
+	.icon-blue{
+		background-color: #157DFA;
+	}
+	.icon-yellow{
+		background-color: #FFD000;
+	}
+	.icon-red{
+		background-color: #FF0036;
+	}
+	.icon-grey{
+		background-color: #808285;
+	}
+	.card{
+		border-radius: 7px;
+		cursor: pointer;
+	}
+	.card-header i{
+		font-size: 50px;
+	}
+	.card-body{
+		height: 200px;
+		overflow: auto;
+	}
+	.ppt{
+		color: #FF6600;
+	}
+	.col-md-4{
+		padding: 0px 10px 0px 10px;
+		margin-bottom: 20px;
+	}
+
+	.white-bg{
+		background-color: #FFFFFF !important;
+	}
+	.rounded{
+		padding: 15px 0px 15px 0px !important;
+		border-radius: 7px !important;
+	}
+
+	.inner-container{
+		padding: 0px !important;
+	}
+	.inner-container div:not(:last-child){
+		padding-right: 10px !important;
+	}
+
+	.container{
+		padding: 15px !important;
+		margin-top: 20px;
+		margin-bottom: 20px;
+		border-radius: 7px;
+	}
+	.container:nth-of-type(2){
+		margin-top: 20px;
+		margin-bottom: 10px;
+	}
+	.container:last-of-type{
+		margin-top: 10px;
+		margin-bottom: 20px;
+	}
+	.no-bg-container{
+		background-color: transparent !important;
+	}
+	.action-item-label{
+		font-size: 20px !important;
+		font-weight: bold !important;
+	}
+	.action-items, .action-items div{
+		font-size: 18px !important;
+		padding: 5px !important;
+	}
+	.action-items .row{
+		border: 1px solid #d8dde6;
+	}
+	.action-items .row:first-child{
+		border-radius: .25rem .25rem 0px 0px;
+		border-bottom: 0px;
+	}
+	.action-items .row:not(:first-child):not(:last-child){
+		border-top: 1px solid #d8dde6;
+		border-bottom: 0px;
+	}
+	.action-items .row:last-child{
+		border-radius: 0px 0px .25rem .25rem;
+	}
+	.action-items .row:only-child{
+		border: 1px solid #d8dde6;
+		border-radius: .25rem;
+	}
+	.no-padding{
+		padding: 0px !important;
+	}
+	.no-margin{
+		margin: 0px !important;
+	}
+	.incomplete{
+		text-decoration: underline;
+		cursor: pointer;
+		color: #FF3B39 !important;
+	}
+	.complete{
+		text-decoration: underline;
+		cursor: pointer;
+		color: #25D96B !important;
+	}
+	.red{
+		color: #FF3B39 !important;
+	}
+	.green{
+		color: #4CD964 !important;
+	}
+	.blue{
+		color: #208FFF !important;
+	}
+	.no-pad{
+		padding: 0px !important;
+	}
+	@media only screen
+	and (min-device-width : 768px)
+	and (max-device-width : 1024px)
+	and (orientation : landscape) {
+		.container{
+			max-width: 1004px !important;
+			margin: 20px 10px 20px 10px;
+		}
+		.container:nth-of-type(2){
+			margin: 20px 10px 10px 10px;
+		}
+		.container:last-of-type{
+			margin: 10px 10px 20px 10px;
+		}
+	}
+
+	.upcoming-events{
+		display: inline-block !important;
+	}
+	#new-event{
+		width: 200px;
+		padding: 5px !important;
+		display: inline-block;
+		float: right;
+	}
+
+	@media (max-width:499px){
+		.upcoming-events{
+			display: block;
+		}
+		#new-event{
+			margin-top: 10px;
+			margin-left: 10px;
+			float: none;
+		}
+
+		.inner-container div:not(:last-child){
+			padding-right: 0px !important;
+		}
+
+		.container{
+			padding: 2px !important;
+		}
+
+	}
+
+	/* Calendar styling */
+	#ui-datepicker-div{
+		border-radius: 0.25rem;
+	}
+	.ui-datepicker-calendar, .ui-datepicker-header{
+		background-color: white;
+		padding: 5px;
+		border: 1px solid #d8dde6;
+	}
+	.ui-datepicker-header{
+		margin-top: 5px;
+		border-radius: 0.25rem 0.25rem 0 0;
+	}
+
+	.ui-datepicker-calendar{
+		border-radius: 0 0 0.25rem 0.25rem;
+	}
+
+	.ui-datepicker-next{
+		position: relative;
+		left: 90px;
+	}
+	.ui-datepicker-calendar th, .ui-datepicker-calendar td{
+		padding: 2px 5px 2px 5px;
+	}
+	/* End calendar styling */
+
+	.round-border{
+		border: 1px solid #ddd;
+		padding: 5px 7px 5px 7px;
+		border-radius: 100%;
+	}
+	.border-blue{
+		border-color: #208FFF !important;
+	}
+	ul{
+		padding-left: 0px;
+	}
+	ul li{
+		font-size: 15px;
+		line-height: 23px;
+		padding: 10px 0px 10px 0px;
+		margin-left: 10px !important;
+		border-bottom: 1px solid #ddd;
+		cursor: pointer;
+		list-style: none;
+	}
+	.cursor-default{
+		cursor: default;
+	}
+	ul li:hover{
+		border-bottom: 1px solid #afafaf;
+	}
+	#editUnits{
+		cursor: pointer;
+		display: inline-block;
+		float: right;
+		font-size: 18px;
+		font-weight: bold;
+		font-style: normal;
+		padding-top: 14px;
+	}
+	#editUnits:hover{
+		color: #46b659 !important;
+	}
+	label{
+		margin-bottom: 5px;
+		margin-top: 10px;
+	}
+	.form-control{
+		margin-left: 0px !important;
+	}
+	.btn{
+		margin-left: 0px !important;
+		margin-top: 10px !important;
+		font-size: 25px !important;
+		padding: 5px 20px 5px 20px !important;
+	}
+
+	.nav-list li{
+		font-size: 20px;
+		display: inline-block;
+		border: none;
+		font-style: italic;
+		color: #FFFFFF;
+		padding: 10px 15px 10px 15px;
+		margin: 0px !important;
+		border-radius: 25px;
+	}
+	.nav-list li:hover{
+		border: none;
+	}
+	.nav-list li:hover:not(.selected){
+		background-color: #afafaf;
+	}
+	.nav-list .selected{
+		background-color: #FFFFFF;
+		color: #157DFA;
+	}
+	.nav-container{
+		width: 100%;
+		padding: 3px !important;
+		margin-bottom: 15px !important;
+		z-index: 11;
+		position: fixed;
+		padding-left: 70px !important;
+	}
+	.blue-bg{
+		background-color: #157DFA !important;
+	}
+	</style>
+</head>
+
+<body>
+
+	<div class="slds-scope">
+
+		<div class="nav-container blue-bg">
+			<div class="row">
+				<ul class="nav-list">
+					<li onclick="window.location.href='/apex/saleshd_homepage'">
+						<i class="fas fa-home"></i> HOME
+					</li>
+					<li onclick="window.location.href='/apex/saleshd_accounts'">
+						<i class="fas fa-hospital"></i> MY ACCOUNTS
+					</li>
+					<li onclick="window.location.href='/apex/saleshd_contacts'">
+						<i class="fas fa-user-md"></i> MY CONTACTS
+					</li>
+					<li onclick="window.location.href='/apex/saleshd_encounters'">
+						<i class="fas fa-phone"></i> ENCOUNTERS
+					</li>
+				</ul>
+			</div>
+		</div>
+
+		<!-- <div class="slds-spinner_container" id="spinner" style="position:fixed; width:100vw; height:100vh;">
+		<div class="slds-spinner slds-spinner--large slds-spinner--brand">
+		<div class="slds-spinner__dot-a"></div>
+		<div class="slds-spinner__dot-b"></div>
+	</div>
+</div> -->
+
+<div class="header">
+	<span class="lnr lnr-arrow-left back-btn" onclick="window.history.back();"></span>
+	<!-- <div id="profilePhoto"></div> -->
+	<h1 class="name">{!account.Name}</h1>
+	<p><b><a href="https://www.google.com/maps/place/{!account.ShippingAddress__c}">{!account.ShippingAddress__c}</a></b></p>
+</div>
+
+<div class="container shadow white-bg">
+	<div class="row">
+			<apex:form >
+			<label>Address</label>
+			<apex:inputField styleClass="form-control" value="{!account.ShippingStreet}" html-placeholder="Street" style="margin-bottom:1%;"/>
+			<apex:inputField styleClass="form-control" value="{!account.ShippingCity}" html-placeholder="City" style="width:49%;margin-right:1%;display:inline-block;"/>
+			<apex:inputField styleClass="form-control" value="{!account.ShippingState}" html-placeholder="State" style="width:19%;margin-right:1%;display:inline-block;"/>
+			<apex:inputField styleClass="form-control" value="{!account.ShippingPostalCode}" html-placeholder="Zip" style="width:30%;display:inline-block;"/>
+			<label>Website</label>
+			<apex:inputField styleClass="form-control" value="{!account.Website}" html-placeholder="Website"/>
+			<label>Phone</label>
+			<apex:inputField styleClass="form-control" value="{!account.Phone}" html-placeholder="Phone"/>
+			<label>Fax</label>
+			<apex:inputField styleClass="form-control" value="{!account.Fax}" html-placeholder="Fax"/>
+			<label>Total Beds</label>
+			<apex:inputField styleClass="form-control" value="{!account.Total_Beds__c}" html-placeholder="Total Beds"/>
+			<!-- <label>Level of Care</label>
+			<apex:inputField styleClass="form-control" value="{!account.Level_of_Care__c}" html-placeholder="Level of Care"/> -->
+			<label>Referral Mechanism</label>
+			<apex:inputField styleClass="form-control" value="{!account.Referral_Mechanism__c}" html-placeholder="Referral Mechanism"/>
+			<apex:commandButton styleClass="btn btn-primary" action="{!save}" value="Save" rerender="form"/>
+			<apex:commandButton styleClass="btn btn-secondary" value="Cancel" style="margin-left:10px!important;" onclick="window.history.back();" rerender="form"/>
+		</apex:form>
+		<apex:pageMessages />
+</div>
+</div>
+
+
+</div>
+<!-- Lightning Wrapper -->
+
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"
+integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script src="//code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>
+<script>
+
+$(document).ready(function(){
+
+
+
+
+});
+
+</script>
+</body>
+</html>
+</apex:page>

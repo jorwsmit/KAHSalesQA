@@ -1,0 +1,17 @@
+<apex:page sidebar="false" showHeader="true" standardController="Account">
+    <apex:includeScript value="/lightning/lightning.out.js"/>
+
+    <apex:includeLightning />
+    
+    <div id = "meetingDivId"/> 
+    <script>
+    	var recordId = '{!Account.id}';    
+    	$Lightning.use("c:AA_PF_Meeting", function(){
+            var attributes = {
+    			recordId: recordId
+				};
+            $Lightning.createComponent("c:AA_PF_MeetingSheet",  attributes, "meetingDivId", function(components, status){
+            });
+        });
+    </script>
+</apex:page>

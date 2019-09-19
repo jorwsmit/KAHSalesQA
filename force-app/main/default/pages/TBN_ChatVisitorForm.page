@@ -1,0 +1,525 @@
+<apex:page showHeader="false" controller="TBN_ChatVisitorController" cache="false">
+    <apex:includeScript value="{!URLFOR($Resource.TBN_Supporting_JS_CSS, '/jQuery-1.11.3.min.js')}" />
+
+    <!-- This script takes the endpoint URL parameter passed from the deployment page and makes it the action for the form -->
+    <script type='text/javascript' src='https://{!LAResourceDomain}/content/g/js/38.0/deployment.js'></script>
+    <apex:includeScript value="/support/console/35.0/integration.js"/>
+    <apex:includeScript value="/soap/ajax/28.0/connection.js"/>
+    <apex:stylesheet value="{!URLFOR($Resource.TBN_Supporting_JS_CSS, 'Chat_Visitor.css')}"/>
+    
+    
+    <!--[if IE 9]>
+        <style type="text/css">
+        
+            .descDiv {
+                margin-top: -80px
+            }
+            
+            .colRight {
+              margin-left:280px; 
+              margin-top: -56px
+            }
+            
+            .marginTop {
+                margin-top:80px;
+            }
+        </style>
+    <![endif]-->
+        
+    <!--[if IE 8]>
+        <style type="text/css">
+          
+            .descDiv {
+                margin-top: -63px;
+            }
+            
+            .colRight {
+              margin-left:280px; 
+              margin-top: -36px
+            }
+            
+            .marginTop {
+                margin-top:80px;
+            }
+        </style>
+    <![endif]-->
+        
+    <!--[if IE 7]>
+        <style type="text/css">
+          
+            .descDiv {
+                margin-top: -63px;
+            }
+            
+            
+            .descCls{
+                margin-left:255px;
+            }
+        </style>
+    <![endif]-->
+   
+    <style>
+        
+        
+        .stAddress{
+            min-width:515px!important;
+            max-width:515px!important;
+            
+        }
+        
+        textarea {
+            
+            max-width: 125% !important;
+            min-width :125% !important;
+        }
+        
+        @media only screen and (max-device-width: 480px) {
+            
+            textarea {
+            
+            max-width: 70% !important;
+            min-width :70% !important;
+            }
+            
+            .lineHeight {
+               line-height : 60px !important;
+            
+            }
+            
+            .stAddress{
+            min-width:697px!important;
+            max-width:697px!important;
+            
+            }
+            .marginTop{
+            
+                margin-top:80px!important;
+            }
+            
+        }  
+      
+        @media screen and (max-device-width: 480px) { 
+          textarea,
+          input {
+            font-size: 26px !important;
+          }
+        }
+    </style>
+    
+    <!--[if IE]>
+    <style>
+        .stAddress{
+            
+            padding-right:10px;
+        }
+    </style>
+    <![endif]-->
+    <script type='text/javascript'>
+        liveagent.init('https://{!LAChatDomain}/chat', '{!deploymentId}', '{!orgId}');
+    </script>
+    
+    <script type="text/javascript">
+       
+        if (!window._laq) { window._laq = []; }
+    
+        window._laq.push(function()
+        {
+            liveagent.showWhenOnline('{!buttonId}', document.getElementById('liveagent_button_online_{!buttonId}'));
+            liveagent.showWhenOffline('{!buttonId}', document.getElementById('liveagent_button_offline_{!buttonId}'));
+        });
+
+        function validate() {
+            
+            var isEmpty = 'false';
+            $('.required').remove();
+            
+            $('.isRequired').each(function() {
+                if( !$(this).val() ) {
+                    isEmpty = 'true';
+                    $(this).after(function() {
+                        
+                      return '<div style="color:#d74c3b;" class="required">{!$Label.Live_Agent_Chat_Field_Required}</div>';
+                    });
+                }
+            });
+            
+            if(isEmpty != 'true'){
+                
+                chatNow(); 
+            }
+        }
+        
+        function chatNow() {   
+           
+            var hasNoMatch = 'false';
+            
+            var phoneformat1 = /^((\(\d{3}\))|\d{3})(\-|\s)?(\d{3})(\-|\s)?(\d{4})$/;
+           // var phoneformat = /((\(\d{3}\) ?)|(\d{3}-))?\d{3}-\d{4}/; // /^\d{10}$/;
+            var phoneformat2 = /^\d{10}$/;
+            var phVal = document.getElementById("phone").value;
+            if(phVal.length > 0 ){
+            if(!phVal.match(phoneformat1) && !phVal.match(phoneformat2)){
+                hasNoMatch = 'true';
+                $(document.getElementById("phone")).after(function() {
+                  return '<div style="color:#d74c3b;" class="required">{!$Label.Live_Agent_Invalid_Phone}</div>';
+                   
+                });
+            	}
+            }
+             
+            var emailVal = document.getElementById("email").value; 
+            //var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+            var mailformat =  /^[a-zA-Z0-9.]*[a-zA-Z0-9]@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+            
+            if(emailVal.length > 0){
+            if(!emailVal.match(mailformat)){
+            
+                hasNoMatch = 'true';
+                $(document.getElementById("email")).after(function() {
+                  return '<div style="color:#d74c3b;" class="required">{!$Label.Live_Agent_Invalid_Email}</div>';
+                });
+            }
+            }
+            /*
+            var firstNameLastNameFormat = /^[a-zA-Z.\s]+$/;
+            var firstNameFormatVal = document.getElementById("fname").value;;
+            var lastNameFormatVal = document.getElementById("lname").value;;
+            
+            if(firstNameFormatVal.length > 0){
+            if(!firstNameFormatVal.match(firstNameLastNameFormat)){
+            
+                hasNoMatch = 'true';
+                $(document.getElementById("fname")).after(function() {
+                  return '<div style="color:#d74c3b;" class="required">{!$Label.Live_Agent_Invalid_FirstName}</div>';
+                });
+            }
+            }
+            
+            if(lastNameFormatVal.length > 0){
+            if(!lastNameFormatVal.match(firstNameLastNameFormat)){
+            
+                hasNoMatch = 'true';
+                $(document.getElementById("lname")).after(function() {
+                  return '<div style="color:#d74c3b;" class="required">{!$Label.Live_Agent_Invalid_LastName}</div>';
+                });
+            }
+            }
+            var zipFormat = /^[0-9]{4,6}$/;
+            var zipCodeVal = document.getElementById("zipCode").value;
+            
+            if(zipCodeVal.length > 0){
+            if(!zipCodeVal.match(zipFormat)){
+            
+                hasNoMatch = 'true';
+                $(document.getElementById("zipCode")).after(function() {
+                  return '<div style="color:#d74c3b;" class="required">{!$Label.Live_Agent_Invalid_Zip_Code}</div>';
+                });
+            } 
+            }
+            
+            var addressFormat = /^[a-zA-Z0-9.,()|'#\-\n\s]+$/;
+            var addressVal = document.getElementById("stAddress").value;
+            
+            if(addressVal.length > 0){
+            if(!addressVal.match(addressFormat)){
+            
+                hasNoMatch = 'true';
+                $(document.getElementById("stAddress")).after(function() {
+                  return '<div style="color:#d74c3b;" class="required">{!$Label.Live_Agent_Invalid_Street_Address}</div>';
+                });
+            }
+            }
+            
+            var cityFormat = /^[A-z\s]+$/;
+            var cityVal = document.getElementById("City").value;
+            if(cityVal.length > 0){
+            if(!cityVal.match(cityFormat)){
+            
+                hasNoMatch = 'true';
+                $(document.getElementById("City")).after(function() {
+                  return '<div style="color:#d74c3b;" class="required">{!$Label.Live_Agent_invalid_City}</div>';
+                });
+            }
+            }
+            var stateFormat = /^[a-zA-Z]{2}$/;
+            var stateVal = document.getElementById("State").value;
+            if(stateVal.length > 0){
+            if(!stateVal.match(stateFormat)){
+            
+                hasNoMatch = 'true';
+                $(document.getElementById("State")).after(function() {
+                  return '<div style="color:#d74c3b;" class="required">{!$Label.Live_Agent_Invalid_State}</div>';
+                });
+            }
+            }
+            */
+            if(hasNoMatch!= 'true')  {
+                
+                var isCapacityFull = document.getElementById('{!$Component.prechatForm:IsCapacityFull}').value;
+                
+                if(isCapacityFull == 'false') {
+                
+                    document.getElementById("prechat_field_name").value = document.getElementById("fname").value + " " +document.getElementById("lname").value;
+                    document.getElementById("{!$Component.prechatForm}").action = "https://{!LAResourceDomain}/content/s/chat?language=en_US#deployment_id={!deploymentId}&org_id={!orgId}&button_id={!buttonId}";
+                    document.getElementById("{!$Component.prechatForm}").method= "post";
+                    var strName = document.getElementById("fname").value + " " +document.getElementById("lname").value;
+                    var outputMsg = document.getElementById('msg');
+                    document.getElementById('onlinePreChat').style.display = "none";
+                    document.getElementById('divMsg').style.display = "block";
+                    document.getElementById('msg').style.display = "block";
+                    outputMsg.innerHTML='Thank you ' +strName+ ', a Nurse Advocate will be with you shortly.';
+                }
+                else {
+                    
+                    document.getElementById("prechat_field_name").value = document.getElementById("fname").value + " " +document.getElementById("lname").value;
+                    document.getElementById("{!$Component.prechatForm}").action = '{!srtRedirectURL}';
+                    document.getElementById("{!$Component.prechatForm}").method= "post";
+                    var strName = document.getElementById("fname").value + " " +document.getElementById("lname").value;
+                }
+                
+                setTimeout(function() {
+                      
+                    submitFormOnline();
+                }, 1500);
+            }
+        
+        }   
+        
+        function submitFormOnline() {
+            
+            document.forms["{!$Component.prechatForm}"].submit();
+        }   
+        
+    </script>
+    <div id="chatFormDiv" style="min-width:570px;">
+        
+        <div id="chatNowDiv">
+            <img class="sldsAvatar" id="liveagent_button_online_{!buttonId}" style="display: none; border: 0px none; cursor: pointer" alt="" />
+            <img class="sldsAvatar" id="liveagent_button_offline_{!buttonId}" style="display: none; border: 0px none;" alt="" />
+        </div>
+
+        <apex:form id="prechatForm" >
+            
+            <apex:actionFunction name="checkForAgentsCapacity" action="{!checkForAgentsCapacity}" oncomplete="setTimeout(function() {validate()}, 1000);" rerender="actionsOP"/>
+            
+            <apex:outputPanel id="actionsOP">
+                <apex:inputHidden value="{!isCapacityFull}" id="IsCapacityFull"/>   
+            </apex:outputPanel>
+            
+            <div id="postSurveyMsgDiv" class="alert alert-warning alert-dismissible" role="alert" style="min-height:456px; display:none; width: 41%;margin-left: 30%;margin-bottom:-1%;margin-top: 1%;">
+                <strong>
+                    <apex:outputLabel value="{!$Label.Live_Agent_Post_Survey_Message}" />
+                </strong>  
+            </div>
+            <div id="formBlank" style="min-height:412px"/>                            
+            <div id="onlinePreChat" style="display:none;">
+                <apex:include pageName="TBN_ChatVisitorFormHeader" />
+                
+                <br/>
+                <div class="sldsFormLabel sldsTextHeadingSmall sldsPHorizontalSmall"><apex:outputLabel value="{!$Label.live_Agent_Welcome_Note}" /></div>
+                <br/><br/>
+                
+                
+                <div class="gridClass sldsGrid" style="width:42%">
+                    <div class="sldsCol sldsFormElement sldsPHorizontalSmall">
+                        <label class="sldsFormLabel">First Name </label><br/>
+                            <input type='text' class="sldsInput inputWidth" name='liveagent.prechat:First Name' id='fname'/>
+                        <input type="hidden" name="liveagent.prechat.save:First Name" value="Web_First_Name__c" />
+                    </div>
+                    <div style="min-width:10px"/>
+                    <div class="sldsCol sldsFormElement sldsPHorizontalSmall paddingBottom colRight">
+                        <label class="sldsFormLabel">Last Name </label><br/>
+                            <input type="text" class="sldsInput inputWidth" name="liveagent.prechat:Last Name" id='lname' />
+                        <input type="hidden" name="liveagent.prechat.save:Last Name" value="Web_Last_Name__c" />
+                    </div>
+                </div> <br/>
+                <br/>
+                <div class="lineBrake"/>
+                <div class="gridClass sldsGrid" style="width:42%">
+                    <div class="sldsCol sldsFormElement sldsPHorizontalSmall">
+                        <label class="sldsFormLabel">Email </label><br/>
+                        <input class="sldsInput hasFormatEmail inputWidth" type="email" name="liveagent.prechat:Email"  id="email" required="true"/>
+                        <input type="hidden" name="liveagent.prechat.save:Email" value="SuppliedEmail" />  
+                    </div>
+                    <div style="min-width:10px"/>
+                    <div class="sldsCol sldsFormElement sldsPHorizontalSmall paddingBottom colRight">
+                        <label class="sldsFormLabel">Phone </label><br/>
+                        <input class="sldsInput hasFormat inputWidth" type="tel" name="liveagent.prechat:Phone" id="phone" required="true" />
+                        <input type="hidden" name="liveagent.prechat.save:Phone" value="SuppliedPhone" /> 
+                    </div>
+    
+                </div><br/>
+                <br/>
+                
+                <div class="lineBrake"/>
+                <div class="gridClass sldsGrid" style="width:42%">
+                    <div class="sldsFormElement sldsPHorizontalSmall ">
+                        <label class="sldsFormLabel">Street Address </label><br/>
+                        <input  class="sldsInput stAddress lineHeight" style="width:100%;" type="text" name="liveagent.prechat:Street Address"  id="stAddress" required="true"/>
+                        <input type="hidden" name="liveagent.prechat.save:Street Address" value="Web_Street_Address__c" />  
+                    </div>
+                </div><br/>
+                <br/>
+                
+                <div class="lineBrake"/>
+                <div class="gridClass sldsGrid" style="width:42%">
+                    <div class="sldsCol sldsFormElement sldsPHorizontalSmall">
+                        <label class="sldsFormLabel">City </label><br/>
+                        <input class="sldsInput inputWidth" type="text" name="liveagent.prechat:City" id="City" required="true" />
+                        <input type="hidden" name="liveagent.prechat.save:City" value="Web_City__c" />
+                    </div>
+                    <div style="min-width:10px"/>
+                    <div class="sldsCol sldsFormElement sldsPHorizontalSmall paddingBottom colRight">
+                        <label class="sldsFormLabel">State </label><br/>
+                        <input class="sldsInput inputWidth" type="text" name="liveagent.prechat:State" id="State" required="true"/>
+                        <input type="hidden" name="liveagent.prechat.save:State" value="Web_State__c" />  
+                    </div>
+    
+                </div><br/>
+                <br/>
+                
+                <div class="lineBrake"/>
+                <div class="gridClass sldsGrid" style="width:42%">
+                    <div class="sldsCol sldsFormElement sldsPHorizontalSmall" >
+                        <label class="sldsFormLabel">Zip Code </label><br/>
+                        <input class="sldsInput inputWidth" type="text" name="liveagent.prechat:Zip Code" required="true" id="zipCode"/>
+                        <input type="hidden" name="liveagent.prechat.save:Zip Code" value="Web_Zip_Code__c" />
+                    </div>
+                    <div style="min-width:10px"/>
+                    <div class="sldsCol sldsFormElement sldsPHorizontalSmall paddingBottom colRight ">
+                        <label class="sldsFormLabel">What would you like to discuss today? </label><br/>
+                        <select class="sldsSelect lineHeight" multiselect="false" size="1" name="liveagent.prechat:What would you like to discuss today?" required="true" disabled="true">
+                            <option value="Kindred Services">Kindred Services</option>
+                            
+                        </select>
+                        <input class ="picklistWidth" type="hidden" name="liveagent.prechat.save:What would you like to discuss today?" value="What_would_you_like_to_discuss_today__c" /> 
+                    </div>
+                </div><br/>
+                <br/>    
+                
+                <div class="lineBrake"/>
+                <div class="gridClass sldsGrid" style="width:42%">
+                    <div class="sldsCol sldsFormElement sldsPHorizontalSmall colLeft">
+                        <label class="sldsFormLabel">Description </label><br/>
+                        <div class="sldsFormElementControl">
+                            <textarea required="true" class="sldsTextarea" name="liveagent.prechat:CaseDescription" id="description" rows="5"></textarea>
+                            
+                        </div> 
+                    </div>
+                </div><br/>
+                <br/>
+                <br/>
+                <div class="gridClass sldsGrid marginTop" style="width:42%" >
+                    <table class="" style="min-width:0px; width:0px">
+                        <tbody><tr style="min-height:10px;height:10px;"><td></td></tr>
+                        </tbody>
+                    </table>
+                    <br/>
+                    <div  class="sldsFormElement sldsFormElement sldsPHorizontalSmall">
+                      <!--  <input type="submit" value="Chat Now" class="slds-button slds-button--neutral" onclick="setName()"/>-->
+                        <button type="button" class="sldsButton sldsButtonNeutral" onclick="checkForAgentsCapacity()">Chat Now</button>
+                    </div>
+                 </div>   
+                 <br/>   
+ 
+
+                <input type="hidden" name="liveagent.prechat:CaseStatus" value="New" />
+    
+                <!-- This example assumes that "Chat" was added as picklist value to the Case Origin field -->
+                <input type="hidden" name="liveagent.prechat:CaseOrigin" value="Live - Chat" />
+                
+                <!-- This example will set the Case Record Type to a specific value for the record type configured on the org. Lookup the case record type's id on your org and set it here -->
+                <input type="hidden" name="liveagent.prechat:CaseRecordType" value="{!strCaseRecordTypeId}" />
+                
+                <!-- Used to set the visitor's name for the agent in the Console -->
+                <input type="hidden" name="liveagent.prechat.name" id="prechat_field_name" />
+                    
+                <input type="hidden" name="liveagent.prechat.findorcreate.map:Case" value="Subject,CaseSubject;Status,CaseStatus;Origin,CaseOrigin;RecordTypeId,CaseRecordType;Description,CaseDescription;Web_State__c,State;Web_City__c,City;Web_Street_Address__c, Street Address;Web_Zip_Code__c, Zip Code; SuppliedEmail, Email;SuppliedPhone, Phone;Web_First_Name__c, First Name;Web_Last_Name__c, Last Name;" />
+                
+                <input type="hidden" name="liveagent.prechat.findorcreate.saveToTranscript:Case" value="CaseId" />
+                
+                <!-- displayToAgent: Hides the case record type from the agent -->
+                <input type="hidden" name="liveagent.prechat.findorcreate.displayToAgent:CaseRecordType" value="false" />
+                
+                <!-- searchKnowledge: Searches knowledge article based on the text, this assumes that Knowledge is setup -->
+                <input type="hidden" name="liveagent.prechat.knowledgeSearch:CaseSubject" value="true" />
+                
+                <div class="sldsFormElement sldsFormElement sldsPHorizontalSmall">
+                    <input name="liveagent.prechat.buttons" value="{!buttonId}" type="hidden" />
+                </div>
+                <input type="hidden" name="liveagent.prechat.findorcreate.map.isExactMatch:Contact" value="Origin,true;Web_State__c,true;Web_City__c,true;Web_Street_Address__c,true;Web_Zip_Code__c,true;SuppliedEmail,true;SuppliedPhone,true;Web_First_Name__c,true;Web_Last_Name__c,true;"/>
+                <input type="hidden" name="liveagent.prechat.findorcreate.map.doCreate:Case" value="Origin,true;Web_State__c,true;Web_City__c,true;Web_Street_Address__c,true;Web_Zip_Code__c,true;SuppliedEmail,true;SuppliedPhone,true;Web_First_Name__c,true;Web_Last_Name__c,true;Description,true;"/>
+
+            </div> 
+            
+            
+            <!--- Button that shows up if someone is online --->    
+
+
+            
+            <!-- Used to set the visitor's name for the agent in the Console -->
+            
+            <input type="hidden" name="liveagent.prechat.findorcreate.saveToTranscript:First_Name__c" value="test name" />
+
+            
+            <div id="divMsg" style="display:none;">
+                <apex:include pageName="TBN_ChatVisitorFormHeader" />
+                <div class="sldsFormLabel sldsTextHeadingSmall sldsPHorizontalSmall" style="margin-left: 2%; margin-bottom:-1%; display:none; margin-top: 10px; min-height:456px" id="msg" />
+            </div>
+        </apex:form>
+    </div>
+    
+    <script>
+        
+        window.onload = function() {
+         
+            var ua = window.navigator.userAgent;
+            var msie = ua.indexOf("MSIE ");
+           
+            if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./))  // If Internet Explorer, return version number
+            {
+                if(navigator.appVersion.indexOf("MSIE 11.") || navigator.appVersion.indexOf("MSIE 10.") || navigator.appVersion.indexOf("MSIE 9.") !== -1 || navigator.appVersion.indexOf("MSIE 8.") !== -1 || navigator.appVersion.indexOf("MSIE 7.") !== -1){
+                    $('.gridClass').each(function() {
+                        
+                       $( this ).width("95%");
+                    });
+                }
+                Visualforce.remoting.Manager.invokeAction(
+                    '{!$RemoteAction.TBN_ChatVisitorController.getIsAgentOnline}',
+                    function(result, event) {
+                                
+                        if (event.status) {
+                            
+                            if(result == true) {
+         
+                                document.getElementById('onlinePreChat').style.display = "block";
+                                document.getElementById('chatNowDiv').style.display = "none";
+                                document.getElementById('formBlank').style.display = "none";
+                            }
+                            
+                            if(result == false) {
+                                
+                                window.location.href = '{!srtRedirectURL}';
+                            }
+                        } 
+                    }, 
+                    {escape: true}
+                );
+            }
+            else {
+                
+                if(document.getElementById("liveagent_button_online_{!buttonId}").style.display != "none") {
+                    
+                    document.getElementById('onlinePreChat').style.display = "block";
+                    document.getElementById('chatNowDiv').style.display = "none";
+                    document.getElementById('formBlank').style.display = "none";
+                }
+                
+                else if(document.getElementById("liveagent_button_offline_{!buttonId}").style.display != "none") {
+                                     
+                    window.location.href = '{!srtRedirectURL}'; 
+                }
+            }
+        };
+    </script>
+</apex:page>

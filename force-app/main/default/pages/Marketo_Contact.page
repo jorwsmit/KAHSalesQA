@@ -1,0 +1,1 @@
+<apex:page action="{!URLFOR('/apex/Contact_Full_List?isdtp=lt?id={!Contact.Id}&view=IM')}"/>

@@ -1,0 +1,56 @@
+<aura:component controller="AA_HD_Unit_Controller" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+	
+    <aura:attribute name="recordId" type="Id" access="public"/>
+    <aura:attribute name="accountUnits" type="sObject[]"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <aura:iteration items="{!v.accountUnits}" var="item">
+    <table>
+    	<tr>
+        	<td>
+             <span style="font-weight:bold; font-size:16px">Unit Name: {!item.accUnit} - Status: {!item.accUnitStatus}</span>
+            </td>
+        </tr>
+     </table>    
+        <br/>
+       <table> 
+        <thead>
+                        <tr class="slds-text-title--caps">
+                            <th scope="row">
+                                <span title="Name">Name</span>
+                            </th>
+                            <th scope="row">
+                                <span title="Name">Title</span>
+                            </th>
+                            <th scope="row">
+                                <span title="Name">Email</span>
+                            </th>
+                        </tr>
+                    </thead>
+           <tbody>
+               <aura:iteration items="{!item.ctcsUnit}" var="add">  
+                            <aura:if isTrue="{!add != null}">
+                                <tr>
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!add.Name}"><ui:outputURL value="{!'/'+add.Id}" label="{!add.Name}" target="_blank"/></div>
+                                    </th>
+                                    
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!add.Title}"><ui:outputText value="{!add.Title}"/></div>
+                                    </th>
+                                    
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!add.Email}"><ui:outputText value="{!add.Email}"/></div>
+                                    </th>
+                                </tr>
+                            </aura:if>
+                        </aura:iteration>
+           </tbody>
+        </table>
+        <br/>
+    </aura:iteration>
+    
+    
+    
+</aura:component>

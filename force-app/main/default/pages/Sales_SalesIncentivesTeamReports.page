@@ -1,0 +1,493 @@
+<apex:page controller="Sales_SalesIncentivesTeamReports" standardStylesheets="false" sidebar="false" applyHtmlTag="true" applyBodyTag="false">
+<html>
+<head>
+	<title>Sales Incentive Team Reports</title>
+	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
+	<link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css"/>
+	<link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.5.1/css/buttons.dataTables.min.css"/>
+
+</head>
+<style>
+#report-container {
+	border-collapse: collapse;
+	width: 95vw;
+	height: 50vh;
+	overflow: auto;
+	margin: auto;
+}
+#year-button, #year-list{
+	margin-left: 60px;
+}
+#year-button i{
+	position: relative;
+	right: -110px;
+}
+
+#lob-button i{
+	position: relative;
+	right: -110px;
+}
+
+#lob-button, #lob-list {
+	margin-left: 15px;
+	margin-bottom: 15px;
+	display: none;
+}
+
+#lob-list li {
+	cursor: pointer;
+	margin: 0px;
+}
+
+.dropdown{
+	width: 300px;
+	cursor: pointer;
+	background-color: #007bff !important;
+	font-size: 20px;
+	padding: 10px 0px 10px 0px;
+	border-radius: 25px;
+	text-align: center;
+	color: white;
+}
+.dropdown:hover{
+	background-color: #0063ce !important;
+}
+
+button.dt-button, div.dt-button, a.dt-button, .dt-button, .buttons-csv, .buttons-html5{
+	width: 300px;
+	border: none;
+	cursor: pointer;
+	background-color: #007bff !important;
+	font-size: 20px;
+	padding: 10px 0px 10px 0px;
+	border-radius: 25px;
+	text-align: center;
+	color: white;
+	background-image: none !important;
+}
+.buttons-html5:hover{
+	background-color: #0063ce !important;
+}
+
+#export{
+	display: none;
+}
+#back{
+	margin: 10px 15px 20px 15px;
+	display: none;
+	background-color: #28a745!important
+}
+#back:hover{
+	background-color: #1f8235 !important;
+}
+.dropdown-list{
+	padding: 10px 0px 10px 0px;
+	color: white;
+	width: 300px;
+	max-height: 250px;
+	overflow: auto;
+	font-size: 20px;
+	border-radius: 25px;
+	text-align: center;
+	background-color: #007bff !important;
+	overflow: auto;
+	display: none;
+	list-style: none;
+}
+#year-list .dropdown-list li{
+	margin-left: 0px;
+}
+#year-list .dropdown-list li:hover{
+	cursor: pointer;
+	border-bottom: 1px solid white;
+	border-top: 1px solid white;
+	background-color: #005dc1 !important;
+}
+.selected{
+	border-bottom: 1px solid white;
+	border-top: 1px solid white;
+	background-color: #005dc1 !important;
+}
+#report-container{
+	display: none;
+	border: 1px solid #ddd;
+	border-radius: 25px;
+}
+#report-list{
+	list-style: none;
+}
+#report-list li{
+	vertical-align: top;
+	opacity: 0;
+	display: inline-block;
+	width: 30%;
+	border-radius: 25px;
+	border: 1px solid #ddd;
+	margin-bottom: 20px;
+	cursor: pointer;
+}
+#report-list li:hover{
+	background-color: #ddd;
+}
+#report-list li .title{
+	color: white;
+	font-weight: bold;
+	font-size: 20px;
+	border-radius: 25px 25px 0px 0px;
+	border-bottom: 1px solid #ddd;
+	background-color: #007bff;
+	padding: 20px;
+}
+#report-list li .description{
+	padding: 20px;
+	margin-top: 10px;
+	font-size: 16px;
+}
+#overlay{
+	display: none;
+	background-color: black;
+	opacity: 0.5;
+	width: 100vw;
+	height: 100vh;
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	z-index: 1;
+}
+.spinner{
+	display: none;
+	color: white;
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	margin-left: -25px;
+	margin-top: -25px;
+}
+.slide-up-fade-in{
+	animation: slide-up-fade-in ease 1s;
+	animation-iteration-count: 1;
+	transform-origin: 50% 50%;
+	animation-fill-mode:forwards; /*when the spec is finished*/
+	-webkit-animation: slide-up-fade-in ease 1s;
+	-webkit-animation-iteration-count: 1;
+	-webkit-transform-origin: 50% 50%;
+	-webkit-animation-fill-mode:forwards; /*Chrome 16+, Safari 4+*/
+	-moz-animation: slide-up-fade-in ease 1s;
+	-moz-animation-iteration-count: 1;
+	-moz-transform-origin: 50% 50%;
+	-moz-animation-fill-mode:forwards; /*FF 5+*/
+	-o-animation: slide-up-fade-in ease 1s;
+	-o-animation-iteration-count: 1;
+	-o-transform-origin: 50% 50%;
+	-o-animation-fill-mode:forwards; /*Not implemented yet*/
+	-ms-animation: slide-up-fade-in ease 1s;
+	-ms-animation-iteration-count: 1;
+	-ms-transform-origin: 50% 50%;
+	-ms-animation-fill-mode:forwards; /*IE 10+*/
+	opacity:0;
+	opacity: 1\9;
+}
+@keyframes slide-up-fade-in{
+	0% {
+		opacity:0;
+		transform:  translate(0px,40px)  ;
+	}
+	100% {
+		opacity:1;
+		transform:  translate(0px,0px)  ;
+	}
+}
+@-moz-keyframes slide-up-fade-in{
+	0% {
+		opacity:0;
+		-moz-transform:  translate(0px,40px)  ;
+	}
+	100% {
+		opacity:1;
+		-moz-transform:  translate(0px,0px)  ;
+	}
+}
+@-webkit-keyframes slide-up-fade-in {
+	0% {
+		opacity:0;
+		-webkit-transform:  translate(0px,40px)  ;
+	}
+	100% {
+		opacity:1;
+		-webkit-transform:  translate(0px,0px)  ;
+	}
+}
+@-o-keyframes slide-up-fade-in {
+	0% {
+		opacity:0;
+		-o-transform:  translate(0px,40px)  ;
+	}
+	100% {
+		opacity:1;
+		-o-transform:  translate(0px,0px)  ;
+	}
+}
+@-ms-keyframes slide-up-fade-in {
+	0% {
+		opacity:0;
+		-ms-transform:  translate(0px,40px)  ;
+	}
+	100% {
+		opacity:1;
+		-ms-transform:  translate(0px,0px)  ;
+	}
+}
+.rotate-r{
+	transform: rotate( 180deg );
+	transition: transform 150ms ease;
+}
+.rotate-l{
+	transform: rotate( 0deg );
+	transition: transform 150ms ease;
+}
+</style>
+<body>
+
+	<div id="sales-container">
+		<div id="overlay"></div>
+		<i style="z-index:4;" class="spinner fa fa-circle-o-notch fa-spin fa-3x fa-fw"></i>
+		<div id="year-button" class="dropdown slide-up-fade-in"><span>Year</span><i class="fa fa-caret-down" aria-hidden="true"></i></div>
+		<div id="back" class="dropdown"><i class="fa fa-chevron-circle-left" aria-hidden="true"></i> Go Back</div>
+		<div id="export" class="dropdown"><i class="fa fa-cloud-download" aria-hidden="true"></i> Export</div>
+		<a id="exportLink"  style="display:none;"></a>
+		<div id="lob-button" class="dropdown"><span>HH</span><i class="fa fa-caret-down" aria-hidden="true"></i></div>
+		<ul id="lob-list" class="dropdown-list"><li class="selected">HH</li><li>HP</li></ul>
+		<ul id="year-list" class="dropdown-list"></ul>
+		<ul id="report-list">
+			<li onclick="reportNumber=1; getTargetTable()">
+				<div class="title">Targets</div>
+				<div class="description">
+					Admit targets for the selected year.
+				</div>
+			</li>
+			<li onclick="reportNumber=2; getTargetHiddenTable()">
+				<div class="title">Targets Without Agreements</div>
+				<div class="description">
+					Admit targets that are hidden from the sales associate and are still in need of manager approval for the selected year.
+				</div>
+			</li>
+			<li onclick="reportNumber=3; getAllTargets()">
+				<div class="title">All Targets</div>
+				<div class="description">
+					All HH and HP admit targets for each user (two rows per user) for the selected year.
+				</div>
+			</li>
+		</ul>
+		<div id="report-container"></div>
+		<div id="report-container2"></div>
+	</div>
+</body>
+<script
+src="https://code.jquery.com/jquery-3.2.1.min.js"
+integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+crossorigin="anonymous"></script>
+
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.5.1/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.flash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.print.min.js"></script>
+<script>
+var year = new Date().getFullYear();
+var lob = 'HH';
+var reportNumber;
+$(document).ready(function(){
+	document.title = 'Sales Incentive Team Reports';
+	$(document).click(function(e) {
+		if ($(e.target).closest('.dropdown, .dropdown-list').length == 0){
+			$("#year-list").slideUp();
+			$("#year-button i").removeClass('rotate-r').addClass('rotate-l');
+			$("#lob-list").slideUp();
+			$("#lob-button i").removeClass('rotate-r').addClass('rotate-l');
+		}
+	});
+
+	$("#report-list li").each(function(i){
+		var li = $(this);
+		setTimeout(function() {
+			li.toggleClass('slide-up-fade-in');
+			li.find('.description').toggleClass('slide-up-fade-in');
+		}, 200*i);
+	});
+
+	$("#year-button").click(function(){
+		$("#year-list").slideDown();
+		$("#year-button i").removeClass('rotate-l').addClass('rotate-r');
+	});
+
+	$("#lob-button").click(function(){
+		$("#lob-list").slideDown();
+		$("#lob-button i").removeClass('rotate-l').addClass('rotate-r');
+	});
+
+	$("#back").click(function(){
+		$("#back").hide().css({ opacity: 0 }).removeClass('slide-up-fade-in');
+		$("#export").hide().css({ opacity: 0 }).removeClass('slide-up-fade-in');
+		$("#lob-button").hide().css({ opacity: 0 }).removeClass('slide-up-fade-in');
+		$("#lob-list").hide().css({ opacity: 0 }).removeClass('slide-up-fade-in');
+		$("#report-container").html('').hide().css({ opacity: 0 }).removeClass('slide-up-fade-in');
+		$("#report-container2").html('').hide().css({ opacity: 0 }).removeClass('slide-up-fade-in');
+		$("#year-button").show().css({ opacity: 0 }).addClass('slide-up-fade-in');
+		$("#report-list").show().css({ opacity: 0 }).addClass('slide-up-fade-in');
+	});
+	$("#export").click(function(){
+		exportReport();
+	});
+	for(var i=2015; i<=new Date().getFullYear(); i++){
+		if(i==year){
+			$("#year-button span").text(i);
+			$("#year-list").append('<li class="selected">'+i+'</li>');
+		} else{
+			$("#year-list").append('<li>'+i+'</li>');
+		}
+	}
+	$("#year-list li").click(function(){
+		$("#year-list li").removeClass("selected");
+		$(this).addClass("selected");
+		$("#year-list").slideUp();
+		$("#year-button i").removeClass('rotate-r').addClass('rotate-l');
+		if(year != $(this).text()){
+			year = $(this).text();
+			$("#year-button span").text(year);
+		}
+	});
+
+	$("#lob-list li").click(function(){
+		$("#lob-list li").removeClass("selected");
+		$(this).addClass("selected");
+		$("#lob-list").slideUp();
+		$("#lob-button i").removeClass('rotate-r').addClass('rotate-l');
+		if(lob != $(this).text()){
+			lob = $(this).text();
+			$("#lob-button span").text(lob);
+			if(reportNumber==1) getTargetTable();
+			if(reportNumber==2) getTargetHiddenTable();
+			if(reportNumber==3) getAllTargets();
+		}
+	});
+});
+function getTargetTable(){
+	$("#overlay").show();
+	$(".spinner").show();
+	$("#back").show().css({ 'opacity': 0, 'display': 'inline-block' }).addClass('slide-up-fade-in');
+	$("#export").show().css({ 'opacity': 0, 'display': 'inline-block' }).addClass('slide-up-fade-in');
+	$("#lob-button").show().css({ 'opacity': 0, 'display': 'block' }).addClass('slide-up-fade-in');
+	$("#lob-list").show().css({ 'opacity': 0, 'display': 'block' }).addClass('slide-up-fade-in');
+	$("#year-button").hide().css({ opacity: 0 }).removeClass('slide-up-fade-in');
+	$("#report-list").hide().css({ opacity: 0 }).removeClass('slide-up-fade-in');
+	Sales_SalesIncentivesTeamReports.getTargetTable(year, lob, function(result, event){
+		$("#report-container").html(result).show().css({ opacity: 0 }).addClass('slide-up-fade-in');
+		$("#overlay").hide();
+		$(".spinner").hide();
+	}, {escape:false});
+}
+function getTargetHiddenTable(){
+	$("#overlay").show();
+	$(".spinner").show();
+	$("#back").show().css({ 'opacity': 0, 'display': 'inline-block' }).addClass('slide-up-fade-in');
+	$("#export").show().css({ 'opacity': 0, 'display': 'inline-block' }).addClass('slide-up-fade-in');
+	$("#lob-button").show().css({ 'opacity': 0, 'display': 'block' }).addClass('slide-up-fade-in');
+	$("#lob-list").show().css({ 'opacity': 0, 'display': 'block' }).addClass('slide-up-fade-in');
+	$("#year-button").hide().css({ opacity: 0 }).removeClass('slide-up-fade-in');
+	$("#report-list").hide().css({ opacity: 0 }).removeClass('slide-up-fade-in');
+	Sales_SalesIncentivesTeamReports.getTargetHiddenTable(year, lob, function(result, event){
+		$("#report-container").html(result).show().css({ opacity: 0 }).addClass('slide-up-fade-in');
+		$("#overlay").hide();
+		$(".spinner").hide();
+	}, {escape:false});
+}
+
+function getAllTargets(){
+	$("#overlay").show();
+	$(".spinner").show();
+	$("#back").show().css({ 'opacity': 0, 'display': 'inline-block' }).addClass('slide-up-fade-in');
+	$("#year-button").hide().css({ opacity: 0 }).removeClass('slide-up-fade-in');
+	$("#report-list").hide().css({ opacity: 0 }).removeClass('slide-up-fade-in');
+	Sales_SalesIncentivesTeamReports.getAllTargets(year, lob, function(result, event){
+		var html = '<table id="tab" style="font-size: 14px; width: 100%; text-align: left; border-collapse: collapse; border: 0.8px solid #ddd;">'+
+		'<thead>'+
+		'<tr>'+
+		'<th style="background-color: #007bff; color: white; padding: 10px;">Name</th><th style="background-color: #007bff; color: white; padding: 10px;">Perner</th><th style="background-color: #007bff; color: white; padding: 10px;">User Line of Business</th><th style="background-color: #007bff; color: white; padding: 10px;">Target Line of Business</th>'+
+		'<th style="background-color: #007bff; color: white; padding: 10px;">Region</th><th style="background-color: #007bff; color: white; padding: 10px;">Area</th>'+
+		'<th style="background-color: #007bff; color: white; padding: 10px;">Market</th><th style="background-color: #007bff; color: white; padding: 10px;">Manager</th>'+
+		'<th style="background-color: #007bff; color: white; padding: 10px;">JAN Target</th><th style="background-color: #007bff; color: white; padding: 10px;">FEB Target</th>'+
+		'<th style="background-color: #007bff; color: white; padding: 10px;">MAR Target</th><th style="background-color: #007bff; color: white; padding: 10px;">APR Target</th>'+
+		'<th style="background-color: #007bff; color: white; padding: 10px;">MAY Target</th><th style="background-color: #007bff; color: white; padding: 10px;">JUN Target</th>'+
+		'<th style="background-color: #007bff; color: white; padding: 10px;">JUL Target</th><th style="background-color: #007bff; color: white; padding: 10px;">AUG Target</th>'+
+		'<th style="background-color: #007bff; color: white; padding: 10px;">SEP Target</th><th style="background-color: #007bff; color: white; padding: 10px;">OCT Target</th>'+
+		'<th style="background-color: #007bff; color: white; padding: 10px;">NOV Target</th><th style="background-color: #007bff; color: white; padding: 10px;">DEC Target</th>'+
+		'<th style="background-color: #007bff; color: white; padding: 10px;">Annualized Total Targets</th>'+
+		'</tr>'+
+		'</thead>'+
+		'<tbody>';
+
+		// console.log(result);
+		for(var i=0; i<result.length; i++){
+			html += '<tr>';
+			html += '<td style="border: 0.8px solid #ddd; padding: 10px;">'+result[i][0][0]+'</td><td style="border: 0.8px solid #ddd; padding: 10px;">'+result[i][0][1]+'</td>'+
+			'<td style="border: 0.8px solid #ddd; padding: 10px;">'+result[i][0][2]+'<td style="border: 0.8px solid #ddd; padding: 10px;">HH</td></td><td style="border: 0.8px solid #ddd; padding: 10px;">'+result[i][0][3]+'</td>'+
+			'<td style="border: 0.8px solid #ddd; padding: 10px;">'+result[i][0][4]+'</td><td style="border: 0.8px solid #ddd; padding: 10px;">'+result[i][0][5]+'</td>'+
+			'</td><td style="border: 0.8px solid #ddd; padding: 10px;">'+result[i][0][6]+'</td>';
+
+			var index = 1;
+			var monthNum = 0;
+			var num = 0.00;
+			for(var j=0; j<12; j++){
+				if(result[i][index][j] != '' && result[i][index][j] > 0){
+					monthNum++;
+					num += parseFloat(result[i][index][j]);
+				}
+				html += '<td style="border: 0.8px solid #ddd; padding: 10px;"><div>'+result[i][index][j]+'</div></td>';
+			}
+			if(monthNum != 0) html += '<td style="border: 0.8px solid #ddd; padding: 10px;"><div>'+((num/monthNum)*12).toFixed(2)+'</div></td>';
+			else html += '<td style="border: 0.8px solid #ddd; padding: 10px;"><div></div></td>';
+			html += '</tr>';
+
+			html += '<tr>';
+			html += '<td style="border: 0.8px solid #ddd; padding: 10px;">'+result[i][0][0]+'</td><td style="border: 0.8px solid #ddd; padding: 10px;">'+result[i][0][1]+'</td>'+
+			'<td style="border: 0.8px solid #ddd; padding: 10px;">'+result[i][0][2]+'</td><td style="border: 0.8px solid #ddd; padding: 10px;">HP</td><td style="border: 0.8px solid #ddd; padding: 10px;">'+result[i][0][3]+'</td>'+
+			'<td style="border: 0.8px solid #ddd; padding: 10px;">'+result[i][0][4]+'</td><td style="border: 0.8px solid #ddd; padding: 10px;">'+result[i][0][5]+'</td>'+
+			'</td><td style="border: 0.8px solid #ddd; padding: 10px;">'+result[i][0][6]+'</td>';
+			index = 2;
+			monthNum = 0;
+			num = 0.00;
+			for(var j=0; j<12; j++){
+				if(result[i][index][j] != '' && result[i][index][j] > 0){
+					monthNum++;
+					num += parseFloat(result[i][index][j]);
+				}
+				html += '<td style="border: 0.8px solid #ddd; padding: 10px;"><div>'+result[i][index][j]+'</div></td>';
+			}
+			if(monthNum != 0) html += '<td style="border: 0.8px solid #ddd; padding: 10px;"><div>'+((num/monthNum)*12).toFixed(2)+'</div></td>';
+			else html += '<td style="border: 0.8px solid #ddd; padding: 10px;"><div></div></td>';
+			html += '</tr>';
+		}
+
+		html += '</tbody>'+
+		'</table>';
+
+		$("#report-container2").html(html).show().css({ opacity: 0 }).addClass('slide-up-fade-in');
+		$('#report-container2').find("table").DataTable({dom: 'Bfrtip', buttons: ['csv', 'excel']});
+		$("#overlay").hide();
+		$(".spinner").hide();
+	}, {escape:false});
+}
+function exportReport(){
+	var link = document.createElement("a");
+	link.href = '/apex/Sales_SalesIncentivesTeamSpreadsheet?report='+reportNumber+'&year='+year+'&lob='+lob;
+	document.body.appendChild(link);
+	link.click();
+	document.body.removeChild(link);
+	delete link;
+}
+
+</script>
+</html>
+</apex:page>

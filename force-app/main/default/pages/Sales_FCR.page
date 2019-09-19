@@ -1,0 +1,3358 @@
+<apex:page controller="Sales_FCRcontroller" showHeader="false" standardStylesheets="false" docType="html-5.0">
+<html lang="en">
+<head>
+  <title>Performance Evaluations</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
+  <link rel="stylesheet" href="//cdn.linearicons.com/free/1.0.0/icon-font.min.css"/>
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css"/>
+  <link href="//fonts.googleapis.com/css?family=Roboto:100,400,700" rel="stylesheet"/>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/air-datepicker/2.2.3/css/datepicker.min.css" rel="stylesheet"/>
+
+  <style>
+  html{
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    overflow-y: hidden;
+  }
+  body{
+    font-family: 'Roboto', sans-serif;
+    position: relative;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    z-index:0;
+    background-color:#f99157;
+  }
+  .section{
+    position: absolute;
+    left: 100%;
+    top:0%;
+    width: 100%;
+    height:100%;
+    color:white;
+  }
+  .center{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .centerTop{
+    position: absolute;
+    top: 5%;
+    left: 50.5%;
+    transform: translate(-50%, -50%);
+  }
+  #profileIcon{
+    display: none;
+  }
+  #profileIcon > img{
+    position: absolute;
+    top: 5%;
+    left: 5%;
+    border-radius: 25px;
+    border: 1px white solid;
+    cursor: pointer;
+    width: 50px;
+    height: 50px;
+    z-index: 2;
+    transform: translate(-50%, -50%);
+  }
+  #closeProfile{
+    display: none;
+    color: white;
+    position: absolute;
+    font-size: 50px;
+    top: 5%;
+    left: 5%;
+    cursor: pointer;
+    width: 50px;
+    height: 50px;
+    z-index: 4;
+    transform: translate(-50%, -50%);
+  }
+  #modal{
+    z-index: 3;
+    width: 50%;
+    border-radius: 25px;
+    overflow-y: hidden;
+    background-color: white;
+    display: none;
+  }
+  .modalFooter{
+    border-top: 1px white solid;
+    padding: 10px;
+    color: white;
+    width: 100%;
+    min-height: 65px;
+    background-color: #6699cc;
+    text-align: center;
+  }
+  #modalUsrName{
+    color: white;
+    cursor: pointer;
+  }
+  #modalUsrName:hover{
+    color: white;
+    text-decoration: underline;
+  }
+  .modalTitle{
+    padding: 10px;
+    color: white;
+    font-size: 18px;
+    width: 100%;
+    min-height: 50px;
+    background-color: #6699cc;
+    text-align: center;
+  }
+  .modalBody{
+    min-height: 250px;
+    max-height: 70vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .salesPerformance{
+    padding: 10px;
+    color: white;
+    font-size: 16px;
+    width: 100%;
+    min-height: 125px;
+    border-top: 1px solid white;
+    background-color: #b7b7b7;
+    text-align: center;
+  }
+  .blue{
+    background-color: #6699cc;
+  }
+  .green{
+    background-color: #89b983;
+  }
+  .yellow{
+    background-color: #e0d686;
+  }
+  .red{
+    background-color: #c9696e;
+  }
+  .centerBot{
+    position: absolute;
+    bottom: 2%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  #welcome{
+    font-size: 40px;
+    position: relative;
+    width: 100vw;
+    height:100vh;
+    color:white;
+    background-color:#f99157;
+  }
+  #welcome ul{
+    font-size: 25px;
+    padding: 0px;
+    padding-bottom: 25%;
+  }
+  #welcome ul li{
+    padding-bottom: 10px;
+  }
+  ul li{
+    cursor: pointer;
+  }
+  ul li:hover{
+    text-decoration: underline;
+  }
+  #users{
+    background-color:#6699cc;
+  }
+  .thin{
+    font-weight:100;
+  }
+  .regular{
+    font-weight:400;
+  }
+  .space{
+    margin:10px;
+  }
+  .bold{
+    font-weight:700;
+  }
+  .link{
+    cursor:pointer;
+  }
+  .inline{
+    display:inline-block;
+  }
+  .pageSel{
+    color:white;
+  }
+  #users .pageTitle{
+    background-color: transparent;
+    color: white;
+  }
+  .section .pageTitle{
+    cursor: pointer;
+    background-color: white;
+    color: black;
+    border-radius: 30px;
+  }
+  .pageTitle{
+    width: 75%;
+    z-index: 1;
+    font-size:25px;
+    padding: 10px 8% 10px 8%;
+    text-align: center;
+  }
+  .fields{
+    font-weight: 400;
+    font-size: 18px;
+    margin-bottom: 8%;
+  }
+  .saFieldHolder{
+    margin-top: 5px;
+    height: 78%;
+    width: 75%;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    padding: 4% 0px 0px 14%;
+    -webkit-mask: -webkit-linear-gradient(
+      bottom,
+      rgba(255,255,255,0),
+      rgba(255,255,255,1) 4%,
+      rgba(255,255,255,1) 96%,
+      rgba(255,255,255,0)
+      );
+    }
+    .saFields{
+      width: 49%;
+      vertical-align: top;
+      display: inline-block;
+      font-size: 18px;
+      font-weight: 700;
+    }
+    .saFields ul{
+      font-weight: 400;
+      margin-left: -10px;
+      padding: 10% 0px 0px 15px;
+      padding-bottom: 20px;
+      max-height:75vh;
+      overflow-y:auto;
+      overflow-x: hidden;
+      list-style:none;
+      -webkit-mask: -webkit-linear-gradient(
+        bottom,
+        rgba(255,255,255,0),
+        rgba(255,255,255,1) 5%,
+        rgba(255,255,255,1) 95%,
+        rgba(255,255,255,0)
+        );
+        -webkit-overflow-scrolling: touch;
+      }
+      .pageDropdown{
+        width: 100%;
+        display: none;
+        z-index: 1;
+        padding: 10px;
+        color: black;
+        background-color: white;
+        border-radius: 25px;
+      }
+      .pageDropdown ul{
+        width: 100%;
+        padding: 0px;
+      }
+      .saFields ul li{
+        padding-left: 10px;
+        padding-bottom: 10px;
+      }
+      .welcomeText{
+        display: none;
+        font-size: 20px;
+        z-index: 4;
+        position: absolute;
+        top: 10%;
+        left: 35%;
+      }
+      .welcomeText div{
+        margin-bottom: 10px;
+      }
+      .userForm{
+        font-size:25px;
+        background: transparent;
+        border: solid;
+        border-width: 0px 0px 3px 0px;
+        width: 300px;
+      }
+      .selectedUl{
+        padding: 10px;
+        background-color: white;
+        color: black;
+        border-radius: 25px;
+      }
+      .selectedUl:hover{
+        text-decoration: none;
+      }
+      .selectedWelcomeUl{
+        text-decoration: underline;
+      }
+      ul{
+        -ms-overflow-style:none;
+        max-height:75%;
+        width: 80%;
+        overflow:auto;
+        list-style:none;
+        text-align:left;
+      }
+
+      #users ul{
+        padding-top: 10px;
+        -ms-overflow-style:none;
+        max-height:25vh;
+        min-height:25vh;
+        width: 300px;
+        overflow:auto;
+        list-style:none;
+        text-align:left;
+        -webkit-mask: -webkit-linear-gradient(
+          bottom,
+          rgba(255,255,255,0),
+          rgba(255,255,255,1) 5%,
+          rgba(255,255,255,1) 95%,
+          rgba(255,255,255,0)
+          );
+          -webkit-overflow-scrolling: touch;
+        }
+        input:focus,
+        select:focus,
+        textarea:focus,
+        button:focus {
+          outline: none;
+        }
+        .button{
+          background-color:white;
+          width:200px;
+          height:50px;
+          padding-top: 8px;
+          text-align:center;
+          border-radius:24px 24px 24px 24px;
+          font-size:25px;
+          font-weight: 700;
+          cursor:pointer;
+          z-index:3;
+          display:inline-block;
+        }
+        .button:hover{
+          background-color:#e0e0e0;
+        }
+        .b-yes{
+          color:white;
+          width:100px;
+          border-radius:24px 0px 0px 24px;
+          margin-right:1px;
+          background-color:#7ddf73;
+        }
+        .b-yes:hover{
+          background-color:#65ad5d;
+        }
+        .b-no{
+          color:white;
+          width:100px;
+          border-radius:0px 24px 24px 0px;
+          background-color:#ec5f67;
+        }
+        .b-no:hover{
+          background-color:#ab5056;
+        }
+        #loadCover{
+          position: fixed;
+          left: 0%;
+          top:0%;
+          width: 100%;
+          height:100%;
+          background-color:black;
+          opacity: 0.75;
+          z-index:2;
+        }
+        p{
+          font-size: 14px;
+          text-align: center;
+        }
+        ::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+          color: white;
+        }
+        ::-moz-placeholder { /* Firefox 19+ */
+          color: white;
+        }
+        :-ms-input-placeholder { /* IE 10+ */
+          color: white;
+        }
+        :-moz-placeholder { /* Firefox 18- */
+          color: white;
+        }
+
+        .ui-datepicker-month{
+          margin-left: 35%;
+        }
+
+        .ui-datepicker-calendar{
+          width: 100%;
+        }
+
+        .ui-state-active{
+          color: white;
+          border: 2px solid white;
+          border-radius: 25px;
+        }
+
+        .ui-state-default{
+          padding: 2px;
+          color: white;
+        }
+
+        .ui-state-hover{
+          color: white;
+        }
+
+        .ui-state-active, .ui-state-hover:hover{
+          color: white;
+        }
+
+        .ui-datepicker-next{
+          float: right;
+        }
+
+        .ui-icon{
+          color: white;
+          cursor: pointer;
+        }
+
+        #datepicker{
+          border-style: solid;
+          border-color: white;
+          border-width: 3px 0px 0px 0px;
+        }
+
+        .editBullet{
+          display: inline-flex;
+          opacity: 0;
+          color: #e0d686;
+        }
+
+        .fieldTitle{
+          display: inline-flex;
+          width: 90%;
+          margin-left: 10px;
+        }
+
+        .dayLength{
+          display: inline-block;
+          cursor: pointer;
+        }
+
+        .fcrSubtype{
+          display: none;
+          cursor: pointer;
+        }
+
+        .summaryButton{
+          width: 137px;
+          height: 36px;
+          font-size: 16px;
+          color: white;
+          text-align: center;
+          background-color: #5579b2;
+        }
+
+        .summaryButton:hover{
+          background-color: #476391;
+        }
+
+        .space{
+          margin: 35px;
+        }
+
+        .alert{
+          color: #fff393;
+          padding: 3px 0px 0px 0px;
+          display: none;
+        }
+
+        .fontZero{
+          font-size: 0px;
+        }
+
+        .star{
+          font-size: 18px;
+          padding: 5px;
+        }
+
+        textarea[type="text"]{
+          margin-top:10px;
+          overflow: auto;
+          outline: 0;
+          border: none;
+          border-radius: 25px;
+          width: 100%;
+          font-size: 14px;
+          padding:10px;
+          color: black;
+          height: 200px;
+        }
+
+        textarea[type="text"]::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+          color: #b7b7b7;
+          font-size: 14px;
+        }
+
+        textarea[type="text"]::-moz-placeholder { /* Firefox 19+ */
+          color: #b7b7b7;
+          font-size: 14px;
+        }
+
+        textarea[type="text"]:-ms-input-placeholder { /* IE 10+ */
+          color: #b7b7b7;
+          font-size: 14px;
+        }
+        .highlightRating{
+          color: black;
+          background-color: white;
+          border-radius: 25px;
+        }
+        .ratings{
+          color: white;
+          display: inline-block;
+          font-size: 18px;
+          padding: 0px 7px 0px 7px;
+        }
+        .fieldHolder{
+          margin-top: 5px;
+          height: 75%;
+          width: 100%;
+          padding: 2% 25% 0px 25%;
+          overflow-y: auto;
+          -webkit-mask: -webkit-linear-gradient(
+            bottom,
+            rgba(255,255,255,0),
+            rgba(255,255,255,1) 5%,
+            rgba(255,255,255,1) 95%,
+            rgba(255,255,255,0)
+            );
+            -webkit-overflow-scrolling: touch;
+          }
+
+          ::-webkit-scrollbar {
+            width: 0px;
+            background: transparent;
+          }
+
+          #saveButton{
+            display: none;
+            text-align: center;
+            cursor: pointer;
+            color: white;
+            background-color:#7bc972;
+            border-radius: 30px;
+            width: 63px;
+            height: 63px;
+            padding: 10px;
+            position: absolute;
+            top: 5%;
+            right: -1%;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+          }
+
+          #saveButton:hover{
+            background-color:#65ad5d;
+          }
+          #pageOutOf{
+            position: absolute;
+            left: 50%
+            transform: translate(-50%, -50%);
+            z-index: 2;
+            bottom: 1.8%;
+            color: white;
+            display: block;
+            margin-bottom: -20px;
+          }
+          .spData{
+            display: inline-block;
+            padding-left: 8%;
+            padding-right: 8%;
+          }
+          .spRight{
+            padding:20px 25% 20px 0px;
+            float: right;
+          }
+          .spCenter{
+            padding:20px 50% 20px 0px;
+            float: right;
+          }
+          .spLeft{
+            padding:20px 0px 20px 25%;
+            float: left;
+          }
+
+          #leftArrow{
+            cursor: pointer;
+            display: none;
+            position: fixed;
+            top: 50%;
+            margin-top:-40px;
+            font-size: 40px;
+            left: 10px;
+            color: white;
+            z-index: 2;
+          }
+
+          #rightArrow{
+            cursor: pointer;
+            display: none;
+            position: fixed;
+            top: 50%;
+            margin-top:-40px;
+            font-size: 40px;
+            right: 10px;
+            color: white;
+            z-index: 2;
+          }
+
+          @media only screen and (max-width: 750px) {
+            .welcomeText{
+              position: absolute;
+              left: 20%;
+              top: 2%;
+              font-size: 13px;
+              margin: 2% 2% 0px 2%;
+            }
+            #saveButton{
+              top: 93.3%;
+              right: 10%;
+              padding: 5px;
+              width: 50px;
+              height: 50px;
+            }
+          }
+
+          @media only screen and (max-width: 500px) {
+            .spData{
+              padding-left: 5%;
+              padding-right: 5%;
+            }
+            .pageDropdown{
+              width: 85%;
+            }
+            #welcome{
+              font-size: 25px;
+            }
+            #welcome .center{
+              top: 40%;
+            }
+            #welcome ul{
+              font-size: 18px;
+            }
+            .saFieldHolder{
+              margin-top: 5px;
+              height: 75%;
+              width: 80%;
+              padding: 2% 0px 0px 0px;
+              overflow:auto;
+              -webkit-mask: -webkit-linear-gradient(
+                bottom,
+                rgba(255,255,255,0),
+                rgba(255,255,255,1) 5%,
+                rgba(255,255,255,1) 95%,
+                rgba(255,255,255,0)
+                );
+                -webkit-overflow-scrolling: touch;
+              }
+              .saFields{
+                width: 100%;
+                vertical-align: top;
+                font-size: 18px;
+                padding-top: 4%;
+              }
+              .saFields ul{
+                width: 100%;
+                max-height:none;
+              }
+              #profileIcon > img{
+                left: 6%;
+                width: 35px;
+                height: 35px;
+              }
+              .pageTitle{
+                font-size: 18px;
+                padding: 10px 10% 10px 10%;
+              }
+              .fields{
+                font-size: 16px;
+              }
+              .fieldHolder{
+                padding: 4% 5% 0px 5%;
+              }
+              .star{
+                font-size: 16px;
+                padding: 3px;
+              }
+              #saveButton{
+                top: 93.3%;
+                right: -15px;
+              }
+              .link{
+                margin-right: 10px;
+              }
+              #modal{
+                width: 80%;
+              }
+              #closeProfile{
+                font-size: 35px;
+                left: 6%;
+                width: 35px;
+                height: 35px;
+              }
+            }
+            @media only screen and (max-width: 350px) {
+              #profileIcon > img{
+                left: 8%;
+                width: 25px;
+                height: 25px;
+              }
+              .pageTitle{
+                font-size: 13px;
+                padding: 10px 15% 10px 15%;
+              }
+              .saFields{
+                width: 100%;
+                vertical-align: top;
+                font-size: 18px;
+                padding-top: 6%;
+              }
+              .fields{
+                font-size: 14px;
+              }
+              .star{
+                font-size: 14px;
+                padding: 2px;
+              }
+            }
+          }
+          </style>
+        </head>
+        <body>
+          <div id="getLoad" style="background-color:#bf4c4c;display:none;position:absolute;font-size:50px;width:100vw;height:100vh;color:white;z-index:5;"><i style="margin-left:-40px;margin-top:-40px;" class="center fa fa-circle-o-notch fa-spin fa-fw"></i></div>
+          <div id="saveButton"><i class="fa fa-cloud" aria-hidden="true"></i> Save</div>
+          <div id="closeProfile" class="lnr lnr-cross"></div>
+          <div id="profileIcon"><img class="imgCircle" src="/profilephoto/005/T" aria-hidden="true"></img></div>
+          <div id="pageOutOf" class="centerBot"></div>
+          <div class="pulse" id="leftArrow"><span class="lnr lnr-chevron-left"></span></div>
+          <div class="pulse" id="rightArrow"><span class="lnr lnr-chevron-right"></span></div>
+          <div class="center" id="modal">
+            <div class="modalTitle">
+              <div class="bold">PRODUCTIVITY</div>
+              <div style="width: 100%; height:0px; padding:0px;">
+                <span style="cursor: pointer; margin-right:60%; padding:0px;" class="lnr lnr-chevron-left"></span>
+                <span style="cursor: pointer; padding:0px;" class="lnr lnr-chevron-right"></span>
+              </div>
+              <div><a target="_blank" class="thin" id="modalUsrName"></a></div>
+              <div style="font-size:12px;" class="regular" id="modalMonth"><i class="fa fa-circle-o-notch fa-spin fa-fw"></i></div>
+            </div>
+            <div class="modalBody">
+              <div class="salesPerformance">
+                <div class="bold">HH Admits</div>
+                <div class="regular">
+                  <span class="spData"><div>Target</div><div></div></span>
+                  <span class="spData"><div>Actual</div><div></div></span>
+                  <span class="spData"><div>% to Target</div><div></div></span>
+                </div>
+              </div>
+              <div class="salesPerformance">
+                <div class="bold">HP Admits</div>
+                <div class="regular">
+                  <span class="spData"><div>Target</div><div></div></span>
+                  <span class="spData"><div>Actual</div><div></div></span>
+                  <span class="spData"><div>% to Target</div><div></div></span>
+                </div>
+              </div>
+              <div class="salesPerformance">
+                <div class="bold">Sales Calls</div>
+                <div class="regular">
+                  <span class="spData"><div>Avg Calls Per Week</div><div></div></span>
+                  <span class="spData"><div>Completed Calls</div><div></div></span>
+                </div>
+              </div>
+            </div>
+            <div class="modalFooter">
+              <div class="regular">
+                <span class="spData"><div>Total Assignments</div><div></div></span>
+                <span class="spData"><div>Last Login</div><div></div></span>
+              </div>
+            </div>
+          </div>
+
+          <div id="welcome">
+            <div class="center">
+              <div style="opacity:0;" class="regular">Please select an option below.</div>
+              <ul style="opacity:0;">
+                <li data-fcrType = "hhCR">Competency Rating</li>
+                <li data-fcrType = "fcr">Field Coaching Report</li>
+                <li data-fcrType = "sa">Pre-ride Self Assessment</li>
+                <li data-fcrType = "af">The Asking Formula</li>
+              </ul>
+              <div style="position:absolute;opacity:0;" class="thin">Click here to begin!</div>
+            </div>
+          </div>
+
+          <div id="users" class="section" style="display:none;">
+            <div style="cursor:default;" class="centerTop bold pageTitle">Enter your FCR details below</div>
+            <div class="center" style="top:58%;">
+              <div id="datepicker"/>
+              <input id="dateInput" type="text" class="userForm" placeholder="FCR date" readonly="readonly"/>
+              <div class="alert" id="dateAlert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> You must select a date.</div>
+              <div class="space"></div>
+              <div style="width:300px;">
+                <div class="dayLength">
+                  <i style="font-size:25px;" class="fa fa-adjust fa-rotate-180" aria-hidden="true"></i> <p style="font-size:25px;display:inline-block;margin-bottom:0px;"> Half day</p>
+                </div>
+                <div class="dayLength" style="float:right;">
+                  <i style="font-size:25px;" class="fa fa-circle" aria-hidden="true"></i> <p style="font-size:25px;display:inline-block;margin-bottom:0px;"> Full day</p>
+                </div>
+                <div class="alert" id="lengthAlert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> You must select an FCR length.</div>
+                <div class="space"></div>
+                <div class="fcrSubtype">
+                  <p style="font-size:25px;display:inline-block;margin-bottom:0px;">SalesPro</p>
+                </div>
+                <div class="fcrSubtype" style="float:right;">
+                  <p style="font-size:25px;display:inline-block;margin-bottom:0px;margin-right:65px;">TAF</p>
+                </div>
+                <div class="alert" id="fcrSubtypeAlert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> You must select an FCR type.</div>
+              </div>
+
+              <div class="space"></div>
+              <input id="employeeSearchInput" type="text" class="userForm" onkeyup="employeeSearch();" placeholder="Employee name"/>
+              <div class="alert" id="employeeAlert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> You must select an employee.</div>
+              <ul id="userList" style="margin-left:-40px;"></ul>
+            </div>
+
+            <div id="userGo" class="button centerBot" style="color:#6699cc; margin-bottom: 30px; display:none;" onclick="areYouSure()">Go</div>
+            <div class="welcomeText" id="sa-welcome">
+              <div>PSA - Prior to your manager ride along, please take a few brief minutes to evaluate yourself on these sections:</div>
+              <div>- Call Planning</div>
+              <div>- Selling Skills and Sales Process</div>
+              <div>- Customer Segment</div>
+              <div>- Customer Segment Contact</div>
+              <div>- Disciplines</div>
+              <div>- Specialty Programs</div>
+              <div>- Diagnoses Specific</div>
+              <div>- Relevant Features / Benefits</div>
+            </div>
+
+            <div class="welcomeText" id="fcr-welcome">
+              <div>FCR - Please take a few minutes to fill out each section:</div>
+              <div>- Pre-Call Planning / Organization Skills</div>
+              <div>- Product and Market Knowledge / Internal Rapport Building</div>
+              <div>- Selling Skills and Sales Processes</div>
+            </div>
+
+            <div class="welcomeText" id="fcrAF-welcome">
+              <div>FCR - Please take a few minutes to fill out each section:</div>
+              <div>- Pre-Call Planning / Organization Skills</div>
+              <div>- Product and Market Knowledge / Internal Rapport Building</div>
+              <div>- Selling Skills and Sales Processes (TAF)</div>
+            </div>
+
+            <div class="welcomeText" id="hhCR-welcome">
+              <div>CR - Please take a few minutes to fill out each section:</div>
+              <div>- Self Starter</div>
+              <div>- Results Oriented</div>
+              <div>- Teamwork</div>
+              <div>- Relationship Building</div>
+              <div>- Consultative Selling</div>
+              <div>- Passion for Hospice Mission (Hospice Only)</div>
+              <div>- Time Management and Organizational Skills</div>
+              <div>- Influential Communication Skills</div>
+              <div>- Networking Ability</div>
+            </div>
+
+            <div class="welcomeText" id="af-welcome">
+              <div>TAF - Welcome to The Asking Formula. Please take a few minutes to consider your ask:</div>
+              <div>- Know what you want</div>
+              <div>- Ask for what you want</div>
+              <div>- Show what you want</div>
+              <div>- Develop three best reasons</div>
+            </div>
+
+            <div id="createFCR" class="centerBot" style="margin-bottom: 30px; display:none; z-index:4;">
+              <p class="centerBot regular" style="width:100%;bottom:100%;"></p>
+              <div class="button b-yes" onclick="createFCR()">Yes</div>
+              <div class="button b-no" onclick="noFCR()">No</div>
+            </div>
+          </div>
+
+          <div id="fcr" style="display:none;">
+            <div id="page1" class="section" style="display:none;">
+              <div class="centerTop regular pageTitle">
+                <div><span style="position:absolute; left:10px; top: 23%;" class="lnr lnr-menu"></span>Pre-Call Planning / Organization Skills</div>
+                <div class="pageDropdown"><ul></ul></div>
+              </div>
+              <div class="center fieldHolder">
+                <div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_FCR_KAH_1_A__c">&bull;</div><div class="fieldTitle">Maintains appropriate call plan, call notes and updates information after each customer visit in CRM.</div>
+                    <input type="hidden" name="Sales_FCR_KAH_1_A"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+                      <i class="ratings link fa fa-ban" aria-hidden="true" value="0 - Not Observed"></i>
+                      <div class="link ratings" value="1 - Underperforming">1</div>
+                      <div class="link ratings" value="2 - Approaching Expectations">2</div>
+                      <div class="link ratings" value="3 - Achieving Expectations">3</div>
+                      <div class="link ratings" value="4 - Exceeding Expectations">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_FCR_KAH_1_B__c">&bull;</div><div class="fieldTitle">Maintains appropriate collateral resources.</div>
+                    <input type="hidden" name="Sales_FCR_KAH_1_B"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+                      <i class="ratings link fa fa-ban" aria-hidden="true" value="0 - Not Observed"></i>
+                      <div class="link ratings" value="1 - Underperforming">1</div>
+                      <div class="link ratings" value="2 - Approaching Expectations">2</div>
+                      <div class="link ratings" value="3 - Achieving Expectations">3</div>
+                      <div class="link ratings" value="4 - Exceeding Expectations">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_FCR_KAH_1_C__c">&bull;</div><div class="fieldTitle">Updates CRM call documentation / notes timely and appropriately.</div>
+                    <input type="hidden" name="Sales_FCR_KAH_1_C"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+                      <i class="ratings link fa fa-ban" aria-hidden="true" value="0 - Not Observed"></i>
+                      <div class="link ratings" value="1 - Underperforming">1</div>
+                      <div class="link ratings" value="2 - Approaching Expectations">2</div>
+                      <div class="link ratings" value="3 - Achieving Expectations">3</div>
+                      <div class="link ratings" value="4 - Exceeding Expectations">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_FCR_KAH_1_D__c">&bull;</div><div class="fieldTitle">Utilizes CRM call recurrence ensuring call frequency and cycle.</div>
+                    <input type="hidden" name="Sales_FCR_KAH_1_D"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+                      <i class="ratings link fa fa-ban" aria-hidden="true" value="0 - Not Observed"></i>
+                      <div class="link ratings" value="1 - Underperforming">1</div>
+                      <div class="link ratings" value="2 - Approaching Expectations">2</div>
+                      <div class="link ratings" value="3 - Achieving Expectations">3</div>
+                      <div class="link ratings" value="4 - Exceeding Expectations">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_FCR_KAH_1_E__c">&bull;</div><div class="fieldTitle">Completes expense reports in a timely manner.</div>
+                    <input type="hidden" name="Sales_FCR_KAH_1_E"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+                      <i class="ratings link fa fa-ban" aria-hidden="true" value="0 - Not Observed"></i>
+                      <div class="link ratings" value="1 - Underperforming">1</div>
+                      <div class="link ratings" value="2 - Approaching Expectations">2</div>
+                      <div class="link ratings" value="3 - Achieving Expectations">3</div>
+                      <div class="link ratings" value="4 - Exceeding Expectations">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_FCR_KAH_1_F__c">&bull;</div><div class="fieldTitle">Adheres to the professional apperance standards, promotes a positive image.</div>
+                    <input type="hidden" name="Sales_FCR_KAH_1_F"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+                      <i class="ratings link fa fa-ban" aria-hidden="true" value="0 - Not Observed"></i>
+                      <div class="link ratings" value="1 - Underperforming">1</div>
+                      <div class="link ratings" value="2 - Approaching Expectations">2</div>
+                      <div class="link ratings" value="3 - Achieving Expectations">3</div>
+                      <div class="link ratings" value="4 - Exceeding Expectations">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <input type="hidden" name="Sales_FCR_KAH_1_Text"/>
+                    <div class="editBullet" data-fieldname="Sales_FCR_KAH_1_Text__c">&bull;</div><div class="fieldTitle"><textarea data-role="none" placeholder="Comments and recommendations." type="text"></textarea></div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <div id="page2" class="section" style="display:none;">
+              <div class="centerTop regular pageTitle">
+                <div><span style="position:absolute; left:10px; top: 23%;" class="lnr lnr-menu"></span>Product and Market Knowledge / Internal Rapport Building</div>
+                <div class="pageDropdown"><ul></ul></div>
+              </div>
+              <div class="center fieldHolder">
+                <div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_FCR_KAH_2_A__c">&bull;</div><div class="fieldTitle">Incorporates available resources as needed to support the selling process - clinical support team, in-services, industry articles, etc.</div>
+                    <input type="hidden" name="Sales_FCR_KAH_2_A"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+                      <i class="ratings link fa fa-ban" aria-hidden="true" value="0 - Not Observed"></i>
+                      <div class="link ratings" value="1 - Underperforming">1</div>
+                      <div class="link ratings" value="2 - Approaching Expectations">2</div>
+                      <div class="link ratings" value="3 - Achieving Expectations">3</div>
+                      <div class="link ratings" value="4 - Exceeding Expectations">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_FCR_KAH_2_B__c">&bull;</div><div class="fieldTitle">Demonstrates superior customer service and follow-up with customers and patients.</div>
+                    <input type="hidden" name="Sales_FCR_KAH_2_B"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+                      <i class="ratings link fa fa-ban" aria-hidden="true" value="0 - Not Observed"></i>
+                      <div class="link ratings" value="1 - Underperforming">1</div>
+                      <div class="link ratings" value="2 - Approaching Expectations">2</div>
+                      <div class="link ratings" value="3 - Achieving Expectations">3</div>
+                      <div class="link ratings" value="4 - Exceeding Expectations">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_FCR_KAH_2_C__c">&bull;</div><div class="fieldTitle">Participates in business development meetings and partners effectively with operations and clinical.</div>
+                    <input type="hidden" name="Sales_FCR_KAH_2_C"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+                      <i class="ratings link fa fa-ban" aria-hidden="true" value="0 - Not Observed"></i>
+                      <div class="link ratings" value="1 - Underperforming">1</div>
+                      <div class="link ratings" value="2 - Approaching Expectations">2</div>
+                      <div class="link ratings" value="3 - Achieving Expectations">3</div>
+                      <div class="link ratings" value="4 - Exceeding Expectations">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_FCR_KAH_2_D__c">&bull;</div><div class="fieldTitle">Exhibits knowldge of competitors offerings, stategies and market share.</div>
+                    <input type="hidden" name="Sales_FCR_KAH_2_D"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+                      <i class="ratings link fa fa-ban" aria-hidden="true" value="0 - Not Observed"></i>
+                      <div class="link ratings" value="1 - Underperforming">1</div>
+                      <div class="link ratings" value="2 - Approaching Expectations">2</div>
+                      <div class="link ratings" value="3 - Achieving Expectations">3</div>
+                      <div class="link ratings" value="4 - Exceeding Expectations">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_FCR_KAH_2_E__c">&bull;</div><div class="fieldTitle">Demonstrates selling skill and strategy across customer segments: hospital, physician, and facility sellings.</div>
+                    <input type="hidden" name="Sales_FCR_KAH_2_E"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+                      <i class="ratings link fa fa-ban" aria-hidden="true" value="0 - Not Observed"></i>
+                      <div class="link ratings" value="1 - Underperforming">1</div>
+                      <div class="link ratings" value="2 - Approaching Expectations">2</div>
+                      <div class="link ratings" value="3 - Achieving Expectations">3</div>
+                      <div class="link ratings" value="4 - Exceeding Expectations">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <input type="hidden" name="Sales_FCR_KAH_2_Text"/>
+                    <div class="editBullet" data-fieldname="Sales_FCR_KAH_2_Text__c">&bull;</div><div class="fieldTitle"><textarea data-role="none" placeholder="Comments and recommendations." type="text"></textarea></div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <div id="page3" class="section" style="display:none;">
+              <div class="centerTop regular pageTitle">
+                <div><span style="position:absolute; left:10px; top: 23%;" class="lnr lnr-menu"></span>Selling Skills and Sales Processes</div>
+                <div class="pageDropdown"><ul></ul></div>
+              </div>
+              <div class="center fieldHolder">
+                <div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_FCR_KAH_3_A__c">&bull;</div><div class="fieldTitle">Call planning: Posts clear sales call objective in CRM.</div>
+                    <input type="hidden" name="Sales_FCR_KAH_3_A"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+                      <i class="ratings link fa fa-ban" aria-hidden="true" value="0 - Not Observed"></i>
+                      <div class="link ratings" value="1 - Underperforming">1</div>
+                      <div class="link ratings" value="2 - Approaching Expectations">2</div>
+                      <div class="link ratings" value="3 - Achieving Expectations">3</div>
+                      <div class="link ratings" value="4 - Exceeding Expectations">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_FCR_KAH_3_B__c">&bull;</div><div class="fieldTitle">Opening the Call: Appropriately introduces self, company and interest spark. Uses transition question effectively.</div>
+                    <input type="hidden" name="Sales_FCR_KAH_3_B"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+                      <i class="ratings link fa fa-ban" aria-hidden="true" value="0 - Not Observed"></i>
+                      <div class="link ratings" value="1 - Underperforming">1</div>
+                      <div class="link ratings" value="2 - Approaching Expectations">2</div>
+                      <div class="link ratings" value="3 - Achieving Expectations">3</div>
+                      <div class="link ratings" value="4 - Exceeding Expectations">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_FCR_KAH_3_C__c">&bull;</div><div class="fieldTitle">Establishing Customer Needs: Asks appropriate probing questions conversationally to understand the customer's situation and identify the customer's needs.</div>
+                    <input type="hidden" name="Sales_FCR_KAH_3_C"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+                      <i class="ratings link fa fa-ban" aria-hidden="true" value="0 - Not Observed"></i>
+                      <div class="link ratings" value="1 - Underperforming">1</div>
+                      <div class="link ratings" value="2 - Approaching Expectations">2</div>
+                      <div class="link ratings" value="3 - Achieving Expectations">3</div>
+                      <div class="link ratings" value="4 - Exceeding Expectations">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_FCR_KAH_3_D__c">&bull;</div><div class="fieldTitle">Confirms Shared Understaning: Confirms and clarifies the customer's needs.</div>
+                    <input type="hidden" name="Sales_FCR_KAH_3_D"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+                      <i class="ratings link fa fa-ban" aria-hidden="true" value="0 - Not Observed"></i>
+                      <div class="link ratings" value="1 - Underperforming">1</div>
+                      <div class="link ratings" value="2 - Approaching Expectations">2</div>
+                      <div class="link ratings" value="3 - Achieving Expectations">3</div>
+                      <div class="link ratings" value="4 - Exceeding Expectations">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_FCR_KAH_3_E__c">&bull;</div><div class="fieldTitle">Presents Targeted Solutions: Offers relevant features and effectively articulates the benefit.</div>
+                    <input type="hidden" name="Sales_FCR_KAH_3_E"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+                      <i class="ratings link fa fa-ban" aria-hidden="true" value="0 - Not Observed"></i>
+                      <div class="link ratings" value="1 - Underperforming">1</div>
+                      <div class="link ratings" value="2 - Approaching Expectations">2</div>
+                      <div class="link ratings" value="3 - Achieving Expectations">3</div>
+                      <div class="link ratings" value="4 - Exceeding Expectations">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_FCR_KAH_3_F__c">&bull;</div><div class="fieldTitle">Solicit Feedback: Engages the customer in verbal / non-verbal feedback.</div>
+                    <input type="hidden" name="Sales_FCR_KAH_3_F"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+                      <i class="ratings link fa fa-ban" aria-hidden="true" value="0 - Not Observed"></i>
+                      <div class="link ratings" value="1 - Underperforming">1</div>
+                      <div class="link ratings" value="2 - Approaching Expectations">2</div>
+                      <div class="link ratings" value="3 - Achieving Expectations">3</div>
+                      <div class="link ratings" value="4 - Exceeding Expectations">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_FCR_KAH_3_G__c">&bull;</div><div class="fieldTitle">Dealing with Obstacles: Effectively deals with obstacles.</div>
+                    <input type="hidden" name="Sales_FCR_KAH_3_G"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+                      <i class="ratings link fa fa-ban" aria-hidden="true" value="0 - Not Observed"></i>
+                      <div class="link ratings" value="1 - Underperforming">1</div>
+                      <div class="link ratings" value="2 - Approaching Expectations">2</div>
+                      <div class="link ratings" value="3 - Achieving Expectations">3</div>
+                      <div class="link ratings" value="4 - Exceeding Expectations">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_FCR_KAH_3_H__c">&bull;</div><div class="fieldTitle">Close: Identifies and matches buying signals to the right close. Deals effectively with rejection and recovery. Discusses appropriate next steps.</div>
+                    <input type="hidden" name="Sales_FCR_KAH_3_H"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+                      <i class="ratings link fa fa-ban" aria-hidden="true" value="0 - Not Observed"></i>
+                      <div class="link ratings" value="1 - Underperforming">1</div>
+                      <div class="link ratings" value="2 - Approaching Expectations">2</div>
+                      <div class="link ratings" value="3 - Achieving Expectations">3</div>
+                      <div class="link ratings" value="4 - Exceeding Expectations">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <input type="hidden" name="Sales_FCR_KAH_3_Text"/>
+                    <div class="editBullet" data-fieldname="Sales_FCR_KAH_3_Text__c">&bull;</div><div class="fieldTitle"><textarea data-role="none" placeholder="Comments and recommendations." type="text"></textarea></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="centerBot" style="margin-bottom:15px;"><div class="button summaryButton" onclick="openSummary();">Go To Summary</div></div>
+          </div>
+
+          <div id="fcrAF" style="display:none;">
+            <div id="page1" class="section" style="display:none;">
+              <div class="centerTop regular pageTitle">
+                <div><span style="position:absolute; left:10px; top: 23%;" class="lnr lnr-menu"></span>Pre-Call Planning / Organization Skills</div>
+                <div class="pageDropdown"><ul></ul></div>
+              </div>
+              <div class="center fieldHolder">
+                <div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_FCR_KAH_1_A__c">&bull;</div><div class="fieldTitle">Maintains appropriate call plan, call notes and updates information after each customer visit in CRM.</div>
+                    <input type="hidden" name="Sales_FCR_KAH_1_A"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+                      <i class="ratings link fa fa-ban" aria-hidden="true" value="0 - Not Observed"></i>
+                      <div class="link ratings" value="1 - Underperforming">1</div>
+                      <div class="link ratings" value="2 - Approaching Expectations">2</div>
+                      <div class="link ratings" value="3 - Achieving Expectations">3</div>
+                      <div class="link ratings" value="4 - Exceeding Expectations">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_FCR_KAH_1_B__c">&bull;</div><div class="fieldTitle">Maintains appropriate collateral resources.</div>
+                    <input type="hidden" name="Sales_FCR_KAH_1_B"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+                      <i class="ratings link fa fa-ban" aria-hidden="true" value="0 - Not Observed"></i>
+                      <div class="link ratings" value="1 - Underperforming">1</div>
+                      <div class="link ratings" value="2 - Approaching Expectations">2</div>
+                      <div class="link ratings" value="3 - Achieving Expectations">3</div>
+                      <div class="link ratings" value="4 - Exceeding Expectations">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_FCR_KAH_1_C__c">&bull;</div><div class="fieldTitle">Updates CRM call documentation / notes timely and appropriately.</div>
+                    <input type="hidden" name="Sales_FCR_KAH_1_C"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+                      <i class="ratings link fa fa-ban" aria-hidden="true" value="0 - Not Observed"></i>
+                      <div class="link ratings" value="1 - Underperforming">1</div>
+                      <div class="link ratings" value="2 - Approaching Expectations">2</div>
+                      <div class="link ratings" value="3 - Achieving Expectations">3</div>
+                      <div class="link ratings" value="4 - Exceeding Expectations">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_FCR_KAH_1_D__c">&bull;</div><div class="fieldTitle">Utilizes CRM call recurrence ensuring call frequency and cycle.</div>
+                    <input type="hidden" name="Sales_FCR_KAH_1_D"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+                      <i class="ratings link fa fa-ban" aria-hidden="true" value="0 - Not Observed"></i>
+                      <div class="link ratings" value="1 - Underperforming">1</div>
+                      <div class="link ratings" value="2 - Approaching Expectations">2</div>
+                      <div class="link ratings" value="3 - Achieving Expectations">3</div>
+                      <div class="link ratings" value="4 - Exceeding Expectations">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_FCR_KAH_1_E__c">&bull;</div><div class="fieldTitle">Completes expense reports in a timely manner.</div>
+                    <input type="hidden" name="Sales_FCR_KAH_1_E"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+                      <i class="ratings link fa fa-ban" aria-hidden="true" value="0 - Not Observed"></i>
+                      <div class="link ratings" value="1 - Underperforming">1</div>
+                      <div class="link ratings" value="2 - Approaching Expectations">2</div>
+                      <div class="link ratings" value="3 - Achieving Expectations">3</div>
+                      <div class="link ratings" value="4 - Exceeding Expectations">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_FCR_KAH_1_F__c">&bull;</div><div class="fieldTitle">Adheres to the professional apperance standards, promotes a positive image.</div>
+                    <input type="hidden" name="Sales_FCR_KAH_1_F"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+                      <i class="ratings link fa fa-ban" aria-hidden="true" value="0 - Not Observed"></i>
+                      <div class="link ratings" value="1 - Underperforming">1</div>
+                      <div class="link ratings" value="2 - Approaching Expectations">2</div>
+                      <div class="link ratings" value="3 - Achieving Expectations">3</div>
+                      <div class="link ratings" value="4 - Exceeding Expectations">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <input type="hidden" name="Sales_FCR_KAH_1_Text"/>
+                    <div class="editBullet" data-fieldname="Sales_FCR_KAH_1_Text__c">&bull;</div><div class="fieldTitle"><textarea data-role="none" placeholder="Comments and recommendations." type="text"></textarea></div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <div id="page2" class="section" style="display:none;">
+              <div class="centerTop regular pageTitle">
+                <div><span style="position:absolute; left:10px; top: 23%;" class="lnr lnr-menu"></span>Product and Market Knowledge / Internal Rapport Building</div>
+                <div class="pageDropdown"><ul></ul></div>
+              </div>
+              <div class="center fieldHolder">
+                <div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_FCR_KAH_2_A__c">&bull;</div><div class="fieldTitle">Incorporates available resources as needed to support the selling process - clinical support team, in-services, industry articles, etc.</div>
+                    <input type="hidden" name="Sales_FCR_KAH_2_A"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+                      <i class="ratings link fa fa-ban" aria-hidden="true" value="0 - Not Observed"></i>
+                      <div class="link ratings" value="1 - Underperforming">1</div>
+                      <div class="link ratings" value="2 - Approaching Expectations">2</div>
+                      <div class="link ratings" value="3 - Achieving Expectations">3</div>
+                      <div class="link ratings" value="4 - Exceeding Expectations">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_FCR_KAH_2_B__c">&bull;</div><div class="fieldTitle">Demonstrates superior customer service and follow-up with customers and patients.</div>
+                    <input type="hidden" name="Sales_FCR_KAH_2_B"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+                      <i class="ratings link fa fa-ban" aria-hidden="true" value="0 - Not Observed"></i>
+                      <div class="link ratings" value="1 - Underperforming">1</div>
+                      <div class="link ratings" value="2 - Approaching Expectations">2</div>
+                      <div class="link ratings" value="3 - Achieving Expectations">3</div>
+                      <div class="link ratings" value="4 - Exceeding Expectations">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_FCR_KAH_2_C__c">&bull;</div><div class="fieldTitle">Participates in business development meetings and partners effectively with operations and clinical.</div>
+                    <input type="hidden" name="Sales_FCR_KAH_2_C"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+                      <i class="ratings link fa fa-ban" aria-hidden="true" value="0 - Not Observed"></i>
+                      <div class="link ratings" value="1 - Underperforming">1</div>
+                      <div class="link ratings" value="2 - Approaching Expectations">2</div>
+                      <div class="link ratings" value="3 - Achieving Expectations">3</div>
+                      <div class="link ratings" value="4 - Exceeding Expectations">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_FCR_KAH_2_D__c">&bull;</div><div class="fieldTitle">Exhibits knowldge of competitors offerings, stategies and market share.</div>
+                    <input type="hidden" name="Sales_FCR_KAH_2_D"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+                      <i class="ratings link fa fa-ban" aria-hidden="true" value="0 - Not Observed"></i>
+                      <div class="link ratings" value="1 - Underperforming">1</div>
+                      <div class="link ratings" value="2 - Approaching Expectations">2</div>
+                      <div class="link ratings" value="3 - Achieving Expectations">3</div>
+                      <div class="link ratings" value="4 - Exceeding Expectations">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_FCR_KAH_2_E__c">&bull;</div><div class="fieldTitle">Demonstrates selling skill and strategy across customer segments: hospital, physician, and facility sellings.</div>
+                    <input type="hidden" name="Sales_FCR_KAH_2_E"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+                      <i class="ratings link fa fa-ban" aria-hidden="true" value="0 - Not Observed"></i>
+                      <div class="link ratings" value="1 - Underperforming">1</div>
+                      <div class="link ratings" value="2 - Approaching Expectations">2</div>
+                      <div class="link ratings" value="3 - Achieving Expectations">3</div>
+                      <div class="link ratings" value="4 - Exceeding Expectations">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <input type="hidden" name="Sales_FCR_KAH_2_Text"/>
+                    <div class="editBullet" data-fieldname="Sales_FCR_KAH_2_Text__c">&bull;</div><div class="fieldTitle"><textarea data-role="none" placeholder="Comments and recommendations." type="text"></textarea></div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <div id="page3" class="section" style="display:none;">
+              <div class="centerTop regular pageTitle">
+                <div><span style="position:absolute; left:10px; top: 23%;" class="lnr lnr-menu"></span>Selling Skills and Sales Processes (TAF)</div>
+                <div class="pageDropdown"><ul></ul></div>
+              </div>
+              <div class="center fieldHolder">
+                <div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_FCR_KAH_TAF_3_A__c">&bull;</div><div class="fieldTitle">He/she knew what they wanted from the call.</div>
+                    <input type="hidden" name="Sales_FCR_KAH_TAF_3_A"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+                      <i class="ratings link fa fa-ban" aria-hidden="true" value="0 - Not Observed"></i>
+                      <div class="link ratings" value="1 - Underperforming">1</div>
+                      <div class="link ratings" value="2 - Approaching Expectations">2</div>
+                      <div class="link ratings" value="3 - Achieving Expectations">3</div>
+                      <div class="link ratings" value="4 - Exceeding Expectations">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_FCR_KAH_TAF_3_B__c">&bull;</div><div class="fieldTitle">The ask was specific with a sense of urgency.</div>
+                    <input type="hidden" name="Sales_FCR_KAH_TAF_3_B"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+                      <i class="ratings link fa fa-ban" aria-hidden="true" value="0 - Not Observed"></i>
+                      <div class="link ratings" value="1 - Underperforming">1</div>
+                      <div class="link ratings" value="2 - Approaching Expectations">2</div>
+                      <div class="link ratings" value="3 - Achieving Expectations">3</div>
+                      <div class="link ratings" value="4 - Exceeding Expectations">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_FCR_KAH_TAF_3_C__c">&bull;</div><div class="fieldTitle">There was a show.</div>
+                    <input type="hidden" name="Sales_FCR_KAH_TAF_3_C"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+                      <i class="ratings link fa fa-ban" aria-hidden="true" value="0 - Not Observed"></i>
+                      <div class="link ratings" value="1 - Underperforming">1</div>
+                      <div class="link ratings" value="2 - Approaching Expectations">2</div>
+                      <div class="link ratings" value="3 - Achieving Expectations">3</div>
+                      <div class="link ratings" value="4 - Exceeding Expectations">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_FCR_KAH_TAF_3_D1__c">&bull;</div><div class="fieldTitle">Best Reason #1 - They lead into their best reasons.</div>
+                    <input type="hidden" name="Sales_FCR_KAH_TAF_3_D1"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+                      <i class="ratings link fa fa-ban" aria-hidden="true" value="0 - Not Observed"></i>
+                      <div class="link ratings" value="1 - Underperforming">1</div>
+                      <div class="link ratings" value="2 - Approaching Expectations">2</div>
+                      <div class="link ratings" value="3 - Achieving Expectations">3</div>
+                      <div class="link ratings" value="4 - Exceeding Expectations">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_FCR_KAH_TAF_3_D2__c">&bull;</div><div class="fieldTitle">Best Reason #2 - They counted their best reasons from 1 to 3.</div>
+                    <input type="hidden" name="Sales_FCR_KAH_TAF_3_D2"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+                      <i class="ratings link fa fa-ban" aria-hidden="true" value="0 - Not Observed"></i>
+                      <div class="link ratings" value="1 - Underperforming">1</div>
+                      <div class="link ratings" value="2 - Approaching Expectations">2</div>
+                      <div class="link ratings" value="3 - Achieving Expectations">3</div>
+                      <div class="link ratings" value="4 - Exceeding Expectations">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_FCR_KAH_TAF_3_D3__c">&bull;</div><div class="fieldTitle">Best Reason #3 - They used "you" and "your" in their best reasons.</div>
+                    <input type="hidden" name="Sales_FCR_KAH_TAF_3_D3"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+                      <i class="ratings link fa fa-ban" aria-hidden="true" value="0 - Not Observed"></i>
+                      <div class="link ratings" value="1 - Underperforming">1</div>
+                      <div class="link ratings" value="2 - Approaching Expectations">2</div>
+                      <div class="link ratings" value="3 - Achieving Expectations">3</div>
+                      <div class="link ratings" value="4 - Exceeding Expectations">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_FCR_KAH_TAF_3_E__c">&bull;</div><div class="fieldTitle">They repeated the Ask exactly as their initial Ask.</div>
+                    <input type="hidden" name="Sales_FCR_KAH_TAF_3_E"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+                      <i class="ratings link fa fa-ban" aria-hidden="true" value="0 - Not Observed"></i>
+                      <div class="link ratings" value="1 - Underperforming">1</div>
+                      <div class="link ratings" value="2 - Approaching Expectations">2</div>
+                      <div class="link ratings" value="3 - Achieving Expectations">3</div>
+                      <div class="link ratings" value="4 - Exceeding Expectations">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_FCR_KAH_TAF_3_F">&bull;</div><div class="fieldTitle">they stopped talking after the ask.</div>
+                    <input type="hidden" name="Sales_FCR_KAH_TAF_3_F"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+                      <i class="ratings link fa fa-ban" aria-hidden="true" value="0 - Not Observed"></i>
+                      <div class="link ratings" value="1 - Underperforming">1</div>
+                      <div class="link ratings" value="2 - Approaching Expectations">2</div>
+                      <div class="link ratings" value="3 - Achieving Expectations">3</div>
+                      <div class="link ratings" value="4 - Exceeding Expectations">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_FCR_KAH_TAF_3_G__c">&bull;</div><div class="fieldTitle">An appropriate "share" was provided.</div>
+                    <input type="hidden" name="Sales_FCR_KAH_TAF_3_G"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+                      <i class="ratings link fa fa-ban" aria-hidden="true" value="0 - Not Observed"></i>
+                      <div class="link ratings" value="1 - Underperforming">1</div>
+                      <div class="link ratings" value="2 - Approaching Expectations">2</div>
+                      <div class="link ratings" value="3 - Achieving Expectations">3</div>
+                      <div class="link ratings" value="4 - Exceeding Expectations">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <input type="hidden" name="Sales_FCR_KAH_3_Text"/>
+                    <div class="editBullet" data-fieldname="Sales_FCR_KAH_3_Text__c">&bull;</div><div class="fieldTitle"><textarea data-role="none" placeholder="Comments and recommendations." type="text"></textarea></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="centerBot" style="margin-bottom:15px;"><div class="button summaryButton" onclick="openSummary();">Go To Summary</div></div>
+          </div>
+
+          <div id="sa" style="display:none;">
+            <div id="page1" class="section" style="display:none;">
+              <div class="centerTop regular pageTitle">
+                <div><span style="position:absolute; left:10px; top: 23%;" class="lnr lnr-menu"></span>Call Planning</div>
+                <div class="pageDropdown"><ul></ul></div>
+              </div>
+              <div class="center saFieldHolder">
+                <div class="saFields">
+                  <div class="editBullet" data-fieldname="Sales_PRA_KAH_1_A__c">&bull;</div><div class="fieldTitle">I'm best at</div>
+                  <input type="hidden" name="Sales_PRA_KAH_1_A"/>
+                  <ul>
+                    <li>Setting Call Objective</li>
+                    <li>Relevant Collateral Resources</li>
+                  </ul>
+                </div>
+                <div class="saFields">
+                  <div class="editBullet" data-fieldname="Sales_PRA_KAH_1_B__c">&bull;</div><div class="fieldTitle">I could most benefit to learn</div>
+                  <input type="hidden" name="Sales_PRA_KAH_1_B"/>
+                  <ul>
+                    <li>Setting Call Objective</li>
+                    <li>Relevant Collateral Resources</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div id="page2" class="section" style="display:none;">
+              <div class="centerTop regular pageTitle">
+                <div><span style="position:absolute; left:10px; top: 23%;" class="lnr lnr-menu"></span>Selling Skills and Sales Process</div>
+                <div class="pageDropdown"><ul></ul></div>
+              </div>
+              <div class="center saFieldHolder">
+                <div class="saFields">
+                  <div class="editBullet" data-fieldname="Sales_PRA_KAH_2_A__c">&bull;</div><div class="fieldTitle">I'm best at</div>
+                  <input type="hidden" name="Sales_PRA_KAH_2_A"/>
+                  <ul>
+                    <li>Opening the Call</li>
+                    <li>Establishing Customer Needs</li>
+                    <li>Confirming Shared Understanding</li>
+                    <li>Presenting Targeted Solutions</li>
+                    <li>Soliciting Feedback</li>
+                    <li>Dealing with Obstacles</li>
+                    <li>Closing the Call</li>
+                    <li>Defining Next Steps</li>
+                  </ul>
+                </div>
+                <div class="saFields">
+                  <div class="editBullet" data-fieldname="Sales_PRA_KAH_2_B__c">&bull;</div><div class="fieldTitle">I could most benefit to learn</div>
+                  <input type="hidden" name="Sales_PRA_KAH_2_B"/>
+                  <ul>
+                    <li>Opening the Call</li>
+                    <li>Establishing Customer Needs</li>
+                    <li>Confirming Shared Understanding</li>
+                    <li>Presenting Targeted Solutions</li>
+                    <li>Soliciting Feedback</li>
+                    <li>Dealing with Obstacles</li>
+                    <li>Closing the Call</li>
+                    <li>Defining Next Steps</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div id="page3" class="section" style="display:none;">
+              <div class="centerTop regular pageTitle">
+                <div><span style="position:absolute; left:10px; top: 23%;" class="lnr lnr-menu"></span>Customer Segment</div>
+                <div class="pageDropdown"><ul></ul></div>
+              </div>
+              <div class="center saFieldHolder">
+                <div class="saFields">
+                  <div class="editBullet" data-fieldname="Sales_PRA_KAH_3_A__c">&bull;</div><div class="fieldTitle">I'm best at</div>
+                  <input type="hidden" name="Sales_PRA_KAH_3_A"/>
+                  <ul>
+                    <li>Physician</li>
+                    <li>Hospital</li>
+                    <li>Skilled Nursing Center</li>
+                    <li>Assisted Living Community</li>
+                  </ul>
+                </div>
+                <div class="saFields">
+                  <div class="editBullet" data-fieldname="Sales_PRA_KAH_3_B__c">&bull;</div><div class="fieldTitle">I could most benefit to learn</div>
+                  <input type="hidden" name="Sales_PRA_KAH_3_B"/>
+                  <ul>
+                    <li>Physician</li>
+                    <li>Hospital</li>
+                    <li>Skilled Nursing Center</li>
+                    <li>Assisted Living Community</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div id="page4" class="section" style="display:none;">
+              <div class="centerTop regular pageTitle">
+                <div><span style="position:absolute; left:10px; top: 23%;" class="lnr lnr-menu"></span>Customer Segment Contact</div>
+                <div class="pageDropdown"><ul></ul></div>
+              </div>
+              <div class="center saFieldHolder">
+                <div class="saFields">
+                  <div class="editBullet" data-fieldname="Sales_PRA_KAH_4_A__c">&bull;</div><div class="fieldTitle">I'm best at</div>
+                  <input type="hidden" name="Sales_PRA_KAH_4_A"/>
+                  <ul>
+                    <li>Physician</li>
+                    <li>Physician Office Nurse</li>
+                    <li>Physician Office Nursing Assistant</li>
+                    <li>Physician Office Receptionist</li>
+                    <li>Hospital Discharge Planning / Social Work</li>
+                    <li>Hospital Physical Therapy Department (HH)</li>
+                    <li>Facility Executive Director</li>
+                    <li>Facility Activities Director / Wellness Director</li>
+                    <li>Facility Medical Director / PA</li>
+                    <li>Facility Admissions Coordinator</li>
+                  </ul>
+                </div>
+                <div class="saFields">
+                  <div class="editBullet" data-fieldname="Sales_PRA_KAH_4_B__c">&bull;</div><div class="fieldTitle">I could most benefit to learn</div>
+                  <input type="hidden" name="Sales_PRA_KAH_4_B"/>
+                  <ul>
+                    <li>Physician</li>
+                    <li>Physician Office Nurse</li>
+                    <li>Physician Office Nursing Assistant</li>
+                    <li>Physician Office Receptionist</li>
+                    <li>Hospital Discharge Planning / Social Work</li>
+                    <li>Hospital Physical Therapy Department (HH)</li>
+                    <li>Facility Executive Director</li>
+                    <li>Facility Activities Director / Wellness Director</li>
+                    <li>Facility Medical Director / PA</li>
+                    <li>Facility Admissions Coordinator</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div id="page5" class="section" style="display:none;">
+              <div class="centerTop regular pageTitle">
+                <div><span style="position:absolute; left:10px; top: 23%;" class="lnr lnr-menu"></span>Disciplines</div>
+                <div class="pageDropdown"><ul></ul></div>
+              </div>
+              <div class="center saFieldHolder">
+                <div class="saFields">
+                  <div class="editBullet" data-fieldname="Sales_PRA_KAH_5_A__c">&bull;</div><div class="fieldTitle">I'm best at</div>
+                  <input type="hidden" name="Sales_PRA_KAH_5_A"/>
+                  <ul>
+                    <li>HH Nurse</li>
+                    <li>HH Physical Therapy</li>
+                    <li>HH Social Worker</li>
+                    <li>HH Occupational Therapy</li>
+                    <li>HH Speech/ Language Pathology</li>
+                    <li>HP Nurse</li>
+                    <li>HP Spiritual / Bereavement Counselor</li>
+                    <li>HP Aide</li>
+                    <li>HP Volunteer</li>
+                    <li>HP Social Worker</li>
+                  </ul>
+                </div>
+                <div class="saFields">
+                  <div class="editBullet" data-fieldname="Sales_PRA_KAH_5_B__c">&bull;</div><div class="fieldTitle">I could most benefit to learn</div>
+                  <input type="hidden" name="Sales_PRA_KAH_5_B"/>
+                  <ul>
+                    <li>HH Nurse</li>
+                    <li>HH Physical Therapy</li>
+                    <li>HH Social Worker</li>
+                    <li>HH Occupational Therapy</li>
+                    <li>HH Speech/ Language Pathology</li>
+                    <li>HP Nurse</li>
+                    <li>HP Spiritual / Bereavement Counselor</li>
+                    <li>HP Aide</li>
+                    <li>HP Volunteer</li>
+                    <li>HP Social Worker</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div id="page6" class="section" style="display:none;">
+              <div class="centerTop regular pageTitle">
+                <div><span style="position:absolute; left:10px; top: 23%;" class="lnr lnr-menu"></span>Specialty Programs</div>
+                <div class="pageDropdown"><ul></ul></div>
+              </div>
+              <div class="center saFieldHolder">
+                <div class="saFields">
+                  <div class="editBullet" data-fieldname="Sales_PRA_KAH_6_A__c">&bull;</div><div class="fieldTitle">I'm best at</div>
+                  <input type="hidden" name="Sales_PRA_KAH_6_A"/>
+                  <ul>
+                    <li>HH Cardiovascular</li>
+                    <li>HH Memory Care</li>
+                    <li>HH Low Vision</li>
+                    <li>HH Osteo</li>
+                    <li>HH Safe Strides</li>
+                    <li>HH Senior Living Service Standards</li>
+                    <li>HH Zontago</li>
+                    <li>HP Memory Care</li>
+                    <li>HP Cardiopulmonary</li>
+                  </ul>
+                </div>
+                <div class="saFields">
+                  <div class="editBullet" data-fieldname="Sales_PRA_KAH_6_B__c">&bull;</div><div class="fieldTitle">I could most benefit to learn</div>
+                  <input type="hidden" name="Sales_PRA_KAH_6_B"/>
+                  <ul>
+                    <li>HH Cardiovascular</li>
+                    <li>HH Memory Care</li>
+                    <li>HH Low Vision</li>
+                    <li>HH Osteo</li>
+                    <li>HH Safe Strides</li>
+                    <li>HH Senior Living Service Standards</li>
+                    <li>HH Zontago</li>
+                    <li>HP Memory Care</li>
+                    <li>HP Cardiopulmonary</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div id="page7" class="section" style="display:none;">
+              <div class="centerTop regular pageTitle">
+                <div><span style="position:absolute; left:10px; top: 23%;" class="lnr lnr-menu"></span>Diagnoses Specific</div>
+                <div class="pageDropdown"><ul></ul></div>
+              </div>
+              <div class="center saFieldHolder">
+                <div class="saFields">
+                  <div class="editBullet" data-fieldname="Sales_PRA_KAH_7_A__c">&bull;</div><div class="fieldTitle">I'm best at</div>
+                  <input type="hidden" name="Sales_PRA_KAH_7_A"/>
+                  <ul>
+                    <li>Cardiac</li>
+                    <li>Pulmonary</li>
+                    <li>Osteo</li>
+                    <li>Dementia / Alzheimer's</li>
+                    <li>Wound</li>
+                    <li>Cancer</li>
+                    <li>Diabetes</li>
+                    <li>Fall Risk</li>
+                  </ul>
+                </div>
+                <div class="saFields">
+                  <div class="editBullet" data-fieldname="Sales_PRA_KAH_7_B__c">&bull;</div><div class="fieldTitle">I could most benefit to learn</div>
+                  <input type="hidden" name="Sales_PRA_KAH_7_B"/>
+                  <ul>
+                    <li>Cardiac</li>
+                    <li>Pulmonary</li>
+                    <li>Osteo</li>
+                    <li>Dementia / Alzheimer's</li>
+                    <li>Wound</li>
+                    <li>Cancer</li>
+                    <li>Diabetes</li>
+                    <li>Fall Risk</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div id="page8" class="section" style="display:none;">
+              <div class="centerTop regular pageTitle">
+                <div><span style="position:absolute; left:10px; top: 23%;" class="lnr lnr-menu"></span>Relevant Features / Benefits</div>
+                <div class="pageDropdown"><ul></ul></div>
+              </div>
+              <div class="center saFieldHolder">
+                <div class="saFields">
+                  <div class="editBullet" data-fieldname="Sales_PRA_KAH_8_A__c">&bull;</div><div class="fieldTitle">I'm best at</div>
+                  <input type="hidden" name="Sales_PRA_KAH_8_A"/>
+                  <ul>
+                    <li>Patient Care / Deliverables</li>
+                    <li>Clinical Outcomes</li>
+                    <li>Financial / Administrative Impact</li>
+                    <li>WIFM</li>
+                  </ul>
+                </div>
+                <div class="saFields">
+                  <div class="editBullet" data-fieldname="Sales_PRA_KAH_8_B__c">&bull;</div><div class="fieldTitle">I could most benefit to learn</div>
+                  <input type="hidden" name="Sales_PRA_KAH_8_B"/>
+                  <ul>
+                    <li>Patient Care / Deliverables</li>
+                    <li>Clinical Outcomes</li>
+                    <li>Financial / Administrative Impact</li>
+                    <li>WIFM</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="centerBot" style="margin-bottom:20px;"><div class="button summaryButton" onclick="openSummary();">Go To Summary</div></div>
+          </div>
+
+          <div id="hhCR" style="display:none;">
+            <div id="page1" class="section" style="display:none;">
+              <div class="centerTop regular pageTitle">
+                <div><span style="position:absolute; left:10px; top: 23%;" class="lnr lnr-menu"></span>Self Starter</div>
+                <div class="pageDropdown"><ul></ul></div>
+              </div>
+              <div class="center fieldHolder">
+                <div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_1_A__c">&bull;</div><div class="fieldTitle">Proactively seeks to learn all aspects of the business and improve skill set.</div>
+                    <input type="hidden" name="Sales_CR_KAH_1_A"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_1_B__c">&bull;</div><div class="fieldTitle">Strong work ethic, willing to work long hours, requires no external motivation or hand holding.</div>
+                    <input type="hidden" name="Sales_CR_KAH_1_B"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_1_C__c">&bull;</div><div class="fieldTitle">Confident and comfortable in a wide variety of sales situations, positions self as expert.</div>
+                    <input type="hidden" name="Sales_CR_KAH_1_C"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_1_D__c">&bull;</div><div class="fieldTitle">Seeks out new opportunities.</div>
+                    <input type="hidden" name="Sales_CR_KAH_1_D"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div id="page2" class="section" style="display:none;">
+              <div class="centerTop regular pageTitle">
+                <div><span style="position:absolute; left:10px; top: 23%;" class="lnr lnr-menu"></span>Results Oriented</div>
+                <div class="pageDropdown"><ul></ul></div>
+              </div>
+              <div class="center fieldHolder">
+                <div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_2_A__c">&bull;</div><div class="fieldTitle">Shows tenacity, is persistent and has a "never give up" mentality to grow the business.</div>
+                    <input type="hidden" name="Sales_CR_KAH_2_A"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_2_B__c">&bull;</div><div class="fieldTitle">Overcomes obstacles, does not accept defeat, works hard to turn a no into a yes".</div>
+                    <input type="hidden" name="Sales_CR_KAH_2_B"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_2_C__c">&bull;</div><div class="fieldTitle">Holds self and others accountable for performance.</div>
+                    <input type="hidden" name="Sales_CR_KAH_2_C"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_2_D__c">&bull;</div><div class="fieldTitle">Works with branch director to resolve capacity issues in order to win more business.</div>
+                    <input type="hidden" name="Sales_CR_KAH_2_D"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div id="page3" class="section" style="display:none;">
+              <div class="centerTop regular pageTitle">
+                <div><span style="position:absolute; left:10px; top: 23%;" class="lnr lnr-menu"></span>Teamwork</div>
+                <div class="pageDropdown"><ul></ul></div>
+              </div>
+              <div class="center fieldHolder">
+                <div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_3_A__c">&bull;</div><div class="fieldTitle">Builds supportive, mutually beneficial relationships with the local Gentiva operations and clinical team.</div>
+                    <input type="hidden" name="Sales_CR_KAH_3_A"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_3_B__c">&bull;</div><div class="fieldTitle">Effectively able to resolve customer service issues both internally and externally.</div>
+                    <input type="hidden" name="Sales_CR_KAH_3_B"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_3_C__c">&bull;</div><div class="fieldTitle">Able to identify problems and ensure resolution occurs.</div>
+                    <input type="hidden" name="Sales_CR_KAH_3_C"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_3_D__c">&bull;</div><div class="fieldTitle">Works well with other team members.</div>
+                    <input type="hidden" name="Sales_CR_KAH_3_D"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div id="page4" class="section" style="display:none;">
+              <div class="centerTop regular pageTitle">
+                <div><span style="position:absolute; left:10px; top: 23%;" class="lnr lnr-menu"></span>Relationship Building</div>
+                <div class="pageDropdown"><ul></ul></div>
+              </div>
+              <div class="center fieldHolder">
+                <div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_4_A__c">&bull;</div><div class="fieldTitle">Able to build strong referral source and internal Gentiva branch relationships (operational and clinical).</div>
+                    <input type="hidden" name="Sales_CR_KAH_4_A"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_4_B__c">&bull;</div><div class="fieldTitle">Viewed as genuine, friendly and approachable, able to establish social rapport.</div>
+                    <input type="hidden" name="Sales_CR_KAH_4_B"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_4_C__c">&bull;</div><div class="fieldTitle">Displays interpersonal sensitivity by being empathetic to both referral sources and Gentiva team members.</div>
+                    <input type="hidden" name="Sales_CR_KAH_4_C"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_4_D__c">&bull;</div><div class="fieldTitle">Develops long lasting referral source relationships, viewed by referral source and branch as trusted advisor.</div>
+                    <input type="hidden" name="Sales_CR_KAH_4_D"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div id="page5" class="section" style="display:none;">
+              <div class="centerTop regular pageTitle">
+                <div><span style="position:absolute; left:10px; top: 23%;" class="lnr lnr-menu"></span>Consultative Selling</div>
+                <div class="pageDropdown"><ul></ul></div>
+              </div>
+              <div class="center fieldHolder">
+                <div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_6_A__c">&bull;</div><div class="fieldTitle">Proactively seeks to understand the industry and referral source business needs.</div>
+                    <input type="hidden" name="Sales_CR_KAH_6_A"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_6_B__c">&bull;</div><div class="fieldTitle">Active listener-focuses sales calls on the referral source's needs.</div>
+                    <input type="hidden" name="Sales_CR_KAH_6_B"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_6_C__c">&bull;</div><div class="fieldTitle">Has a deep understanding of and positions Gentiva's solutions to meet the referral source's needs.</div>
+                    <input type="hidden" name="Sales_CR_KAH_6_C"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_6_D__c">&bull;</div><div class="fieldTitle">Consistently asks for the business using effective closing techniques.</div>
+                    <input type="hidden" name="Sales_CR_KAH_6_D"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div id="page6" class="section" style="display:none;">
+              <div class="centerTop regular pageTitle">
+                <div><span style="position:absolute; left:10px; top: 23%;" class="lnr lnr-menu"></span>Time Management and Organizational Skills</div>
+                <div class="pageDropdown"><ul></ul></div>
+              </div>
+              <div class="center fieldHolder">
+                <div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_7_A__c">&bull;</div><div class="fieldTitle">Efficient in work efforts, plans out activities 3-4 weeks ahead and sticks to the plan.</div>
+                    <input type="hidden" name="Sales_CR_KAH_7_A"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_7_B__c">&bull;</div><div class="fieldTitle">Relevant use of time management tools, planning tools(i.e. BI reports), collaterals and other resources.</div>
+                    <input type="hidden" name="Sales_CR_KAH_7_B"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_7_C__c">&bull;</div><div class="fieldTitle">Gets work done on time and with high quality.</div>
+                    <input type="hidden" name="Sales_CR_KAH_7_C"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_7_D__c">&bull;</div><div class="fieldTitle">Back to those priorities.</div>
+                    <input type="hidden" name="Sales_CR_KAH_7_D"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div id="page7" class="section" style="display:none;">
+              <div class="centerTop regular pageTitle">
+                <div><span style="position:absolute; left:10px; top: 23%;" class="lnr lnr-menu"></span>Influential Communication Skills</div>
+                <div class="pageDropdown"><ul></ul></div>
+              </div>
+              <div class="center fieldHolder">
+                <div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_8_A__c">&bull;</div><div class="fieldTitle">Persuasive-able to effectively influence both referral sources and team members to grow business.</div>
+                    <input type="hidden" name="Sales_CR_KAH_8_A"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_8_B__c">&bull;</div><div class="fieldTitle">Fosters two-way active dialog when speaking with others.</div>
+                    <input type="hidden" name="Sales_CR_KAH_8_B"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_8_C__c">&bull;</div><div class="fieldTitle">Effective communicator, tailors communication to maximize impact and to appeal to the "what's in it for me" for both referral sources and team members.</div>
+                    <input type="hidden" name="Sales_CR_KAH_8_C"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_8_D__c">&bull;</div><div class="fieldTitle">Practices active listening.</div>
+                    <input type="hidden" name="Sales_CR_KAH_8_D"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div id="page8" class="section" style="display:none;">
+              <div class="centerTop regular pageTitle">
+                <div><span style="position:absolute; left:10px; top: 23%;" class="lnr lnr-menu"></span>Networking Ability</div>
+                <div class="pageDropdown"><ul></ul></div>
+              </div>
+              <div class="center fieldHolder">
+                <div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_9_A__c">&bull;</div><div class="fieldTitle">Continually stays abreast of area market, key clinical players, competitive landscape, and potential new referral sources.</div>
+                    <input type="hidden" name="Sales_CR_KAH_9_A"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_9_B__c">&bull;</div><div class="fieldTitle">Proactively seeks opportunities to connect with those who can provide knowledge and contacts to build business.</div>
+                    <input type="hidden" name="Sales_CR_KAH_9_B"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_9_C__c">&bull;</div><div class="fieldTitle">Leverages past relationships to build business contacts.</div>
+                    <input type="hidden" name="Sales_CR_KAH_9_C"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_9_D__c">&bull;</div><div class="fieldTitle">Looks outside of conventional referral sources to build networks that will expand Gentiva's reach in new markets.</div>
+                    <input type="hidden" name="Sales_CR_KAH_9_D"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="centerBot" style="margin-bottom:20px;"><div class="button summaryButton" onclick="openSummary();">Go To Summary</div></div>
+          </div>
+
+          <div id="hpCR" style="display:none;">
+            <div id="page1" class="section" style="display:none;">
+              <div class="centerTop regular pageTitle">
+                <div><span style="position:absolute; left:10px; top: 23%;" class="lnr lnr-menu"></span>Self Starter</div>
+                <div class="pageDropdown"><ul></ul></div>
+              </div>
+              <div class="center fieldHolder">
+                <div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_1_A__c">&bull;</div><div class="fieldTitle">Strong work ethic, willing to work above and beyond the call of duty.</div>
+                    <input type="hidden" name="Sales_CR_KAH_1_A"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_1_B__c">&bull;</div><div class="fieldTitle">Self-confident across all selling scenarios positioning themselves as a hospice expert.</div>
+                    <input type="hidden" name="Sales_CR_KAH_1_B"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_1_C__c">&bull;</div><div class="fieldTitle">Self motivated, requires no external motivation, actively seeks new business and growth opportunities.</div>
+                    <input type="hidden" name="Sales_CR_KAH_1_C"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_1_D__c">&bull;</div><div class="fieldTitle">Proactive Learner, continually evaluates processes and practices for improvement.</div>
+                    <input type="hidden" name="Sales_CR_KAH_1_D"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div id="page2" class="section" style="display:none;">
+              <div class="centerTop regular pageTitle">
+                <div><span style="position:absolute; left:10px; top: 23%;" class="lnr lnr-menu"></span>Results Oriented</div>
+                <div class="pageDropdown"><ul></ul></div>
+              </div>
+              <div class="center fieldHolder">
+                <div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_2_A__c">&bull;</div><div class="fieldTitle">Driven for success, actively tracks goals and results to goals with a commitment to grow.</div>
+                    <input type="hidden" name="Sales_CR_KAH_2_A"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_2_B__c">&bull;</div><div class="fieldTitle">Has a sense of urgency and responsiveness.</div>
+                    <input type="hidden" name="Sales_CR_KAH_2_B"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_2_C__c">&bull;</div><div class="fieldTitle">Proactive with issue resolution and plans for growth with the program.</div>
+                    <input type="hidden" name="Sales_CR_KAH_2_C"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_2_D__c">&bull;</div><div class="fieldTitle">Sets high expectations and holds self and program accountable for performance.</div>
+                    <input type="hidden" name="Sales_CR_KAH_2_D"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div id="page3" class="section" style="display:none;">
+              <div class="centerTop regular pageTitle">
+                <div><span style="position:absolute; left:10px; top: 23%;" class="lnr lnr-menu"></span>Teamwork</div>
+                <div class="pageDropdown"><ul></ul></div>
+              </div>
+              <div class="center fieldHolder">
+                <div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_3_A__c">&bull;</div><div class="fieldTitle">Respectful, appreciative, and shows commitment to working well with colleagues and internal team.</div>
+                    <input type="hidden" name="Sales_CR_KAH_3_A"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_3_B__c">&bull;</div><div class="fieldTitle">Demonstrates 360 degree communication - active communication processes to ensure collaboration and teamwork.</div>
+                    <input type="hidden" name="Sales_CR_KAH_3_B"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_3_C__c">&bull;</div><div class="fieldTitle">Able to identify issues and works to be part of the resolution process.</div>
+                    <input type="hidden" name="Sales_CR_KAH_3_C"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_3_D__c">&bull;</div><div class="fieldTitle">Flexible and resourceful, makes self available to internal staff and customers.</div>
+                    <input type="hidden" name="Sales_CR_KAH_3_D"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div id="page4" class="section" style="display:none;">
+              <div class="centerTop regular pageTitle">
+                <div><span style="position:absolute; left:10px; top: 23%;" class="lnr lnr-menu"></span>Relationship Building</div>
+                <div class="pageDropdown"><ul></ul></div>
+              </div>
+              <div class="center fieldHolder">
+                <div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_4_A__c">&bull;</div><div class="fieldTitle">Able to build strong collaborate relationships internally, strong networked with Kindred at Home Hospice team.</div>
+                    <input type="hidden" name="Sales_CR_KAH_4_A"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_4_B__c">&bull;</div><div class="fieldTitle">Members Interpersonal sensitivity, shows empathy in both internal and external relationships and communications.</div>
+                    <input type="hidden" name="Sales_CR_KAH_4_B"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_4_C__c">&bull;</div><div class="fieldTitle">Builds strong partnerships across company divisions in bridge markets.</div>
+                    <input type="hidden" name="Sales_CR_KAH_4_C"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_4_D__c">&bull;</div><div class="fieldTitle">Understands the advantage of strong internal and external relationships and works hard to build those relationships.</div>
+                    <input type="hidden" name="Sales_CR_KAH_4_D"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div id="page5" class="section" style="display:none;">
+              <div class="centerTop regular pageTitle">
+                <div><span style="position:absolute; left:10px; top: 23%;" class="lnr lnr-menu"></span>Passion for Hospice Mission</div>
+                <div class="pageDropdown"><ul></ul></div>
+              </div>
+              <div class="center fieldHolder">
+                <div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_5_A__c">&bull;</div><div class="fieldTitle">Demonstrates passion for the Hospice Industry and work.</div>
+                    <input type="hidden" name="Sales_CR_KAH_5_A"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_5_B__c">&bull;</div><div class="fieldTitle">Motivated by and demonstrates an overriding professional responsibility to do the right thing for the patient and family.</div>
+                    <input type="hidden" name="Sales_CR_KAH_5_B"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_5_C__c">&bull;</div><div class="fieldTitle">Demonstrates sensitivity to the needs, beliefs, and expectations of others.</div>
+                    <input type="hidden" name="Sales_CR_KAH_5_C"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_5_D__c">&bull;</div><div class="fieldTitle">Show compassion and sensitivity with patients and families.</div>
+                    <input type="hidden" name="Sales_CR_KAH_5_D"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div id="page6" class="section" style="display:none;">
+              <div class="centerTop regular pageTitle">
+                <div><span style="position:absolute; left:10px; top: 23%;" class="lnr lnr-menu"></span>Consultative Selling</div>
+                <div class="pageDropdown"><ul></ul></div>
+              </div>
+              <div class="center fieldHolder">
+                <div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_6_A__c">&bull;</div><div class="fieldTitle">Active Listener - focuses sales calls on the referral source's needs.</div>
+                    <input type="hidden" name="Sales_CR_KAH_6_A"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_6_B__c">&bull;</div><div class="fieldTitle">Seeks to understand the customer's needs, referral source, patient or family and shares relevant solutions.</div>
+                    <input type="hidden" name="Sales_CR_KAH_6_B"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_6_C__c">&bull;</div><div class="fieldTitle">Successfully deals with objections.</div>
+                    <input type="hidden" name="Sales_CR_KAH_6_C"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_6_D__c">&bull;</div><div class="fieldTitle">Consistently "asks for the business" utilizing effective closing techniques.</div>
+                    <input type="hidden" name="Sales_CR_KAH_6_D"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div id="page7" class="section" style="display:none;">
+              <div class="centerTop regular pageTitle">
+                <div><span style="position:absolute; left:10px; top: 23%;" class="lnr lnr-menu"></span>Time Management and Organizational Skills</div>
+                <div class="pageDropdown"><ul></ul></div>
+              </div>
+              <div class="center fieldHolder">
+                <div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_7_A__c">&bull;</div><div class="fieldTitle">Prioritizes daily and weekly activities to meet performance expectations.</div>
+                    <input type="hidden" name="Sales_CR_KAH_7_A"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_7_B__c">&bull;</div><div class="fieldTitle">Understands program goals and manages time to work on key priorities to reach those goals.</div>
+                    <input type="hidden" name="Sales_CR_KAH_7_B"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_7_C__c">&bull;</div><div class="fieldTitle">Always prepared and available for patient and family conversations.</div>
+                    <input type="hidden" name="Sales_CR_KAH_7_C"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_7_D__c">&bull;</div><div class="fieldTitle">Prioritizes program communication and relationship building.</div>
+                    <input type="hidden" name="Sales_CR_KAH_7_D"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div id="page8" class="section" style="display:none;">
+              <div class="centerTop regular pageTitle">
+                <div><span style="position:absolute; left:10px; top: 23%;" class="lnr lnr-menu"></span>Influential Communication Skills</div>
+                <div class="pageDropdown"><ul></ul></div>
+              </div>
+              <div class="center fieldHolder">
+                <div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_8_A__c">&bull;</div><div class="fieldTitle">Active listener.</div>
+                    <input type="hidden" name="Sales_CR_KAH_8_A"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_8_B__c">&bull;</div><div class="fieldTitle">Credible, engaging, and compassionate use of industry knowledge and acumen.</div>
+                    <input type="hidden" name="Sales_CR_KAH_8_B"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_8_C__c">&bull;</div><div class="fieldTitle">Has the ability to influence referral sources, patients and family, and the internal team.</div>
+                    <input type="hidden" name="Sales_CR_KAH_8_C"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_8_D__c">&bull;</div><div class="fieldTitle">Effective communicator, tailors communication and fosters two way active dialog when speaking with others.</div>
+                    <input type="hidden" name="Sales_CR_KAH_8_D"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div id="page9" class="section" style="display:none;">
+              <div class="centerTop regular pageTitle">
+                <div><span style="position:absolute; left:10px; top: 23%;" class="lnr lnr-menu"></span>Networking Ability</div>
+                <div class="pageDropdown"><ul></ul></div>
+              </div>
+              <div class="center fieldHolder">
+                <div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_9_A__c">&bull;</div><div class="fieldTitle">High visibility within the community.</div>
+                    <input type="hidden" name="Sales_CR_KAH_9_A"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_9_B__c">&bull;</div><div class="fieldTitle">Highly networked with the internal team for community knowledge and leads.</div>
+                    <input type="hidden" name="Sales_CR_KAH_9_B"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_9_C__c">&bull;</div><div class="fieldTitle">Continually stays abreast of area market, key clinical players, competitive landscape, and potential new referral sources.</div>
+                    <input type="hidden" name="Sales_CR_KAH_9_C"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                  <div class="fields">
+                    <div class="editBullet" data-fieldname="Sales_CR_KAH_9_D__c">&bull;</div><div class="fieldTitle">Proactively seeks opportunities to connect with those who can provide knowledge and contacts to build business.</div>
+                    <input type="hidden" name="Sales_CR_KAH_9_D"/>
+                    <div class="fontZero" style="margin-left: 13px;">
+
+                      <div class="link ratings" value="1 - Specialist demonstrates little or no evidence of this behavior">1</div>
+                      <div class="link ratings" value="2 - Specialist demonstrates some infrequent evidence of this behavior">2</div>
+                      <div class="link ratings" value="3 - Specialist demonstrates frequent evidence of this behavior">3</div>
+                      <div class="link ratings" value="4 - Specialist demonstrates significant or strong evidence of this behavior">4</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="centerBot" style="margin-bottom:20px;"><div class="button summaryButton" onclick="openSummary();">Go To Summary</div></div>
+          </div>
+
+          <div id="af" style="display:none;">
+            <div id="page1" class="section" style="display:none;">
+              <div class="centerTop regular pageTitle">
+                <div><span style="position:absolute; left:10px; top: 23%;" class="lnr lnr-menu"></span>Know</div>
+                <div class="pageDropdown"><ul></ul></div>
+              </div>
+              <div class="center fieldHolder">
+                <div class="fields">
+                  <input type="hidden" name="Sales_TAF_KAH_1_Text"/>
+                  <div class="editBullet" data-fieldname="Sales_TAF_KAH_1_Text__c">&bull;</div><div class="fieldTitle"><textarea data-role="none" placeholder="Know what you want." type="text"></textarea></div>
+                </div>
+              </div>
+            </div>
+            <div id="page2" class="section" style="display:none;">
+              <div class="centerTop regular pageTitle">
+                <div><span style="position:absolute; left:10px; top: 23%;" class="lnr lnr-menu"></span>Ask</div>
+                <div class="pageDropdown"><ul></ul></div>
+              </div>
+              <div class="center fieldHolder">
+                <div class="fields">
+                  <input type="hidden" name="Sales_TAF_KAH_2_Text"/>
+                  <div class="editBullet" data-fieldname="Sales_TAF_KAH_2_Text__c">&bull;</div><div class="fieldTitle"><textarea data-role="none" placeholder="Ask for what you want." type="text"></textarea></div>
+                </div>
+              </div>
+            </div>
+            <div id="page3" class="section" style="display:none;">
+              <div class="centerTop regular pageTitle">
+                <div><span style="position:absolute; left:10px; top: 23%;" class="lnr lnr-menu"></span>Show</div>
+                <div class="pageDropdown"><ul></ul></div>
+              </div>
+              <div class="center fieldHolder">
+                <div class="fields">
+                  <input type="hidden" name="Sales_TAF_KAH_3_Text"/>
+                  <div class="editBullet" data-fieldname="Sales_TAF_KAH_3_Text__c">&bull;</div><div class="fieldTitle"><textarea data-role="none" placeholder="Show what you want." type="text"></textarea></div>
+                </div>
+              </div>
+            </div>
+            <div id="page4" class="section" style="display:none;">
+              <div class="centerTop regular pageTitle">
+                <div><span style="position:absolute; left:10px; top: 23%;" class="lnr lnr-menu"></span>Develop</div>
+                <div class="pageDropdown"><ul></ul></div>
+              </div>
+              <div class="center fieldHolder">
+                <div class="fields">
+                  <input type="hidden" name="Sales_TAF_KAH_4a_Text"/>
+                  <div class="editBullet" data-fieldname="Sales_TAF_KAH_4a_Text__c">&bull;</div><div class="fieldTitle"><textarea data-role="none" placeholder="Best Reason #1." type="text"></textarea></div>
+                </div>
+                <div class="fields">
+                  <input type="hidden" name="Sales_TAF_KAH_4b_Text"/>
+                  <div class="editBullet" data-fieldname="Sales_TAF_KAH_4b_Text__c">&bull;</div><div class="fieldTitle"><textarea data-role="none" placeholder="Best Reason #2." type="text"></textarea></div>
+                </div>
+                <div class="fields">
+                  <input type="hidden" name="Sales_TAF_KAH_4c_Text"/>
+                  <div class="editBullet" data-fieldname="Sales_TAF_KAH_4c_Text__c">&bull;</div><div class="fieldTitle"><textarea data-role="none" placeholder="Best Reason #3." type="text"></textarea></div>
+                </div>
+              </div>
+            </div>
+            <div class="centerBot" style="margin-bottom:20px;"><div class="button summaryButton" onclick="openSummary();">Go To Summary</div></div>
+          </div>
+
+          <div id="selectedPage" style="color:#c9c9c9; display:none;">
+            <div style="z-index:1;" class="centerBot">
+            </div>
+          </div>
+
+          <div id="loadCover" style="display:none;"></div>
+          <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+          <script src="//cdnjs.cloudflare.com/ajax/libs/air-datepicker/2.2.3/js/datepicker.min.js"></script>
+          <script src="//cdnjs.cloudflare.com/ajax/libs/air-datepicker/2.2.3/js/i18n/datepicker.en.min.js"></script>
+          <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+          <script src="//code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+          <script src="//code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>
+          <script>
+          var fcrId, userName, userId, pageNum, pageScroll=false, right, dateSelect, rideLength=null, pageColors=['#bf4c4c', '#e89247', '#ddae4f', '#9fce88', '#76c1c0', '#61a8bf', '#5579b2', '#8d7fc4', '#ab87bf'], fcrType, fcrSubtype, monthOffset=0;
+          var monthNames = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE",
+          "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
+          $(document).ready(function(){
+            $.mobile.loading().hide();
+
+            if('{!$Profile.Id}'.indexOf('00e1300000225C9')!=-1){
+              $("#employeeSearchInput").remove();
+              $('[data-fcrType = "hhCR"]').remove();
+              $('[data-fcrType = "fcr"]').remove();
+              $("#userList").remove();
+              userId = '{!$User.Id}';
+              userName = '{!$User.FirstName}'+' {!$User.LastName}';
+              $('#userGo').show().css({'marginBottom': 50, opacity: 0}).animate({'marginBottom': 30, opacity: 1}, '450');
+            }
+
+            Sales_FCRcontroller.getUsers(function(result, event){
+              $('#userList').html(result);
+            }, {escape:false});
+
+            $('#welcome .regular').css({top: '25%', opacity: 0}).animate({top: '40%', opacity: 1}, '450');
+            $('#welcome ul').css({top: '35%', opacity: 0}).delay(550).animate({top: '70%', opacity: 1}, '450');
+
+            $( "#datepicker" ).datepicker({
+              dateFormat: 'yy-mm-dd',
+              onSelect: function(date) {
+                var date2 = $(this).datepicker('getDate');
+                $("#dateInput").val($.datepicker.formatDate('mm/dd/yy', date2));
+                dateSelect=$.datepicker.formatDate('mm/dd/yy', date2);
+                $("#dateAlert").hide();
+              }
+            });
+
+            if(window.location.href.indexOf('fcrId')!=-1 && window.location.href.indexOf('userId')!=-1){
+              $("#getLoad").show();
+              welcome();
+              getFcr(getParameterByName('fcrId'), getParameterByName('userId'));
+            }
+
+            if(window.location.href.indexOf('fcrType')!=-1 && window.location.href.indexOf('userId')!=-1){
+              $("#employeeSearchInput").remove();
+              userId = getParameterByName('userId');
+              fcrType = getParameterByName('fcrType');
+              $('#userGo').show().css({'marginBottom': 50, opacity: 0}).animate({'marginBottom': 30, opacity: 1}, '450');
+              welcome();
+            }
+
+            var d = new Date();
+            $("#modalMonth").text(monthNames[d.getMonth()]+' '+d.getFullYear());
+
+            $(".dayLength").click(function(){
+              $(".dayLength").css("border","none");
+              $(this).css("border-bottom","3px solid white");
+              rideLength = $(this).find("p").text();
+              $("#lengthAlert").hide();
+            });
+
+            $(".fcrSubtype").click(function(){
+              $(".fcrSubtype").css("border","none");
+              $(this).css("border-bottom","3px solid white");
+              fcrSubtype = $(this).find("p").text();
+              $("#subtypeAlert").hide();
+            });
+
+            $(".fa-ban").hover(function(){
+              $(this).siblings().andSelf().removeClass("highlightRating");
+            }, function(){
+              $(this).siblings().andSelf().removeClass("highlightRating");
+              $(this).siblings().closest(".selected").prevAll(':not(i)').addClass("highlightRating");
+            });
+
+            $(".fa-ban").click(function(){
+              $(this).closest(".fields").find(".editBullet").css({'opacity':'1'});
+              $(this).siblings().removeClass("selected");
+              if(!$('#saveButton').is(':visible'))$('#saveButton').show().css({'marginTop': 20, opacity: 0}).animate({'marginTop': 0, opacity: 1}, '450');
+            });
+
+            $(".ratings").hover(function(){
+              $(this).siblings().andSelf().css("color","white").removeClass("highlightRating");
+              $(this).prevAll(':not(i)').andSelf(':not(i)').css("color","black").addClass("highlightRating");
+            }, function(){
+              $(this).siblings().andSelf().css("color","white").removeClass("highlightRating");
+              $(this).siblings().andSelf().closest(".selected").prevAll(':not(i)').andSelf(':not(i)').css("color","black").addClass("highlightRating");
+            });
+
+            $(".ratings").click(function(){
+              $(this).closest(".fields").find(".editBullet").css({'opacity':'1'});
+              $(this).closest(".fields").find("input").text($(this).attr("value"));
+              $(this).siblings().andSelf().removeClass("selected");
+              $(this).addClass("selected");
+              if(!$('#saveButton').is(':visible'))$('#saveButton').show().css({'marginTop': 20, opacity: 0}).animate({'marginTop': 0, opacity: 1}, '450');
+            });
+
+            $(".saFields ul li").click(function(){
+              $(this).closest(".saFields").find(".editBullet").css({'opacity':'1'});
+              $(this).closest(".saFields").find("input").text($(this).text());
+              $(this).siblings().removeClass("selectedUl");
+              $(this).addClass("selectedUl");
+              if(!$('#saveButton').is(':visible'))$('#saveButton').show().css({'marginTop': 20, opacity: 0}).animate({'marginTop': 0, opacity: 1}, '450');
+            });
+
+            $(".lnr-chevron-left").click(function(){
+              monthOffset--;
+              var d = new Date();
+              d.setMonth(d.getMonth() + monthOffset);
+              $("#modalMonth").text(monthNames[d.getMonth()]+' '+d.getFullYear());
+              $("#modal > .modalBody").html('<div style="color:#6699cc;padding-top:15%;margin: auto;"><i class="pageTitle fa fa-circle-o-notch fa-spin fa-fw"></i></div>');
+              Sales_FCRcontroller.getSP(userId, monthOffset, function(result, event){
+                var json = JSON.parse(result);
+                $("#modal > .modalBody").html(json.body);
+                $("#modal > .modalFooter").html(json.footer);
+              }, {escape:false});
+            });
+
+            $(".lnr-chevron-right").click(function(){
+              monthOffset++;
+              var d = new Date();
+              d.setMonth(d.getMonth() + monthOffset);
+              $("#modalMonth").text(monthNames[d.getMonth()]+' '+d.getFullYear());
+              $("#modal > .modalBody").html('<div style="color:#6699cc;padding-top:15%;margin: auto;"><i class="pageTitle fa fa-circle-o-notch fa-spin fa-fw"></i></div>');
+              Sales_FCRcontroller.getSP(userId, monthOffset, function(result, event){
+                var json = JSON.parse(result);
+                $("#modal > .modalBody").html(json.body);
+                $("#modal > .modalFooter").html(json.footer);
+              }, {escape:false});
+            });
+
+            $("#welcome ul li").click(function(){
+              fcrType = $(this).data("fcrtype");
+              $("#welcome ul li").removeClass("selectedWelcomeUl");
+              $(this).addClass("selectedWelcomeUl");
+              $('#welcome .thin').attr("onclick","welcome();").addClass("link").css({top: '95%', opacity: 0, 'font-size':'35px'}).animate({top: '90%',opacity: 1}, '450');
+            });
+
+            $("#saveButton").click(function(){
+              $('#saveButton').html('<i style="margin-top: 10px; font-size: 25px;" class="fa fa-circle-o-notch fa-spin fa-fw"></i>');
+              var data='{"fcrType":"'+fcrType+'",\n';
+              data+='"fcr":{';
+              $("#fcr .fields input").each(function(){
+                data+='\n"'+$(this).attr("name")+'":"'+escapeJSON($(this).text())+'",';
+              });
+              data = data.substring(0, data.length-1);
+              data+='\n},\n"fcrAF":{';
+              $("#fcrAF .fields input").each(function(){
+                data+='\n"'+$(this).attr("name")+'":"'+escapeJSON($(this).text())+'",';
+              });
+              data = data.substring(0, data.length-1);
+              data +='\n},\n"hhCR":{';
+              $("#hhCR .fields input").each(function(){
+                data+='\n"'+$(this).attr("name")+'":"'+escapeJSON($(this).text())+'",';
+              });
+              data = data.substring(0, data.length-1);
+              data +='\n},\n"hpCR":{';
+              $("#hpCR .fields input").each(function(){
+                data+='\n"'+$(this).attr("name")+'":"'+escapeJSON($(this).text())+'",';
+              });
+              data = data.substring(0, data.length-1);
+              data +='\n},\n"sa":{';
+              $("#sa .saFields input").each(function(){
+                data+='\n"'+$(this).attr("name")+'":"'+escapeJSON($(this).text())+'",';
+              });
+              data = data.substring(0, data.length-1);
+              data +='\n},\n"af":{';
+              $("#af .fields input").each(function(){
+                data+='\n"'+$(this).attr("name")+'":"'+escapeJSON($(this).text())+'",';
+              });
+              data = data.substring(0, data.length-1);
+              data +='\n}\n}';
+              Sales_FCRcontroller.updateFCR(fcrId, data, function(result, event){
+                $(".editBullet").animate({opacity: 0}, '450');
+                $('#saveButton').css({'marginTop': 0, opacity: 1}).animate({'marginTop': 20, opacity: 0}, '450').delay(450).fadeOut(1).html('<i aria-hidden="true" class="fa fa-cloud"></i> Save');
+                $('#userList').html(result);
+              }, {escape:false});
+            });
+
+            $("textarea").keyup(function(){
+              $(this).closest(".fields").find(".editBullet").css({'opacity':'1'});
+              $(this).closest(".fields").find("input").text($(this).val());
+              if(!$('#saveButton').is(':visible'))$('#saveButton').show().css({'marginTop': 20, opacity: 0}).animate({'marginTop': 0, opacity: 1}, '450');
+            });
+
+            $("#profileIcon").click(function(){
+              $("#closeProfile").fadeIn();
+              $("#modal").fadeIn();
+              $('#loadCover').fadeIn();
+            });
+
+            $("#closeProfile").click(function(){
+              $("#closeProfile").fadeOut();
+              $("#modal").fadeOut();
+              $('#loadCover').fadeOut();
+            });
+
+            $(".section .pageTitle").click(function(){
+              $(this).find(".pageDropdown").animate({marginTop:$(this).find(".pageDropdown").height()+"px"}).slideDown();
+            });
+
+            $('body').on('click', function(e) {
+              if($(e.target).closest('.section .pageTitle').length === 0) {
+                $(".section .pageTitle .pageDropdown").slideUp();
+              }
+            });
+
+            $(window).on('resize', function(){
+              var win = $(this);
+              if (win.width() <= 500){
+                $("#leftArrow").fadeOut();
+                $("#rightArrow").fadeOut();
+              } else if (win.width() > 500){
+                if(pageNum==1){
+                  $("#leftArrow").fadeOut();
+                } else{
+                  $("#leftArrow").fadeIn();
+                }
+                if(pageNum==$("#selectedPage i").length){
+                  $("#rightArrow").fadeOut();
+                } else{
+                  $("#rightArrow").fadeIn();
+                }
+              }
+            });
+
+            $("#leftArrow").click(function(){
+              if(noAnimations() && pageScroll && pageNum>1){
+                pageNum--;
+                right=false;
+              }
+              if(pageNum>1){
+                $("#rightArrow").fadeIn();
+              } else{
+                $("#leftArrow").fadeOut();
+              }
+              changePage();
+            });
+
+            $("#rightArrow").click(function(){
+              if(noAnimations() && pageScroll && pageNum<$("#selectedPage i").length){
+                $("#leftArrow").fadeIn();
+                pageNum++;
+                right=true;
+              }
+              if(pageNum<$("#selectedPage i").length){
+                $("#leftArrow").fadeIn();
+              } else{
+                $("#rightArrow").fadeOut();
+              }
+              changePage();
+            });
+
+          });
+
+          function escapeJSON(json){
+            json = json.replace(/\\/g, "/");
+            json = json.replace(/\n/g, " ");
+            json = json.replace(/\r/g, " ");
+            json = json.replace(/'/g, "\'");
+            json = json.replace(/"/g, '\\"');
+            return json;
+          }
+
+          function welcome(){
+            $('#welcome').animate({'left' : "-100%"});
+            var title = '';
+            if(fcrType == 'fcr'){
+              title = 'FCR';
+              $(".fcrSubtype").css("display","inline-block");
+            } else if(fcrType == 'hhCR' || fcrType =='hpCR'){
+              title = 'CR';
+              $(".dayLength").hide();
+            } else if(fcrType == 'af'){
+              title = 'TAF';
+            } else if(fcrType == 'sa'){
+              title = 'PSA';
+              $(".dayLength").hide();
+            }
+            $('#users div:first').text('Enter your '+title+' details below');
+            $('#users').show().animate({'left' : "0%"});
+            $('body').animate({'backgroundColor' : "#6699cc"});
+          }
+
+          function employeeSearch() {
+            var input, filter, li, i;
+            input = document.getElementById('employeeSearchInput');
+            filter = input.value.toUpperCase();
+            ul = document.getElementById("userList");
+            li = ul.getElementsByTagName('li');
+            var found=0;
+            for (i = 0; i < li.length; i++) {
+              if (li[i].innerHTML.toUpperCase().indexOf(filter) > -1 && filter!='') {
+                li[i].style.display = "";
+                found++;
+              } else {
+                li[i].style.display = "none";
+              }
+            }
+            if(found==1 && !$('#createFCR').is(':visible')) $('#userGo').show().css({'marginBottom': 50, opacity: 0}).animate({'marginBottom': 30, opacity: 1}, '450');
+            else $('#userGo').hide();
+          }
+
+          function inputCheck(){
+            var allDone = true;
+            if(dateSelect==null){
+              $("#dateAlert").show();
+              allDone = false;
+            }
+            if(userId==null){
+              $("#employeeAlert").show();
+              allDone = false;
+            }
+            if((fcrType != 'hhCR' && fcrType != 'hpCR' && fcrType != 'sa') && rideLength==null){
+              $("#lengthAlert").show();
+              allDone = false;
+            }
+            if(fcrType == 'fcr' && fcrSubtype == null){
+              $("#fcrSubtypeAlert").show();
+              allDone = false;
+            }
+            return allDone;
+          }
+
+          function areYouSure(){
+            if(userId == null){
+              userId = $('#userList li:not(:hidden)').attr('id');
+            } else{
+              userName = $('#'+userId).text();
+            }
+            if(userName == null) userName = $('#userList li:not(:hidden)').text();
+            $("#employeeSearchInput").val(userName);
+            var typeText = '';
+            if(fcrType == 'hhCR' || fcrType =='hpCR') typeText='a competency rating';
+            if(fcrType == 'fcr') typeText='a field coaching report';
+            if(fcrType == 'sa') typeText='a pre-ride self assessment';
+            if(fcrType == 'af') typeText='the asking formula';
+            $('#createFCR p').html('Are you sure that you want to start '+typeText+' for '+userName+'?');
+            if(!$('#loadCover').is(':visible') && inputCheck()){
+              $('#loadCover').css({opacity: 0}).show().animate({opacity: 0.75});
+              $('#userGo').hide();
+              $('#createFCR').show();
+              if(fcrType=='fcr'){
+                if(fcrSubtype=='TAF')$('#fcrAF-welcome').show();
+                else $('#fcr-welcome').show();
+              } else {
+                $('#'+fcrType+'-welcome').show();
+              }
+            }
+          }
+
+          function noFCR(){
+            $('#loadCover').hide();
+            $('.welcomeText').hide();
+            $('#createFCR').hide();
+            employeeSearch();
+          }
+
+          function createFCR(){
+            if(fcrType == 'hhCR' || fcrType =='hpCR') document.title = 'CR Performance Evaluation';
+            else if(fcrType == 'fcr' || fcrType == 'fcrAF'){
+              document.title = 'FCR Performance Evaluation';
+              if(fcrSubtype == 'TAF') fcrType = 'fcrAF';
+            } else if(fcrType == 'sa') document.title = 'PSA Performance Evaluation';
+            else if(fcrType == 'af') document.title = 'TAF Performance Evaluation';
+
+            $('#createFCR').hide();
+            $('#userGo').show();
+            $('#userGo').html('<i class="fa fa-circle-o-notch fa-spin fa-fw"></i>');
+            var spLoaded = false;
+            var fcrLoaded = false;
+            Sales_FCRcontroller.createFCR(userId, fcrType, dateSelect, rideLength, function(result, event){
+              var json = JSON.parse(result);
+              fcrId=json.fcrId;
+              $("#profileIcon > img").attr("src", json.usrPhotoURL);
+              fcrType = json.fcrType;
+              $("#modalUsrName").text(json.usrName);
+              $("#modalUsrName").attr("href", "/"+$('#userList li:not(:hidden)').attr('id'));
+              $("#"+fcrType).show();
+              var html = '';
+
+              var pageDropdown = '';
+              $('#'+fcrType+' .section .pageTitle').each(function(index){
+                if(index==0) pageDropdown+='<li style="text-decoration:underline;" onclick="changePageNtimes('+(index+1)+');">'+$(this).text()+'</li>'
+                else pageDropdown+='<li onclick="changePageNtimes('+(index+1)+');">'+$(this).text()+'</li>'
+              });
+              $(".pageDropdown ul").html(pageDropdown);
+
+              for(var i=0; i<$('#'+fcrType+' > .section').length; i++){
+                html+='<i class="fa fa-circle inline" aria-hidden="true"></i>\n';
+              }
+              $('#selectedPage > div').html(html);
+              fcrLoaded = true;
+              if(spLoaded) closeSearch();
+            }, {escape:false});
+
+            Sales_FCRcontroller.getSP(userId, monthOffset, function(result, event){
+              var json = JSON.parse(result);
+              $("#modal > .modalBody").html(json.body);
+              $("#modal > .modalFooter").html(json.footer);
+              spLoaded = true;
+              if(fcrLoaded) closeSearch();
+            }, {escape:false});
+
+
+          }
+          function closeSearch(){
+            $('#loadCover').animate({'left' : "-100%"});
+            $('#loadCover').promise().done(function(){$('#loadCover').hide(); $('#loadCover').css({'left' : "0%"});});
+            $('#users').animate({'left' : "-100%"});
+            pageNum=1;
+            pageScroll=true;
+            $('#selectedPage').show();
+            $('#profileIcon').fadeIn();
+            $("#pageOutOf").text(pageNum+' of '+$("#selectedPage i").length);
+            openPages();
+          }
+
+          function openPages(){
+            $('#selectedPage i').removeClass('pageSel');
+            $('#selectedPage i:nth-child('+pageNum+')').addClass('pageSel');
+            $('#'+fcrType+' > #page'+pageNum).show().animate({'left' : "0%"});
+            $('#'+fcrType+' > #page'+pageNum+1).show().animate({'left' : "100%"}).promise($("#getLoad").fadeOut());
+            $('body').animate({'backgroundColor' : pageColors[pageNum-1]});
+            if($(window).width() > 500){
+              //$("#leftArrow").fadeIn();
+              $("#rightArrow").fadeIn();
+            }
+          }
+
+          function noAnimations(){
+            var i=1;
+            var bool = true;
+            while(bool && $("#"+fcrType+" > #page"+i).length){
+              if($("#"+fcrType+" > #page"+i).is(':animated')) bool = false;
+              i++;
+            }
+            return bool;
+          }
+
+
+          $('body').keydown(function(e){
+            if(e.which==37){
+              if(noAnimations() && pageScroll && pageNum>1){
+                pageNum--;
+                right=false;
+              }
+            } else if(e.which==39){
+              if(noAnimations() && pageScroll && pageNum<$("#selectedPage i").length){
+                pageNum++;
+                right=true;
+              }
+            } else if(e.which==13){
+              if($('#userList li:not(:hidden)').length==1 && !pageScroll)areYouSure();
+            }
+            changePage();
+          });
+
+          $('body').on("swiperight",function(){
+            if(pageScroll && pageNum>1){
+              pageNum--;
+              right=false;
+            }
+            changePage();
+          });
+
+          $('body').on("swipeleft",function(){
+            if(pageScroll && pageNum<$("#selectedPage i").length){
+              pageNum++;
+              right=true;
+            }
+            changePage();
+          });
+
+          function changePageNtimes(n){
+            if(n < pageNum){
+              right = false;
+              n = pageNum - n;
+            } else if(n > pageNum){
+              right = true;
+              n = n - pageNum;
+            } else n = 0;
+            for(var i=0; i<n; i++){
+              if(!right) pageNum--;
+              else pageNum++;
+              changePage();
+            }
+          }
+
+          function changePage(){
+            $(".pageDropdown").slideUp();
+            if(pageNum!=null){
+              $('#selectedPage i').removeClass('pageSel');
+              $('#selectedPage i:nth-child('+pageNum+')').addClass('pageSel');
+              if(!right){
+                $('#'+fcrType+' > #page'+pageNum).css({'backgroundColor' : pageColors[pageNum-1]}).show().animate({'left' : "0"});
+                $('#'+fcrType+' > #page'+(pageNum+1)).css({'backgroundColor' : pageColors[pageNum]}).show().animate({'left' : "100%"});
+              } else{
+                $('#'+fcrType+' > #page'+pageNum).css({'backgroundColor' : pageColors[pageNum-1]}).show().animate({'left' : "0%"});
+                $('#'+fcrType+' > #page'+(pageNum-1)).css({'backgroundColor' : pageColors[pageNum-2]}).show().animate({'left' : "-100%"});
+              }
+
+              $(".pageDropdown ul li").removeAttr("style");
+              $(".pageDropdown ul li:nth-child("+pageNum+")").css("text-decoration","underline");
+
+              $("#pageOutOf").text(pageNum+' of '+$("#selectedPage i").length);
+
+              $('body').css({'backgroundColor' : pageColors[pageNum-1]});
+            }
+          }
+
+          function getFcr(Id, uId){
+            var spLoaded = false;
+            var fcrLoaded = false;
+            userId = uId;
+            fcrId = Id;
+            Sales_FCRcontroller.getFCR(fcrId, userId, function(result, event){
+              var json = JSON.parse(result);
+              if(json.completed){
+                window.location = '/apex/Sales_summaryFCR?fcrId='+fcrId+'&fcrType='+json.fcrType;
+              } else {
+                if(json.fcrType == 'hhCR' || json.fcrType == 'hpCR') document.title = 'CR Performance Evaluation';
+                else if(json.fcrType == 'fcr' || json.fcrType == 'fcrAF') document.title = 'FCR Performance Evaluation';
+                else if(json.fcrType == 'sa') document.title = 'PSA Performance Evaluation';
+                else if(json.fcrType == 'af') document.title = 'TAF Performance Evaluation';
+
+                for (var key in json['fields'][json.fcrType]) {
+                  if (json['fields'][json.fcrType].hasOwnProperty(key)) {
+                    if(json['fields'][json.fcrType][key]!='null' && key.indexOf('_Text')==-1 && key.indexOf('Sales_PRA')==-1){
+                      $('div[data-fieldname="'+key+'"]').siblings(".fontZero").find('.ratings[value="'+json['fields'][json.fcrType][key]+'"]').click().trigger('mouseenter');
+                    }  else if(json['fields'][json.fcrType][key]!='null' && key.indexOf('Sales_PRA')!=-1){
+                      $('div[data-fieldname="'+key+'"]').siblings("ul").find('li:contains("'+json['fields'][json.fcrType][key]+'")').addClass("selectedUl").click();
+                    } else if(json['fields'][json.fcrType][key]!='null' && key.indexOf('_Text')!=-1){
+                      $('div[data-fieldname="'+key+'"]').siblings(".fieldTitle").find("textarea").text(json['fields'][json.fcrType][key]).keyup();
+                    }
+                  }
+                }
+                $(".editBullet").css("opacity","0");
+                $("#saveButton").hide();
+                fcrId=json.fcrId;
+                fcrType = json.fcrType;
+                $("#profileIcon > img").attr("src", json.usrPhotoURL);
+                $("#modalUsrName").text(json.usrName);
+                $("#modalUsrName").attr("href", "/"+userId);
+                $("#"+fcrType).show();
+                var html = '';
+                for(var i=0; i<$('#'+fcrType+' > .section').length; i++){
+                  html+='<i class="fa fa-circle inline" aria-hidden="true"></i>\n';
+                }
+                $('#selectedPage > div').html(html);
+                var pageDropdown = '';
+                $('#'+fcrType+' .section .pageTitle').each(function(index){
+                  if(index==0) pageDropdown+='<li style="text-decoration:underline;" onclick="changePageNtimes('+(index+1)+');">'+$(this).text()+'</li>'
+                  else pageDropdown+='<li onclick="changePageNtimes('+(index+1)+');">'+$(this).text()+'</li>'
+                });
+                $(".pageDropdown ul").html(pageDropdown);
+                fcrLoaded = true;
+                if(spLoaded) closeSearch();
+              }
+            }, {escape:false});
+
+
+
+            Sales_FCRcontroller.getSP(userId, monthOffset, function(result, event){
+              var json = JSON.parse(result);
+              $("#modal > .modalBody").html(json.body);
+              $("#modal > .modalFooter").html(json.footer);
+              spLoaded = true;
+              if(fcrLoaded) closeSearch();
+            }, {escape:false});
+
+          }
+
+          document.addEventListener('touchmove', function(event) {
+            event = event.originalEvent || event;
+            if(event.scale > 1) {
+              event.preventDefault();
+            }
+          }, false);
+
+          window.addEventListener("load",function() {
+            setTimeout(function(){
+              // This hides the address bar:
+              window.scrollTo(0, 1);
+            }, 0);
+          });
+
+          function getParameterByName(name, url) {
+            if (!url) url = window.location.href;
+            name = name.replace(/[\[\]]/g, "\\$&");
+            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+            results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, " "));
+          }
+
+          function openSummary(){
+            $('.summaryButton').html('<i class="fa fa-circle-o-notch fa-spin fa-fw"></i>');
+            var data='{"fcrType":"'+fcrType+'",\n';
+            data+='"fcr":{';
+            $("#fcr .fields input").each(function(){
+              data+='\n"'+$(this).attr("name")+'":"'+escapeJSON($(this).text())+'",';
+            });
+            data = data.substring(0, data.length-1);
+            data+='\n},\n"fcrAF":{';
+            $("#fcrAF .fields input").each(function(){
+              data+='\n"'+$(this).attr("name")+'":"'+escapeJSON($(this).text())+'",';
+            });
+            data = data.substring(0, data.length-1);
+            data +='\n},\n"hhCR":{';
+            $("#hhCR .fields input").each(function(){
+              data+='\n"'+$(this).attr("name")+'":"'+escapeJSON($(this).text())+'",';
+            });
+            data = data.substring(0, data.length-1);
+            data +='\n},\n"hpCR":{';
+            $("#hpCR .fields input").each(function(){
+              data+='\n"'+$(this).attr("name")+'":"'+escapeJSON($(this).text())+'",';
+            });
+            data = data.substring(0, data.length-1);
+            data +='\n},\n"sa":{';
+            $("#sa .saFields input").each(function(){
+              data+='\n"'+$(this).attr("name")+'":"'+escapeJSON($(this).text())+'",';
+            });
+            data = data.substring(0, data.length-1);
+            data +='\n},\n"af":{';
+            $("#af .fields input").each(function(){
+              data+='\n"'+$(this).attr("name")+'":"'+escapeJSON($(this).text())+'",';
+            });
+            data = data.substring(0, data.length-1);
+            data +='\n}\n}';
+            Sales_FCRcontroller.updateFCR(fcrId, data, function(result, event){
+              window.location.href = "{!LEFT($CurrentPage.URL,FIND('/',$CurrentPage.URL,9))}"+'/apex/Sales_summaryFCR?fcrId='+fcrId+'&fcrType='+fcrType;
+            }, {escape:false});
+          }
+          </script>
+        </body>
+        </html>
+      </apex:page>

@@ -1,0 +1,614 @@
+<apex:page controller="Sales_MarketingToolControllerAlpha" standardStylesheets="false" showHeader="false" applyHtmlTag="true" applyBodyTag="false" docType="html-5.0">
+
+<html>
+
+<head>
+  <title>Marketing Tool</title>
+  <apex:stylesheet value="{!URLFOR($Resource.LightningDesign, 'assets/styles/salesforce-lightning-design-system-vf.css')}"/>
+  <link rel="stylesheet" href="https://cdn.linearicons.com/free/1.0.0/icon-font.min.css"/>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+</head>
+<style>
+body{
+  background-color: #548de5;
+}
+.blue {
+  background-color: #548de5;
+}
+#search, #collateralList{
+  font-size: 20px;
+  padding: 10px;
+  text-align: center;
+  color: white;
+}
+
+#searchInput{
+  padding-left: 50px;
+  outline: none;
+}
+
+.full{
+  width: 100%;
+  height: 97vh;
+  color: white;
+  font-size: 20px;
+  border-radius: 25px;
+}
+
+.ico-search{
+  position: relative;
+  top: -40px;
+  left: 50%;
+  margin-left: -15px;
+  font-size: 30px;
+  cursor: pointer;
+  width: 30px;
+
+}
+
+.sel-title{
+  color: #548de5;
+  font-size: 20px;
+  background-color: white;
+  width: 250px;
+  height: 30px;
+  border-radius: 15px;
+  display: inline-block;
+  margin-right: 5px;
+  margin-top: 20px;
+  opacity: 0;
+  vertical-align: top;
+}
+
+  #market{
+    text-align: center;
+    cursor: default;
+    height: 97vh;
+    width: 100%;
+  }
+.inline{
+  display: inline-block;
+}
+
+.mainBtns{
+  color: white;
+  cursor: pointer;
+  width: 250px;
+  height: 50px;
+  font-size: 18px;
+  border-radius: 25px;
+  padding: 10px;
+  text-align: center;
+  display: inline-block;
+  margin-right: 10px;
+}
+
+.btn-rnd{
+  cursor: pointer;
+  width: 250px;
+  height: 50px;
+  border-radius: 25px;
+  padding: 10px;
+  color: white;
+  font-size: 18px;
+  text-align: center;
+  display: inline-block;
+  margin-right: 10px;
+}
+
+.btn-outline{
+  cursor: pointer;
+  width: 250px;
+  height: 50px;
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 25px;
+  padding: 10px;
+  color: white;
+  font-size: 18px;
+  text-align: center;
+  display: inline-block;
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+.click{
+  cursor: pointer;
+}
+
+.search{
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
+  padding-left: 47px;
+  background: none;
+  border: none;
+  border-style: solid;
+  border-width: 1px;
+  color: white;
+  font-size: 20px;
+}
+
+.btn-groups{
+  width: 100%;
+  text-align: center;
+  margin-top: 10px;
+}
+
+#collateral, #markets{
+  width: 100%;
+  display: block;
+  float: none;
+  margin: auto;
+}
+
+.list{
+  overflow: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  height: 80vh !important;
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 25px;
+  text-align:left;
+}
+.toggleOn{
+  background-color: white;
+  color: #548de5;
+}
+
+.listItems{
+  cursor: pointer;
+}
+
+.listItems:hover{
+  color: #e5e5e5;
+}
+
+.btn-close{
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.spin{
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@media only screen and (max-width: 800px) {
+  .mainBtns{
+    width:100%;
+    display: block;
+    margin-right: 0px;
+    margin-bottom: 10px;
+  }
+
+  .btn-rnd{
+    width: 100%;
+    display: block;
+    margin-right: 0px;
+    margin-bottom: 10px;
+  }
+
+  .btn-outline{
+    width: 100%;
+    display: block;
+    margin-right: 0px;
+  }
+
+  .sel-title{
+    text-align: center;
+    width: 100%;
+    display: block;
+    margin-right: 0px;
+    margin-bottom: 5px;
+    margin-top: 5px;
+  }
+
+  .search{
+    padding-left: 40px;
+  }
+
+  #collateral, #markets{
+    width: 100%;
+    margin: auto;
+    margin-top:
+  }
+  .list{
+    height: 60vh !important;
+  }
+
+}
+
+</style>
+<body>
+
+  <!-- REQUIRED SLDS WRAPPER -->
+  <div class="LightningDesign">
+    <!--<div class="btn-close" id="closeMarket" style="display:none;" onclick="closeMarket()"><div class="lnr lnr-cross"></div></div>-->
+
+    <div id="market" class="blue">
+
+      <!-- Selected Tags -->
+      <div style="margin-top:25px;">
+        <div id="sel-lob" class="sel-title"></div>
+        <div id="sel-cspec" class="sel-title" style="display:none;"></div>
+        <div id="sel-spec" class="sel-title" style="display:none;"></div>
+        <div id="sel-refcus" class="sel-title" style="display:none;"></div>
+      </div>
+
+      <!-- Tag Buttons -->
+      <div>
+        <div id="lob" class="btn-groups">
+          <div id="hh-btn" class="btn-outline" onclick="navLob('hh-btn')">Home Health</div>
+          <div id="hp-btn" class="btn-outline" onclick="navLob('hp-btn')">Hospice</div>
+          <div id="hosp-btn" class="btn-outline" onclick="navLob('hosp-btn')">Hospital</div>
+        </div>
+
+        <div id="cspec" class="btn-groups" style="display:none;">
+          <div id="core-btn" class="btn-outline" onclick="navCSpec('core-btn')">Core Collateral</div>
+          <div id="spec-btn" class="btn-outline" onclick="navCSpec('spec-btn')">Specialty Programs</div>
+          <div id="vid-btn" class="btn-outline" onclick="navCSpec('vid-btn')">Success Story Videos</div>
+        </div>
+
+        <div id="spec" class="btn-groups" style="display:none;">
+          <div class="btn-outline" style="cursor:default;"><div class="lnr lnr-sync spin" style="font-size:30px;overflow:hidden;"></div></div>
+        </div>
+
+        <div id="refcus" class="btn-groups" style="display:none;">
+          <div id="bereav-btn" class="btn-outline" onclick="navRefcus('bereav-btn')" style="display:none;">Bereavement</div>
+          <div id="cust-btn" class="btn-outline" onclick="navRefcus('cust-btn')">Customer</div>
+          <!--<div id="disease-btn" class="btn-outline" onclick="navRefcus('disease-btn')">Disease Specific</div>-->
+          <div id="ref-btn" class="btn-outline" onclick="navRefcus('ref-btn')">Referral Source</div>
+          <div id="vol-btn" class="btn-outline" onclick="navRefcus('vol-btn')" style="display:none;">Volunteer</div>
+          <div id="vet-btn" class="btn-outline" onclick="navRefcus('vet-btn')" style="display:none;">We Honor Veterans</div>
+          <!--<div id="kndnet-btn" class="btn-outline" onclick="navRefcus('kndnet-btn')">Kindred Networks</div>-->
+        </div>
+
+      </div>
+
+      <!-- Search -->
+      <div id="search" style="display:none; margin-top:10px;">
+        <input class="search" type="text" id="searchInput" onkeyup="searchList()"></input>
+        <div id="searchIcon" class="lnr lnr-magnifier ico-search" onclick="openSearch()"></div>
+      </div>
+
+      <div id="collateral" style="display:none; margin-top:-20px;">
+        <div id="disease" class="btn-outline" style="display:none; padding:0px; height:30px;">Show Disease Specific Only</div>
+        <ul class="list" id="collateralList"></ul>
+      </div>
+
+      <!-- Markets Search -->
+      <div id="marketSearch" style="display:none; margin-top:10px;">
+        <input class="search" type="text" id="marketSearchInput" onkeyup="searchMarket()"></input>
+        <div id="marketSearchIcon" class="lnr lnr-magnifier ico-search" onclick="openSearch()"></div>
+      </div>
+
+      <div id="markets" style="display:none; margin-top:-20px;">
+        <ul class="list" id="marketList"></ul>
+      </div>
+
+    </div>
+  </div>
+  <!-- END REQUIRED SLDS WRAPPER -->
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+  <script>
+
+  $( document ).ready(function() {
+    $('#marketSearchIcon').removeClass('lnr-magnifier').addClass('lnr-sync spin');
+    Sales_MarketingToolControllerAlpha.getMarkets( function(result, event){
+      $("#marketList").html(result);
+      $('#marketSearchIcon').removeClass('lnr-sync spin').addClass('lnr-magnifier');
+    }, {escape:false});
+
+    Sales_MarketingToolControllerAlpha.getSpecPrograms( function(result, event){
+      if(result == '') $("#spec-btn").remove();
+      else $("#spec").html(result);
+    }, {escape:false});
+
+    $("#disease").click(function(){
+      if(!$("#disease").hasClass("toggleOn")){
+        $("#disease").addClass("toggleOn");
+        $("#collateralList li").hide();
+        $(".isDiseaseSpecific").show();
+      } else{
+        $("#disease").removeClass("toggleOn");
+        $("#collateralList li").show();
+        $(".isDiseaseSpecific").show();
+      }
+    });
+  });
+
+  var lob=null, cspec=null, spec=null, refcus=null, market=null;
+  $('#searchInput').attr('disabled', 'disabled');
+
+ /*
+  function navMkt(){
+    $("#market").css('cursor','default').animate({height:'97vh', width:'100%'}, 500).prop('onclick',null);
+    $("#mktBtnText").empty();
+    $("#closeMarket").fadeIn();
+    $("#lob").css({opacity:'1', marginTop:'20px'}).fadeIn();
+    $("#sel-lob").show();
+  }
+  */
+
+  function navLob(lobs){
+    lob = $("#"+lobs).text();
+    $("#sel-lob").html('<div onclick="lob=null;showSearch();removeTag(\'lob\');" class="lnr lnr-cross-circle inline click"></div> ' + $("#"+lobs).text());
+    $("#sel-lob").animate({opacity:'1'}, 350);
+    $("#lob").animate({opacity:'0', marginTop:'0px'}, 350).prop('onclick',null);
+    if($("#"+lobs).text()=='Hospital'){
+      $("#spec-btn").fadeOut();
+      $("#bereav-btn").fadeOut();
+      $("#vol-btn").fadeOut();
+      $("#vet-btn").fadeOut();
+      if(cspec=='Specialty Programs'){
+        cspec=null;
+        spec=null;
+        $("#sel-cspec").animate({opacity:'0'}, 350);
+        $("#sel-spec").fadeOut();
+      }
+      if(refcus=='Bereavement' || refcus=='We Honor Veterans' || refcus=='Volunteer'){
+        $("#sel-refcus").animate({opacity:'0'}, 350);
+        refcus=null;
+      }
+    }  else if($("#"+lobs).text()=='Home Health'){
+      $("#spec div").show();
+      $("#spec-btn").fadeIn();
+      $("#bereav-btn").fadeOut();
+      // $("#disease-btn").fadeIn();
+      $("#vol-btn").fadeOut();
+      $("#vet-btn").fadeOut();
+      if(refcus=='Bereavement' || refcus=='We Honor Veterans' || refcus=='Volunteer'){
+        $("#sel-refcus").animate({opacity:'0'}, 350);
+        refcus=null;
+      }
+    } else if($("#"+lobs).text()=='Hospice'){
+      if(cspec=='Specialty Programs' && (spec!='Memory Care' || spec!='Cardiopulmonary' || spec!='Step On It')) spec=null;
+      $("#spec div").not("#btn-memory-care").not("#btn-cardiopulmonary").not("#btn-step-on-it").hide();
+      // $("#disease-btn").fadeOut();
+    } else{
+      $("#spec-btn").fadeIn();
+      $("#bereav-btn").fadeIn();
+      // $("#disease-btn").fadeOut();
+      $("#vol-btn").fadeIn();
+      $("#vet-btn").fadeIn();
+    }
+    $("#lob").promise().done(function(){
+      $("#lob").hide();
+      if(cspec==null){
+        $("#cspec").css({opacity:'1', marginTop:'20px'}).fadeIn();
+      } else if(spec==null && cspec!='Core Collateral'){
+        $("#spec").css({opacity:'1', marginTop:'20px'}).fadeIn();
+      } else if(refcus==null){
+        $("#refcus").css({opacity:'1', marginTop:'20px'}).fadeIn();
+      }
+      $("#sel-cspec").show();
+    });
+    showSearch();
+  }
+
+  function navCSpec(cspecs){
+    cspec = $("#"+cspecs).text();
+    $("#sel-cspec").html('<div onclick="cspec=null;showSearch();removeTag(\'cspec\');" class="lnr lnr-cross-circle inline click"></div> ' + $("#"+cspecs).text());
+    $("#sel-cspec").animate({opacity:'1'}, 350);
+    $("#cspec").animate({opacity:'0', marginTop:'0px'}, 350).prop('onclick',null);
+    $("#cspec").promise().done(function(){
+      $("#cspec").hide();
+      if(refcus==null && spec==null){
+        if(cspecs=='core-btn'){
+          if(lob!='Hospital' && lob!='Home Health'){
+            $("#bereav-btn").show();
+            $("#vol-btn").show();
+            $("#vet-btn").show();
+          }
+          $("#refcus").css({opacity:'1', marginTop:'20px'}).fadeIn();
+          $("#sel-refcus").show();
+          $("#sel-spec").fadeOut();
+        }
+        if(cspecs=='spec-btn'){
+          $("#spec").css({opacity:'1', marginTop:'20px'}).fadeIn();
+          $("#sel-spec").show();
+          $("#sel-core").fadeOut();
+        }
+      }
+    });
+    showSearch();
+  }
+
+  function navSpec(specs){
+    $("#bereav-btn").hide();
+    $("#vol-btn").hide();
+    $("#vet-btn").hide();
+    spec = $("#"+specs).text();
+    $("#sel-spec").html('<div onclick="spec=null;showSearch();removeTag(\'spec\');" class="lnr lnr-cross-circle inline click"></div> ' + $("#"+specs).text());
+    $("#sel-spec").animate({opacity:'1'}, 350);
+    $("#spec").animate({opacity:'0', marginTop:'0px'}, 350).prop('onclick',null);
+    $("#spec").promise().done(function(){
+      $("#spec").hide();
+      if(refcus==null){
+        $("#refcus").css({opacity:'1', marginTop:'20px'}).fadeIn();
+      }
+      $("#sel-refcus").show();
+    });
+    showSearch();
+  }
+
+  function navRefcus(refcust){
+    refcus = $("#"+refcust).text();
+    $("#sel-refcus").html('<div onclick="market=null;refcus=null;showSearch();removeTag(\'refcus\');" class="lnr lnr-cross-circle inline click"></div> ' + $("#"+refcust).text());
+    $("#sel-refcus").animate({opacity:'1'}, 350);
+    $("#refcus").animate({opacity:'0', marginTop:'0px'}, 350).prop('onclick',null);
+    $("#refcus").promise().done(function(){
+      $("#refcus").hide();
+      if(spec==null && (cspec!='Core Collateral' && cspec!='Success Story Videos')){
+        $("#refcus").css({opacity:'1', marginTop:'20px'}).fadeIn();
+      }
+      if(refcus=='Referral Source' && lob=='Home Health' && cspec=='Core Collateral'){
+        $("#disease").fadeIn();
+      } else{
+        $("#disease").hide();
+      }
+    });
+    showSearch();
+  }
+
+  function removeTag(tag){
+    if(lob==null){
+      $(".btn-groups").fadeOut();
+      $("#sel-"+tag).animate({opacity:'0'}, 350);
+      $("#lob").css({opacity:'1', marginTop:'20px'}).fadeIn();
+    } else if(cspec==null){
+      $(".btn-groups").fadeOut();
+      $("#sel-"+tag).animate({opacity:'0'}, 350);
+      $("#cspec").css({opacity:'1', marginTop:'20px'}).fadeIn();
+    } else {
+      $(".btn-groups").not("#"+tag).fadeOut();
+      $("#sel-"+tag).animate({opacity:'0'}, 350);
+      $("#"+tag).css({opacity:'1', marginTop:'20px'}).fadeIn();
+    }
+    if(tag=='cspec'){
+      refcus=null;
+      spec=null;
+      $("#core").css({opacity:'1', marginTop:'20px'});
+      $("#spec").css({opacity:'1', marginTop:'20px'});
+    }
+  }
+
+  function showSearch(){
+    if(lob!=null && cspec!=null && (spec!=null && refcus!=null || refcus!=null || cspec=='Success Story Videos') && refcus!='Kindred Networks'){
+      $('#searchIcon').removeClass('lnr-magnifier').addClass('lnr-sync spin');
+      $('#search').fadeIn();
+      Sales_MarketingToolControllerAlpha.getCollateral(lob, cspec, spec, refcus, market, function(result, event){
+        $("#collateralList").html(result);
+        if ($(window).width() < 750){
+          $("#collateralList li").css({width : $(window).width()-60+'px', marginLeft:'13px', wordWrap:'break-word', paddingLeft:'5px', paddingRight:'5px'});
+        } else {
+          $("#collateralList li").css({wordWrap:'break-word'});
+        }
+        $('#collateral').fadeIn();
+        $('#searchIcon').removeClass('lnr-sync spin').addClass('lnr-magnifier');
+      }, {escape:false});
+    } else if (refcus=='Kindred Networks' && market==null){
+      $('#marketSearch').fadeIn();
+      $('#markets').fadeIn();
+    } else if (refcus=='Kindred Networks' && market!=null){
+      $('#marketSearch').fadeOut();
+      $('#searchIcon').removeClass('lnr-magnifier').addClass('lnr-sync spin');
+      $('#search').fadeIn();
+      $('#markets').fadeOut();
+      Sales_MarketingToolControllerAlpha.getCollateral(lob, cspec, spec, refcus, market, function(result, event){
+        $("#collateralList").html(result);
+        if ($(window).width() < 750){
+          $("#collateralList li").css({width : $(window).width()-60+'px', marginLeft:'13px', wordWrap:'break-word', paddingLeft:'5px', paddingRight:'5px'});
+        } else {
+          $("#collateralList li").css({wordWrap:'break-word'});
+        }
+        $('#collateral').fadeIn();
+        $('#searchIcon').removeClass('lnr-sync spin').addClass('lnr-magnifier');
+      }, {escape:false});
+    } else{
+      $('#marketSearch').fadeOut();
+      $('#search').fadeOut();
+      $('#collateral').fadeOut();
+      $('#markets').fadeOut();
+    }
+  }
+
+  function openSearch(){
+    $('#searchInput').removeAttr('disabled');
+    $('#marketSearchInput').removeAttr('disabled');
+    if ($(window).width() < 750){
+      $('.ico-search').animate({left:'7%'}, 350);
+      $('.search').animate({width:'100%'}, 350);
+    } else {
+      $('.ico-search').animate({marginLeft:'-238px'}, 350);
+      $('.search').animate({width:'500px'}, 350);
+    }
+  }
+
+
+  $(document).mouseup(function(e){
+    var container = $(".search");
+    if (!container.is(e.target) && container.has(e.target).length === 0) {
+      $('.search').attr('disabled', 'disabled');
+      $('.ico-search').animate({left:'50%', marginLeft:'-15px'}, 350);
+      $('.search').animate({width:'50px'}, 350);
+    }
+  });
+
+  function navTo(target){
+    if( (typeof sforce != 'undefined') && sforce && (!!sforce.one) ) {
+      sforce.one.navigateToSObject(target);
+    } else {
+      window.open('/sfc/servlet.shepherd/version/download/'+target+'?asPdf=false');
+    }
+  }
+
+  function searchList(){
+    var input, filter, ul, li, span;
+    input = document.getElementById("searchInput");
+    filter = input.value.toUpperCase();
+    ul = document.getElementById("collateralList");
+    li = ul.getElementsByTagName("li");
+
+    for (i = 0; i < li.length; i++) {
+      span = li[i].getElementsByTagName("span")[0];
+      if (span.innerHTML.toUpperCase().indexOf(filter) > -1) {
+        li[i].style.display = "";
+      } else {
+        li[i].style.display = "none";
+      }
+    }
+  }
+
+  function searchMarket(){
+    var input, filter, ul, li, span;
+    input = document.getElementById("marketSearchInput");
+    filter = input.value.toUpperCase();
+    ul = document.getElementById("marketList");
+    li = ul.getElementsByTagName("li");
+
+    for (i = 0; i < li.length; i++) {
+      if (li[i].innerHTML.toUpperCase().indexOf(filter) > -1) {
+        li[i].style.display = "";
+      } else {
+        li[i].style.display = "none";
+      }
+    }
+  }
+
+  /*
+  function closeMarket(){
+    lob=null;
+    cspec=null;
+    spec=null;
+    refcus=null;
+    showSearch();
+    $("#closeMarket").fadeOut();
+    $(".btn-groups").fadeOut();
+    $(".sel-title").fadeOut().animate({opacity:'0'}).empty();
+    if ($(window).width() < 750){
+      $("#market").css('cursor','pointer').animate({height:'50px', width:'100%'}, 500).attr('onClick','navMkt();');
+
+    } else {
+      $("#market").css('cursor','pointer').animate({height:'50px', width:'250px'}, 500).attr('onClick','navMkt();');
+    }
+    $("#mktBtnText").hide().text('Marketing Collateral').fadeIn();
+  }
+  */
+
+  </script>
+</body>
+</html>
+</apex:page>

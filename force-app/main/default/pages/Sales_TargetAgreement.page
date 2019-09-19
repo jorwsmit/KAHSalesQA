@@ -1,0 +1,408 @@
+<apex:page controller="Sales_TargetAgreementController" showHeader="false" standardStylesheets="false" sidebar="false" applyHtmlTag="true" applyBodyTag="false" docType="html-5.0">
+<html>
+<head>
+  <title>Goal Acknowledgement</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
+  <link rel="stylesheet" href="//cdn.linearicons.com/free/1.0.0/icon-font.min.css"/>
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css"/>
+  <link href="//fonts.googleapis.com/css?family=Roboto:100,400,700" rel="stylesheet"/>
+  <style>
+  body{
+    font-family: 'Roboto', sans-serif;
+    margin: 0px;
+    padding-bottom: 50px;
+  }
+  .link{
+    color: #007bff !important;
+    cursor: pointer;
+  }
+  .link:hover{
+    text-decoration: underline;
+  }
+  .btn-holder{
+    margin-top: 20px;
+    padding: 25px;
+  }
+  .overlay{
+    background-color: black;
+    opacity: 0.5;
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    display: none;
+  }
+  .center-modal{
+    border-radius: 25px;
+    display: none;
+    background-color: white;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    width: 80vw;
+    padding: 25px;
+    font-size: 19px;
+    margin-left: -40vw;
+    margin-top: -250px;
+  }
+  .dropdown{
+    width: 250px;
+    font-size: 20px;
+  }
+  .btm-left{
+    font-size: 25px;
+    width: 50px;
+    position: fixed;
+    bottom: 25px;
+    margin-right: -25px;
+    right: 10%;
+  }
+  .dropdown-list{
+    padding: 10px 0px 10px 0px;
+    color: white;
+    width: 250px;
+    max-height: 250px;
+    overflow: auto;
+    font-size: 20px;
+    border-radius: 25px;
+    text-align: center;
+    background-color: #007bff !important;
+    overflow: auto;
+    display: none;
+  }
+  .dropdown-list li:hover{
+    cursor: pointer;
+    border-bottom: 1px solid white;
+    border-top: 1px solid white;
+    background-color: #005dc1 !important;
+  }
+  .selected{
+    border-bottom: 1px solid white;
+    border-top: 1px solid white;
+    background-color: #005dc1 !important;
+  }
+  .btn{
+    border-radius: 25px;
+    cursor: pointer;
+  }
+  .header{
+    width: 100%;
+    color: white;
+    padding: 20px;
+  }
+  .spinner{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-left: -25px;
+    margin-top: -25px;
+  }
+  .holder{
+    width: 100%;
+    margin: 0px;
+    margin-top: 25px;
+    padding: 25px;
+    border-bottom: 1px solid black;
+  }
+  .col{
+    margin-top: 10px;
+  }
+  .red{
+    background-color: #d9534f !important;
+  }
+  .red-btn{
+    background-color: #d9534f !important;
+    cursor: pointer;
+  }
+  .red-btn:hover{
+    background-color: #a03c39 !important;
+  }
+  .yellow{
+    background-color: #ffc107 !important;
+  }
+  .green{
+    background-color: #5cb85c !important;
+  }
+  .green-btn{
+    background-color: #5cb85c !important;
+    cursor: pointer;
+  }
+  .green-btn:hover{
+    background-color: #478e47 !important;
+  }
+  .blue{
+    background-color: #007bff !important;
+  }
+  .listItems{
+    cursor: pointer;
+    width: 100%;
+    margin: auto;
+    padding: 25px;
+    border-bottom: 1px solid black;
+  }
+  .listItems:hover{
+    background-color: #ededed;
+  }
+  .icons{
+    text-align: center;
+    display: inline-block;
+    padding-top: 9px;
+    background-color: #0275d8;
+    width: 55px;
+    height: 55px;
+    border-radius: 30px;
+    color: white;
+    font-size: 25px;
+  }
+  .iconText{
+    display: inline-block;
+    position: relative;
+    top: 9px;
+    left: 10px;
+    width: 15%;
+  }
+  .pages{
+    width: 80%;
+    margin: auto;
+    margin-bottom: 50px;
+  }
+  .back{
+    display: inline-block;
+    margin-top: -50px;
+  }
+  #terms p{
+    height: 50vh;
+    margin-bottom: 10px;
+    border: 1px solid black;
+    border-radius: 25px;
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
+    padding: 10px;
+  }
+  #agreement{
+    display: none;
+    margin: auto;
+  }
+  @media only screen and (max-width: 750px) {
+    .pages{
+      width: 90%;
+    }
+    .back{
+      display: block;
+      width: 100%;
+      margin-top: 0px;
+      margin-bottom: 10px;
+    }
+    .listItems{
+      width: 100%;
+    }
+    .icons{
+      width: 100%;
+    }
+    .iconText{
+      width: 33%;
+      padding-bottom: 15px;
+    }
+    .dropdown{
+      width: 100%;
+      display: block;
+    }
+    .dropdown-list{
+      width: 100%;
+    }
+    .btm-left{
+      right: 10%;
+      width: 50px;
+      margin-right: -25px;
+    }
+    .center-modal{
+      width: 95vw;
+      height: 500px;
+      text-align: center;
+      margin-left: -47.5vw;
+      margin-top: -250px;
+    }
+  }
+  </style>
+</head>
+<body>
+
+  <div id="agreement">
+  </div>
+
+  <div class="modal fade" id="questionModal">
+    <div class="modal-dialog" role="document">
+      <div style="border-radius:25px" class="modal-content">
+        <div style="border-radius:25px 25px 0px 0px; color:white;" class="blue modal-header">
+          <h5 class="modal-title">Question for Sales Incentives Team</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="form-group">
+              <label class="col-form-label">Fill in your question to the Sales Incentives Team below</label>
+              <textarea class="form-control" id="question-text"></textarea>
+              <p id="question-alert" style="color:#d9534f; display:none;"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> This is required to send!</p>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <div class="btn btn-secondary" data-dismiss="modal">Close</div>
+          <div id="sendQuestion" class="btn btn-primary">Send <i class="fa fa-envelope" aria-hidden="true"></i></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script
+	src="https://code.jquery.com/jquery-3.2.1.min.js"
+	integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+	crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js"
+	integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh"
+	crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"
+	integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ"
+	crossorigin="anonymous"></script>
+  <script>
+  var buttonSpinner = '<i style="font-size: 22px;" class="fa fa-circle-o-notch fa-spin fa-3x fa-fw"></i>';
+  var centerSpinner = '<i class="spinner fa fa-circle-o-notch fa-spin fa-3x fa-fw"></i>';
+  $(document).ready(function(){
+
+    $("#sendQuestion").click(function(){
+      $("#sendQuestion").html(buttonSpinner);
+      $("#question-alert").slideUp();
+      if($("#questionTargets").attr("data-id") && $("#question-text").val()){
+        Sales_TargetAgreementController.sendQuestion($("#questionTargets").attr("data-id"), $("#question-text").val(), function(result, event){
+          $("#question-text").val('');
+          $("#questionModal").modal('hide');
+          $("#sendQuestion").removeClass("btn-primary").addClass("btn-success").html('Sent <i class="fa fa-check" aria-hidden="true"></i>');
+        }, {escape:false});
+      } else{
+        $("#sendQuestion").html('Send <i class="fa fa-envelope" aria-hidden="true"></i>');
+        $("#question-alert").slideDown().delay(3000).slideUp();
+      }
+    });
+
+    if(window.location.href.indexOf('id')!=-1){
+      Sales_TargetAgreementController.getAgreementById(getParameterByName('id'), function(result, event){
+        $("#agreement").html(result);
+        $("#acceptTargets").click(function(){
+          $("#acceptTargets").html(buttonSpinner).off('click');
+          id = $(this).attr("data-id");
+          Sales_TargetAgreementController.agree($(this).attr("data-id"), function(result, event){
+            $("#agreement").html(result);
+            Sales_TargetAgreementController.emailPdf(id, function(result, event){}, {escape:false});
+          }, {escape:false});
+        });
+        $("#agreement").show();
+      }, {escape:false});
+    }else getAgreement();
+  });
+  var index = null;
+  var id = null;
+  var year = new Date().getFullYear();
+  var filters = [true, true, true];
+  function getAgreement(){
+    $("#agreement").html(centerSpinner);
+    $("#agreement").show();
+    Sales_TargetAgreementController.getAgreement(index, year, filters, function(result, event){
+      $("#agreement").html(result);
+      for(var i=2018; i<=new Date().getFullYear(); i++){
+        if(i==year){
+          $("#year").text(i);
+          $("#year-list").append('<li class="selected">'+i+'</li>');
+        } else{
+          $("#year-list").append('<li>'+i+'</li>');
+        }
+      }
+
+      for(var i=0; i<filters.length; i++){
+        if(!filters[i]) $("#filter"+i).removeClass("green-btn").addClass("red-btn").text("OFF");
+      }
+
+      $("#year").click(function(){
+        $("#year-list").slideDown();
+      });
+
+      $("#year-list li").click(function(){
+        $(".dropdown-list li").removeClass("selected");
+        $(this).addClass("selected");
+        $(".dropdown-list").slideUp();
+        if(year != $(this).text()){
+          year = $(this).text();
+          $("#year").text(year);
+          getAgreement();
+        }
+
+
+      });
+
+      $("#filter").click(function(){
+        $("#close-filter").fadeIn();
+        $(".overlay").fadeIn();
+        $(".center-modal").fadeIn();
+      });
+
+      $("#close-filter").click(function(){
+        $("#close-filter").fadeOut();
+        $(".overlay").fadeOut();
+        $(".center-modal").fadeOut();
+        getAgreement();
+      });
+
+      $(".listItems").click(function(){
+        index = $(this).index();
+        $("#agreement").html(centerSpinner);
+        Sales_TargetAgreementController.getAgreement(index, year, filters, function(result, event){
+          $("#agreement").html(result);
+          $("#acceptTargets").click(function(){
+            $("#acceptTargets").html(buttonSpinner).off('click');
+            id = $(this).attr("data-id");
+            Sales_TargetAgreementController.agree($(this).attr("data-id"), function(result, event){
+              $("#agreement").html(result);
+              Sales_TargetAgreementController.emailPdf(id, function(result, event){}, {escape:false});
+            }, {escape:false});
+          });
+        }, {escape:false});
+      });
+
+      $(".center-modal .icons").click(function(){
+        filters[$(this).attr("data-index")] = !filters[$(this).attr("data-index")];
+        if($(this).hasClass("green-btn")){
+          $(this).removeClass("green-btn").addClass("red-btn").text("OFF");
+        } else if($(this).hasClass("red-btn")){
+          $(this).removeClass("red-btn").addClass("green-btn").text("ON");
+        }
+      });
+
+      $("#acceptTargets").click(function(){
+        $("#acceptTargets").html(buttonSpinner).off('click');
+        id = $(this).attr("data-id");
+        Sales_TargetAgreementController.agree($(this).attr("data-id"), function(result, event){
+          $("#agreement").html(result);
+          Sales_TargetAgreementController.emailPdf(id, function(result, event){}, {escape:false});
+        }, {escape:false});
+      });
+    }, {escape:false});
+  }
+
+  function getParameterByName(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+    results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+  }
+
+  </script>
+</body>
+</html>
+</apex:page>

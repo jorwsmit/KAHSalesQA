@@ -1,0 +1,78 @@
+<apex:page standardController="Account" extensions="CenterAssignmentController" id="ProgramAssignment" sidebar="false" showHeader="false" standardStylesheets="true">
+    
+
+    
+    <apex:form >
+        <!-- <apex:pageBlock title="Program Name" id="pBlock">  -->
+          <!--  <apex:pageBlockSection columns="1" id="pbSearch">
+                <apex:pageBlockSectionItem > 
+                   <apex:outputPanel >   
+                        <apex:outputLabel >Program Name: </apex:outputLabel> &nbsp;&nbsp;
+                            <apex:inputField id="txtSearch" value="{!searchedProgram.name}">
+                        </apex:inputField> 
+                        &nbsp;&nbsp;
+                         <apex:commandButton value="Search" onclick="Search();return false;"/>
+                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                         <apex:actionStatus id="opStatus" >
+                            <apex:facet name="start"><img src="/img/loading.gif" /></apex:facet>           
+                         </apex:actionStatus> 
+                         
+                   </apex:outputPanel>
+                </apex:pageBlockSectionItem>                
+            </apex:pageBlockSection>  --> 
+            <table style="width:100%">
+                <tr>
+                    <td width="47%" valign="top">
+                        <apex:pageBlock title="Available Programs" id="pbSearchResult">
+                    <!--  <apex:pageBlockButtons location="top"  rendered="{!IF(lstProgramWrapper.SIZE>0,true,false)}"> 
+                    <apex:commandButton value="Add Center to Program" onclick="create();return false;" />               
+                    </apex:pageBlockButtons>-->
+                            <apex:pageBlockTable id="pbtSearchProgram" value="{!lstProgramWrapper}" var="progWrapper" rendered="{!IF(lstProgramWrapper.SIZE>0,true,false)}">
+                                <apex:column width="5px">                       
+                                    <apex:inputCheckbox id="ceheckBox" value="{!progWrapper.isSelected}"/>
+                                </apex:column> 
+                            <apex:column >  
+                                <apex:facet name="header">Program Name</apex:facet>
+                                {!progWrapper.cProgram.Name}
+                                </apex:column>                 
+                            </apex:pageBlockTable>  
+                        </apex:pageBlock> 
+                    </td>
+                    <td width="6%" align="center" valign="top">
+                    <br></br>
+                    <br></br>
+                  <apex:commandButton id="btn1" value=">>" action="{!CreateContentLink}" />            
+                    <br></br><br></br>
+                    <apex:commandButton id="btn2" value="<<" action="{!DeleteContentLink}"/>              
+                    </td>
+                    <td width="47%" valign="top">
+                        <apex:pageBlock title="Assigned Programs" id="pbCreateContentLink">
+                <!--  <apex:pageBlockButtons location="top" rendered="{!IF(lstContentLinkWrapperCls.SIZE>0,true,false)}">  
+                    <apex:commandButton value="Delete Center from Program" onclick="deleteContent();return false;"/>              
+                </apex:pageBlockButtons>  -->
+                            <apex:pageBlockTable value="{!lstContentLinkWrapperCls}" var="clWrapper" rendered="{!IF(lstContentLinkWrapperCls.SIZE>0,true,false)}">
+                                <apex:column width="5px">
+                                    <apex:inputCheckbox id="ceheckBox" value="{!clWrapper.isSelected}"/>
+                                </apex:column> 
+                           <!--  <apex:column value="{!clWrapper.ContentLink.Name}"/>   --> 
+                                <apex:column >  
+                                    <apex:facet name="header">Program Name</apex:facet>
+                                    {!clWrapper.ContentLink.Program__r.name}
+                                </apex:column>                 
+                            </apex:pageBlockTable>             
+                        </apex:pageBlock>
+                    </td>
+                </tr>
+            </table>
+            
+        <!--  </apex:pageBlock> -->
+        
+     <!--   <apex:actionFunction name="Search" action="{!SearchProgram}" Status="opStatus" rerender="pbSearchResult">           
+        </apex:actionFunction>
+        <apex:actionFunction name="deleteContent" action="{!DeleteContentLink}" Status="opStatus" rerender="pbSearchResult,pbCreateContentLink" oncomplete="document.getElementById('{!$Component.btn1}').disabled = false;document.getElementById('{!$Component.btn2}').disabled = false;">            
+        </apex:actionFunction>
+        <apex:actionFunction name="create" action="{!CreateContentLink}" Status="opStatus" rerender="pbSearchResult,pbCreateContentLink" oncomplete="document.getElementById('{!$Component.btn1}').disabled = false;document.getElementById('{!$Component.btn2}').disabled = false;" >       
+        </apex:actionFunction>  -->  
+    </apex:form>
+    
+</apex:page>

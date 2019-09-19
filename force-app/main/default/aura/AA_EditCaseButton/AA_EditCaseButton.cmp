@@ -1,0 +1,9 @@
+<aura:component controller="AA_CaseEntryController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <aura:attribute name="recordId" type="Id" access="public"/>
+    <aura:attribute name="caseID" type="Id" />
+    
+    <lightning:workspaceAPI aura:id="workspace" />
+    <lightning:navigation aura:id="navService"/>
+    
+    <ui:button label="Edit Case" press="{!c.navToCase}"/>
+</aura:component>

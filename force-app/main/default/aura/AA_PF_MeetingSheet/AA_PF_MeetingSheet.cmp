@@ -1,0 +1,304 @@
+<aura:component controller="AA_PF_MonthlyClientMeetingController" access="global" implements="force:appHostable,flexipage:availableForAllPageTypes,force:hasRecordId" >
+    
+    <aura:attribute name="repNameTitle" type="string" access="public"/>
+    <aura:attribute name="selOptionsLst" type="string[]" access="public"/>
+    <aura:attribute name="facName" type="string" access="public"/>
+    <aura:attribute name="cAttendees" type="string" access="public"/>
+    <aura:attribute name="rhbAttendees" type="string" access="public"/>
+    <aura:attribute name="smart" type="string" access="public"/>
+    <aura:attribute name="sap" type="string" access="public"/>
+    <aura:attribute name="meetDate" type="string" access="public"/>
+    <aura:attribute name="mClReport" type="string" access="public"/>
+    <aura:attribute name="disc1" type="string" access="public"/>
+    <aura:attribute name="concl1" type="string" access="public"/>
+    <aura:attribute name="action1" type="string" access="public"/>
+    <aura:attribute name="dueD1" type="string" access="public"/>
+    <aura:attribute name="disc2" type="string" access="public"/>
+    <aura:attribute name="concl2" type="string" access="public"/>
+    <aura:attribute name="action2" type="string" access="public"/>
+    <aura:attribute name="dueD2" type="string" access="public"/>
+    <aura:attribute name="disc3" type="string" access="public"/>
+    <aura:attribute name="concl3" type="string" access="public"/>
+    <aura:attribute name="action3" type="string" access="public"/>
+    <aura:attribute name="dueD3" type="string" access="public"/>
+    <aura:attribute name="cliConSpec" type="string" access="public"/>
+    <aura:attribute name="specif2" type="string" access="public"/>
+    <aura:attribute name="specificGJ" type="string" access="public"/>
+    <aura:attribute name="comments" type="string" access="public"/>
+    
+    <aura:attribute name="acc" type="Account" access="public"/>
+    <aura:attribute name="filterName" type="string" access="public"/>
+    <aura:attribute name="accName" type="string" access="public"/>
+    <aura:attribute name="facID" type="string" access="public"/>
+    <aura:attribute name="reportPresented" type="boolean" access="public"/>
+    <aura:attribute name="cliCon" type="boolean" access="public"/>
+    <aura:attribute name="nonImed" type="boolean" access="public"/>
+    
+    <aura:attribute name="recordId" type="Id" />
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <img src="{!$Resource.rehabLogo}" style="text-align:right" height="25" width="250"/>
+    <p style="text-align:center; font-size:22px">Monthly Client Meeting Summary</p>
+	<p style="align:left"><em>The Meeting Summary is to be electronically completed by the MPD/PD for each location every month and emailed to their ADO.  The meeting summary should be completed within 24 hours after the meeting and written from the clients perspective and include Action – Response – Follow-ups (ARF) specific to the meeting.</em></p>
+    <br/>
+    <span style="font-weight:bold">Meeting Information: </span>
+    <div class="slds-grid paddingTop">
+      <div class="slds-size--1-of-1 slds-small-size--1-of-1 slds-medium-size--1-of-2">
+      	<div class="slds-form-element discussionDiv" style="min-width: 310px">
+        	<div class="slds-form-element__label">Name and title of person completing the form:</div>
+               	<div>
+                   	<ui:outputText aura:ID="repNameTitle" value="{!v.repNameTitle}" />
+                </div>
+        </div>
+      </div>
+            <div class="slds-col slds-size--1-of-1 slds-small-size--2-of-2 slds-medium-size--2-of-2">
+            <div class="slds-form-element reportDiv paddingleft" style="width: 200px">
+                	<div class="slds-form-element__label">Due Date: </div>
+                	    <ui:inputDate class="field" aura:ID="meetDate" value="{!v.meetDate}" displayDatePicker="true"/>
+                    </div>
+            </div>
+        <div class="slds-col slds-size--1-of-1 slds-small-size--3-of-3 slds-medium-size--3-of-3">
+        &nbsp;
+        </div>
+        
+    	</div>
+                <br/>
+        <div class="slds-grid paddingTop">
+           <div class="slds-size--1-of-1 slds-small-size--1-of-3 slds-medium-size--1-of-3"> 
+            	<div class="slds-form-element discussionDiv" style="min-width: 310px">
+               <div class="slds-form-element__label">Facility Name: </div>
+                        <br/>
+					<ui:outputText value="{!v.acc.Name}"/>
+                	<!--<aura:renderif isTrue="{!v.searchAcc}">
+			<br/>
+			<ui:inputSelect class="slds-select" aura:id="InputSelectAccount" change="{!c.listChange}">
+                                <aura:iteration items="{!v.selOptionsLst}" var="indVal"> 
+                                    <ui:inputSelectOption text="{!indVal}"/> 
+                                </aura:iteration>
+                            </ui:inputSelect>
+            <ui:inputText label="Filter Name" aura:id="accSearchTxt" class="field" value="{!v.filterName}"/>
+        	<ui:Button label="Filter List" press="{!c.searchAccounts}"/>
+        	<ui:Button aura:id="inputButton" label="Confirm Choice" press="{!c.populateAcc}" disabled="true"/>
+            </aura:renderif>-->
+               </div>
+               </div>
+                <br/>
+            <div class="slds-col slds-size--1-of-1 slds-small-size--2-of-3 slds-medium-size--2-of-3">   
+            	<div class="slds-form-element__label">SMART #:</div><br/>
+                	<ui:outputText value="{!v.acc.PF_Smart_ID__c}"/>
+            </div>
+            <div class="slds-col slds-size--1-of-1 slds-small-size--3-of-3 slds-medium-size--3-of-3">   
+                <div class="slds-form-element__label">SAP #:</div><br/>
+                	<ui:outputText value="{!v.acc.PF_SAP_ID__c}"/>
+			</div>
+    		</div>
+                <br/>
+            <div class="slds-grid paddingTop">   
+            	<div class="slds-col slds-size--1-of-1 slds-small-size--1-of-1 slds-medium-size--1-of-1">
+                	<div class="slds-form-element__label">Client Attendees Name and Title: </div>
+                		<div>
+                        	<ui:inputTextArea aura:ID="cAttendees" value="{!v.cAttendees}" rows="4"/>
+                    	</div>
+            	</div>
+    		</div>
+            <br/>  
+			
+            
+        	<div class="slds-grid paddingTop">
+           		<div class="slds-col slds-size--1-of-1 slds-small-size--1-of-1 slds-medium-size--1-of-1">
+            		<div class="slds-form-element__label">RHB Attendees: </div>
+                        <br/>
+					<ui:inputTextArea aura:ID="rhbAttendees" value="{!v.rhbAttendees}" rows="4"/>
+    			</div>
+    		</div>	
+            <br/>
+                
+            <div class="slds-grid paddingTop">
+           		<div class="slds-col">
+            	<div class="slds-form-element__label">Was the Monthly Client report presented?: </div><br/>
+               		<ui:inputRadio aura:id="reportRadio" name="reportRadio" label="Yes" change="{!c.onRadio}"/>
+                    <ui:inputRadio aura:id="reportRadio" name="reportRadio" label="No" change="{!c.onRadio}" /> 
+                </div>
+    			</div>
+				<br/>
+                
+            <div class="slds-grid paddingTop">
+           		<div class="slds-col slds-size--1-of-1 slds-small-size--1-of-1 slds-medium-size--1-of-1">
+            		<div class="slds-form-element__label">Report Comments: </div>
+                	<div>
+                        <ui:inputTextArea aura:ID="mClReport" value="{!v.mClReport}" rows="3"/>
+                    </div>
+            	</div>
+    		</div>
+            <br/>
+            
+    <br/>
+    <span style="font-weight:bold">Discussion Items: </span> <em>Provide meeting discussion topics - issues/concerns, discussion details, what was the conclusion and what is the next action/follow-up.</em>
+    
+      <div class="slds-grid paddingTop">
+           		<div class="slds-col slds-size--1-of-1 slds-small-size--1-of-1 slds-medium-size--1-of-1">
+            		<div class="slds-form-element__label">Discussion: </div>
+                	<div>
+                        <ui:inputTextArea aura:ID="disc1" value="{!v.disc1}" rows="4"/>
+                    </div>
+            	</div>
+    		</div>
+                <br/>
+                
+            <div class="slds-grid paddingTop">
+           		<div class="slds-col slds-size--1-of-1 slds-small-size--1-of-1 slds-medium-size--1-of-1">
+            		<div class="slds-form-element__label">Conclusion: </div>
+                	<div>
+                        <ui:inputTextArea aura:ID="concl1" value="{!v.concl1}" rows="4"/>
+                    </div>
+            	</div>
+    		</div>
+				
+                <br/>
+                
+            <div class="slds-grid paddingTop">
+           		<div class="slds-col slds-size--1-of-1 slds-small-size--1-of-1 slds-medium-size--1-of-1">
+                    <div class="slds-form-element__label">Action/Follow Up: </div>
+                	<div>
+                        <ui:inputTextArea aura:ID="action1" value="{!v.action1}" rows="4"/>
+                    </div>
+            	</div>
+    		</div>
+				
+                
+                
+            <div class="slds-form-element reportDiv paddingleft" style="width: 200px">
+            	<div class="slds-form-element__label">Due Date: </div>
+                	<div>
+                        <ui:inputDate aura:ID="dueD1" value="{!v.dueD1}" displayDatePicker="true"/>
+                    </div>
+            </div>
+            <br/>  
+    		<br/>
+    		<div class="slds-grid paddingTop">
+           		<div class="slds-col slds-size--1-of-1 slds-small-size--1-of-1 slds-medium-size--1-of-1">
+            		<div class="slds-form-element__label">Discussion: </div>
+                	<div>
+                        <ui:inputTextArea aura:ID="disc2" value="{!v.disc2}" rows="4"/>
+                    </div>
+            	</div>
+    		</div>
+                <br/>
+                
+            <div class="slds-grid paddingTop">
+           		<div class="slds-col slds-size--1-of-1 slds-small-size--1-of-1 slds-medium-size--1-of-1">
+            		<div class="slds-form-element__label">Conclusion: </div>
+                	<div>
+                        <ui:inputTextArea aura:ID="concl2" value="{!v.concl2}" rows="4"/>
+                    </div>
+            	</div>
+    		</div>
+				
+                <br/>
+                
+            <div class="slds-grid paddingTop">
+           		<div class="slds-col slds-size--1-of-1 slds-small-size--1-of-1 slds-medium-size--1-of-1">
+                    <div class="slds-form-element__label">Action/Follow Up: </div>
+                	<div>
+                        <ui:inputTextArea aura:ID="action2" value="{!v.action2}" rows="4"/>
+                    </div>
+            	</div>
+    		</div>
+				
+                
+                
+            <div class="slds-form-element reportDiv paddingleft" style="width: 200px">
+            	<div class="slds-form-element__label">Due Date: </div>
+                	<div>
+                        <ui:inputDate aura:ID="dueD2" value="{!v.dueD2}" displayDatePicker="true"/>
+                    </div>
+            </div>
+            <br/>
+    		<br/>
+            <div class="slds-grid paddingTop">
+           		<div class="slds-col slds-size--1-of-1 slds-small-size--1-of-1 slds-medium-size--1-of-1">
+            		<div class="slds-form-element__label">Discussion: </div>
+                	<div>
+                        <ui:inputTextArea aura:ID="disc3" value="{!v.disc3}" rows="4"/>
+                    </div>
+            	</div>
+    		</div>
+                <br/>
+                
+            <div class="slds-grid paddingTop">
+           		<div class="slds-col slds-size--1-of-1 slds-small-size--1-of-1 slds-medium-size--1-of-1">
+            		<div class="slds-form-element__label">Conclusion: </div>
+                	<div>
+                        <ui:inputTextArea aura:ID="concl3" value="{!v.concl3}" rows="4"/>
+                    </div>
+            	</div>
+    		</div>
+				
+                <br/>
+                
+            <div class="slds-grid paddingTop">
+           		<div class="slds-col slds-size--1-of-1 slds-small-size--1-of-1 slds-medium-size--1-of-1">
+                    <div class="slds-form-element__label">Action/Follow Up: </div>
+                	<div>
+                        <ui:inputTextArea aura:ID="action3" value="{!v.action3}" rows="4"/>
+                    </div>
+            	</div>
+    		</div>
+			             
+            <div class="slds-form-element reportDiv paddingleft" style="width: 200px">
+            	<div class="slds-form-element__label">Due Date: </div>
+                	<div>
+                        <ui:inputDate aura:ID="dueD3" value="{!v.dueD3}" displayDatePicker="true"/>
+                    </div>
+            </div>
+    <br/>
+    <br/>
+    <span style="font-weight:bold">Client Concerns: </span>
+    <div class="slds-grid paddingTop">
+      <div style="max-width:90%">
+        <div class=" slds-text-align--left">
+            <div class="slds-form-element discussionDiv">
+            	<div class="slds-form-element__label">Were any issues/concerns presented that requires immediate attention and may put the client at risk: </div>
+                	<div>
+                        <ui:inputRadio aura:id="concernRadio" name="concernRadio" label="Yes" change="{!c.onRadio2}"/>
+                    	<ui:inputRadio aura:id="concernRadio" name="concernRadio" label="No" change="{!c.onRadio2}" /> 
+                    </div>
+                <div class="slds-form-element__label">If yes, provide the issues/concerns specifics: </div>
+                <br/>
+                <ui:inputTextArea aura:ID="cliConSpec" value="{!v.cliConSpec}" rows="5"/>
+                    
+            </div>
+                <br/>
+                
+            <div class="slds-form-element hierarchyDiv paddingleft">
+                <div class="slds-form-element__label">Were non-immediate issues/concerns presented? </div><br/>
+                	<ui:inputRadio aura:id="nonImmRadio" name="nonImmRadio" label="Yes" change="{!c.onRadio3}"/>
+                    <ui:inputRadio aura:id="nonImmRadio" name="nonImmRadio" label="No" change="{!c.onRadio3}" />  <br/>
+            	<div class="slds-form-element__label">If yes, provide the issues/concerns specifics: </div>
+                <br/>
+				<ui:inputTextArea aura:ID="specif2" value="{!v.specif2}" rows="5"/>
+    		</div>
+			<br/>
+            
+            <span style="font-weight:bold">Great Job! </span> <em> List exciting items, highlights, kudos presented in the meeting by the client.</em>
+            <div class="slds-form-element hierarchyDiv paddingleft">
+                <div class="slds-form-element__label">Great Job specifics: </div>
+                <br/>
+				<ui:inputTextArea aura:ID="specificGJ" value="{!v.specificGJ}" rows="4"/>
+    		</div>
+			<br/>
+            
+            <span style="font-weight:bold">Comments </span> <em> Provide any additional meeting comments you would like to add that are relevant to the customer relationship.</em>
+            <div class="slds-form-element hierarchyDiv paddingleft">
+                <ui:inputTextArea aura:ID="comments" value="{!v.comments}" rows="4"/>
+    		</div>
+			
+            <br/>
+            
+            <lightning:button aura:id="submitButton" label="Submit Form" onclick="{!c.echo}"/>
+            
+          </div>
+      </div>
+    </div>
+</aura:component>

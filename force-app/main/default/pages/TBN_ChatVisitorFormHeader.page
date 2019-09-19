@@ -1,0 +1,56 @@
+<apex:page >
+    <style>
+        
+        .paddingAll {
+        
+            padding: 24px;
+            text-align: right;
+        }
+        
+        @media only screen and (max-device-width: 480px) {
+
+            .verticalLine {
+                
+                font-size: 47px !important; 
+                font-family: times new roman;
+                color: white !important;
+            }
+            
+            img {
+                width: 220px;
+            }
+            
+            .paddingAll {
+            
+                padding-right: 4px !important;
+                padding-left: 8px !important;
+                padding-top:24px !important;
+                padding-bottom:24px !important;
+                width: 75% !important;
+                text-align: right;
+            }
+        }
+        
+        .logoImage {
+            
+           width:20% !important; 
+        }
+    </style>
+    
+    <table style="background-color:#789ac5; width: 100%;" >
+        
+        <tr width="100%">
+            <td style="padding-left: 15px;" class="logoImage" width="35%">
+                <apex:image value="{!$Resource.TBN_KindredLogo}"/>
+            </td>
+            
+            <td class="paddingAll" width="65%"> 
+                <span  class="verticalLine" style="font-size: 30px; color:white;">
+                    &nbsp;<span>  Healthcare</span> <span style="font-weight: bold;"> Made Easy</span>
+                </span>
+            </td>
+            
+        </tr>
+        
+    </table>
+</apex:page>

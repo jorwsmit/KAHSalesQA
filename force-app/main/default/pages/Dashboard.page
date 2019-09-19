@@ -1,0 +1,1 @@
+<apex:page action="{!URLFOR('/a07/o?isdtp=p1')}"/>

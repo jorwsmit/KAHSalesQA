@@ -1,0 +1,1149 @@
+<apex:page showHeader="false" standardController="Event" extensions="SalesHD_Event" lightningStyleSheets="true" standardStylesheets="false"
+  sidebar="false" applyHtmlTag="false" applyBodyTag="false" docType="html-5.0">
+  <html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+  <head>
+    <title>Encounters</title>
+
+    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/> -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/"
+      crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4"
+      crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdn.linearicons.com/free/1.0.0/icon-font.min.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1,minimum-scale=1, maximum-scale=1, user-scalable=no" />
+    <apex:slds />
+    <style>
+      a {
+        color: #208FFF !important;
+        text-decoration: underline !important;
+      }
+
+      a:hover {
+        color: #1773d1 !important;
+      }
+
+      div {
+        font-size: 20px;
+      }
+
+      body {
+        font-family: "Salesforce Sans", Arial, sans-serif !important;
+        margin: 0px;
+        background-color: #E0E2E7;
+      }
+
+      input {
+        display: block;
+      }
+
+      form {
+        width: 100%;
+      }
+
+      form label {
+        font-size: 24px !important;
+        font-weight: bold !important;
+      }
+
+      textarea,
+      input {
+        color: #3E3E3C !important;
+        font-size: 18px !important;
+      }
+
+      textarea::placeholder,
+      input::placeholder {
+        font-size: 18px !important;
+      }
+
+      .LightningDesign {
+        color: #3E3E3C !important;
+      }
+
+      .LightningDesign::selection {
+        color: #3E3E3C !important;
+      }
+
+      .reassignButton {
+        position: fixed;
+        bottom: 0px;
+        left: 50%;
+        margin-left: -250px;
+      }
+
+      .reassignButton button {
+        width: 500px !important;
+      }
+
+      .l-space {
+        margin: 20px;
+      }
+
+      .s-space {
+        margin: 10px;
+      }
+
+      .spinner {
+        text-align: center;
+        color: #157DFA;
+        position: relative;
+        left: 50%;
+      }
+
+      .tableCheck {
+        position: relative;
+        left: 45%;
+      }
+
+      .btn {
+        border: none !important;
+        color: #FFFFFF !important;
+      }
+
+      .row {
+        margin-left: 0px !important;
+        margin-right: 0px !important;
+      }
+
+      table {
+        overflow: hidden;
+      }
+
+      table td,
+      table th {
+        border: 1px solid #ddd;
+        padding-left: 4px !important;
+        padding-right: 4px !important;
+      }
+
+      table thead th {
+        text-align: center !important;
+      }
+
+      table tbody td {
+        text-align: center !important;
+        vertical-align: middle !important;
+      }
+
+      .userList {
+        border: 1px solid #ced4da !important;
+        border-radius: 7px;
+        max-height: 450px;
+        overflow: auto;
+        display: none;
+      }
+
+      .userList li {
+        cursor: pointer;
+        padding-left: 5px;
+        padding-right: 5px;
+        border-bottom: 1px solid #ced4da !important;
+      }
+
+      .shadow {
+        -webkit-box-shadow: 0px 3px 7px 0px rgba(0, 0, 0, 0.25);
+        -moz-box-shadow: 0px 3px 7px 0px rgba(0, 0, 0, 0.25);
+        box-shadow: 0px 3px 7px 0px rgba(0, 0, 0, 0.25);
+      }
+
+      .header {
+        padding-top: 80px;
+        padding-bottom: 20px;
+        width: 100vw;
+        color: white;
+        text-align: center;
+        background-color: #817FE1;
+      }
+
+      .header h1 {
+        z-index: 10;
+        position: fixed;
+        background-color: #817FE1;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        top: 0px;
+        width: 100%;
+      }
+
+      .back-btn {
+        z-index: 100;
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        font-size: 48px !important;
+        cursor: pointer;
+      }
+
+      .modal {
+        font-family: "Salesforce Sans", Arial, sans-serif !important;
+        color: #3E3E3C !important;
+      }
+
+      .modal ul li {
+        border-bottom: 1px solid #e9ecef;
+        padding: 10px;
+        font-size: 18px;
+        font-weight: bold;
+      }
+
+      .modal-body {
+        max-height: 375px;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .modal-title {
+        font-weight: normal !important;
+        color: #157DFA !important;
+      }
+
+      .modal-subtitle {
+        font-weight: lighter !important;
+      }
+
+      .btn-primary {
+        background-color: #157DFA !important;
+      }
+
+      .btn-primary:active {
+        background-color: #1f6bc6 !important;
+      }
+
+      .btn-secondary {
+        background-color: #808285 !important;
+      }
+
+      .btn-secondary:active {
+        background-color: #6c6e70 !important;
+      }
+
+      #profilePhoto,
+      #profilePhoto img {
+        z-index: 200;
+        position: fixed;
+        right: 10px;
+        top: 10px;
+        width: 58px;
+        height: 58px;
+        border-radius: 100%;
+        border: 2px solid #FFFFFF;
+        background-color: #E0E2E7;
+        cursor: pointer;
+      }
+
+      h1 {
+        font-size: 48px !important;
+        font-weight: bold !important;
+      }
+
+      .name {
+        font-weight: lighter !important;
+      }
+
+      h2 {
+        font-size: 36px !important;
+        font-weight: lighter !important;
+      }
+
+      h3 {
+        font-size: 29px !important;
+        font-weight: bold !important;
+      }
+
+      h4 {
+        font-size: 22px !important;
+        font-weight: normal !important;
+      }
+
+      h5 {
+        font-size: 18px !important;
+        font-weight: lighter !important;
+      }
+
+      .thin {
+        font-weight: lighter !important;
+      }
+
+      .italic {
+        font-style: italic !important;
+      }
+
+      .icon {
+        color: white;
+        margin-left: 10px;
+        border-radius: 7px;
+      }
+
+      .icon-green {
+        background-color: #2BC100;
+      }
+
+      .icon-purple {
+        background-color: #A644D2;
+      }
+
+      .icon-account-purple {
+        background-color: #817FE1 !important;
+      }
+
+      .icon-pink {
+        background-color: #FF74C0;
+      }
+
+      .icon-lightblue {
+        background-color: #37D5EC;
+      }
+
+      .icon-blue {
+        background-color: #157DFA;
+      }
+
+      .icon-yellow {
+        background-color: #FFD000;
+      }
+
+      .icon-red {
+        background-color: #FF0036;
+      }
+
+      .icon-grey {
+        background-color: #808285;
+      }
+
+      .bg-danger {
+        background-color: #FF3B39 !important;
+      }
+
+      .card {
+        border-radius: 7px;
+        cursor: pointer;
+      }
+
+      .card-header i {
+        font-size: 50px;
+      }
+
+      .card-body {
+        height: 200px;
+        overflow: auto;
+      }
+
+      .ppt {
+        color: #FF6600;
+      }
+
+      .col-md-4 {
+        padding: 0px 10px 0px 10px;
+        margin-bottom: 20px;
+      }
+
+      .white-bg {
+        background-color: #FFFFFF !important;
+      }
+
+      .blue-bg {
+        background-color: #157DFA !important;
+      }
+
+      .rounded {
+        padding: 15px 0px 15px 0px !important;
+        border-radius: 7px !important;
+      }
+
+      .inner-container {
+        padding: 0px !important;
+      }
+
+      .inner-container div:not(:last-child) {
+        padding-right: 10px !important;
+      }
+
+      .container {
+        padding: 10px !important;
+        margin-top: 10px !important;
+        margin-bottom: 10px !important;
+        border-radius: 7px;
+      }
+
+      .container:last-of-type {
+        margin-top: 10px;
+        margin-bottom: 20px;
+      }
+
+      .no-bg-container {
+        background-color: transparent !important;
+      }
+
+      .action-item-label {
+        font-size: 20px !important;
+        font-weight: bold !important;
+      }
+
+      .action-items,
+      .action-items div {
+        font-size: 18px !important;
+        padding: 5px !important;
+      }
+
+      .action-items .row {
+        border: 1px solid #d8dde6;
+      }
+
+      .action-items .row:first-child {
+        border-radius: .25rem .25rem 0px 0px;
+        border-bottom: 0px;
+      }
+
+      .action-items .row:not(:first-child):not(:last-child) {
+        border-top: 1px solid #d8dde6;
+        border-bottom: 0px;
+      }
+
+      .action-items .row:last-child {
+        border-radius: 0px 0px .25rem .25rem;
+      }
+
+      .action-items .row:only-child {
+        border: 1px solid #d8dde6;
+        border-radius: .25rem;
+      }
+
+      .no-padding {
+        padding: 0px !important;
+      }
+
+      .no-margin {
+        margin: 0px !important;
+      }
+
+      .incomplete {
+        text-decoration: underline;
+        cursor: pointer;
+        color: #FF3B39 !important;
+      }
+
+      .complete {
+        text-decoration: underline;
+        cursor: pointer;
+        color: #25D96B !important;
+      }
+
+      .red {
+        color: #FF3B39 !important;
+      }
+
+      .grey {
+        color: #808285 !important;
+      }
+
+      .green {
+        color: #4CD964 !important;
+      }
+
+      .blue {
+        color: #208FFF !important;
+      }
+
+      .purple {
+        color: #817FE1 !important;
+      }
+
+      .no-pad {
+        padding: 0px !important;
+      }
+
+      @media (min-width: 768px) {
+        .ui-autocomplete {
+          max-width: 720px;
+        }
+      }
+
+      @media (min-width: 992px) {
+        .ui-autocomplete {
+          max-width: 960px;
+        }
+      }
+
+      @media (min-width: 1200px) {
+        .ui-autocomplete {
+          max-width: 1140px;
+        }
+      }
+
+
+      @media only screen and (min-device-width: 768px) and (max-device-width: 1024px) and (orientation: landscape) {
+        .container {
+          max-width: 1004px !important;
+          margin: 20px 10px 20px 10px;
+        }
+        .ui-autocomplete {
+          max-width: 1004px;
+        }
+        .container:nth-of-type(2) {
+          margin: 20px 10px 10px 10px;
+        }
+        .container:last-of-type {
+          margin: 10px 10px 20px 10px;
+        }
+      }
+
+      .upcoming-events {
+        display: inline-block !important;
+      }
+
+      #new-event {
+        width: 200px;
+        padding: 5px !important;
+        display: inline-block;
+        float: right;
+      }
+
+      @media (max-width:499px) {
+        .upcoming-events {
+          display: block;
+        }
+        #new-event {
+          margin-top: 10px;
+          margin-left: 10px;
+          float: none;
+        }
+
+        .inner-container div:not(:last-child) {
+          padding-right: 0px !important;
+        }
+
+        .container {
+          padding: 2px !important;
+        }
+
+      }
+
+      /* Calendar styling */
+
+      #ui-datepicker-div {
+        border-radius: 0.25rem;
+      }
+
+      .ui-datepicker-calendar,
+      .ui-datepicker-header {
+        background-color: white;
+        padding: 5px;
+        border: 1px solid #d8dde6;
+      }
+
+      .ui-datepicker-header {
+        margin-top: 5px;
+        border-radius: 0.25rem 0.25rem 0 0;
+      }
+
+      .ui-datepicker-calendar {
+        border-radius: 0 0 0.25rem 0.25rem;
+      }
+
+      .ui-datepicker-next {
+        position: relative;
+        left: 90px;
+      }
+
+      .ui-datepicker-calendar th,
+      .ui-datepicker-calendar td {
+        padding: 2px 5px 2px 5px;
+      }
+
+      /* End calendar styling */
+
+      .round-border {
+        border: 1px solid #ddd;
+        padding: 5px 7px 5px 7px;
+        border-radius: 100%;
+      }
+
+      .border-blue {
+        border-color: #208FFF !important;
+      }
+
+      ul {
+        padding-left: 0px;
+      }
+
+      ul li {
+        font-size: 15px;
+        line-height: 23px;
+        padding: 10px 0px 10px 0px;
+        margin-left: 10px !important;
+        margin-right: 10px !important;
+        border-bottom: 1px solid #ddd;
+        cursor: pointer;
+        list-style: none;
+      }
+
+      .cursor-default {
+        cursor: default;
+      }
+
+      ul li:hover {
+        border-bottom: 1px solid #afafaf;
+      }
+
+      .nav-list li {
+        font-size: 20px;
+        display: inline-block;
+        border: none;
+        font-style: italic;
+        color: #FFFFFF;
+        padding: 10px 15px 10px 15px;
+        margin: 0px !important;
+        border-radius: 25px;
+      }
+
+      .nav-list li:hover {
+        border: none;
+      }
+
+      .nav-list li:hover:not(.selected) {
+        background-color: #afafaf;
+      }
+
+      .nav-list .selected {
+        background-color: #FFFFFF;
+        color: #157DFA;
+      }
+
+      .nav-container {
+        width: 100%;
+        padding: 3px !important;
+        margin-bottom: 15px !important;
+        z-index: 11;
+        position: fixed;
+        top: 0px;
+        padding-left: 70px !important;
+      }
+
+      .progress {
+        margin-top: 10px;
+        margin-left: 10px;
+        height: 50px;
+        border-radius: 7px;
+      }
+
+      #accountSearchInput {
+        border: 1px solid #ddd;
+        width: 100%;
+        border-radius: 25px;
+      }
+
+      .ui-autocomplete {
+        background-color: #FFFFFF;
+        margin-right: 20px;
+        margin-top: 10px;
+        border-radius: 7px;
+        max-height: 510px;
+        overflow: auto;
+      }
+
+      .ui-helper-hidden-accessible {
+        display: none;
+      }
+
+      #stateChoices {
+        max-height: 400px;
+        overflow: auto;
+      }
+
+      /* calendar style */
+
+      #date {
+        text-align: center;
+        font-size: 20px !important;
+      }
+
+      #calendar thead tr th {
+        width: 14%;
+        height: 30px;
+        text-align: center;
+        border: 1px solid #d8dde6;
+        background-color: white;
+      }
+
+      .today {
+        border: 2px solid #007bff !important;
+      }
+
+      .selected-day {
+        border: 2px solid #afafaf !important;
+      }
+
+      .day {
+        font-size: 15px !important;
+        text-align: left;
+        padding-left: 5px;
+      }
+
+      .event {
+        font-size: 13px !important;
+        cursor: pointer;
+        border: 1px solid #d8dde6;
+        background-color: #efefef;
+        margin: 0px 2px 1px 2px;
+        border-radius: 3px;
+        padding-left: 1px;
+      }
+
+      #calendar tbody tr td {
+        vertical-align: top !important;
+        width: 14%;
+        height: 100px;
+        padding: 0px !important;
+        text-align: center;
+        background-color: white;
+        border: 1px solid #d8dde6;
+      }
+
+      .complete {
+        color: #04844B;
+      }
+
+      .hideDay {
+        background-color: transparent !important;
+      }
+
+      .weekly-monthly {
+        width: 150px;
+      }
+
+      .weekly-monthly-selected {
+        color: #157DFA !important;
+        background-color: #fff !important;
+        border: 1px solid #157DFA !important;
+      }
+
+      .weekly-monthly-selected:active {
+        background-color: #e8e8e8 !important;
+      }
+
+      .nav-tabs li {
+        width: 50%;
+        text-align: center;
+        margin: 0px !important;
+      }
+
+      .nav-tabs li a {
+        text-decoration: none !important;
+      }
+
+      .nav-tabs li .active {
+        text-decoration: underline !important;
+      }
+
+      .table thead th,
+      .table tbody td {
+        padding: 2px !important;
+      }
+    </style>
+  </head>
+
+  <body>
+
+    <div class="slds-scope">
+
+      <div class="slds-spinner_container" id="spinner" style="position:fixed; width:100vw; height:100vh;">
+        <div class="slds-spinner slds-spinner--large slds-spinner--brand">
+          <div class="slds-spinner__dot-a"></div>
+          <div class="slds-spinner__dot-b"></div>
+        </div>
+      </div>
+
+      <div class="nav-container blue-bg">
+        <div class="row">
+          <ul class="nav-list">
+            <li onclick="window.location.href='/apex/saleshd_homepage'">
+              <i class="fas fa-home"></i> HOME
+            </li>
+            <li onclick="window.location.href='/apex/saleshd_accounts'">
+              <i class="fas fa-hospital"></i> MY ACCOUNTS
+            </li>
+            <li onclick="window.location.href='/apex/saleshd_contacts'">
+              <i class="fas fa-user-md"></i> MY CONTACTS
+            </li>
+            <li class="selected">
+              <i class="fas fa-phone"></i> ENCOUNTERS
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="container no-pad" style="margin-top:60px!important;">
+
+        <div class="row inner-container">
+          <div class="col-md-9 no-pad">
+            <button data-weekly="true" class="btn btn-primary rounded weekly-monthly weekly-monthly-selected" style="padding-top:5px!important; padding-bottom:5px!important; margin-bottom:10px;">Weekly</button>
+            <button id="monthly" data-weekly="false" class="btn btn-primary rounded weekly-monthly" style="padding-top:5px!important; padding-bottom:5px!important; margin-bottom:10px;">Monthly</button>
+
+            <apex:outputPanel rendered="{!IF(CONTAINS($Profile.Name, 'Manager'), true, false)}" style="display:inline-block;">
+              <button class="btn btn-secondary rounded" id="cl-button" style="padding: 5px !important; width:150px; margin-top:-10px; margin-left:5px;"
+                data-toggle="modal" data-target="#clModal">Select CL</button>
+            </apex:outputPanel>
+
+            <div class="shadow white-bg rounded">
+              <div id="calendarHeader">
+                <span style="cursor:pointer;padding:10px;float:left;" class="lnr lnr-chevron-left" id="previousDate"></span>
+                <h1 style="padding:5px;" id="date"></h1>
+                <span id="nextDate" style="cursor:pointer;padding:10px;float:right;margin-top:-35px;" class="lnr lnr-chevron-right"></span>
+              </div>
+              <table id="calendar">
+                <thead>
+                  <tr>
+                    <th>
+                      Sun
+                    </th>
+                    <th>
+                      Mon
+                    </th>
+                    <th>
+                      Tues
+                    </th>
+                    <th>
+                      Wed
+                    </th>
+                    <th>
+                      Thur
+                    </th>
+                    <th>
+                      Fri
+                    </th>
+                    <th>
+                      Sat
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+
+          <div class="col-md-3 no-pad">
+
+            <button class="btn btn-primary btn-block rounded" style="padding-top:5px!important; padding-bottom:5px!important; margin-bottom:10px;"
+              onclick="window.location.href='/apex/SalesHD_NewEncounter'">
+              <i class="fas fa-phone"></i> New Encounter</button>
+
+            <div class="shadow white-bg rounded">
+              <h3 class="thin italic">
+                <i class="fa fa-calendar-alt icon icon-blue" style="padding:10px 11px 10px 11px;" aria-hidden="true"></i> <span id="todayText" style="font-size:25px">Today</span>
+              </h3>
+              <ul id="todaysEncounters">
+                <div class="grey" style="padding:10px;">
+                  <i class="fa fa-times-circle" aria-hidden="true"></i> You have no encounters scheduled today.
+                </div>
+              </ul>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="modal fade" id="clModal">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header icon-contact-blue">
+              <h3 class="bold">
+                <i aria-hidden="true" class="fa fa-users" style="padding-right:10px;"></i> Select CL</h3>
+            </div>
+            <div class="modal-body">
+
+              <ul class="nav nav-tabs" id="tabContent">
+                <li class="active">
+                  <a class="active" href="#search-tab" data-toggle="tab">Search</a>
+                </li>
+                <li>
+                  <a href="#drilldown-tab" data-toggle="tab">Drilldown</a>
+                </li>
+              </ul>
+
+              <div class="tab-content">
+                <div class="tab-pane active" id="search-tab">
+                  <input style="margin-bottom:10px;margin-top:10px;" type="search" id="userSearch" value="" class="form-control" placeholder="Search by name or role"
+                  />
+                  <table class="table table-bordered table-striped">
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Role</th>
+                      </tr>
+                    </thead>
+                    <tbody id="usersUnderRole">
+                    </tbody>
+                  </table>
+                </div>
+                <div class="tab-pane" id="drilldown-tab">
+                  <a style="cursor:pointer;  display: inline-block;" id="revertOneRole">
+                    <i class="fa fa-angle-left" aria-hidden="true"></i> Back one role</a>
+                  <a style="cursor:pointer; padding-left:20px;" id="revertRole">
+                    <i class="fa fa-angle-double-left" aria-hidden="true"></i> Back to your role</a>
+                  <table class="table table-bordered">
+                    <thead>
+                      <tr>
+                        <th>Roles</th>
+                        <th id="currentRole">Current Role</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <td id="roleDrillList" style="padding:0px!important;width:100%;">
+
+                      </td>
+                      <td id="userDrillList" style="padding:0px!important;width:100%;">
+
+                      </td>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+            </div>
+            <div class="modal-footer">
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+    </div>
+    <!-- Lightning Wrapper -->
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+      crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
+      crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+      crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
+    <script src="//code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>
+    <script>
+
+      var isWeekly = true;
+      var roleNav = [];
+      var currentRole = '{!$UserRole.Id}';
+      var userId = '{!$User.Id}';
+      $(document).ready(function () {
+
+        sessionStorage.removeItem("hdBreadcrumb");
+
+        if ({!IF(CONTAINS($Profile.Name, 'Manager'), true, false)
+      }){
+        SalesHD_Event.getUsersUnderRoleId('{!$UserRole.Id}', function (users, event) {
+          for (user of users) {
+            $("#usersUnderRole").append('<tr><td><a data-userid="' + user.Id + '">' + user.Name + '</a></td><td>' + user.UserRole.Name + '</td></tr>')
+          }
+
+          $("#usersUnderRole a").click(function () {
+            userId = $(this).data('userid');
+            getCalendar();
+          });
+
+          $roleRows = $('#usersUnderRole tr');
+        }, { escape: false });
+
+        var $roleRows;
+        $('#userSearch').keyup(function () {
+          var val = $.trim($(this).val()).replace(/\s+/g, '').toLowerCase();
+
+          $roleRows.show().filter(function () {
+            var text = $(this).text().replace(/\s+/g, '').toLowerCase();
+            return !~text.indexOf(val);
+          }).hide();
+        });
+
+        $("#revertOneRole").click(function () {
+          if (roleNav.length > 0) {
+            currentRole = roleNav.pop();
+            getRoles(currentRole);
+          }
+        });
+
+        $("#revertRole").click(function () {
+          roleNav = [];
+          currentRole = '{!$UserRole.Id}';
+          getRoles(currentRole);
+        });
+
+
+
+        getRoles(currentRole);
+
+      }
+
+      if (sessionStorage.weeklyMonthly && sessionStorage.weeklyMonthly == 'monthly') {
+        isWeekly = false;
+        $(".weekly-monthly").removeClass('weekly-monthly-selected');
+        $("#monthly").addClass('weekly-monthly-selected');
+      }
+
+      $("#previousDate").click(function () {
+        monthOffset--;
+        weekOffset--;
+        getCalendar();
+      });
+
+      $("#nextDate").click(function () {
+        monthOffset++;
+        weekOffset++;
+        getCalendar();
+      });
+
+      getDay(null);
+      getCalendar();
+
+      $(".weekly-monthly").click(function () {
+        $(".weekly-monthly").removeClass('weekly-monthly-selected');
+        $(this).addClass('weekly-monthly-selected');
+        isWeekly = $(this).data('weekly');
+        if (isWeekly) sessionStorage.weeklyMonthly = 'weekly';
+        else sessionStorage.weeklyMonthly = 'monthly';
+        monthOffset = 0;
+        weekOffset = 0;
+        getCalendar();
+      });
+
+});
+
+      var monthOffset = 0;
+      var weekOffset = 0;
+
+      var days;
+      var dayNumber;
+      function getCalendar() {
+        $("#spinner").show();
+        days = 1;
+        var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        var d = new Date();
+        d.setMonth(d.getMonth() + monthOffset);
+        if (isWeekly) {
+          if (weekOffset == 0) $("#date").text('This Week');
+          else if (weekOffset == -1) $("#date").text('Last Week');
+          else if (weekOffset == 1) $("#date").text('Next Week');
+          else if (weekOffset > 1) $("#date").text(weekOffset + ' Weeks Ahead');
+          else if (weekOffset < 1) $("#date").text(Math.abs(weekOffset) + ' Weeks Ago');
+        } else {
+          $("#date").text(months[d.getMonth()] + ' ' + d.getFullYear());
+        }
+        SalesHD_Event.getCalendar(monthOffset, weekOffset, isWeekly, userId, function (calendarJson, event) {
+          // console.log(calendarJson);
+          var data = JSON.parse(calendarJson);
+          dayNumber = new Date(data.lowDate);
+          var dayOfWeekIndex = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+          var html = '';
+          html += '<tr>';
+          for (var i = 0; i < dayOfWeekIndex.indexOf(data.startDay); i++) {
+            html += '<td class="hideDay"></td>';
+          }
+          for (var i = days; i < 7 - dayOfWeekIndex.indexOf(data.startDay) + 1; i++) {
+            html += calendarHtml(data);
+          }
+          html += '</tr>';
+          while (days <= data.numberOfDays) {
+            html += '<tr>';
+            for (var i = 0; i < 7; i++) {
+              html += calendarHtml(data);
+            }
+            html += '</tr>';
+          }
+          $("#calendar tbody").html(html);
+          $(".event").click(function () {
+            window.location.href = '/apex/SalesHD_Encounter?id=' + this.id;
+          });
+
+          $("#calendar tbody tr td:not(.hideDay)").click(function () {
+            $("#calendar tbody tr td:not(.hideDay)").removeClass('selected-day');
+            if (!$(this).hasClass('today')) $(this).addClass('selected-day');            
+            getDay($(this).data('date'));
+          }).find('.event').click(function (e) { e.stopPropagation(); });
+
+          $("#spinner").hide();
+        }, { escape: false });
+      }
+
+      function calendarHtml(data) {
+        var html = '';
+        if (days <= data.numberOfDays) {
+          var today = '';
+          var d = new Date();
+          var dataDate = new Date(data.lowDate);
+          dataDate.setDate(dataDate.getDate() + days - 1);
+          dataDate = moment(dataDate).format('YYYY-MM-DD')
+          if (monthOffset == 0 && dayNumber.getDate() == d.getDate()) today = ' class="today"';
+          if (data.events.hasOwnProperty(dayNumber.getDate())) {
+            html += '<td data-date="' + dataDate + '" ' + today + '><div class="day">' + dayNumber.getDate() + '</div>';
+            for (var event of data.events[dayNumber.getDate()]) {
+              if (event.complete) html += '<div class="event complete" id="' + event.eventId + '"><b>' + event.eventSubject + '</b> ' + moment(event.eventDatetime).format('LT') + '</div>';
+              else html += '<div class="event" id="' + event.eventId + '"><b>' + event.eventSubject + '</b> ' + moment(event.eventDatetime).format('LT') + '</div>';
+            }
+            html += '</td>';
+          } else {
+            html += '<td data-date="' + dataDate + '" ' + today + '><div class="day">' + dayNumber.getDate() + '</div></td>';
+          }
+
+        } else {
+          html += '<td class="hideDay"></td>';
+        }
+        days++;
+        dayNumber.setDate(dayNumber.getDate() + 1);
+        return html;
+      }
+
+      function getDay(day) {
+        $('#todayText').html('<div style="position:relative;top:-23px;left:130px;" class="slds-spinner slds-spinner--medium slds-spinner--brand"><div class="slds-spinner__dot-a"></div><div class="slds-spinner__dot-b"></div></div>');
+        // if(day!=null) $('#todayText').text(moment(day).format('L'));
+        // else $('#todayText').text('Today');
+        // $("#todaysEncounters").html('<div style="margin-top:-255px;margin-left:65px;" class="slds-spinner slds-spinner--medium slds-spinner--brand"><div class="slds-spinner__dot-a"></div><div class="slds-spinner__dot-b"></div></div>');
+        SalesHD_Event.getDay(day, function (callback, event) {
+          var events = JSON.parse(callback);
+          if(day!=null) $('#todayText').text(moment(day).format('L'));
+          else $('#todayText').text('Today');
+          if (events.length > 0) $("#todaysEncounters").html('');
+          else $("#todaysEncounters").html('<div class="grey" style="padding:10px;"><i class="fa fa-times-circle" aria-hidden="true"></i> You have no encounters scheduled today.</div>');
+          for (var event of events) {
+            var contact = '';
+            if (event.hasOwnProperty('Who')) contact = event.Who.Name;
+            $("#todaysEncounters").append('<li onclick="window.location.href=\'/apex/saleshd_encounter?id=' + event.Id + '\'"><b>' + event.Subject +
+              ': ' + contact + '</b><br/>' + event.SalesHD_Call_Objective__c + '<br/>' + moment(event.StartDateTime).format('LT') + ' to ' + moment(event.EndDateTime).format('LT') + '</li>')
+          }
+        }, { escape: false });
+      }
+
+      function getRoles(roleId) {
+        SalesHD_Event.getUsersByRole(roleId, function (callback, event) {
+          var data = JSON.parse(callback);
+          $("#currentRole").text(data.currentRoleName);
+          $("#userDrillList").html('');
+          for (user of data.users) {
+            $("#userDrillList").append('<tr><td><a data-userid="' + user.Id + '">' + user.Name + '</a></td></tr>')
+          }
+          $("#userDrillList a").click(function () {
+            userId = $(this).data('userid');
+            getCalendar();
+          });
+
+          $("#roleDrillList").html('');
+          for (role of data.subRoles) {
+            $("#roleDrillList").append('<tr><td style="border:none;"><a data-roleid="' + role.Id + '">' + role.Name + '</a></td></tr>')
+          }
+          $("#roleDrillList a").click(function () {
+            roleNav.push(currentRole);
+            currentRole = $(this).data('roleid');
+            getRoles(currentRole);
+          });
+
+        }, { escape: false });
+      }
+
+    </script>
+
+  </body>
+
+  </html>
+</apex:page>

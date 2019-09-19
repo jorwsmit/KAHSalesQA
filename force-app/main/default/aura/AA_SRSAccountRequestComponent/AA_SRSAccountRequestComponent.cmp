@@ -1,0 +1,79 @@
+<aura:component controller="AA_SRSAccountRequest" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes" access="global" >
+    <aura:attribute name="tempAccount" type="Account"/>
+    <aura:attribute name="Spinner" type="boolean" default="false"/>
+    <aura:attribute name="response" type="string"/>
+    <aura:attribute name="accName" type="string"/>
+    <aura:attribute name="accType" type="string[]"/>
+    <aura:attribute name="accStreet" type="string"/>
+    <aura:attribute name="accCity" type="string"/>
+    <aura:attribute name="accState" type="string[]"/>
+    <aura:attribute name="accZip" type="string"/>
+    <aura:attribute name="accPhone" type="string"/>
+    <aura:attribute name="accDefID" type="string"/>
+    <aura:attribute name="accNewConst" type="boolean" default="false"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <aura:if isTrue="{!v.Spinner}">
+        <div aura:id="spinnerId" class="slds-spinner_container">
+            <div class="slds-spinner--brand  slds-spinner slds-spinner--large slds-is-relative" role="alert">
+                <span class="slds-assistive-text">Loading</span>
+                <div class="slds-spinner__dot-a"></div>
+                <div class="slds-spinner__dot-b"></div>
+            </div>
+        </div>
+    </aura:if>
+    <div><span style="font-weight:bold">SRS Account Creation Request</span></div>
+    <aura:if isTrue="{!v.response != null}">
+        <span style="font-weight:bold; color: red"><ui:outputText value="{!v.response}"/></span>
+    </aura:if>
+    <lightning:layout>
+	<lightning:layoutItem size="4">
+	<div class="slds-form-element__label"><span style="font-weight:bold; color: red">*</span><span style="font-weight:bold">Account Name: </span>&nbsp;&nbsp;&nbsp;&nbsp;
+                <ui:inputText value="{!v.accName}" required="true"/>
+            </div>
+	<div class="slds-form-element__label">
+            <ui:inputSelect label="Account Type:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" class="dynamic" aura:id="InputSelectType" required="true">
+                                    <aura:iteration items="{!v.accType}" var="type"> 
+                                        <ui:inputSelectOption text="{!type}"/> 
+                                    </aura:iteration>
+                                </ui:inputSelect>    
+            </div>
+        <br/>
+        <div class="slds-form-element__label"><span style="font-weight:bold; color: red">*</span><span style="font-weight:bold">Phone:  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> 
+                <ui:inputText value="{!v.accPhone}" required="true"/>
+            </div>
+        <br/>
+        <div class="slds-form-element__label"><span style="font-weight:bold">New Construction:  </span> 
+                <ui:inputCheckbox value="{!v.accNewConst}" />
+            </div>
+        <br/>
+	<div class="slds-form-element__label"><span style="font-weight:bold">Definitive ID:  </span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <ui:inputText value="{!v.accDefID}" />
+            </div>		
+	</lightning:layoutItem>
+	<lightning:layoutItem size="4">
+	<div class="slds-form-element__label"><span style="font-weight:bold; color: red">*</span><span style="font-weight:bold">Street: </span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <ui:inputText value="{!v.accStreet}" required="true"/>
+            </div>
+        <br/>
+	<div class="slds-form-element__label"><span style="font-weight:bold; color: red">*</span><span style="font-weight:bold">City:  </span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <ui:inputText value="{!v.accCity}" required="true"/>
+            </div>
+        <br/>
+	<div class="slds-form-element__label">
+            <ui:inputSelect label ="State: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" class="dynamic" aura:id="InputSelectState" required="true">
+                                    <aura:iteration items="{!v.accState}" var="state"> 
+                                        <ui:inputSelectOption text="{!state}"/> 
+                                    </aura:iteration>
+                                </ui:inputSelect>    
+            </div>
+        <br/>
+            <div class="slds-form-element__label"><span style="font-weight:bold; color: red">*</span><span style="font-weight:bold">Zip Code:  </span> &nbsp;&nbsp;
+                <ui:inputText value="{!v.accZip}" required="true"/>
+            </div>		
+	</lightning:layoutItem>
+	</lightning:layout>
+    <br/>
+    <ui:button label="Submit" press="{!c.submitAccount}"/>
+</aura:component>

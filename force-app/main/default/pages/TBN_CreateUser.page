@@ -1,0 +1,153 @@
+<apex:page controller="TBN_CreateUserController" sidebar="false">
+    <apex:includeScript value="{!URLFOR($Resource.TBN_Supporting_JS_CSS, '/jQuery-1.11.3.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.TBN_Supporting_JS_CSS, '/jquery-ui-1.11.3.js')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.TBN_Supporting_JS_CSS, '/jqueryCss.css')}"/>
+    <apex:stylesheet value="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.19/themes/cupertino/jquery-ui.css"/>
+    
+    <apex:includeScript value="{!URLFOR($Resource.TBN_Supporting_JS_CSS, '/BootstrapJS.js')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.TBN_Supporting_JS_CSS, '/Bootstrap.css')}"/>
+    
+    <apex:includeScript value="{!URLFOR($Resource.TBN_Supporting_JS_CSS, '/DataManagement/JS/JS_DataManagement.js')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.TBN_Supporting_JS_CSS, '/DataManagement/CSS/CSS_DataManagement.css')}"/>
+    
+    <style>
+    .lookups {
+            
+            width: 75%;
+            height: 34px;
+            padding: 6px 12px;
+            font-size: 14px;
+            line-height: 1.42857143;
+            color: #555;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+    .smallMarginBottomTable{
+            margin-bottom: 3% !important;
+        }
+    .smallMarginLeftTable{
+            margin-left: 7% !important;
+        }    
+      
+    </style>
+    <script>
+        j$(document).ready(function() {
+              j$('#lookupsSpan').find('input').attr('class', 'lookups');
+              j$('#lookupsSpanpProfile').find('input').attr('class', 'lookups');    
+        });
+        
+    </script>
+    <apex:pageMessages />
+     <div id="OverlapBS"> 
+        <apex:form id="idForm">
+            <apex:actionFunction name="CreateNewUserData" action="{!CreateNewUserRecord}" oncomplete="j$('#lookupsSpan').find('input').attr('class', 'lookups'); j$('#lookupsSpanpProfile').find('input').attr('class', 'lookups'); showConfirmation({!isSuccess});" rerender="createUsersOP"/>
+        
+            <div id="CreateUser" class="tab-pane marginTop tabHeight">
+                <apex:outputpanel id="createUsersOP">
+                    <div style="width: 100%;" class="smallMarginTop">
+                        <h2 class="smallMarginLeftTable" style="font-size: 20px;"> Enter User Details</h2>
+                    </div>
+                    <apex:outputpanel >
+                        <table width="70%" class="smallMarginLeftTable smallMarginBottomTable smallMarginTop" > 
+                            <tr width="100%">
+                                <td width="50%">
+                                    <div style="width: 100%;">
+                                        <label class="slds-form-element__label">First Name</label>
+                                        <apex:inputField id="FirstnameUser" value="{!objUser.FirstName}" StyleClass="form-control inputFieldWidth"/>
+                                    </div>
+                                </td>
+                                <td width="50%">
+                                    <div style="width: 100%;padding-top: 13px;">
+                                        <label class="slds-form-element__label">Last Name</label>
+                                        <apex:inputfield value="{!objUser.LastName}" StyleClass="form-control inputFieldWidth"/><br/>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr width="100%">
+                                <td width="50%">
+                                    <div style="width: 100%;">
+                                        <label class="slds-form-element__label">User Name</label>
+                                        <apex:inputField value="{!objUser.UserName}" StyleClass="form-control inputFieldWidth"/>
+                                        
+                                    </div>
+                                </td>
+                                <td width="50%">
+                                    <div style="width: 100%;padding-top: 13px;">
+                                        <label class="slds-form-element__label">Email</label>
+                                        <apex:inputfield value="{!objUser.Email}" StyleClass="form-control inputFieldWidth"/>  <br/>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr width="100%">
+                                <td width="50%">
+                                    <div style="width: 100%;padding-top: 13px;">
+                                        <label class="slds-form-element__label">Alias</label>
+                                        <apex:inputfield value="{!objUser.Alias}" StyleClass="form-control inputFieldWidth"/>
+                                    </div>
+                                </td>
+                                <td width="50%">
+                                    <div style="width: 100%;padding-top: 13px;">
+                                        <label class="slds-form-element__label">Nick Name</label>
+                                        <apex:inputfield value="{!objUser.CommunityNickname}" StyleClass="form-control inputFieldWidth"/> 
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr width="100%">
+                                <td width="50%">
+                                    <div style="width: 100%;padding-top: 22px;">
+                                         <span id="lookupsSpan">
+                                         
+                                            <label class="slds-form-element__label">Role</label><br/>
+                                            <apex:inputfield value="{!objUser.UserRoleId}"/>  <br/><br/>
+                                        </span>
+                                    </div>
+                                </td>
+                                <td width="50%">
+                                    <div style="width: 100%;padding-top: 22px;">
+                                         <span id="lookupsSpanpProfile">
+                                         <label class="slds-form-element__label">Profile</label><br/>
+                                            <apex:inputfield value="{!objUser.ProfileId}" id="profileInput"/>  <br/>
+                                        </span>
+                                    </div>
+                                </td>         
+                            </tr> 
+                            <tr width="100%">
+                                <td width="50%">
+                                    <div style="width: 100%;padding-top: 13px;">
+                                        <label class="slds-form-element__label">Time Zone</label>
+                                        <apex:inputfield value="{!objUser.TimeZoneSidKey}" style="line-height: 30px;" StyleClass="form-control inputFieldWidth"/>  <br/>
+                                         
+                                    </div>
+                                </td>
+                                <td width="50%">
+                                    <div style="width: 100%;">
+                                        <label class="slds-form-element__label">Locale</label>
+                                        <apex:inputfield value="{!objUser.LocaleSidKey}" style="line-height: 30px;" StyleClass="form-control inputFieldWidth"/> 
+                                         
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr width="100%">
+                                <td width="50%">
+                                    <div style="width: 100%;">
+                                        <label class="slds-form-element__label">Receive Approval Request Emails</label>
+                                        <apex:inputfield value="{!objUser.EmailEncodingKey}" style="line-height: 30px;" StyleClass="form-control inputFieldWidth"/>  
+                                    </div>
+                                </td>
+                                <td width="50%">
+                                    <div style="width: 100%;padding-top: 13px;">
+                                        <label class="slds-form-element__label">Language</label>
+                                        <apex:inputfield value="{!objUser.LanguageLocaleKey}" style="line-height: 30px;" StyleClass="form-control inputFieldWidth"/>  <br/> 
+                                    </div>
+                                </td>
+                            </tr>
+                              
+                        </table> 
+                        <button type="button" class="btn btn-info" style="margin-left:35%" onclick="CreateNewUserData();">Submit</button>           
+                    </apex:outputpanel>
+                </apex:outputpanel>
+            </div>
+        </apex:form>
+    </div>  
+    
+</apex:page>

@@ -1,0 +1,23 @@
+<apex:page standardController="Account" 
+  
+  action="{!if($Profile.Name =='KRS: Read Only' || $Profile.Name =='KRS: SRS Finance' || $Profile.Name =='KRS: SRS User', 
+    null, 
+    urlFor($Page.AA_AccountRecordTypeChoice))}">
+
+  <apex:includeScript value="/lightning/lightning.out.js"/>
+
+    <apex:includeLightning />
+    <div class="slds">
+        <!-- Target div for the Lightning component -->
+        <div id="customObjectEdit"></div>
+        </div> 
+    <script>
+        $Lightning.use("c:AA_SRSAccountRequest", function(){
+            var targetElementId = 'customObjectEdit';
+            $Lightning.createComponent("c:AA_SRSAccountRequestComponent",  null, targetElementId, function(components, status){
+            });
+        });
+    </script>  
+    
+  
+</apex:page>

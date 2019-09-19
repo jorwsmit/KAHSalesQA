@@ -1,0 +1,65 @@
+<aura:component controller="AA_AccountChoiceController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,lightning:isUrlAddressable,lightning:actionOverride" access="global">
+	
+    <aura:attribute name="choiceList" type="sObject[]"/>
+    <aura:attribute name="recordtypeId" type="id" />
+    <aura:attribute name="showList" type="boolean" default="true"/>
+    <aura:attribute name="showForm" type="boolean" default="false"/>
+    <aura:attribute name="isLEX" type="boolean" default="false"/>
+    
+    <lightning:workspaceAPI aura:id="workspace" />
+    <lightning:navigation aura:id="navService"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <div style="background-color:white">
+    	<aura:if isTrue="{!v.showList}">
+        <ui:outputText value="Please select the type of Account to create"/>
+    	<div>
+        <aura:if isTrue="{!v.choiceList != null}">
+        <table>
+            <thead>
+                <tr class="slds-text-title--caps">
+                    <th scope="row" >
+                        <span title="Name">Account</span> 
+                    </th>
+                    <th scope="row" >
+                        <span title="Name">Description</span> 
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <aura:iteration items="{!v.choiceList}" var="add">  
+                    <aura:if isTrue="{!add != null}">
+                        <tr>
+                            <th scope="row">
+                                <ui:outputURL title="{!add.Id}" label="{!add.Name}" click="{!c.openPage}"/>
+                            </th>
+                            <th scope="row">
+                                <ui:outputText value="{!add.Description}"/>
+                            </th>
+                        </tr>
+                    </aura:if>
+                </aura:iteration>
+            </tbody>
+        </table>
+        </aura:if>
+    </div>
+    </aura:if>
+    
+    <aura:if isTrue="{!v.showForm}">
+    	    <lightning:recordForm
+                         objectApiName="Account"
+                         recordTypeId="{!v.recordtypeId}"
+                         mode="edit"
+                         oncancel="{!c.onCancel}"
+                         onsuccess="{!c.handleSuccess}"
+                         layoutType="Full"
+                         columns="2">
+        <lightning:messages />
+        
+    </lightning:recordForm>
+    </aura:if>
+        
+    </div>
+    
+</aura:component>

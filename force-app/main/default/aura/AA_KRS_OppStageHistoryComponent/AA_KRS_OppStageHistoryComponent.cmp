@@ -1,0 +1,69 @@
+<aura:component controller="AA_KRSOpportunityStageHistory" implements="force:appHostable,force:LightningQuickAction,flexipage:availableForAllPageTypes,force:hasRecordId" access="global" >
+    <aura:attribute name="recordId" type="Id" access="public"/>
+    <aura:attribute name="stageList" type="string[]"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <div class="slds-grid slds-wrap" id="reportSec">
+        <div class="slds-grid paddingTop">
+            <div class="slds-col slds-size--1-of-1 slds-small-size--1-of-1 slds-medium-size--1-of-2">
+                <div class="slds-form-element discussionDiv">
+                    <table class="slds-table slds-table--bordered slds-table--cell-buffer" width="500px">
+                        <thead>
+                            <tr class="slds-text-title--caps">
+                                <th class="slds-is-sortable slds-text-title--caps" scope="col" >
+                                    <span class="slds-truncate" title="oppStage">Stage</span>  
+                                </th>
+                                
+                                <th class="slds-is-sortable slds-text-title--caps" scope="col" >
+                                    <span class="slds-truncate" title="oppProb">Probability %</span>  
+                                </th>
+                                
+                                <th class="slds-is-sortable slds-text-title--caps" scope="col">
+                                    <span class="slds-truncate" title="oppAmt">Amount</span>
+                                </th>
+                                
+                                <th class="slds-is-sortable slds-text-title--caps" scope="col">
+                                    <span class="slds-truncate" title="oppRev">Expected Revenue</span>
+                                </th>
+                                
+                                <th class="slds-is-sortable slds-text-title--caps" scope="col">
+                                    <span class="slds-truncate" title="oppDate">Close Date</span>
+                                </th> 
+                                
+                                <th class="slds-is-sortable slds-text-title--caps" scope="col">
+                                    <span class="slds-truncate" title="User">User</span>
+                                </th>        
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <aura:iteration items="{!v.stageList}" var="opp">
+                                <tr>    
+                                <th scope="row">
+                                        <div class="slds-truncate" title="{!opp.Stage__c}">{!opp.Stage__c}</div>
+                                    </th>
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!opp.Probability__c}">{!opp.Probability__c}%</div>
+                                    </th>
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!opp.Amount__c}">${!opp.Amount__c}</div>
+                                    </th>
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!opp.Expected_Rev__c}">${!opp.Expected_Rev__c}</div>
+                                    </th>
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!opp.Close_Date__c}" ><ui:outputDateTime value="{!opp.Close_Date__c}" format="MM/dd/yyyy" /></div>
+                                    </th>
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!opp.User__r.Name}"><ui:outputURL value="{!'/'+opp.User__r.Id}" label="{!opp.User__r.Name}" target="_blank"/><br/>
+                                        </div>
+                                    </th>
+                                    </tr>
+                             </aura:iteration>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</aura:component>

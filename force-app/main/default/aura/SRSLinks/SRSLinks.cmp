@@ -1,0 +1,18 @@
+<aura:component access="global"
+	implements="force:appHostable,flexipage:availableForAllPageTypes">
+	<ui:outputURL value="{!'https://www.medicare.gov/nursinghomecompare/search.html?'}"
+		label="Medicare.gov"
+		target="_blank"/>
+	<br/>
+	<ui:outputURL value="{!'https://www.defhc.com/home'}"
+		label="Definitive Healthcare"
+		target="_blank"/>
+	<br/>
+	<ui:outputURL value="{!'https://www.google.com/'}"
+		label="Google"
+		target="_blank"/>
+	<br/>
+	<ui:outputURL value="{!'https://www.linkedin.com/'}"
+		label="LinkedIn"
+		target="_blank"/>
+</aura:component>

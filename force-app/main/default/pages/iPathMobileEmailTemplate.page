@@ -1,0 +1,126 @@
+<apex:page controller="iPathMobileEmailTemplate_Controller" sidebar="false" showHeader="false">
+
+<style>
+b {
+    font-size: 14pt;
+    font-weight: bold;
+    color: #000000;
+    font-family: Arial, Helvetica, sans-serif;  
+}
+td {
+    font-size: 14pt;
+    color: #000000;
+    font-family: Arial, Helvetica, sans-serif;  
+}
+a {
+    font-size: 14pt;
+    color: #2f62bb;
+    font-family: Arial, Helvetica, sans-serif;  
+}
+p {
+    font-size: 11pt;
+    color: #666666;
+    font-family: Arial, Helvetica, sans-serif;  
+}
+</style>
+
+<div style="width:800px;">
+    <!-- Choose header based on whether this is a facility-specific email or not -->
+    <apex:outputpanel rendered="{!NOT(ISNULL(center))}">
+        <table>
+            <tr><td><img alt="Logo" src="{!center_logo}" style="border:0; width:200px;"/></td></tr>
+            <tr><td><img alt="Bar" src="{!email_bar_general}"/></td></tr>
+        </table>
+    </apex:outputpanel> 
+
+    <apex:outputpanel rendered="{!ISNULL(center)}">
+        <table>
+            <tr><td><img alt="Logo" src="{!logo_kindred}" style="border:0"/></td></tr>
+            <tr><td><img alt="Bar" src="{!email_bar_general}"/></td></tr>
+        </table>
+    </apex:outputpanel>
+
+    <table width="100%">
+        <td width="55%" valign="top">
+            <table>
+                <tr><td>Greetings,<br/><br/></td></tr>
+                <tr><td>{!emailContent}<br/><br/></td></tr>
+                <tr><td>Sincerely, </td></tr>
+                <tr><td>{!userObj.Name}</td></tr>
+                <tr><td>{!userObj.Title}</td></tr>
+                <tr><td>{!IF(NOT(ISNULL(userObj.MobilePhone)) && userObj.MobilePhone != '',userObj.MobilePhone,userObj.Phone)}</td></tr>
+            </table>
+        
+            <br></br>
+        
+            <apex:outputpanel rendered="{!NOT(ISNULL(collateralsMap))}">
+                <table>
+                    <tr><td><b>Documents</b></td></tr>
+                    <apex:repeat value="{!collateralsMap}" var="key">
+                        <tr><td><apex:outputlink value="{!key}">{!collateralsMap[key]}</apex:outputlink></td></tr>
+                    </apex:repeat>
+                </table>    
+            </apex:outputpanel>
+        </td>
+        
+        <td width="45%" valign="top">
+            <br></br>
+        
+            <table>
+                <tr><td><b>Related Information</b></td></tr>    
+        
+                <apex:outputpanel rendered="{!NOT(ISNULL(centerWebsiteLink))}">       
+                    <tr><td><a href="{!centerWebsiteLink}"> Facility Website</a></td></tr>
+                </apex:outputpanel>
+        
+                <apex:outputpanel rendered="{!NOT(ISNULL(scheduleATourLink))}">       
+                    <tr><td><a href="{!scheduleATourLink}"> Schedule a Tour</a></td></tr>
+                </apex:outputpanel>
+                
+                <apex:outputpanel rendered="{!ISNULL(center)}">
+                    <tr><td><a href="{!findKindredLocationsWeblink}"> Find Kindred Locations</a></td></tr>
+                </apex:outputpanel>
+                
+                <apex:outputpanel rendered="{!NOT(ISNULL(center))}">
+                    <tr><td><a href="{!findKindredLocationsWeblink}"> Find Other Kindred Locations</a></td></tr>
+                </apex:outputpanel>
+                
+                <apex:outputpanel rendered="true">
+                    <tr><td><a href="http://www.kindred.com"> http://www.kindred.com</a></td></tr>
+                </apex:outputpanel>
+                
+            </table>    
+        
+            <table>
+                <tr><td>
+                    <div class="social-links">
+                        <a href="{!twitterWeblink}" id="ctl00_ctl00_lnkTwitter" ><img alt="Twitter" src="{!icn_twitter}" style="border:0"/></a>
+                        <a href="{!facebookWeblink}" id="ctl00_ctl00_lnkFacebook" ><img alt="Facebook" src="{!icn_facebook}" style="border:0"/></a>
+                        <a href="{!youtubeWeblink}" id="ctl00_ctl00_lnkYouTube" ><img alt="YouTube" src="{!icn_youtube}" style="border:0"/></a>
+                        <a href="{!linkedinWeblink}" id="ctl00_ctl00_lnkLinkedIn" ><img alt="LinkedIn" src="{!icn_linkedin}" style="border:0"/></a>
+                    </div>
+                </td></tr>
+        
+                <tr><td>&nbsp;</td></tr>
+
+            </table>    
+        </td>
+    </table>
+    
+    <br/>
+    
+    <hr style="color:blue;"/>
+    
+    <p>This information contained in this E-mail transmission is intended only for the use of the individual or entity to whom it is addressed. It may contain
+    privileged, confidential, and protected health information</p>
+    
+    <p>If you received it in error, you are on notice of its status. Please notify us immediately by reply e-mail and then please delete this message from your system.
+    Please do not copy it or use it for any purpose, or disclose its contents to any  other person. To do so could violate state and Federal privacy laws. Thanks for your cooperation. Please contact the sender if you need assistance.
+    </p>
+    
+    <p>Dedicated to Hope, Healing and Recovery.</p>
+    
+    <br/>
+</div>
+
+</apex:page>

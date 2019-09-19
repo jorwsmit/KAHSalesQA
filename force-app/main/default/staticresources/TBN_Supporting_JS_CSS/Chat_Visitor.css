@@ -1,0 +1,270 @@
+     
+        .sldsFormLabel { 
+            display: inline-block;
+            color: #54698d;
+            font-size: 0.75rem;
+            line-height: 1.5;
+            margin-right: 0.75rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .sldsPHorizontalSmall {
+            padding-right: 0.75rem;
+            padding-left: 0.75rem;
+        }
+        
+        .sldsTextHeadingSmall {
+            font-size: 1rem;
+            line-height: 1.25;
+        }
+        
+        .sldsAvatar {
+            overflow: hidden;
+            display: inline-block;
+            vertical-align: middle;
+            border-radius: 0.25rem;
+            line-height: 1; 
+        }
+
+        .sldsGrid {
+            display: -webkit-box;
+            display: table-cell;
+            display: flex; 
+        }
+        
+        .sldsFormElement {
+            position: relative; 
+        }
+        
+        
+        .sldsInput {
+            background-color: white;
+            color: #16325c;
+            border: 1px solid #d8dde6;
+            border-radius: 0.25rem;
+            width: 100%;
+            transition: border 0.1s linear, background-color 0.1s linear;
+            display: inline-block;
+            padding: 0 1rem 0 0.75rem;
+            line-height: 1.875rem;
+            min-height: calc(1.875rem + (1px * 2)); 
+        }
+
+        .sldsFormElementControl {
+            width: 100%; 
+        }
+        
+        .sldsTextarea {
+            background-color: white;
+            color: #16325c;
+            border: 1px solid #d8dde6;
+            border-radius: 0.25rem;
+            width: 100%;
+            transition: border 0.1s linear, background-color 0.1s linear;
+            resize: vertical;
+            padding: 0.5rem 0.75rem; 
+        }
+        
+        .sldsButton {
+        
+            position: relative;
+            display: inline-block;
+            padding: 0;
+            background: transparent;
+            background-clip: border-box;
+            border: 1px solid transparent;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            line-height: 1.875rem;
+            text-decoration: none;
+            color: #0070d2;
+            -webkit-appearance: none;
+            white-space: normal;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            transition: color 0.05s linear, background-color 0.05s linear;
+        }
+         
+        .sldsButtonNeutral {
+            padding-left: 1rem;
+            padding-right: 1rem;
+            text-align: center;
+            vertical-align: middle;
+            border: 1px solid #d8dde6;
+            background-color: white; 
+        }
+        
+        .sldsButtonNeutral:hover, .sldsButtonNeutral:focus {
+            background-color: #f4f6f9; 
+        }
+
+        .sldsButtonNeutral:active {
+            background-color: #eef1f6; 
+        }
+
+        .sldsButtonNeutral  [disabled] {
+            background-color: white;
+            cursor: default; 
+        }
+
+        .inputWidth {
+             
+            max-width: 226px !important;
+            min-width :226px !important;
+        }
+        
+        select {
+            
+            max-width: 255px !important;
+            min-width :255px !important;
+        }
+
+        textarea {
+            
+            max-width: 226px !important;
+            min-width :226px !important;
+        }
+        
+        @media only screen and (max-device-width: 480px) {
+            
+            .sldsFormLabel {
+                font-size: 25px;
+            }
+          
+            .sldsButtonNeutral {
+                font-size: 25px;
+            }
+            
+            .sldsInput {
+                font-size: 25px;
+            }
+            
+            .inputWidth {
+                max-width: 700px !important;
+                min-width: 700px !important;
+                line-height: 60px !important;
+            }
+            
+            textarea {
+                
+                max-width: 700px !important;
+                min-width: 700px !important;
+                line-height: 50px !important;
+            }
+            
+            select {
+                
+                max-width: 700px !important;
+                min-width: 700px !important;
+                line-height: 60px !important;
+            }
+            
+            .sldsCol {
+                
+                max-width: 700px !important;
+                width: 700px !important;
+                
+            }
+            
+        }
+        
+        @media (min-width: 75em)
+        .sldsGrid {
+            
+            -webkit-column-count: 2 !important;
+            -moz-column-count: 2 !important;
+            column-count: 2 !important;
+            flex-basis: 100%;
+            float: none;
+        }    
+        
+        @media (min-width: 75em)
+        .sldsCol {
+            
+            min-width: 75% !important;
+            width: 75% !important;
+            max-width: 75% !important;
+            display: inline-block;
+            margin-bottom: 10px !important;
+        }
+        
+        @media (min-width: 75em)
+        .inputWidth {
+             
+            max-width: 50% !important;
+            min-width :50% !important;
+        }
+            
+        @media (min-width: 75em)
+        textarea {
+            
+            max-width: 50% !important;
+            min-width :50% !important;
+        }
+        
+        @media (min-width: 75em)
+        select {
+            
+            max-width: 50% !important;
+            min-width :50% !important;
+        }
+        
+        .sldsCol {
+            
+            max-width: 255px;
+            width: 255px;
+        }
+        
+        @media (min-width: 75em)
+        .sldsCol {
+            
+            max-width: 50%;
+            width: 50%;
+        }
+    
+        .verticalLine {
+            border-left: thin solid #ffffff;
+        }
+        
+        .verticalLineFooter {
+            border-left: 2px solid #DBDBDB;
+        }
+        
+        .gridClass {
+                
+            @media only screen and (max-width: 480px), only screen and (max-device-width: 480px) {
+            
+                display: inline-block;
+            }
+        }
+            
+        @media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+          
+            .gridClass {
+              
+                display: block;
+            } 
+            
+            
+            .paddingBottom {
+            
+                padding-top : 15px;   
+            }
+        } 
+        
+        .sldsSelect {
+            background-color: white;
+            color: #16325c;
+            border: 1px solid #d8dde6;
+            border-radius: 0.25rem;
+            width: 100%;
+            transition: border 0.1s linear, background-color 0.1s linear;
+            height: calc(1.875rem + (1px * 2)); 
+        }
+
+        .colLeft {
+          float: left;
+        }
+ 

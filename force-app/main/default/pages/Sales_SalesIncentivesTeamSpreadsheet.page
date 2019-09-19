@@ -1,0 +1,19 @@
+<apex:page controller="Sales_SalesIncentivesTeamReports"  contentType="application/vnd.ms-excel#export.xls" cache="true">
+<html>
+
+<head>
+	<title>Target - Actual Report</title>
+</head>
+<style>
+#report-container {
+	font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+	border-collapse: collapse;
+	width: 100%;
+	margin: auto;
+}
+</style>
+<body>
+	<apex:outputText escape="false" value="{!ReportHtml}" ></apex:outputText>
+</body>
+</html>
+</apex:page>

@@ -1,0 +1,329 @@
+/* For coloring the map marker*/
+    .saturate {-webkit-filter: saturate(3);}
+	.grayscale {-webkit-filter: grayscale(100%);}
+	.contrast {-webkit-filter: contrast(160%);}
+	.brightness {-webkit-filter: brightness(0.25);}
+	.blur {-webkit-filter: blur(3px);}
+	.invert {-webkit-filter: invert(100%);}
+	.sepia {-webkit-filter: sepia(100%);}
+	.huerotate {-webkit-filter: hue-rotate(180deg);}
+	.rssopacity {-webkit-filter: opacity(50%);}
+	
+	
+	/* for checkbox picklist*/
+	.lookupInput {
+        padding-left: 4px;
+     }
+	.multiselect {
+        margin-bottom: 10px;
+    }
+    .selectBox {
+        position: relative;
+    }
+    .selectBox select {
+        width: 100%;
+        font-weight: bold;
+    }
+    .overSelect {
+        position: absolute;
+        left: 0; right: 0; top: 0; bottom: 0;
+    }
+    #checkboxes {
+        display: none;
+        border: 1px #dadada solid;
+        width: 200px;
+	    background-color: #f5f5f5;
+	    position: absolute;
+	    border: 1px #dadada solid;
+    }
+    #checkboxes label{
+	    display: block;
+	    padding: 3px 3px 3px 6px;
+	}
+    #checkboxes label:hover {
+        background-color: #1e90ff;
+    }
+    
+    /* for left side form */	
+	#OverlapBS .form-group {
+		    margin-right: 0.5% !important; 
+	}
+    .contentItems{
+    	padding: 2px 10px 10px 10px;
+    }
+    .closeContent, .viewContent{
+    	cursor: pointer;
+    }
+    #OverlapBS .input-group{
+    	position:initial;
+   	}
+    .rightSlide{
+    	position: fixed;
+	   /* width: 26.2%;
+	    top: 37%;
+		*/
+		width: 353px;
+		top: 272px;
+	    right: -329px;
+	    display: block;
+	    background-color: palegoldenrod;
+    }
+    
+    .part1{
+    	position: absolute;
+	    left: -6px;
+	    background-color: #DAEFDA;
+	    border: 4px solid;
+	    border-right-style: none;
+	    color: #CFD0CF;
+	    border-top-left-radius: 5px;
+	    border-bottom-left-radius: 5px;
+	    z-index: 10;
+    }
+    
+    .part2{
+    	padding-top: 6px;
+    	min-height: 33px;
+   	    position: absolute;
+	    /*
+		width: 95%;
+	    left: 7%;
+		*/
+		width: 331px;
+		left: 24px;
+	    background-color: #DAEFDA;
+	    border: 4px solid;
+	    border-right-style: none;
+	    border-color: #CFD0CF;
+	    border-top-left-radius: 5px;
+	    border-bottom-left-radius: 5px;
+		max-height: 300px;
+    	overflow-y: auto;
+    }
+    
+    #OverlapBS #row7_Buttons input{ 
+        margin-left:3%;
+    }
+     
+    .accountWrapperTile{
+		border: 1px solid rgb(202, 195, 188);
+		border-radius: 6px;
+	  	padding: 2px;
+	  	background-color: white;
+	  	line-height: 16px;
+	  	margin-top: 12px;
+	 	float: left;
+   		width: 100%;
+    }
+    .accountTiles{
+  		border-left: 1px dotted rgb(202, 195, 188);
+	  	padding: 4px 8px;
+	  	background-color: white;
+		float: left;
+    	width: 86%;
+    }
+    #mapAddress{
+    	overflow-y: auto;
+    	max-height: 400px;
+    }
+    .accountMarker{
+    	float: left;
+    	width: 14%;
+   	  	padding: 3px;
+    }
+    
+    #part1Left .form-group label{
+    	margin-top: 14px;
+    }
+    #part1Left .form-inline .form-group label{
+    	margin-top: 14px;
+    }
+    
+    #part1Left #row1_Type_Subject #row1_CaseType{
+    	width: auto
+    }
+    
+    #part1Left #row1_Type_Subject #row2_Subject{
+    	width: 78.5%
+   	}
+    
+    #part1Left #row3_Phone{
+    	width:40%;
+    }	
+   
+    #part1Left  #row3_Phone input{
+    	width:51%
+   	}
+   	
+ 	#part1Left #row3_Phone select{ 
+   		width:49%; 
+   		padding-right:0; 
+   		border-right:0px; 
+ 	} 
+   	
+   	#part1Left #row1_Type_Subject,
+   	#part1Left #row1_Type_Subject #row2_Subject .form-control,
+   	#part1Left #row1_Type_Subject #row1_CaseType .form-control,
+   	#part1Left #row3_Phone_Name #row3_FName .form-control, 
+   	#part1Left #row3_Phone_Name #row3_LName .form-control, 
+   	#part1Left #row3_Phone_Name,
+   	#part1Left #row4_Location #row4_PostalCode .form-control{
+    	display: block;
+    	width: 100%
+   	}
+   	
+   	#part1Left #row3_Phone_Name #row3_LName, #part1Left #row3_Phone_Name #row3_FName{
+        width:33%;
+   	}
+	#part1Left #row3_Phone_Name, #part1Left #row4_Location, #part1Left #row6_CaseSource{
+		display: -webkit-box;
+		display: flex;
+	}
+   	
+ 	#part1Left #row4_Location .form-group{
+    	width: 33%;
+    }
+    #part1Left #row4_Location{
+    	/*display: inline-flex; */
+    	width:100%
+   	}
+   	
+    #part1Left #row4_Location #row4_City .form-control, #part1Left #row4_Location #row4_State .form-control{
+    	display: block;
+    	width:100%;
+    }
+	 #part1Left #row6_CaseSource #row6_CaseOrigin .form-control{
+    	display: block;
+    	width: 90%;
+    }
+    #part1Left .small-TextArea .form-control{
+    	resize:none;
+    	height:34px !important
+    }
+	#part1Left .long-TextArea .form-control{
+    	resize:none;
+    	height:60px !important
+    }
+	
+    #part1Left #row5_Description .form-control{
+    	resize: vertical;
+    	height: 120px
+    }
+    #part1Left #row6_CaseSource .form-control{
+    	display: block;
+    	/*width: 34%;*/
+    }
+    #part1Left #row7_Buttons{
+    	margin-top: 35px;
+    	margin-left: 23%;
+    }
+    
+    #part2Middle {
+    	height: 611px;
+    	resize:horizontal;
+    }
+    #part2Middle #mapAccount{
+    	min-height: 200px;
+    }
+    #part2Middle #idMapErrors{
+		color:red; font-size: 13px;
+   	}
+   	
+   	#part2Middle .accountMapBlock{
+   		overflow:hidden;
+	}
+     
+    #part3Right .articleBox{
+    	border-radius: 6px;
+  		padding: 4px;
+	  	font-size: 13px;
+	  	background-color: white;
+  		border-bottom: 3px solid lightgrey;
+  		margin-bottom: 4px;
+  		word-break:break-all;
+  		word-break: break-word;
+    }
+    
+    #part3Right .mergedInputField{
+    	display: -webkit-box;
+		display: flex;
+    	margin-bottom:10px;
+    	margin-up:10px;
+    }
+    
+    #part3Right #dateCategroyHeading{
+    	padding-left:4px;
+    	margin-bottom:10px;
+    	font-size:14px;
+    	font-weight:bold;
+   	}
+   	
+   	#part3Right #scrollArticle{
+   		overflow:auto;
+   		max-height: 560px;
+   	}
+    
+    
+    .textEllpisis{
+		overflow: hidden;
+   		text-overflow: ellipsis;
+   		display: -webkit-box;
+   		line-height: 16px;     /* fallback */
+   		max-height: 32px;      /* fallback */
+   		-webkit-line-clamp: 2; /* number of lines to show */
+   		-webkit-box-orient: vertical;
+   		font-size: 12px;
+    }
+	.form-group .inline{
+		width:33%
+	}
+	
+	.panel-heading {
+		cursor: pointer;
+	}
+	#OverlapBS .nav>li>a:focus, #OverlapBS .nav>li>a:hover{
+    	background-color: rgba(72, 69, 72, 0.09);
+    	cursor: pointer;
+    }
+    
+    #OverlapBS .panel-body {
+		padding-top: 0
+	}
+	#OverlapBS .panel {
+	    margin: 10px 0 0 0;
+	}
+	
+	
+	#legendLink:hover + .legentData {
+		display: block !important;
+		z-index: 99;
+		position: absolute;
+		background-color: white;
+		left: 69%;
+		padding: 1%;
+		border: 1px solid lightgray;
+		border-radius: 4px;
+	}
+	
+	.disableGrabber {
+    		resize: none;
+    	}
+
+	#part1Left #row7_Buttons {
+		margin-top : 17px;
+	}
+	#OverlapBS input[type=radio]{
+	margin-top: 0	
+	}
+	#OverlapBS .panel{
+		background-color :transparent;
+	}
+	#OverlapBS .emptyCheck{
+		border-left: 3px solid red;
+	}
+	
+	.ui-autocomplete { max-height: 250px; overflow-y: auto; overflow-x: hidden;} 
+	
+	#OverlapBS textarea.form-control {
+            height: 34px;
+    }

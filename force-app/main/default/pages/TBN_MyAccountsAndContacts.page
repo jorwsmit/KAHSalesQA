@@ -1,0 +1,156 @@
+<apex:page controller="TBN_MyAccountsAndContactsController" sidebar="false" showHeader="false" readOnly="true">
+    <apex:includeScript value="{!URLFOR($Resource.TBN_Supporting_JS_CSS, '/jQuery-1.11.3.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.TBN_Supporting_JS_CSS, '/jquery-ui-1.11.3.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.TBN_Supporting_JS_CSS, '/jquery.dataTables.min.js')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.TBN_Slds_Static_Resource, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+    <apex:includeScript value="{!URLFOR($Resource.TBN_Supporting_JS_CSS, '/BootstrapJS.js')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.TBN_Supporting_JS_CSS, '/Bootstrap.css')}"/>
+    
+    <apex:form >
+        <apex:outputPanel styleClass="slds" id="assignedRecords">
+             <!-- Error panel-->
+            <div class="slds-card" id="mainBody">
+                 <div class="slds-spinner_container" id="spinner">
+                    <div class="slds-spinner slds-spinner--small" aria-hidden="false" role="alert">
+                      <div class="slds-spinner__dot-a"></div>
+                      <div class="slds-spinner__dot-b"></div>
+                    </div>
+                </div>
+                <div class="slds-card__header slds-grid">
+                    <div class="slds-media slds-media--center slds-has-flexi-truncate">
+                        <div class="slds-media__body">
+                            <h2 class="slds-section__title slds-truncate" style="color:#0099e6;">My Accounts and Contacts ({!intTotalCount})</h2>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="slds-card__body">
+                    <table id="table" cellpadding="0" cellspacing="0" border="0" class="slds-table slds-table--bordered slds-max-medium-table--stacked-horizontal slds-no-row-hover" >
+                        <thead>
+                            <tr class="slds-tile slds-hint-parent" style="text-align: left;">
+                                <th style="display:none;"></th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+             <div id="tempError">
+                <div id="ErrDisplay" style="display:none; margin-top: 15px;">
+                    <div class="slds-notify slds-notify--alert slds-theme--warning" role="alert">
+                        <span class="slds-assistive-text">Info</span>
+                        <h2>
+                            <span class="slds-avatar slds-avatar--x-small">
+                                <img src="{!URLFOR($Resource.TBN_Slds_Static_Resource, '/assets/icons/utility/warning_60.png')}" alt="error" />
+                            </span>
+                            <span id="errorMessage"></span>
+                        </h2>
+                    </div>
+                </div>
+            </div>
+            
+            <script>
+            
+                var j$ = jQuery.noConflict();
+                var TableData = [];
+                
+                j$(document).ready(function() {
+                    
+                    /*Salesforce1 - page automatically scrolls to top when user taps on a page element on iOS devices only*/
+                    var ua=navigator.userAgent; 
+                    if((ua.indexOf('Salesforce')!=-1)&&(ua.indexOf('iPhone')!=-1||ua.indexOf('iPad')!=-1)&&(ua.indexOf('Safari')==-1)){ 
+                        function IOS_SCROLL_BOOTSTRAP() { 
+                            var children = Array.prototype.slice.call(document.body.children), 
+                            placeholder = document.createElement('section'), 
+                            fragment = document.createDocumentFragment(), 
+                            styles, 
+                            width, 
+                            height; 
+                            children.forEach(function(c){fragment.appendChild(c);}); 
+                            placeholder.appendChild(fragment); 
+                            styles = [ 
+                            'width:100%;', 
+                            'height:', (window.screen.height - 42), 'px;', 
+                            'position: absolute; overflow: auto; -webkit-overflow-scrolling: touch' 
+                            ].join(''); 
+                            placeholder.style.cssText = styles; 
+                            document.body.appendChild(placeholder); 
+                        } 
+                        window.addEventListener('load', function (e) { 
+                            IOS_SCROLL_BOOTSTRAP(); 
+                        }); 
+                    } 
+                  
+                     TBN_MyAccountsAndContactsController.getRecords(function(result, event) {
+                            if (event.type != 'exception') {
+                                for (var i = 0; i < result.length; i++) {
+                                    var r = result[i].strAddress;
+                                    var arrData = [];
+                                    arrData.push(r)
+                                    TableData.push(arrData);
+                                }
+                               createTable();
+                               j$("#spinner").hide();
+                            } else {
+                                j$("#spinner").hide();
+                                //j$("#mainBody").hide();
+                                j$('[id$=ErrDisplay]').css('display','block');
+                                j$("#errorMessage").html("<b> Error in page : "+event.message+"</b>");
+                            }
+                    });
+                   
+                });
+                
+                function createTable() {
+                    
+                      j$("#table").dataTable({
+                           "aaData":  TableData,
+                           "bFilter": true,
+                           "bInfo": false,
+                           "responsive": true,
+                           "bLengthChange": false,
+                           "searching": true,
+                           "aoColumnDefs": [ 
+                            { "aTargets": [0], 
+                              "sType": "html", 
+                              "fnRender": function(o, val) { 
+                                  return j$("<div/>").html(o.aData[0]).text();
+                              } 
+                            }
+                        ],
+                        "fnDrawCallback":function(){
+                            j$("#table_previous").addClass("slds-button slds-button--large slds-m-left--large");
+                            j$(".dataTables_filter").addClass("slds-input");
+                            j$("#table_previous").css('padding-left','7px');
+                            j$("#table_previous").css('padding-right','7px');
+                            j$("#table_next").addClass("slds-button slds-button--large slds-m-left--large");
+                            j$("#table_next").css('width','60px');
+                            j$("#table td").css('text-align','left');
+                            j$('.paginate_disabled_previous').attr("disabled", true);
+                            j$('.paginate_enabled_previous').attr("disabled",false);
+                            j$('.paginate_disabled_next').attr("disabled", true);
+                            j$('.paginate_enabled_next').attr("disabled",false);
+                         }
+                        });
+                }
+                
+                function redirectTosObject(strId){ 
+                    
+                    if( (typeof sforce != 'undefined') && sforce && (!!sforce.one) ) {
+                        // Salesforce1 navigation
+                        sforce.one.navigateToSObject(strId);
+                    }
+                    else {
+                        // Set the window's URL using a Visualforce expression
+                        window.open('/'+strId,'_self');
+                    }
+                   
+                }
+                var table = j$('#example').DataTable();
+                j$('#myInput').on( 'keyup', function () {
+                    table.search( this.value ).draw();
+                } );
+              
+            </script>
+        </apex:outputPanel>
+    </apex:form>
+</apex:page>

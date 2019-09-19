@@ -1,0 +1,1126 @@
+<apex:page showHeader="false" lightningStyleSheets="true" standardController="Event" extensions="SalesHD_Event" standardStylesheets="false"
+ sidebar="false" applyHtmlTag="false" applyBodyTag="false" docType="html-5.0">
+
+	<html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+	<head>
+		<title>Encounter</title>
+
+		<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/> -->
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/"
+		 crossorigin="anonymous" />
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4"
+		 crossorigin="anonymous" />
+		<link rel="stylesheet" href="https://cdn.linearicons.com/free/1.0.0/icon-font.min.css" />
+		<meta name="viewport" content="width=device-width, initial-scale=1,minimum-scale=1, maximum-scale=1, user-scalable=no" />
+		<apex:slds />
+		<style>
+			a {
+				color: #FFFFFF !important;
+				text-decoration: underline !important;
+			}
+
+			a:hover {
+				color: #E0E2E7 !important;
+			}
+
+			div {
+				font-size: 20px;
+			}
+
+			body {
+				font-family: "Salesforce Sans", Arial, sans-serif !important;
+				margin: 0px;
+				background-color: #E0E2E7;
+			}
+
+			input {
+				display: block;
+			}
+
+			form {
+				width: 100%;
+			}
+
+			form label {
+				font-size: 20px !important;
+				font-weight: bold !important;
+			}
+
+			textarea,
+			input {
+				color: #3E3E3C !important;
+				font-size: 18px !important;
+			}
+
+			textarea::placeholder,
+			input::placeholder {
+				font-size: 18px !important;
+			}
+
+			.LightningDesign {
+				color: #3E3E3C !important;
+			}
+
+			.LightningDesign::selection {
+				color: #3E3E3C !important;
+			}
+
+			.reassignButton {
+				position: fixed;
+				bottom: 0px;
+				left: 50%;
+				margin-left: -250px;
+			}
+
+			.reassignButton button {
+				width: 500px !important;
+			}
+
+			.l-space {
+				margin: 20px;
+			}
+
+			.s-space {
+				margin: 10px;
+			}
+
+			.spinner {
+				text-align: center;
+				color: #157DFA;
+				position: relative;
+				left: 50%;
+			}
+
+			.tableCheck {
+				position: relative;
+				left: 45%;
+			}
+
+			.btn {
+				border: none !important;
+				color: #FFFFFF !important;
+			}
+
+			.row {
+				margin-left: 0px !important;
+				margin-right: 0px !important;
+			}
+
+			table {
+				overflow: hidden;
+			}
+
+			table td,
+			table th {
+				border: 1px solid #ddd;
+				padding-left: 4px !important;
+				padding-right: 4px !important;
+			}
+
+			table thead th {
+				text-align: center !important;
+			}
+
+			table tbody td {
+				text-align: center !important;
+				vertical-align: middle !important;
+			}
+
+			.userList {
+				border: 1px solid #ced4da !important;
+				border-radius: 7px;
+				max-height: 450px;
+				overflow: auto;
+				display: none;
+			}
+
+			.userList li {
+				cursor: pointer;
+				padding-left: 5px;
+				padding-right: 5px;
+				border-bottom: 1px solid #ced4da !important;
+			}
+
+			.shadow {
+				-webkit-box-shadow: 0px 3px 7px 0px rgba(0, 0, 0, 0.25);
+				-moz-box-shadow: 0px 3px 7px 0px rgba(0, 0, 0, 0.25);
+				box-shadow: 0px 3px 7px 0px rgba(0, 0, 0, 0.25);
+			}
+
+			.header {
+				padding-top: 120px;
+				padding-bottom: 20px;
+				width: 100vw;
+				color: white;
+				text-align: center;
+				background-color: #157DFA;
+			}
+
+			.header h1 {
+				z-index: 10;
+				position: fixed;
+				background-color: #157DFA;
+				padding-top: 10px;
+				padding-bottom: 10px;
+				top: 49px;
+				width: 100%;
+			}
+
+			.back-btn {
+				z-index: 100;
+				position: fixed;
+				top: 0px;
+				left: 10px;
+				font-size: 48px !important;
+				cursor: pointer;
+			}
+
+			.modal {
+				font-family: "Salesforce Sans", Arial, sans-serif !important;
+				color: #3E3E3C !important;
+			}
+
+			.modal ul li {
+				border-bottom: 1px solid #e9ecef;
+				padding: 10px;
+				font-size: 18px;
+				font-weight: bold;
+			}
+
+			.modal-body {
+				max-height: 375px;
+				overflow-y: auto;
+				-webkit-overflow-scrolling: touch;
+			}
+
+			.modal-title {
+				font-weight: normal !important;
+				color: #157DFA !important;
+			}
+
+			.modal-header {
+				color: #FFFFFF !important;
+			}
+
+			.modal-subtitle {
+				font-weight: lighter !important;
+			}
+
+			.btn-primary {
+				background-color: #157DFA !important;
+			}
+
+			.btn-primary:active {
+				background-color: #1f6bc6 !important;
+			}
+
+			.btn-secondary {
+				background-color: #808285 !important;
+			}
+
+			.btn-secondary:active {
+				background-color: #6c6e70 !important;
+			}
+
+			#profilePhoto,
+			#profilePhoto img {
+				z-index: 200;
+				position: fixed;
+				right: 10px;
+				top: 3px;
+				width: 42px;
+				height: 42px;
+				border-radius: 100%;
+				border: 2px solid #FFFFFF;
+				background-color: #E0E2E7;
+				cursor: pointer;
+			}
+
+			#star {
+				color: #157DFA;
+				z-index: 200;
+				position: fixed;
+				right: 10px;
+				bottom: 10px;
+				font-size: 40px;
+				width: 58px;
+				height: 58px;
+				cursor: pointer;
+			}
+
+			h1 {
+				font-size: 38px !important;
+				font-weight: bold !important;
+			}
+
+			.name {
+				font-weight: lighter !important;
+			}
+
+			h2 {
+				font-size: 36px !important;
+				font-weight: lighter !important;
+			}
+
+			h3 {
+				font-size: 29px !important;
+				font-weight: bold !important;
+			}
+
+			h4 {
+				font-size: 22px !important;
+				font-weight: normal !important;
+			}
+
+			h5 {
+				font-size: 18px !important;
+				font-weight: lighter !important;
+			}
+
+			.thin {
+				font-weight: lighter !important;
+			}
+
+			.italic {
+				font-style: italic !important;
+			}
+
+			.icon {
+				color: white;
+				margin-left: 10px;
+				border-radius: 7px;
+			}
+
+			.icon-green {
+				background-color: #2BC100;
+			}
+
+			.icon-blue {
+				background-color: #157DFA;
+			}
+
+			.icon-yellow {
+				background-color: #FFD000;
+			}
+
+			.icon-red {
+				background-color: #FF0036;
+			}
+
+			.icon-grey {
+				background-color: #808285;
+			}
+
+			.card {
+				border-radius: 7px;
+				cursor: pointer;
+			}
+
+			.card-header i {
+				font-size: 50px;
+			}
+
+			.card-body {
+				height: 200px;
+				overflow: auto;
+			}
+
+			.ppt {
+				color: #FF6600;
+			}
+
+			.col-md-4 {
+				padding: 0px 10px 0px 10px;
+				margin-bottom: 20px;
+			}
+
+			.white-bg {
+				background-color: #FFFFFF !important;
+			}
+
+			.rounded {
+				padding: 15px 0px 15px 0px !important;
+				border-radius: 7px !important;
+			}
+
+			.inner-container {
+				padding: 0px !important;
+			}
+
+			.inner-container div:not(:last-child) {
+				padding-right: 10px !important;
+			}
+
+			.container {
+				padding: 15px !important;
+				margin-top: 20px;
+				margin-bottom: 20px;
+				border-radius: 7px;
+			}
+
+			.container:nth-of-type(2) {
+				margin-top: 20px;
+				margin-bottom: 10px;
+			}
+
+			.container:last-of-type {
+				margin-top: 10px;
+				margin-bottom: 20px;
+			}
+
+			.no-bg-container {
+				background-color: transparent !important;
+			}
+
+			.action-item-label {
+				font-size: 20px !important;
+				font-weight: bold !important;
+			}
+
+			.action-items,
+			.action-items div {
+				font-size: 18px !important;
+				padding: 5px !important;
+			}
+
+			.action-items .row {
+				border: 1px solid #d8dde6;
+			}
+
+			.action-items .row:first-child {
+				border-radius: .25rem .25rem 0px 0px;
+				border-bottom: 0px;
+			}
+
+			.action-items .row:not(:first-child):not(:last-child) {
+				border-top: 1px solid #d8dde6;
+				border-bottom: 0px;
+			}
+
+			.action-items .row:last-child {
+				border-radius: 0px 0px .25rem .25rem;
+			}
+
+			.action-items .row:only-child {
+				border: 1px solid #d8dde6;
+				border-radius: .25rem;
+			}
+
+			.no-padding {
+				padding: 0px !important;
+			}
+
+			.no-margin {
+				margin: 0px !important;
+			}
+
+			.incomplete {
+				text-decoration: underline;
+				cursor: pointer;
+				color: #FF3B39 !important;
+			}
+
+			.complete {
+				text-decoration: underline;
+				cursor: pointer;
+				color: #25D96B !important;
+			}
+
+			.red {
+				color: #FF3B39 !important;
+			}
+
+			.green {
+				color: #4CD964 !important;
+			}
+
+			.blue {
+				color: #208FFF !important;
+			}
+
+			.no-pad {
+				padding: 0px !important;
+			}
+
+			@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) and (orientation: landscape) {
+				.container {
+					max-width: 1004px !important;
+					margin: 20px 10px 20px 10px;
+				}
+				.container:nth-of-type(2) {
+					margin: 20px 10px 10px 10px;
+				}
+				.container:last-of-type {
+					margin: 10px 10px 20px 10px;
+				}
+			}
+
+			.upcoming-events {
+				display: inline-block !important;
+			}
+
+			#new-event {
+				width: 200px;
+				padding: 5px !important;
+				display: inline-block;
+				float: right;
+			}
+
+			@media (max-width:499px) {
+				.upcoming-events {
+					display: block;
+				}
+				#new-event {
+					margin-top: 10px;
+					margin-left: 10px;
+					float: none;
+				}
+
+				.inner-container div:not(:last-child) {
+					padding-right: 0px !important;
+				}
+
+				.container {
+					padding: 2px !important;
+				}
+
+			}
+
+			/* Calendar styling */
+
+			#ui-datepicker-div {
+				border-radius: 0.25rem;
+			}
+
+			.ui-datepicker-calendar,
+			.ui-datepicker-header {
+				background-color: white;
+				padding: 5px;
+				border: 1px solid #d8dde6;
+			}
+
+			.ui-datepicker-header {
+				margin-top: 5px;
+				border-radius: 0.25rem 0.25rem 0 0;
+			}
+
+			.ui-datepicker-calendar {
+				border-radius: 0 0 0.25rem 0.25rem;
+			}
+
+			.ui-datepicker-next {
+				position: relative;
+				left: 90px;
+			}
+
+			.ui-datepicker-calendar th,
+			.ui-datepicker-calendar td {
+				padding: 2px 5px 2px 5px;
+			}
+
+			/* End calendar styling */
+
+			.round-border {
+				border: 1px solid #ddd;
+				padding: 5px 7px 5px 7px;
+				border-radius: 100%;
+			}
+
+			.border-blue {
+				border-color: #208FFF !important;
+			}
+
+			ul {
+				padding-left: 0px;
+			}
+
+			ul li {
+				font-size: 15px;
+				line-height: 23px;
+				padding: 10px 0px 10px 0px;
+				margin-left: 10px !important;
+				border-bottom: 1px solid #ddd;
+				cursor: pointer;
+				list-style: none;
+			}
+
+			.cursor-default {
+				cursor: default;
+			}
+
+			.pointer {
+				cursor: pointer;
+			}
+
+			ul li:hover {
+				border-bottom: 1px solid #afafaf;
+			}
+
+			#editUnits {
+				cursor: pointer;
+				display: inline-block;
+				float: right;
+				font-size: 18px;
+				font-weight: bold;
+				font-style: normal;
+				padding-top: 14px;
+			}
+
+			#editUnits:hover {
+				color: #46b659 !important;
+			}
+
+			label {
+				margin-bottom: 5px;
+				margin-top: 10px;
+			}
+
+			.form-control {
+				color: #495057 !important;
+				margin-left: 0px !important;
+			}
+
+			.btn {
+				margin-left: 0px !important;
+				margin-top: 10px !important;
+				font-size: 25px !important;
+				padding: 5px 20px 5px 20px !important;
+			}
+
+			.nav-list li {
+				font-size: 20px;
+				display: inline-block;
+				border: none;
+				font-style: italic;
+				color: #FFFFFF;
+				padding: 10px 15px 10px 15px;
+				margin: 0px !important;
+				border-radius: 25px;
+			}
+
+			.nav-list li:hover {
+				border: none;
+			}
+
+			.nav-list li:hover:not(.selected) {
+				background-color: #afafaf;
+			}
+
+			.nav-list .selected {
+				background-color: #FFFFFF;
+				color: #157DFA;
+			}
+
+			.nav-container {
+				width: 100%;
+				padding: 3px !important;
+				margin-bottom: 15px !important;
+				z-index: 11;
+				position: fixed;
+				padding-left: 70px !important;
+			}
+
+			.blue-bg {
+				background-color: #157DFA !important;
+			}
+
+			.required {
+				color: #FF3B39 !important;
+			}
+
+			.multiSelectPicklistRow td:not(.multiSelectPicklistCell) {
+				width: 45%;
+			}
+
+			.multiSelectPicklistRow td select {
+				width: 100% !important;
+			}
+
+			.multiSelectPicklistTable tbody tr:not(multiSelectPicklistRow) td {
+				border: none;
+			}
+
+			.multiSelectPicklistCell a {
+				margin: auto !important;
+			}
+
+			.multiSelectPicklistCell a:first-child {
+				margin-bottom: 30px !important;
+			}
+
+			.multiSelectPicklistCell {
+				border: none;
+			}
+
+			/* #j_id0\:encounterForm\:closeCustomer_selected_hint,
+			#j_id0\:encounterForm\:closeCustomer_unselected_hint {
+				display: none !important;
+			} */
+
+			#addMoreContacts {
+				display: none;
+				text-decoration: underline;
+			}
+		</style>
+	</head>
+
+	<body>
+
+		<div class="slds-scope">
+
+			<div class="slds-spinner_container" id="spinner" style="position:fixed; width:100vw; height:100vh; display:none;">
+				<div class="slds-spinner slds-spinner--large slds-spinner--brand">
+					<div class="slds-spinner__dot-a"></div>
+					<div class="slds-spinner__dot-b"></div>
+				</div>
+			</div>
+
+			<div class="nav-container blue-bg">
+				<div class="row">
+					<ul class="nav-list">
+						<li onclick="window.location.href='/apex/saleshd_homepage'">
+							<i class="fas fa-home"></i> HOME
+						</li>
+						<li onclick="window.location.href='/apex/saleshd_accounts'">
+							<i class="fas fa-hospital"></i> MY ACCOUNTS
+						</li>
+						<li onclick="window.location.href='/apex/saleshd_contacts'">
+							<i class="fas fa-user-md"></i> MY CONTACTS
+						</li>
+						<li onclick="window.location.href='/apex/saleshd_encounters'">
+							<i class="fas fa-phone"></i> ENCOUNTERS
+						</li>
+					</ul>
+				</div>
+			</div>
+
+			<div class="header">
+				<span class="lnr lnr-arrow-left back-btn" onclick="window.history.back();"></span>
+				<!-- <div id="profilePhoto"></div> -->
+				<h1 class="name"></h1>
+			</div>
+
+			<div class="container shadow white-bg">
+				<div class="row">
+					<apex:outputPanel id="containerBlock">
+						<apex:form id="encounterForm">
+							<label>INFORMATION</label>
+							<label class="required" style="width: 100%;">*Date
+								<span style="padding-left:28%;">*Time</span>
+								<span style="padding-left:27%;">*Duration In Minutes</span>
+							</label>
+							<apex:input type="date" id="startDate" value="{!startDate}" style="height:37px; width:33%; margin-right:1%; display:inline-block;"
+							 styleClass="form-control" required="true" />
+							<apex:input type="time" id="startTime" value="{!startTime}" style="height:37px; width:32%; margin-right:1%; display:inline-block;"
+							 styleClass="form-control" required="true" />
+							<apex:input type="number" id="duration" value="{!duration}" style="height:37px; width:33%; display:inline-block;" styleClass="form-control"
+							 required="true" />
+							<!-- <apex:inputField styleClass="form-control" value="{!event.DurationInMinutes}" html-placeholder="Duration" required="true"/> -->
+							<!-- <label class="required" style="width: 100%;">*End Datetime</label> -->
+							<!-- <apex:input type="date" id="endDate" value="{!endDate}" style="height:37px; width:49%; margin-right:1%; display:inline-block;" styleClass="form-control" required="true"/> -->
+							<!-- <apex:input type="time" id="endTime" value="{!endTime}" style="height:37px; width:49%; display:inline-block;" styleClass="form-control" required="true"/> -->
+							<label class="required" style="width: 100%;">*Primary Contact</label>
+							<apex:inputHidden value="{!contactId}" id="contactId" required="true" />
+							<input class="form-control" placeholder="Contact" id="contact" value="{!contactName}" />
+							<ul class="form-control" id="contactList" style="display:none;"></ul>
+
+							<apex:inputHidden value="{!additionalContactIdString}" id="additionalContactIds" />
+							<apex:inputHidden value="{!removeAdditionalContactIdString}" id="removeAdditionalContactIds" />
+							<ul id="addedContacts"></ul>
+							<ul class="form-control" id="addContactList" style="display:none;"></ul>
+							<div style="margin-top:5px;">
+								<span id="addMoreContacts" class="blue pointer">
+									<i class="fa fa-user-plus"></i> Add Additional Contacts</span>
+							</div>
+
+							<label class="required" style="width: 100%;">*Account
+								<span style="padding-left:41%;">*Unit</span>
+							</label>
+							<apex:inputHidden value="{!accountId}" id="accountId" required="true" />
+							<input class="form-control" placeholder="Account" style="width:49%; margin-right:1%; display:inline-block;" id="account"
+							 value="{!accountName}" />
+							<apex:inputHidden value="{!unitId}" id="unitId" required="true" />
+							<input class="form-control" placeholder="Unit" style="width:49%; display:inline-block;" id="unit" value="{!unitName}" />
+							<ul class="form-control" id="accountList" style="display:none; width:49%;"></ul>
+							<ul class="form-control" id="unitList" style="display:none; width:49%; margin-left:50% !important;"></ul>
+
+							<label class="required">*Encounter Type</label>
+							<apex:inputField styleClass="form-control" value="{!event.Type}" html-placeholder="Encounter Type" required="true" />
+							<label class="required">*Encounter Objective</label>
+							<apex:inputField styleClass="form-control" value="{!event.SalesHD_Call_Objective__c}" html-placeholder="Encounter Objective"
+							 required="true" />
+
+							<label style="margin-top:30px; width:100%; border-top:1px solid #ddd;">PREPARATION</label>
+							<label class="required" style="width: 100%; {!IF(ISBLANK(event.SalesHD_Last_Encounter__c), 'display:none;', 'display:block;')}">Last Encounter</label>
+							<apex:inputField styleClass="form-control" style="{!IF(ISBLANK(event.SalesHD_Last_Encounter__c), 'display:none;', 'display:block;')}"
+							 value="{!event.SalesHD_Last_Encounter__c}" html-placeholder="Last Encounter" html-disabled="true" />
+							<label class="required" style="width: 100%;">*Open Ended Questions
+								<!-- <span class="educationtip" id="question">
+									<i class="fas fa-question-circle blue pointer"></i>
+								</span> -->
+							</label>
+							<apex:inputField styleClass="form-control" value="{!event.SalesHD_Open_Ended_Questions__c}" html-placeholder="Open Ended Questions"
+							 required="true" />
+							<label style="width: 100%;">Marketing Collateral
+
+							</label>
+							<apex:inputField styleClass="form-control" value="{!event.SalesHD_Marketing_Collateral__c}" html-placeholder="Marketing Collateral"
+							/>
+							<label style="width: 100%;">Agenda</label>
+							<apex:inputField styleClass="form-control" value="{!event.SalesHD_Agenda_Preparation__c}" html-placeholder="Agenda Preparation"
+							/>
+							<label style="width: 100%;">Data
+
+							</label>
+							<apex:inputField styleClass="form-control" value="{!event.SalesHD_Data_Preparation__c}" html-placeholder="Data Preparation"
+							/>
+
+
+							<apex:outputPanel id="postCallPanel">
+								<label style="margin-top:30px; width:100%; border-top:1px solid #ddd;">POST CALL</label>
+								<p style="font-size:13px;" class="required">
+									*This section is requried after you complete the call.
+								</p>
+
+								<!-- <apex:outputPanel rendered="{!IF(CONTAINS($Profile.Name, 'Manager'), true, false)}" style="display:inline-block;"> -->
+
+								<label style="width: 100%;" class="{!IF(event.SalesHD_Complete__c=true, 'required', '')}">{!IF(event.SalesHD_Complete__c=true, '*Results', 'Results')}
+
+								</label>
+								<apex:inputField styleClass="form-control" value="{!event.Result__c}" html-placeholder="Results" />
+								<label style="width: 100%;">Next Encounter</label>
+								<apex:inputField styleClass="form-control" value="{!event.SalesHD_Next_Encounter__c}" html-placeholder="Next Encounter" onkeyup="showNextEncounter();"
+								/>
+								<label style="width: 100%;" class="{!IF(event.SalesHD_Complete__c=true, 'required', '')}">{!IF(event.SalesHD_Complete__c=true, '*Close / Customer Commitment', 'Close / Customer Commitment')}</label>
+								<apex:inputField styleClass="form-control" value="{!event.SalesHD_Close_Customer_Commitment__c}" html-placeholder="Close / Customer Commitment"
+								 id="closeCustomer" />
+								<script>replaceMultiselectButtons();</script>
+								<label style="width: 100%;">Complete</label>
+								<apex:inputField styleClass="form-control" value="{!event.SalesHD_Complete__c}" style="width:15px;">
+									<apex:actionSupport event="onchange" rerender="postCallPanel" />
+								</apex:inputField>
+							</apex:outputPanel>
+
+
+
+							<div style="margin-top:20px;">
+								<apex:commandButton styleClass="btn btn-primary" status="statusSpinner" action="{!saveNew}" onclick="storeHtml();" oncomplete="loadPage();"
+								 value="Save" rerender="containerBlock" id="saveNew" style="vertical-align:bottom; margin-top:0px!important;" />
+								 <apex:commandButton styleClass="btn btn-primary" status="statusSpinner" action="{!saveAndNew}" onclick="storeHtml();" oncomplete="loadPage();"
+								 value="Save and New" rerender="containerBlock" id="saveAndNew" style="vertical-align:bottom; margin-top:0px!important; margin-left:10px!important;" />
+								<apex:commandButton styleClass="btn btn-secondary" value="Cancel" oncomplete="loadPage();" style="margin-top:0px!important; margin-left:10px!important;"
+								 onclick="window.history.back();" rerender="containerBlock" />
+								 <apex:commandButton styleClass="btn btn-success" id="saveAndNext" status="statusSpinner" oncomplete="loadPage();"
+								 style="margin-left:10px!important;
+								 {!IF(ISBLANK(event.SalesHD_Next_Encounter__c), 'display:none;',
+								 IF($CurrentPage.parameters.duplicate='true', 'display:none;', 'display:inline-block;'))} vertical-align:bottom; margin-top:0px!important;"
+								 action="{!saveAndNext}" value="Save and Next" rerender="containerBlock" />
+							</div>
+
+
+							<apex:actionStatus id="statusSpinner">
+								<apex:facet name="start">
+
+									<div class="slds-spinner_container" style="position:fixed; width:100vw; height:100vh;">
+										<div class="slds-spinner slds-spinner--large slds-spinner--brand">
+											<div class="slds-spinner__dot-a"></div>
+											<div class="slds-spinner__dot-b"></div>
+										</div>
+									</div>
+
+								</apex:facet>
+							</apex:actionStatus>
+
+							<apex:pageMessages />
+
+						</apex:form>
+					</apex:outputPanel>
+
+					<apex:form >
+						<apex:outputPanel id="recurrencePanel">
+							<label style="margin-top:30px; width:100%; border-top:1px solid #ddd;">Recurring Event</label>
+							<apex:inputcheckbox styleClass="form-control" value="{!event.IsRecurrence}" style="width:15px;">
+								<apex:actionSupport event="onclick" rerender="recurrencePanel" action="{!recurrenceClicked}" />
+							</apex:inputcheckbox>
+
+							<apex:outputPanel rendered="{!displayRecurrence}">
+								<label style="width: 100%;">Recurrence Interval</label>
+								<apex:selectList multiselect="false" size="1" value="{!selectedRecurrenceType}">
+									<apex:selectOption itemLabel="Daily" itemValue="RecursDaily" />
+									<apex:selectOption itemLabel="Weekly" itemValue="RecursWeekly" />
+									<apex:selectOption itemLabel="Monthly" itemValue="RecursMonthly" />
+									<apex:actionSupport event="onchange" rerender="recurrencePanel" action="{!selectRecurrenceType}" />
+								</apex:selectList>
+							</apex:outputPanel>
+
+						</apex:outputPanel>
+					</apex:form>
+
+				</div>
+			</div>
+
+			<div class="modal fade" id="educationModal">
+				<div class="modal-dialog modal-dialog-centered">
+					<div class="modal-content">
+						<div class="modal-header icon-blue">
+							<h3 class="bold">
+								<i aria-hidden="true" class="far fa-question-circle" style="padding-right:10px;"></i>
+								<span id="education-title"></span>
+							</h3>
+						</div>
+						<div class="modal-body" id="education-body">
+
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						</div>
+					</div>
+				</div>
+			</div>
+
+
+		</div>
+		<!-- Lightning Wrapper -->
+
+		<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+		 crossorigin="anonymous"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+		 crossorigin="anonymous"></script>
+		<script src="//code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>
+		<script>
+
+			var educationtips = {
+				"question": { "title": "Open Ended Questions", "body": "Talking points that are to be prepared before an encounter." },
+				"result": { "title": "Results", "body": "The result of a completed encounter." },
+				"marketing": { "title": "Marketing Collateral", "body": "A marketing collateral that was used during the encounter." },
+				"data": { "title": "Data", "body": "Any information or data referenced in the encounter." }
+			};
+
+			var addedContacts = [];
+			var removeContacts = [];
+
+			var contactHtml = '';
+			var additionalContactHtml = '';
+			var accountHtml = '';
+			var unitHtml = '';
+			var unitListHtml = '';
+
+			$(document).ready(function () {
+
+				replaceMultiselectButtons();
+				loadPage();
+
+				$(document).on("click", ".educationtip", function () {
+					$("#education-title").text(educationtips[$(this).attr('id')].title);
+					$("#education-body").text(educationtips[$(this).attr('id')].body);
+					$('#educationModal').modal('show');
+				});
+
+				$(document).on("click", "#addMoreContacts", function () {
+					$('#addContactList').show();
+				});
+
+			});
+
+			function showNextEncounter() {
+				if ('{!$CurrentPage.parameters.duplicate}' != 'true') {
+					document.getElementById('{!$Component.encounterForm.saveAndNext}').style.display = 'inline-block';
+				}
+			}
+
+			function replaceMultiselectButtons() {
+				$("#j_id0\\:encounterForm\\:closeCustomer_right_arrow").replaceWith('<i style="font-size:50px;" class="fas fa-arrow-circle-right blue"></i>');
+				$("#j_id0\\:encounterForm\\:closeCustomer_left_arrow").replaceWith('<i style="font-size:50px;" class="fas fa-arrow-circle-left blue"></i>');
+			}
+
+			function removeAddedContact(id) {
+				$("#addedContact-" + id).remove();
+
+				var index = addedContacts.indexOf(id);
+
+				if (index !== -1) {
+					addedContacts.splice(index, 1);
+					removeContacts.push(id);
+					document.getElementById('{!$Component.encounterForm.removeAdditionalContactIds}').value = removeContacts.join();
+				}
+
+			}
+
+			function loadPage() {
+
+				if('{!contactName}'=='') $("#contact").val(contactHtml);
+				if('{!accountName}'=='') $("#account").val(accountHtml);
+				if('{!unitName}'=='') $("#unit").val(unitHtml);
+				if({!unitList}.length==0) $("#unitList").html(unitListHtml);
+				$("#addedContacts").html(additionalContactHtml);
+
+				if ('{!contactName}' != '' || contactHtml!='') $("#addMoreContacts").show();
+
+				$("#unit").attr("name", Math.random().toString(36).substring(7));
+				$("#contact").attr("name", Math.random().toString(36).substring(7));
+				$("#account").attr("name", Math.random().toString(36).substring(7));
+
+				var additionalContacts = {!additionalContactsString
+			};
+			if (!isEmpty(additionalContacts)) {
+				for (var contactId in additionalContacts) {
+					addedContacts.push(contactId);
+					$("#addedContacts").append('<li id="addedContact-' + contactId + '">' +
+						additionalContacts[contactId] + ' <span style="float:right;" onclick="removeAddedContact(\'' + contactId + '\');"><i class="fas fa-times"></i></span></li>');
+				}
+				document.getElementById('{!$Component.encounterForm.additionalContactIds}').value = addedContacts.join();
+			}
+
+			if ({!unitList}.length > 0) $("#unitList").html('');
+			for (var unit of {!unitList}) {
+				if (unit.Unit__r.Name == 'Administrative') $("#unitList").append('<li data-unitid="' + unit.Id + '">Global / Director</li>');
+				else $("#unitList").append('<li data-unitid="' + unit.Id + '">' + unit.Unit__r.Name + '</li>');
+			}
+			$(document).on("click", '#unitList li', function () {
+				$('#unit').val($(this).text()).data('unitid', $(this).data('unitid'));
+				document.getElementById('{!$Component.encounterForm.unitId}').value = $(this).data('unitid');
+			});
+
+			$(document).on("click", '#contact', function () {
+				$('#contactList').show();
+			});
+
+			$(document).on("click", '#account', function () {
+				$('#accountList').show();
+			});
+
+			$(document).on("click", '#unit', function () {
+				$('#unitList').show();
+			});
+
+			$(document).click(function (e) {
+				if (!$('#contact').is(e.target) && $('#contact').has(e.target).length === 0) {
+					$('#contactList').hide();
+				}
+			});
+
+			$(document).click(function (e) {
+				if (!$('#addMoreContacts').is(e.target) && $('#addMoreContacts').has(e.target).length === 0) {
+					$('#addContactList').hide();
+				}
+			});
+
+			$(document).click(function (e) {
+				if (!$('#account').is(e.target) && $('#account').has(e.target).length === 0) {
+					$('#accountList').hide();
+				}
+			});
+
+			$(document).click(function (e) {
+				if (!$('#unit').is(e.target) && $('#unit').has(e.target).length === 0) {
+					$('#unitList').hide();
+				}
+			});
+
+			$('#contact').keyup(function () {
+				$("#contactList li").each(function () {
+					if ($(this).text().toUpperCase().replace(/\s/g, '').indexOf($("#contact").val().toUpperCase().replace(/\s/g, '')) > -1) {
+						$(this).show();
+					} else {
+						$(this).hide();
+					}
+				});
+			});
+
+			$('#account').keyup(function () {
+				$("#accountList li").each(function () {
+					if ($(this).text().toUpperCase().replace(/\s/g, '').indexOf($("#account").val().toUpperCase().replace(/\s/g, '')) > -1) {
+						$(this).show();
+					} else {
+						$(this).hide();
+					}
+				});
+			});
+
+			SalesHD_Event.getContacts(function (callback, event) {
+				var data = JSON.parse(callback);
+				$("#contactList").html('');
+				$("#addContactList").html('');
+				for (var contacts of data) {
+					var contact = contacts.Contact__r;
+					$("#contactList").append('<li data-contactid="' + contact.Id + '">' + contact.Name + '</li>');
+					$("#addContactList").append('<li data-contactid="' + contact.Id + '">' + contact.Name + '</li>');
+				}
+				$(document).on("click", '#contactList li', function () {
+
+					$("#addMoreContacts").show();
+
+					$('#contact').val($(this).text()).data('contactid', $(this).data('contactid'));
+					document.getElementById('{!$Component.encounterForm.contactId}').value = $(this).data('contactid');
+				});
+
+				$(document).on("click", '#addContactList li', function () {
+					if (!addedContacts.includes($(this).data('contactid'))) {
+						$('#addedContacts').append('<li id="addedContact-' + $(this).data('contactid') + '">' + $(this).text() + ' <span style="float:right;" onclick="removeAddedContact(\'' + $(this).data('contactid') + '\');"><i class="fas fa-times"></i></span></li>');
+						addedContacts.push($(this).data('contactid'));
+
+						var index = removeContacts.indexOf($(this).data('contactid'));
+
+						if (index !== -1) {
+							removeContacts.splice(index, 1);
+							document.getElementById('{!$Component.encounterForm.removeAdditionalContactIds}').value = removeContacts.join();
+						}
+
+						document.getElementById('{!$Component.encounterForm.additionalContactIds}').value = addedContacts.join();
+					}
+
+				});
+
+			}, { escape: false });
+
+			SalesHD_Event.getAccounts(function (callback, event) {
+				var data = JSON.parse(callback);
+				$("#accountList").html('');
+				for (var account of data) {
+					$("#accountList").append('<li data-accountid="' + account.AccountId + '">' + account.Account.Name + '</li>');
+				}
+				$(document).on("click", '#accountList li', function () {
+					$('#account').val($(this).text()).data('accountid', $(this).data('accountid'));
+					document.getElementById('{!$Component.encounterForm.accountId}').value = $(this).data('accountid');
+
+					SalesHD_Event.getUnits($(this).data('accountid'), function (callback, event) {
+						var data = JSON.parse(callback);
+						$("#unitList").html('');
+						for (var unit of data) {
+							// $("#unitList").append('<li data-unitid="'+unit.Id+'">'+unit.Unit__r.Name+'</li>');
+							if (unit.Unit__r.Name == 'Administrative') $("#unitList").append('<li data-unitid="' + unit.Id + '">Global / Director</li>');
+							else $("#unitList").append('<li data-unitid="' + unit.Id + '">' + unit.Unit__r.Name + '</li>');
+						}
+						$(document).on("click", '#unitList li', function () {
+							$('#unit').val($(this).text()).data('unitid', $(this).data('unitid'));
+							document.getElementById('{!$Component.encounterForm.unitId}').value = $(this).data('unitid');
+						});
+					}, { escape: false });
+
+				});
+			}, { escape: false });
+}
+
+			function isEmpty(obj) {
+				for (var key in obj) {
+					if (obj.hasOwnProperty(key))
+						return false;
+				}
+				return true;
+			}
+
+			
+			function storeHtml() {
+				contactHtml = $("#contact").val();
+				accountHtml = $("#account").val();
+				unitHtml = $("#unit").val();
+				unitListHtml = $("#unitList").html();
+				additionalContactHtml = $("#addedContacts").html();
+			}
+
+		</script>
+	</body>
+
+	</html>
+</apex:page>

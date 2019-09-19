@@ -1,0 +1,8 @@
+<aura:event type="APPLICATION">
+    <aura:attribute name="selRole" type="String" />
+    <aura:attribute name="selReport" type="String"/>
+    <aura:attribute name="selRoleName" type="String"/>
+    <aura:attribute name="selIndividual" type="String"/>
+    <aura:attribute name="selDteFrom" type="String"/>
+    <aura:attribute name="selDteTo" type="String"/>
+</aura:event>

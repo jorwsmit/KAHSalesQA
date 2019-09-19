@@ -1,0 +1,420 @@
+<apex:page controller="Sales_FCRcontroller" sidebar="false" standardStylesheets="false">
+<html lang="en">
+<head>
+	<title>My FCRs</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
+	<link rel="stylesheet" href="//cdn.linearicons.com/free/1.0.0/icon-font.min.css"/>
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css"/>
+	<link href="//fonts.googleapis.com/css?family=Roboto:100,400,700" rel="stylesheet"/>
+	<link href="//cdnjs.cloudflare.com/ajax/libs/air-datepicker/2.2.3/css/datepicker.min.css" rel="stylesheet"/>
+	<style>
+	.myContentWrapper{
+		font-family: 'Roboto', sans-serif;
+	}
+	#main{
+		position: absolute;
+		left: 0px;
+		width: 100%;
+		height: 100%;
+		top: 0px;
+		overflow-x: hidden;
+		overflow-y: auto;
+		-webkit-overflow-scrolling: touch;
+		border-radius: 0px 0px 25px 25px;
+	}
+	#bodyTable{
+		border-radius: 0px 0px 25px 25px;
+		position: relative;
+		overflow-x: hidden;
+		overflow-y: auto;
+		width: 100%;
+		height: 83vh;
+		-webkit-box-sizing: border-box;
+		-moz-box-sizing: border-box;
+		box-sizing: border-box;
+		z-index:0;
+	}
+	.bodyDiv{
+		z-index: 1;
+		border-radius: 0px 0px 25px 25px;
+	}
+	.noTableFooter{
+		display: none;
+	}
+	#loadCover{
+		position: fixed;
+		left: 0%;
+		top:0%;
+		width: 100%;
+		height:100%;
+		background-color:black;
+		opacity: 0.75;
+		z-index:2;
+		display: none;
+	}
+	.center{
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+	}
+	.centerTop{
+		position: absolute;
+		top: 5%;
+		left: 50.5%;
+		transform: translate(-50%, -50%);
+	}
+	.largeFont{
+		font-size: 20px;
+	}
+	.mediumFont{
+		font-size: 18px;
+	}
+	.smallFont{
+		font-size: 14px;
+	}
+	.blue{
+		background-color: #5579b2;
+	}
+	.green{
+		background-color: #89b983;
+	}
+	.yellow{
+		background-color: #ddae4f;
+	}
+	.orange{
+		background-color: #f99157;
+	}
+	.red{
+		background-color: #bf4c4c;
+	}
+	.centerBot{
+		position: absolute;
+		bottom: -2%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+	}
+	#empty{
+		display: none;
+		border-radius: 25px;
+		font-size: 25px;
+		color: white;
+		padding: 25px;
+	}
+	#header{
+		width: 100%;
+		color: white;
+		font-size: 25px;
+		padding: 10px;
+		position: absolute;
+		top: 0px;
+		left: 0px;
+		z-index: 3;
+	}
+	#dates{
+		position: relative;
+		left: 50%;
+		margin-left: -55px;
+	}
+	#mainTable{
+		margin: 25px;
+		font-size: 25px;
+		width: 100%;
+		margin-bottom: 75px;
+		margin-top: 55px;
+	}
+	#mainTable tbody tr td:first-child{
+		font-size: 65px;
+		width: 65px;
+	}
+	.fcrType{
+		z-index: 1;
+		height: 0px;
+		text-align: center;
+		font-size: 20px;
+		font-weight: bold;
+		position: relative;
+		top: -46px;
+		left: -4.5px;
+		color: white;
+	}
+	.complete{
+		color: #89b983;
+	}
+	.incomplete{
+		color: #bf4c4c;
+	}
+	.cr{
+		color: #5579b2;
+	}
+	.fcr{
+		color: #89b983;
+	}
+	.psa{
+		color: #ddae4f;
+	}
+	.taf{
+		color: #bf4c4c;
+	}
+	#mainTable tbody tr{
+		cursor: pointer;
+		height: 45px;
+		border-bottom: #e0e0e0 1px solid;
+	}
+	#mainTable tbody tr:hover{
+		border-bottom: #5579b2 2px solid;
+	}
+	#mainTable tbody tr td:not(:first-child){
+		padding-left: 25px;
+	}
+	#addList{
+		display: none;
+		width: 0px;
+		z-index: 1;
+		position: absolute;
+		bottom: 10px;
+		left: 65px;
+		color: white;
+	}
+	#addList ul{
+		margin-bottom: 0px;
+		width: 250px;
+		list-style-type: none;
+		overflow: hidden;
+	}
+	#addList ul li{
+		text-align: center;
+		padding-top: 13px;
+		margin-left: 10px;
+		height: 56px;
+		width: 56px;
+		border-radius: 65px;
+		font-size: 20px;
+		font-weight: bold;
+		cursor: pointer;
+		float: left;
+	}
+	#addButton{
+		z-index: 2;
+		position: absolute;
+		bottom: 10px;
+		margin-left: 15px;
+		color: white;
+		background-color: #f99157;
+		height: 56px;
+		width: 56px;
+		font-size: 45px;
+		border-radius: 65px;
+		cursor: pointer;
+	}
+	#addButton span{
+		display: inline-block;
+		position: relative;
+		top: 5px;
+		left: 6px;
+		-webkit-transform: rotate(45deg);
+		-moz-transform: rotate(45deg);
+		-o-transform: rotate(45deg);
+		-ms-transform: rotate(45deg);
+		transform: rotate(45deg);
+	}
+	#helpButton{
+    display: none;
+    z-index: 4;
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    border: 1px solid white;
+    color: white;
+    background-color: #5579b2;
+    padding: 5px 8px 5px 8px;
+    font-size: 15px;
+    border-radius: 25px;
+    cursor: pointer;
+  }
+	.spinIn{
+		animation-name: rotateIn;
+		animation-duration: 400ms;
+		animation-timing-function: ease;
+		animation-fill-mode: forwards;
+	}
+	@keyframes rotateIn{
+		from {transform: rotate(45deg);}
+		to {transform: rotate(360deg);}
+	}
+	.spinOut{
+		animation-name: rotateOut;
+		animation-duration: 400ms;
+		animation-timing-function: ease;
+		animation-fill-mode: forwards;
+	}
+	@keyframes rotateOut{
+		from {transform: rotate(360deg);}
+		to {transform: rotate(45deg);}
+	}
+	#loading{
+		color: #5579b2;
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		font-size: 50px;
+		margin-left: -30px;
+		margin-top: -30px;
+	}
+	.roundLegend{
+    border-radius: 25px;
+    font-size: 18px;
+    text-align: center;
+    padding: 5px;
+    min-width: 55px;
+    margin-top: 10px;
+    margin: auto;
+    display: inline-block;
+    color: white;
+  }
+
+  #legend{
+		position: relative;
+		bottom: 80px;
+    color: black;
+    border-radius: 25px;
+    text-align: center;
+    padding: 5px 15px 5px 0px;
+    min-width: 55px;
+    margin: 10px;
+    display: inline-block;
+    background-color: white;
+  }
+
+  #legend li{
+		font-size: 14px;
+    list-style: none;
+    display: inline-block;
+  }
+	@media only screen and (max-width: 900px) {
+		#empty{
+			width: 90%;
+		}
+		#addButton{
+			left: 10px;
+		}
+		#mainTable{
+			margin-bottom: 85px;
+		}
+	}
+	</style>
+</head>
+<body>
+
+	<div class="myContentWrapper">
+		<div id="helpButton"><i class="fa fa-question" aria-hidden="true"></i></div>
+		<div id="addButton"><span class="lnr lnr-cross"></span></div>
+		<div id="addList">
+			<ul>
+				<li class="blue" onclick="createFcr('hhCR','{!$User.Id}');">CR</li>
+				<li class="yellow" onclick="createFcr('sa','{!$User.Id}');">PSA</li>
+				<li class="red" onclick="createFcr('af','{!$User.Id}');">TAF</li>
+			</ul>
+		</div>
+		<div id="loading"><i class="fa fa-circle-o-notch fa-spin fa-fw"></i></div>
+		<div id="header" class="orange">
+			<span style="cursor:pointer;" class="lnr lnr-chevron-left"></span><span id="dates"></span>
+			<span class="lnr lnr-chevron-right" style="float:right;cursor:pointer;"></span>
+		</div>
+		<div id="main">
+			<table id="mainTable">
+				<tbody>
+				</tbody>
+			</table>
+			<ul id="legend">
+				<li><i style="color:#5579b2;" class="fa fa-circle" aria-hidden="true"></i> Competency Rating</li>
+				<li><i  style="color:#89b983;" class="fa fa-circle" aria-hidden="true"></i> Field Coaching Report</li>
+				<li><i  style="color:#ddae4f;" class="fa fa-circle" aria-hidden="true"></i> Pre-ride Self Assessment</li>
+				<li><i  style="color:#bf4c4c;" class="fa fa-circle" aria-hidden="true"></i> The Asking Formula</li>
+			</ul>
+		</div>
+		<div class="center red" id="empty">
+			<span class="lnr lnr-thumbs-down"></span> You have no performance evaluations at this time.
+		</div>
+
+	</div>
+
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+	<script>
+	var yearOffset = 0;
+	var date = new Date();
+	$(document).ready(function(){
+		document.title = 'My FCRs';
+
+		Sales_FCRcontroller.getHelp('listFCR', function(result, event){
+			if(result){
+        $('#helpButton').attr("onclick", "navTo('"+result+"')").show();
+      }
+    }), {escape:false};
+
+		$("#dates").html(date.getFullYear());
+
+		getFcrList();
+
+		$(".lnr-chevron-left").click(function(){
+			yearOffset--;
+			changeDate();
+			getFcrList();
+		});
+
+		$(".lnr-chevron-right").click(function(){
+			yearOffset++;
+			changeDate();
+			getFcrList();
+		});
+
+		$("#addButton").click(function(){
+			if($(this).find("span").hasClass("spinIn")){
+				$("#addList").fadeOut();
+				$(this).find("span").removeClass("spinIn").addClass("spinOut");
+			} else if($(this).find("span").hasClass("spinOut")){
+				$("#addList").fadeIn();
+				$(this).find("span").removeClass("spinOut").addClass("spinIn");
+			} else {
+				$(this).find("span").addClass("spinIn");
+				$("#addList").fadeIn();
+			}
+		});
+	});
+
+	function getFcrList(){
+		$("#loading").show();
+		$("#mainTable tbody").html('');
+		$("#empty").hide();
+		Sales_FCRcontroller.getFcrList('{!$User.Id}', yearOffset, function(result, event){
+			if(result!=''){
+				$("#mainTable tbody").html(result);
+			} else{
+				$("#empty").show();
+			}
+			$("#loading").hide();
+		}, {escape:false});
+	}
+
+	function changeDate(){
+		var d = new Date();
+		$("#dates").html(date.getFullYear() + yearOffset);
+	}
+
+	function createFcr(fcrType, userId){
+		window.open("{!LEFT($CurrentPage.URL,FIND('/',$CurrentPage.URL,9))}"+'/apex/Sales_FCR?fcrType='+fcrType+'&userId='+userId);
+	}
+
+	function navTo(target){
+    if( (typeof sforce != 'undefined') && sforce && (!!sforce.one) ) {
+      sforce.one.navigateToSObject(target);
+    } else {
+      window.open("{!LEFT($CurrentPage.URL,FIND('/',$CurrentPage.URL,9))}"+'/sfc/servlet.shepherd/version/download/'+target+'?asPdf=false');
+    }
+  }
+	</script>
+</body>
+</html>
+</apex:page>

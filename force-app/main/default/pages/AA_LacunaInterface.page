@@ -1,0 +1,17 @@
+<apex:page showHeader="false" sidebar="false" standardController="Case"
+readOnly="false">
+    <apex:includeScript value="/lightning/lightning.out.js"/>
+    <apex:includeLightning />
+    
+    <div id = "interfaceDivId"/> 
+    <script>
+        var recordId = '{!Case.id}';
+        $Lightning.use("c:AA_LacunaInterface", function(){
+            var attributes = {
+                recordId: recordId
+                };
+            $Lightning.createComponent("c:AA_LacunaInterfaceComponent",  attributes, "interfaceDivId", function(components, status){
+            });
+        });
+    </script>
+</apex:page>

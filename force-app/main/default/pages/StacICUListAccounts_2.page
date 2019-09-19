@@ -1,0 +1,556 @@
+<apex:page docType="html-5.0" controller="StacICUAccountsQueryExt" sidebar="false" showheader="false" standardStylesheets="false">
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1,minimum-scale=1, maximum-scale=1, user-scalable=no"/>
+<!-- Bootstrap -->
+<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" rel="stylesheet" media="screen"/>
+<style>
+.just-padding {
+    padding: 10px;
+}
+
+.hiddenRow {
+    padding: 0 !important;
+}
+    
+.glyphicon-refresh-animate {
+    -animation: spin .7s infinite linear;
+    -webkit-animation: spin2 .7s infinite linear;
+}
+
+@-webkit-keyframes spin2 {
+    from { -webkit-transform: rotate(0deg);}
+    to { -webkit-transform: rotate(360deg);}
+}
+
+@keyframes spin {
+    from { transform: scale(1) rotate(0deg);}
+    to { transform: scale(1) rotate(360deg);}
+}
+    
+.sort {
+    padding: 4px 8px;
+    border-radius: 6px;
+    border: none;
+    display: inline-block;
+    color: #fff;
+    text-decoration: none;
+    background-color: #428bca;
+    border-color: #357ebd;
+    height: 36px;
+
+}
+    
+input {
+    border: solid 1px #ccc;
+    width: 200px;
+    border-radius: 5px;
+    padding: 7px 14px;
+    margin-bottom: 10px;
+}
+    
+.borderlist {
+    padding: 1px;
+}
+.borderlist:nth-child(odd) { background: #e8e8e8; }
+
+.table {
+    margin-bottom: 0px;
+}
+      
+</style>
+</head>
+
+<body>
+
+
+
+<div id="completeContainer" class="container" style="height: 99vh; width: 99vw; overflow-y: scroll; -webkit-overflow-scrolling: touch;">
+    
+<div class="just-padding">
+    <button class="btn btn-primary btn-lg" type="button" id="backButton" onclick="loadCol(market); $('#accountAndICUs').hide(); $('#accountList').show(); $('#backButton').hide(); $('#dropdownMenu1').show(); selectedAcctId = '';" style="height: 65px; width:175px; display:none;"><h4><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span> Go back</h4></button>
+    <div class="dropdown">
+        <button class="btn btn-primary btn-lg dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" style="width:175px; height: 65px;">
+            <h4 id="dropdowntext" style="margin: 0px; padding: 0px;">Select a market</h4>
+            <span class="caret" ></span>
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+            <li id="california"><a href="#"><h4>California</h4></a></li>
+            <li id="colorado"><a href="#"><h4>Colorado</h4></a></li>
+            <li id="florida"><a href="#"><h4>Florida</h4></a></li>
+            <li id="georgia"><a href="#"><h4>Georgia</h4></a></li>
+            <li id="illinois"><a href="#"><h4>Illinois</h4></a></li>
+            <li id="indiana"><a href="#"><h4>Indiana</h4></a></li>
+            <li id="kansas"><a href="#"><h4>Kansas</h4></a></li>
+            <li id="kentucky"><a href="#"><h4>Kentucky</h4></a></li>
+            <li id="michigan"><a href="#"><h4>Michigan</h4></a></li>
+            <li id="missouri"><a href="#"><h4>Missouri</h4></a></li>
+            <li id="northCarolina"><a href="#"><h4>North Carolina</h4></a></li>
+            <li id="newMexico"><a href="#"><h4>New Mexico</h4></a></li>
+            <li id="ohio"><a href="#"><h4>Ohio</h4></a></li>
+            <li id="southCarolina"><a href="#"><h4>South Carolina</h4></a></li>
+            <li id="tennessee"><a href="#"><h4>Tennessee</h4></a></li>
+            <li id="texas"><a href="#"><h4>Texas</h4></a></li>
+            <li id="virginia"><a href="#"><h4>Virginia</h4></a></li>
+            <li id="washington"><a href="#"><h4>Washington</h4></a></li>
+        </ul>
+    </div>
+    <div id="accounts">
+        
+    </div>
+</div>
+    
+<div class="just-padding" id="accountList" style="display:none;">
+    <input  type="text" class="search" placeholder="Search by account name..." id="searchTextbox"/>
+    <button class="btn btn-danger" onclick="$('#searchTextbox').blur(); $('#searchTextbox').val(''); acctList.search('');"><span class="glyphicon glyphicon-remove"></span> Clear</button>
+    <br></br>
+    <button class="sort" data-sort="acctname" id="acctNameSort" onclick="$('#searchTextbox').blur();">Sort by account name</button>
+    <button class="sort" data-sort="icuTotal" id="icuTotalSort" onclick="$('#searchTextbox').blur();">Sort by ICS total</button>
+    <br></br><br></br>
+    <div class="panel-group" style="max-width:495px;">
+        <div class="panel panel-default">
+            <div id="collapse1" class="panel">
+                <ul class="list" style="list-style-type: none; padding:0px; -webkit-overflow-scrolling: touch;"></ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="just-padding" id="accountAndICUs" style="display:none;">
+    <div class="row">
+        <div class="col-xs-12 col-md-12" id="accountMap"><!--<div id="closeButton"></div>--></div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-md-6" id="accountInfo"></div>
+        <div class="col-xs-12 col-md-6" id="tacticalNextSteps"></div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-md-12" id="icuInfo">
+                <div class="panel panel-default">
+                    <div class="panel-heading" id="ICUtotal" style="padding:1px; height:30px"></div>
+                    <div id="ICUs"></div>
+                </div>
+        </div>
+    </div>
+    
+</div>
+</div>
+
+<!--Javascript-->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/list.js/1.2.0/list.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+<script>
+var selectedAcctId = '';
+var market = '';
+var refresh = false;
+
+setInterval("refreshNextSteps(selectedAcctId)", 500);
+
+$('#california').click(function(e) {
+    e.preventDefault();// prevent the default anchor functionality
+    $("#dropdowntext").html('<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Loading...');
+    market = "California";
+    loadCol(market);
+});
+
+$('#colorado').click(function(e) {
+    e.preventDefault();// prevent the default anchor functionality
+    $("#dropdowntext").html('<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Loading...');
+    market = "Colorado";
+    loadCol(market);
+});
+
+$('#florida').click(function(e) {
+    e.preventDefault();// prevent the default anchor functionality
+    $("#dropdowntext").html('<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Loading...');
+    market = "Florida";
+    loadCol(market);
+});
+
+$('#georgia').click(function(e) {
+    e.preventDefault();// prevent the default anchor functionality
+    $("#dropdowntext").html('<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Loading...');
+    market = "Georgia";
+    loadCol(market);
+});
+
+$('#illinois').click(function(e) {
+    e.preventDefault();// prevent the default anchor functionality
+    $("#dropdowntext").html('<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Loading...');
+    market = "Illinois";
+    loadCol(market);
+});
+
+$('#indiana').click(function(e) {
+    e.preventDefault();// prevent the default anchor functionality
+    $("#dropdowntext").html('<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Loading...');
+    market = "Indiana";
+    loadCol(market);
+});
+
+$('#kansas').click(function(e) {
+    e.preventDefault();// prevent the default anchor functionality
+    $("#dropdowntext").html('<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Loading...');
+    market = "Kansas";
+    loadCol(market);
+});
+
+$('#kentucky').click(function(e) {
+    e.preventDefault();// prevent the default anchor functionality
+    $("#dropdowntext").html('<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Loading...');
+    market = "Kentucky";
+    loadCol(market);
+});
+
+$('#michigan').click(function(e) {
+    e.preventDefault();// prevent the default anchor functionality
+    $("#dropdowntext").html('<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Loading...');
+    market = "Michigan";
+    loadCol(market);
+});
+
+$('#missouri').click(function(e) {
+    e.preventDefault();// prevent the default anchor functionality
+    $("#dropdowntext").html('<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Loading...');
+    market = "Missouri";
+    loadCol(market);
+});
+
+$('#northCarolina').click(function(e) {
+    e.preventDefault();// prevent the default anchor functionality
+    $("#dropdowntext").html('<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Loading...');
+    market = "North Carolina";
+    loadCol(market);
+});
+
+$('#newMexico').click(function(e) {
+    e.preventDefault();// prevent the default anchor functionality
+    $("#dropdowntext").html('<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Loading...');
+    market = "New Mexico";
+    loadCol(market);
+});
+
+$('#ohio').click(function(e) {
+    e.preventDefault();// prevent the default anchor functionality
+    $("#dropdowntext").html('<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Loading...');
+    market = "Ohio";
+    loadCol(market);
+});
+
+$('#southCarolina').click(function(e) {
+    e.preventDefault();// prevent the default anchor functionality
+    $("#dropdowntext").html('<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Loading...');
+    market = "South Carolina";
+    loadCol(market);
+});
+
+$('#tennessee').click(function(e) {
+    e.preventDefault();// prevent the default anchor functionality
+    $("#dropdowntext").html('<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Loading...');
+    market = "Tennessee";
+    loadCol(market);
+});
+
+$('#texas').click(function(e) {
+    e.preventDefault();// prevent the default anchor functionality
+    $("#dropdowntext").html('<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Loading...');
+    market = "Texas";
+    loadCol(market);
+});
+
+$('#virginia').click(function(e) {
+    e.preventDefault();// prevent the default anchor functionality
+    $("#dropdowntext").html('<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Loading...');
+    market = "Virginia";
+    loadCol(market);
+});
+
+$('#washington').click(function(e) {
+    e.preventDefault();// prevent the default anchor functionality
+    $("#dropdowntext").html('<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Loading...');
+    market = "Washington";
+    loadCol(market);
+});
+
+
+
+
+//loadCol ----> populates html by calling getHTML and then places the html in the ICUs div
+function loadCol(market){
+    $('#accountAndICUs').hide();
+    acctList.reIndex();
+    //initiate var html
+    var html = "";
+    acctList.clear();
+    StacICUAccountsQueryExt.queryAccounts(market, function(result, event){
+        if (result.length > 0){
+            $('#accountList').show();
+            for(var i=0; i<result.length; i++){
+                var r = result[i];
+                var nextSteps;
+                if(r.ICS_Tactical_Next_Steps__c != null){
+                    nextSteps=r.ICS_Tactical_Next_Steps__c;
+                    nextSteps=nextSteps.replace(/(\r\n|\n|\r)/gm," ");
+                }
+                var acctname = '<a id="'+r.Name+'"href="#" onclick="getAcct(&quot;'+r.Id+'&quot;, &quot;'+r.Name+'&quot;, &quot;'+r.ShippingAddress__c+'&quot;, &quot;'+r.Phone+'&quot;, &quot;'+nextSteps+'&quot;, &quot;'+r.ICU_CCU_Total__c+'&quot;);">'+r.Name+'</a>';
+                
+                var icuTotal = "";
+                if(r.ICU_CCU_Total__c == null){
+                    icuTotal = '<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>';
+                } else {
+                    icuTotal = '<b>Total ICS Discharge Volume: </b>'+r.ICU_CCU_Total__c.toString();
+                }
+                
+                var address = "";
+                
+                if (r.ShippingAddress__c == null){
+                    address = '<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>';
+                } else {
+                    address = '<b>Address: </b>'+r.ShippingAddress__c;
+                }
+                
+                acctList.add({acctname, icuTotal, address});
+            }
+            
+        } else {
+            $('#accountList').hide();
+                              html += '</br><div class="alert alert-info" role="alert"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span><b> Accounts for this market are not yet available! </b>Please check again soon, or contact your supervisor for more information.</div>';
+        }
+        
+        $("#dropdowntext").html('Select a market');
+        
+        document.getElementById("accounts").innerHTML = html;
+        
+    }, {escape:true}); 
+    
+}
+
+function getAcct(acctId, acctName, acctAddress, acctPhone, acctTactNxtStp, acctIcuTotal){
+    $("#dropdowntext").html('<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Loading...');
+    $("#searchTextbox").blur();
+    
+    StacICUAccountsQueryExt.queryICU(acctId, function(result, event){
+        if(result.length>0){
+                var htmlIcuInfo = "";
+                htmlIcuInfo += '<table class="table table-striped">'+
+                   '<thead>'+
+                   '<tr>'+
+                   '<th style="font-size:12px; padding:1px;">ICS Code</th>'+
+                   '<th style="font-size:12px; padding:1px;">Discharge Volume</th>'+
+                   '<th style="font-size:12px; padding:1px;">Units</th>'+
+                   '</tr>'+
+                   '</thead>'+
+                   '<tbody>';
+            
+            var htmlAccountInfo = "";
+            selectedAcctId = acctId;
+            if ( (typeof window.sforce != 'undefined') && (window.sforce!=null) ) {
+                htmlAccountInfo += '<div class="well well-sm" style="height: 115px;"><a onclick="sf1navigation();"><h3 style="padding: 0px; margin-top: 0px;">'+acctName+'</h3></a>';
+                //htmlAccountInfo += '<div class="well well-sm" style="height: 115px;"><a onclick="sf1navigation('+acctId+');"><h3 style="padding: 0px; margin-top: 0px;">'+acctName+'</h3></a>';
+                //htmlAccountInfo += '<div class="well well-sm" style="height: 115px;"><a onclick="" href="javascript:sforce.one.navigateToSObject(&quot;'+acctId+'&quot;)"><h3 style="padding: 0px; margin-top: 0px;">'+acctName+'</h3></a>';
+                //htmlAccountInfo += '<div class="well well-sm" style="height: 115px;"><a href="javascript:sforce.one.navigateToURL(/&quot;'+acctId+'&quot;)"><h3 style="padding: 0px; margin-top: 0px;">'+acctName+'</h3></a>';
+            }
+            else {
+                htmlAccountInfo += '<div class="well well-sm" style="height: 115px;"><a href="/'+acctId+'" target="_blank" ><h3 style="padding: 0px; margin-top: 0px;">'+acctName+'</h3></a>';
+            }
+            //htmlAccountInfo += '<div class="well well-sm" style="height:100px;"><a href="/'+acctId+'" target="_blank"><h3>'+acctName+'</h3></a>';
+            if (acctAddress != null){
+                htmlAccountInfo += '<h5>'+acctAddress+'</h5>';
+            }
+            
+            if (acctPhone != null){
+                acctPhone = acctPhone.replace(/[^\/\d]/g,'');
+                htmlAccountInfo += '<h5>('+acctPhone.substring(0,3)+') '+acctPhone.substring(3,6)+'-'+acctPhone.substring(6,acctPhone.length)+'</h5>';
+            }
+            htmlAccountInfo += '</div>';
+            
+            var htmlIcuTotal = getIcuTotalHTML(acctIcuTotal);
+            for(var i=0; i<result.length; i++){
+                var r = result[i];
+                htmlIcuInfo = getIcuHTML(htmlIcuInfo, r.ICU_Code__c, r.Discharge_Volume__c, r.Unit__c, r.Id);   
+            }
+            
+            $('#accountList').hide();
+            $('#dropdownMenu1').hide();
+            $('#backButton').show();
+            $('#accountAndICUs').show();
+            document.getElementById("accountInfo").innerHTML = htmlAccountInfo;
+            document.getElementById("ICUtotal").innerHTML = htmlIcuTotal;
+            document.getElementById("ICUs").innerHTML = htmlIcuInfo;
+            //document.getElementById("closeButton").innerHTML = '<a class="btn btn-danger" onclick="$(&quot;#accountAndICUs&quot;).hide(); $(&quot;#accountList&quot;).show();"><h5><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>Click here to close out of '+acctName+'</h5></a>';
+                    
+        } else {
+            alert("No ICU data");   
+        }
+        
+    }, {escape:true}); 
+    
+    if (acctTactNxtStp != 'undefined'){
+        document.getElementById("tacticalNextSteps").innerHTML = '<div class="panel panel-default" style="height:115px;">'+
+        '<div class="panel-heading">'+
+        '<h3 class="panel-title">Tactical Next Steps</h3>'+
+        '</div>'+
+        '<div class="panel-body">'+acctTactNxtStp+'</div>'+
+        '</div>';
+    } else {
+        document.getElementById("tacticalNextSteps").innerHTML = '<div class="panel panel-default" style="height:115px;">'+
+        '<div class="panel-heading">'+
+        '<h3 class="panel-title">Tactical Next Steps</h3>'+
+        '</div>'+
+        '<div class="panel-body"><div class="alert alert-info" role="alert" style="padding: 10px;"><span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span> No Tactical Next Steps Data Available</div></div>'+
+        '</div>';
+    }
+    
+    $("#dropdowntext").html('Select a market');
+
+}
+
+function refreshNextSteps(acctId){
+     var acctTactNxtStp = "";
+     StacICUAccountsQueryExt.queryAccount(acctId, function(result, event){
+          if (result.length>0){
+             var r = result[0];
+             acctTactNxtStp = r.ICS_Tactical_Next_Steps__c;
+             if (acctTactNxtStp != null){
+                 document.getElementById("tacticalNextSteps").innerHTML = '<div class="panel panel-default" style="height:115px;">'+
+                 '<div class="panel-heading">'+
+                 '<h3 class="panel-title">Tactical Next Steps</h3>'+
+                 '</div>'+
+                 '<div class="panel-body">'+acctTactNxtStp+'</div>'+
+                 '</div>';
+             } else {
+                 document.getElementById("tacticalNextSteps").innerHTML = '<div class="panel panel-default" style="height:115px;">'+
+                 '<div class="panel-heading">'+
+                 '<h3 class="panel-title">Tactical Next Steps</h3>'+
+                 '</div>'+
+                 '<div class="panel-body"><div class="alert alert-info" role="alert" style="padding: 10px;"><span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span> No Tactical Next Steps Data Available</div></div>'+
+                 '</div>';
+             }
+        }
+     }, {escape:true}); 
+}
+
+           
+//getIcuHTML ----> populates html
+function getIcuHTML(html, name, ICU, units, id){
+    if(ICU != ""){
+        var unitHtml='';
+        var unit='';
+        if(units == null){
+            unitHtml = '<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span> No Data Available';
+        } else {
+            unitHtml = units;
+            unit = units;
+        }
+        
+        if(ICU == null){
+            var dischargeVolume = '<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span> No Data Available';
+        } else {
+            var dischargeVolume = ICU.toString();
+            if(dischargeVolume.length==4){
+                dischargeVolume = dischargeVolume.substring(0,1)+","+dischargeVolume.substring(1,dischargeVolume.length);
+            } else if(dischargeVolume.length==5){
+                dischargeVolume = dischargeVolume.substring(0,2)+","+dischargeVolume.substring(2,dischargeVolume.length);
+            } else if(dischargeVolume.length==6){
+                dischargeVolume = dischargeVolume.substring(0,3)+","+dischargeVolume.substring(3,dischargeVolume.length);
+            }
+        }
+         
+        html += '<tr id="'+id+'">'+
+                '<td style="font-size:12px;">'+name+'</td>'+
+                '<td style="font-size:12px;">'+dischargeVolume+'</td>';
+                
+        if('{!$Profile.Name}'.includes('Manager') || '{!$Profile.Name}'.includes('Admin')) html+='<td style="font-size:12px;" id="unit'+id+'">'+unitHtml+'<span class="pull-right"><a href="#" onclick="editUnit(\'unit'+id+'\', \''+unit+'\');"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span> edit</a></span></td></tr>';
+                else html+='<td style="font-size:12px;">'+unitHtml+'</td></tr>';
+                
+          
+    }
+    return html;
+}
+
+function editUnit(rowId, unit){
+    if(unit=='<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span> No Data Available') unit='';
+    var html = '<div class="input-group">'+
+      '<input id="saveData'+rowId+'" type="text" class="form-control" placeholder="Unit Information" value="'+unit+'">'+
+      '<span class="input-group-btn">'+
+      '<button class="btn btn-primary" type="button" onclick="backToEdit(\''+rowId+'\');">Save</button>'+
+      '</span>'+
+      '</div>';
+
+    document.getElementById(rowId).innerHTML = html;
+}
+            
+function backToEdit(rowId){
+    var unit = document.getElementById("saveData"+rowId).value;
+    var html = unit+'<span class="pull-right"><a href="#" onclick="editUnit(\''+rowId+'\', \''+unit+'\');"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span> edit</a></span>';
+    StacICUAccountsQueryExt.updateICU(rowId, unit, function(result, event){
+        //if(result) alert("Saved!");
+        //else alert("Didn't save");
+    }, {escape:true}); 
+    document.getElementById(rowId).innerHTML = html;
+}
+
+//getHeaderHTML ----> populates html
+function getIcuTotalHTML(total){
+    var html = "";
+    if(total != ""){
+        if(total.length==4){
+            total = total.substring(0,1)+","+total.substring(1,total.length);
+        } else if(total.length==5){
+            total = total.substring(0,2)+","+total.substring(2,total.length);
+        } else if(total.length==6){
+            total = total.substring(0,3)+","+total.substring(3,total.length);
+        } 
+        html += '<h4 style="font-size:15px;"><b style="color:#428bca;">Total ICS Discharge Volume </b>'+total+'</h4>';
+        
+    } else {
+        html += '<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span> No Data Available';
+    }
+    return html;
+}
+
+
+$('.sort').click(function() {
+    if ($(this).html() == 'Sort by account name') {
+        document.getElementById('icuTotalSort').innerHTML = 'Sort by ICS total';
+        $(this).html('<span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span> Sort by account name');
+    } else if ($(this).html() == 'Sort by ICS total'){
+                document.getElementById('acctNameSort').innerHTML = 'Sort by account name'; 
+        $(this).html('<span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span> Sort by ICS total');
+    } else if ($(this).html() == '<span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span> Sort by account name') {
+        $(this).html('<span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span> Sort by account name');
+    } else if ($(this).html() == '<span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span> Sort by ICS total') {
+        $(this).html('<span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span> Sort by ICS total');
+    }  else if ($(this).html() == '<span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span> Sort by account name') { 
+        $(this).html('<span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span> Sort by account name');
+    } else if ($(this).html() == '<span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span> Sort by ICS total') { 
+        $(this).html('<span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span> Sort by ICS total');
+    } 
+});
+
+function sf1navigation(){
+    //alert("Here");
+    $('#icuInfo').hide();
+    refresh = true;
+    sforce.one.navigateToSObject(selectedAcctId);
+    //$('#icuInfo').show();
+    $("#icuInfo").delay(500).show(0);
+}
+
+</script>
+
+<script>
+var options = {
+    valueNames: [ 'acctname', 'icuTotal', 'address'],
+    item: '<li class="borderlist"><h4 style="color: #428bca;" class="acctname"></h4><p class="icuTotal" style="line-height: 0.1;"></p><p class="address" style="line-height: 0.9;"></p></li>'
+};
+
+var values = [];
+var acctList = new List('accountList', options, values);
+
+</script>
+ 
+</body>
+</html>
+</apex:page>

@@ -1,0 +1,116 @@
+<apex:page standardController="CMS_Data__c"
+			extensions="AA_CMSData" 
+action="{!pullPDFData}"
+renderAs="pdf"
+>
+
+<apex:form >
+<span style="font-size: 22px">{!accName}</span>
+<br/>
+<span style="font-size: 22px">CMS.gov Data: Last Updated 1/1/{!dateVal}</span>
+<br/>
+<br/>
+    <div id="reportSec">
+        <apex:panelGroup >
+    	<apex:outputPanel >
+    	<div id="col1">
+                <div >    		
+            		<table width="400px">
+                		<tr>
+                		<td>
+                		<div style="font-size: 16px; font-weight:bold">Facility Details</div>
+                		</td>
+                		<td>
+                		<div style="font-size: 16px; font-weight:bold">Therapy Details</div>
+                		</td>
+                		</tr>
+                		<tr>
+                            <td><apex:outputText value="County Name: "/><br/>
+                                <apex:outputText style="font-weight:bold" value="{!cmsData.CMS_County_Name__c}" /></td>
+                                <td><apex:outputText value="RU Days: "/><br/>
+                                <apex:outputText style="font-weight:bold" value="{!cmsData.CMS_RU_Days__c}" /></td>
+                                
+                		</tr>
+                        <tr>    
+                            <td><apex:outputText value="Ownership: "/><br/>
+                                <apex:outputText style="font-weight:bold" value="{!cmsData.CMS_Ownership__c}" /></td>
+                                <td><apex:outputText value="RU Prcnt: "/><br/>
+                                <apex:outputText style="font-weight:bold" value="{!cmsData.CMS_RU_Prcnt__c}"/>
+                                </td>
+                                
+                		</tr>
+                		<tr>    
+                            <td><apex:outputText value="CCRC: "/><br/>
+                                <apex:outputField value="{!cmsData.CMS_ContCare_Fac__c}" /></td>
+                                <td><apex:outputText value="RV Days: "/><br/>
+                                <apex:outputText style="font-weight:bold" value="{!cmsData.CMS_RV_Days__c}" /></td>
+                                
+                                
+                        </tr>
+                        <tr>    
+                            <td><apex:outputText value="Certified Beds: "/><br/>
+                                <apex:outputText style="font-weight:bold" value="{!cmsData.CMS_Cert_Beds__c}" /></td>
+                                   <td><apex:outputText value="RV Prcnt: "/><br/>
+                                <apex:outputText style="font-weight:bold" value="{!cmsData.CMS_RV_Prcnt__c}"/>
+                                </td>
+                                
+                        </tr>
+                        <tr>    
+                            <td><apex:outputText value="Bed Occupancy: "/><br/>
+                                <apex:outputText style="font-weight:bold" value="{!cmsData.CMS_Bed_Occupancy2__c}" />%</td>
+                                <td><apex:outputText value="RH Days: "/><br/>
+                                <apex:outputText style="font-weight:bold" value="{!cmsData.CMS_RH_Days__c}" /></td>
+                        </tr>
+                        <tr>
+                            <td><apex:outputText value="Average Length of Stay: "/><br/>
+                                <apex:outputText style="font-weight:bold" value="{!cmsData.CMS_Average_Length_of_Stay__c}" /></td>
+                                <td>
+                        	<apex:outputText value="RH Prcnt: "/><br/>
+                                <apex:outputText style="font-weight:bold" value="{!cmsData.CMS_RH_Prcnt__c}"/>
+                        </td>
+                        </tr>
+                        <tr>
+                        <td>
+                        <div style="font-size: 16px; font-weight:bold">Patient Star Rating </div>
+                        </td>
+                        <td><apex:outputText value="RM Days: "/><br/>
+                                <apex:outputText style="font-weight:bold" value="{!cmsData.CMS_RM_Days__c}" /></td>
+                        </tr>
+                        <tr>
+                        <td><apex:outputText value="Overall Rating: "/><br/>
+                                <apex:outputText style="font-weight:bold" value="{!cmsData.CMS_Overall_Rating__c}" /></td>
+                        <td><apex:outputText value="RM Prcnt: "/><br/>
+                                <apex:outputText style="font-weight:bold" value="{!cmsData.CMS_RM_Prcnt__c}"/>
+                        </td>
+                        </tr>
+                        <tr>
+                        <td><apex:outputText value="Health Inspection Rating: "/><br/>
+                                <apex:outputText style="font-weight:bold" value="{!cmsData.CMS_Health_Insp_Rating__c}" /></td>
+                                
+                        </tr>
+                        <tr>
+                        <td><apex:outputText value="Quality Rating: "/><br/>
+                                <apex:outputText style="font-weight:bold" value="{!cmsData.CMS_QM_Rating__c}" /></td>
+                        </tr>
+                        <tr>
+                        <td><apex:outputText value="Staffing Rating: "/><br/>
+                                <apex:outputText style="font-weight:bold" value="{!cmsData.CMS_Staffing_Rating__c}" /></td>
+                        </tr>
+                    </table>
+                    </div>
+                    </div>
+                    </apex:outputPanel>
+                    <apex:outputPanel >
+                    
+        </apex:outputPanel>
+                    </apex:panelGroup>
+                    
+                    <div>
+                    </div>
+        			</div>
+        		
+    
+    
+    
+</apex:form>
+</apex:page>

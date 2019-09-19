@@ -1,0 +1,893 @@
+<apex:page controller="AccountDashboardExt" sidebar="false" standardStylesheets="false" docType="html-5.0" language="en-US" applyHTMLTag="false" showHeader="false">
+    <head>
+        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css"/>
+
+        <style>
+        .panel-green {
+            border-color: #5cb85c;
+        }
+
+        .panel-green .panel-heading {
+            border-color: #5cb85c;
+            color: #fff;
+            background-color: #5cb85c;
+        }
+
+        .panel-green a {
+            color: #5cb85c;
+        }
+
+        .panel-green a:hover {
+            color: #3d8b3d;
+        }
+
+        .panel-orange {
+            border-color: #F1A636;
+        }
+
+        .panel-orange .panel-heading {
+            border-color: #F1A636;
+            color: #fff;
+            background-color: #F1A636;
+        }
+
+        .panel-orange a {
+            color: #F1A636;
+        }
+
+        .panel-orange a:hover {
+            color: #c0842b;
+        }
+
+        .panel-red {
+            border-color: #d9534f;
+        }
+
+        .panel-red .panel-heading {
+            border-color: #d9534f;
+            color: #fff;
+            background-color: #d9534f;
+        }
+
+        .panel-red a {
+            color: #d9534f;
+        }
+
+        .panel-red a:hover {
+            color: #b52b27;
+        }
+
+        .panel-purple {
+            border-color: #9F96EE;
+        }
+
+        .panel-purple .panel-heading {
+            border-color: #9F96EE;
+            color: #fff;
+            background-color: #9F96EE;
+        }
+
+        .panel-purple a {
+            color: #9F96EE;
+        }
+
+        .panel-purple a:hover {
+            color: #7f78be;
+        }
+
+        .circle {
+            position: relative;
+            border-radius: 50%;
+            width: 100%;
+            height: auto;
+            padding-top: 100%;
+            background: white;
+        }
+
+        .just-padding {
+            padding: 10px;
+        }
+        </style>
+    </head>
+    <div class="container" style="height: 99vh; width: 99vw; overflow-y: scroll; -webkit-overflow-scrolling: touch;">
+    <div class="just-padding" id="menu">
+        <div class="col-xs-12 col-sm-12 col-md-6">
+                <div class="panel panel-green">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <i class="fa fa-birthday-cake fa-3x"></i>
+                            </div>
+                            <div class="col-xs-9 text-right">
+                                <h4 id="birthdaysNumber"><i class="fa fa-refresh fa-spin fa-1x fa-fw margin-bottom"></i></h4>
+                                <div><b>Recent Birthdays</b></div>
+                            </div>
+                        </div>
+                    </div>
+                    <a data-toggle="collapse" href="#birthdays" aria-expanded="false" aria-controls="birthdays" id="button4">
+                        <div class="panel-footer">
+                            <span class="pull-left" id="details4">View Details</span>
+                            <span class="pull-right" id="arrow4"><i class="fa fa-arrow-circle-right"></i></span>
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
+                </div>
+                <div id="birthdays" class="panel-collapse collapse"></div>
+            </div>
+            <div class="col-xs-12 col-sm-12 col-md-6">
+                <div class="panel panel-green">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <i class="fa fa-pencil fa-3x"></i>
+                            </div>
+                            <div class="col-xs-9 text-right">
+                                <h4 id="touchpointsNumber" style="height: 20px;"></h4>
+                                <div><b>Recent Touchpoints</b></div>
+                            </div>
+                        </div>
+                    </div>
+                    <a data-toggle="collapse" href="#recentTouchpoints" aria-expanded="false" aria-controls="recentTouchpoints" id="button6">
+                        <div class="panel-footer">
+                            <span class="pull-left" id="details6">View Details</span>
+                            <span class="pull-right" id="arrow6"><i class="fa fa-arrow-circle-right"></i></span>
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
+                </div>
+                <div id="recentTouchpoints" class="panel-collapse collapse">
+                    <div class="col-xs-12 col-sm-12 col-md-12">
+                        <div id="recentTouchpointsTable">
+                        <div class="panel panel-default">
+                                <div class="panel-heading" style="padding: 1px; padding-left: 8px;"><h4 style="padding: 1px; font-size: 14px;"><b> 5 Most Recent Touchpoints</b></h4></div>
+                                 <div class="table">
+                                    <table class="table table-bordered">
+                                        <thead id="touchpointsTableHead">
+                                            <tr style="padding: 1px; font-size: 11px;">
+                                                <th>Sales Associate</th>
+                                                <th>Contact</th>
+                                                <th>Date</th>
+                                                <th>Completed</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="touchpointsTableBody">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <div class="col-xs-12 col-sm-12 col-md-12">
+            <div class="panel panel-primary" >
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <i class="fa fa-users fa-3x"></i>
+                        </div>
+                        <div class="col-xs-9 text-right">
+                            <h4 id="accountTeamNumber"><i class="fa fa-refresh fa-spin fa-1x fa-fw margin-bottom"></i></h4>
+                            <div><b>Kindred Sales Team</b></div>
+                        </div>
+                    </div>
+                </div>
+                <a data-toggle="collapse" href="#accountTeam" aria-expanded="false" aria-controls="accountTeam" id="button1">
+                    <div class="panel-footer">
+                        <span class="pull-left" id="details1">View Details</span>
+                        <span class="pull-right" id="arrow1"><i class="fa fa-arrow-circle-right"></i></span>
+                        <div class="clearfix"></div>
+                    </div>
+                </a>
+             </div>
+             <div id="accountTeam" class="panel-collapse collapse"></div>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-12">
+                    <div class="panel panel-orange">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-bar-chart fa-3x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <h4 id="accountMetricsNumber"></h4>
+                                    <div><b>Referrals vs Admits</b></div>
+                                </div>
+                            </div>
+                        </div>
+                        <a data-toggle="collapse" href="#accountMetrics" aria-expanded="false" aria-controls="accountMetrics" id="button2">
+                            <div class="panel-footer">
+                                <span class="pull-left" id="details2">View Details</span>
+                                <span class="pull-right" id="arrow2"><i class="fa fa-arrow-circle-right"></i></span>
+                                <!--<span class="pull-right"><i class="fa fa-arrow-circle-right rotate" id="arrow1"></i></span>-->
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+                    <div id="accountMetrics" class="panel-collapse collapse">
+                        <div class="col-xs-12 col-sm-12 col-md-6">
+                            <div id="HHchartBlock"></div>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-6">
+                            <div id="HPchartBlock"></div>
+                        </div>
+                    </div>
+                </div>
+        <div class="col-xs-12 col-sm-12 col-md-6">
+                    <div class="panel panel-red">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa fa-medkit fa-3x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <h4 id="accountMetricsNumber"></h4>
+                                    <div><b>HMS</b></div>
+                                </div>
+                            </div>
+                        </div>
+                        <a data-toggle="collapse" href="#HMS" aria-expanded="false" aria-controls="HMS" id="button7">
+                            <div class="panel-footer">
+                                <span class="pull-left" id="details7">View Details</span>
+                                <span class="pull-right" id="arrow7"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+                    <div id="HMS" class="panel-collapse collapse">
+                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                <div class="panel panel-default" style="border: 1px solid #428bca;">
+                                    <div class="panel-heading" style="background-color:#428bca; padding: 4px; color:white;"><h5><b>HMS Home Health</b><span class="pull-right"><b>ALL (d.r) </b><b style="padding: 10px;" id="hh1"></b></span></h5></div>
+                                        <div class="panel-body" style="min-height: 110px; font-size: 12px; padding: 2px;">
+                                            <div class="row"><div class="col-xs-12 col-sm-12 col-md-12"><b style="color:#428bca;">Cancer/Bold/Vascular (d.r)</b><b style="padding: 10px;" id="hh2"></b></div></div>
+                                            <div class="row"><div class="col-xs-12 col-sm-12 col-md-12"><b style="color:#428bca;">CHF/Stroke/COPD (d.r)</b><b style="padding: 10px;" id="hh3"></b></div></div>
+                                            <div class="row"><div class="col-xs-12 col-sm-12 col-md-12"><b style="color:#428bca;">Endo/Wounds (d.r)</b><b style="padding: 10px;" id="hh4"></b></div></div>
+                                            <div class="row"><div class="col-xs-12 col-sm-12 col-md-12"><b style="color:#428bca;">Ortho (d.r)</b><b style="padding: 10px;" id="hh5"></b></div></div>
+                                            <div class="row"><div class="col-xs-12 col-sm-12 col-md-12"><b style="color:#428bca;">Urinary/Kidney/GI (d.r)</b><b style="padding: 10px;" id="hh6"></b></div></div>
+                                        </div>
+                                     </div>
+                                </div>
+                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                <div class="panel panel-default" style="border: 1px solid #d9534f;">
+                                    <div class="panel-heading" style="background-color:#d9534f; padding: 4px; color:white;"><h5><b>HMS Hospice</b><span class="pull-right"><b>ALL (d.r) </b><b style="padding: 10px;" id="hp1"></b></span></h5></div>
+                                         <div class="panel-body" style="min-height: 110px; font-size: 12px; padding: 2px;">
+                                            <div class="row"><div class="col-xs-12 col-sm-12 col-md-12"><b style="color:#d9534f;">Cancer (d.r)</b><b style="padding: 10px;" id="hp2"></b></div></div>
+                                            <div class="row"><div class="col-xs-12 col-sm-12 col-md-12"><b style="color:#d9534f;">CHF (d.r)</b><b style="padding: 10px;" id="hp3"></b></div></div>
+                                            <div class="row"><div class="col-xs-12 col-sm-12 col-md-12"><b style="color:#d9534f;">COPD (d.r)</b><b style="padding: 10px;" id="hp4"></b></div></div>
+                                            <div class="row"><div class="col-xs-12 col-sm-12 col-md-12"><b style="color:#d9534f;">Debility (d.r)</b><b style="padding: 10px;" id="hp5"></b></div></div>
+                                            <div class="row"><div class="col-xs-12 col-sm-12 col-md-12"><b style="color:#d9534f;">Dementia (d.r)</b><b style="padding: 10px;" id="hp6"></b></div></div>
+                                            <div class="row"><div class="col-xs-12 col-sm-12 col-md-12"><b style="color:#d9534f;">Influencer Network (d.r)</b><b style="padding: 10px;" id="hp7"></b></div></div>
+                                         </div>
+                                 </div>
+                             </div>
+                    </div>
+                </div>
+        <div class="col-xs-12 col-sm-12 col-md-6">
+            <div class="panel panel-red">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <i class="fa fa-heartbeat fa-3x"></i>
+                        </div>
+                        <div class="col-xs-9 text-right">
+                            <h4 id="accountNearbyNumber"></h4>
+                            <div><b>Admits YTD vs Admits PY</b></div>
+                        </div>
+                    </div>
+                </div>
+                <a data-toggle="collapse" href="#referralsAdmits" aria-expanded="false" aria-controls="referralsAdmits" id="button3">
+                    <div class="panel-footer">
+                        <span class="pull-left" id="details3">View Details</span>
+                        <span class="pull-right" id="arrow3"><i class="fa fa-arrow-circle-right"></i></span>
+                        <div class="clearfix"></div>
+                    </div>
+                </a>
+            </div>
+            <div id="referralsAdmits" class="panel-collapse collapse">
+                    <div class="just-padding">
+                    <div class="row">
+                         <div class="col-xs-12 col-sm-12 col-md-12">
+                             <h5>Home Health</h5>
+                             <div id="hhAdmits">
+                             </div>
+                         </div>
+                         <div class="col-xs-12 col-sm-12 col-md-12">
+                             <h5>Hospice</h5>
+                             <div id="hpAdmits">
+                             </div>
+                         </div>
+                    </div>
+                    </div>
+            </div>
+        </div>
+            <div class="col-xs-12 col-sm-12 col-md-12">
+                <div class="panel panel-purple">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <i class="fa fa-history fa-3x"></i>
+                            </div>
+                            <div class="col-xs-9 text-right">
+                                <h4 id="recentEventsNumber"><i class="fa fa-refresh fa-spin fa-1x fa-fw margin-bottom"></i></h4>
+                                <div><b>Recent Events</b></div>
+                            </div>
+                        </div>
+                    </div>
+                    <a data-toggle="collapse" href="#recentEvents" aria-expanded="false" aria-controls="recentEvents" id="button5">
+                        <div class="panel-footer">
+                            <span class="pull-left" id="details5">View Details</span>
+                            <span class="pull-right" id="arrow5"><i class="fa fa-arrow-circle-right"></i></span>
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
+                </div>
+                <div id="recentEvents" class="panel-collapse collapse">
+                    <div class="col-xs-12 col-sm-12 col-md-6">
+                        <div id="recentEventsPie"></div>
+                    </div>
+                    <div class="col-xs-12 col-sm-12 col-md-6" style="padding: 1px;">
+                        <div id="activityTable">
+                            <div class="panel panel-default">
+                                <div class="panel-heading" style="padding: 1px; padding-left: 8px;"><h4 style="padding: 1px; font-size: 14px;"><b> Recent Events for Rolling 6 Months</b></h4></div>
+                                 <div class="table">
+                                    <table class="table table-bordered">
+                                        <thead id="activityTableHead">
+                                        </thead>
+                                        <tbody id="activityTableBody">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <script src="https://www.google.com/jsapi"></script>
+    <script>
+        $( document ).ready(function() {
+            initCharts();
+        });
+
+        AccountDashboardExt.queryAccountTeam('{!$CurrentPage.parameters.acctid}', function(result, event){
+
+            var html = '';
+            if (result.length == 0){
+                document.getElementById("accountTeamNumber").innerHTML = '0';
+                document.getElementById("accountTeam").innerHTML = '<div class="alert alert-info" role="alert"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span><b> There are no account team members for this account! </b>Please check again soon, or contact your supervisor for more information.</div>';
+            } else {
+                document.getElementById("accountTeamNumber").innerHTML = result.length;
+                for (var i=0; i<result.length; i++){
+                    var r = result[i];
+                    var title, lineOfBusiness, assignmentDate;
+
+                    if(r.User.Title == null){
+                        title = '<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>';
+                    } else {
+                        title = r.User.Title;
+                    }
+
+                    if(r.CreatedDate == null){
+                      assignmentDate = '<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>';
+                    } else{
+                      var d = new Date(r.CreatedDate);
+                      assignmentDate = (d.getMonth() + 1) + '/' + d.getDate() + '/' +  d.getFullYear();
+                    }
+
+                    if(r.User.Line_of_Business__c == null){
+                        lineOfBusiness = '<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>';
+                    } else {
+                        if(r.User.Line_of_Business__c == 'HD'){
+                            lineOfBusiness = 'Hospital Division';
+                        } else if(r.User.Line_of_Business__c == 'NCD'){
+                            lineOfBusiness = 'Nursing Center Division';
+                        } else if(r.User.Line_of_Business__c == 'KHRS'){
+                            lineOfBusiness = 'Kindred Healthcare Rehabilitation Services';
+                        } else if(r.User.Line_of_Business__c == 'HH'){
+                            lineOfBusiness = 'Home Health';
+                        } else if(r.User.Line_of_Business__c == 'HP'){
+                            lineOfBusiness = 'Hospice';
+                        } else if(r.User.Line_of_Business__c == 'HH/HP'){
+                            lineOfBusiness = 'Home Health and Hospice';
+                        } else {
+                            lineOfBusiness = r.User.Line_of_Business__c;
+                        }
+                    }
+
+                    html += '<div class="col-xs-12 col-sm-12 col-md-6"><div class="well well-sm" style="max-height: 100px; min-height: 80px;">';
+                    html += '<span class="pull-left"><img style="margin-top:10px;height: 50px; width: 50px; object-fit: cover; object-position: center;" class="img-circle" src="'+r.User.FullPhotoUrl+'"/></span>';
+                    html += '<b style="font-size: 18px; line-height: 1px; padding-left: 4px;"><a href="javascript:goToRecord(&quot;'+r.User.Id+'&quot;)"> '+r.User.Name+'</a></b><p style="font-size: 14px; line-height: 13px; padding-left: 55px;"><b> Title: </b>'+title+'<b></br> Line of Business: </b>'+lineOfBusiness+'<b></br> Assignment Date: </b>'+assignmentDate+'</p>';
+                    html += '</div></div>';
+                }
+                document.getElementById("accountTeam").innerHTML = html;
+            }
+        }, {escape:true});
+
+        function goToRecord(id){
+            if( (typeof sforce != 'undefined') && sforce && (!!sforce.one) ) {
+                    $("#menu").hide();
+                    sforce.one.navigateToSObject(id);
+                    setTimeout(function(){ $("#menu").show(); }, 500);
+            } else {
+                    var target = '/'+id;
+                    window.open(target);
+            }
+
+        }
+
+        //account team button animation
+        $('#button1').click(function(){
+            if($('#arrow1').html()== '<i class="fa fa-arrow-circle-right"></i>'){
+                $('#arrow1').html('<i class="fa fa-arrow-circle-down"></i>');
+                $('#details1').html('Hide Details');
+            } else {
+                $('#arrow1').html('<i class="fa fa-arrow-circle-right"></i>');
+                $('#details1').html('View Details');
+            }
+
+        })
+
+        //account metric button animation
+        $('#button2').click(function(){
+            initCharts();
+            if($('#arrow2').html()== '<i class="fa fa-arrow-circle-down"></i>'){
+                $('#arrow2').html('<i class="fa fa-arrow-circle-right"></i>');
+                $('#details2').html('View Details');
+            } else {
+                $('#arrow2').html('<i class="fa fa-arrow-circle-down"></i>');
+                $('#details2').html('Hide Details');
+            }
+
+        })
+
+        $('#button3').click(function(){
+            initCharts();
+            if($('#arrow3').html()== '<i class="fa fa-arrow-circle-down"></i>'){
+                $('#arrow3').html('<i class="fa fa-arrow-circle-right"></i>');
+                $('#details3').html('View Details');
+            } else {
+                $('#arrow3').html('<i class="fa fa-arrow-circle-down"></i>');
+                $('#details3').html('Hide Details');
+            }
+
+        })
+
+        $('#button4').click(function(){
+            if($('#arrow4').html()== '<i class="fa fa-arrow-circle-down"></i>'){
+                $('#arrow4').html('<i class="fa fa-arrow-circle-right"></i>');
+                $('#details4').html('View Details');
+            } else {
+                $('#arrow4').html('<i class="fa fa-arrow-circle-down"></i>');
+                $('#details4').html('Hide Details');
+            }
+
+        })
+
+        $('#button5').click(function(){
+            initCharts();
+            if($('#arrow5').html()== '<i class="fa fa-arrow-circle-down"></i>'){
+                $('#arrow5').html('<i class="fa fa-arrow-circle-right"></i>');
+                $('#details5').html('View Details');
+            } else {
+                $('#arrow5').html('<i class="fa fa-arrow-circle-down"></i>');
+                $('#details5').html('Hide Details');
+            }
+
+        })
+
+        $('#button6').click(function(){
+            if($('#arrow6').html()== '<i class="fa fa-arrow-circle-down"></i>'){
+                $('#arrow6').html('<i class="fa fa-arrow-circle-right"></i>');
+                $('#details6').html('View Details');
+            } else {
+                $('#arrow6').html('<i class="fa fa-arrow-circle-down"></i>');
+                $('#details6').html('Hide Details');
+            }
+
+        })
+
+        $('#button7').click(function(){
+            if($('#arrow7').html()== '<i class="fa fa-arrow-circle-down"></i>'){
+                $('#arrow7').html('<i class="fa fa-arrow-circle-right"></i>');
+                $('#details7').html('View Details');
+            } else {
+                $('#arrow7').html('<i class="fa fa-arrow-circle-down"></i>');
+                $('#details7').html('Hide Details');
+            }
+
+        })
+
+        // If you are confused about the chart creation, refer to Google Charts API -------> https://developers.google.com/chart/
+
+        // Load the Visualization API and the piechart package.
+        google.load('visualization', '1.0', {'packages':['corechart']});
+
+        // Set a callback to run when the Google Visualization API is loaded.
+        google.setOnLoadCallback(initCharts);
+
+
+        function initCharts() {
+
+        // Javascript remote into AccountDashboardQuery and run LoadOpps which returns related AccountMetrics data
+          AccountDashboardExt.loadOpps('{!$CurrentPage.parameters.acctid}', function(result, event){
+
+
+                 if(result.length != 0){
+                     var visualization = new google.visualization.ColumnChart(document.getElementById('HHchartBlock'));
+                     var visualization2 = new google.visualization.ColumnChart(document.getElementById('HPchartBlock'));
+
+                     var data = new google.visualization.DataTable();
+                     data.addColumn('string', 'Month');
+                     data.addColumn('number', 'Referrals');
+                     data.addColumn('number', 'Admits');
+
+                     var data2 = new google.visualization.DataTable();
+                     data2.addColumn('string', 'Month');
+                     data2.addColumn('number', 'Referrals');
+                     data2.addColumn('number', 'Admits');
+                 }
+
+                 for (var i=0; i<result.length; i++){
+                       var r = result[i];
+                       var m;
+                       var date = new Date(r.Month__c);
+                       m = date.toLocaleDateString();
+                       m = returnMonth(m);
+                       data.addRow([m, r.KAH_HH_Referrals__c, r.KAH_HH_PPS_Admits__c]);
+                       data2.addRow([m, r.KAH_HP_Referrals__c, r.KAH_HP_Qualified_Admits__c]);
+                 }
+
+                 if(result.length != 0){
+                 var view = new google.visualization.DataView(data);
+                      view.setColumns([0, 1,
+                       { calc: "stringify",
+                         sourceColumn: 1,
+                         type: "string",
+                         role: "annotation" },
+                       2, { calc: "stringify",
+                         sourceColumn: 2,
+                         type: "string",
+                         role: "annotation" }]);
+
+                       var view2 = new google.visualization.DataView(data2);
+                      view2.setColumns([0, 1,
+                       { calc: "stringify",
+                         sourceColumn: 1,
+                         type: "string",
+                         role: "annotation" },
+                       2, { calc: "stringify",
+                         sourceColumn: 2,
+                         type: "string",
+                         role: "annotation" }]);
+
+                       var options = {
+                        title: "Home Health",
+                        width: "100%",
+                        height: 225,
+                        bar: {groupWidth: "95%"},
+                        legend: { position: "top" },
+                        chartArea:{left:30, right:10},
+                        colors: ['#428bca', '#5cb85c']
+                      };
+
+                       var options2 = {
+                        title: "Hospice",
+                        width: "100%",
+                        height: 225,
+                        bar: {groupWidth: "95%"},
+                        legend: { position: "top" },
+                        chartArea:{left:30, right:10},
+                        colors: ['#f0ad4e', '#d9534f']
+                      };
+
+                      visualization.draw(view, options);
+                       visualization2.draw(view2, options2);
+                    } else {
+                        document.getElementById("accountMetrics").innerHTML = '<div class="alert alert-info" role="alert"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span><b> Refferal and admit data for this account is not yet available! </b>Please check again soon, or contact your supervisor for more information.</div>';
+                    }
+              }, {escape:true});
+
+              AccountDashboardExt.queryEvents('{!$CurrentPage.parameters.acctid}', function(result, event){
+                  if (result.length == 0){
+                      document.getElementById("recentEventsNumber").innerHTML = '0';
+                  } else {
+                      document.getElementById("recentEventsNumber").innerHTML = result.length;
+                      var visualization = new google.visualization.PieChart(document.getElementById('recentEventsPie'));
+                       var data = new google.visualization.DataTable();
+                       var ownersToEventTotal = {};
+                       for (var i=0; i<result.length; i++){
+                           var r = result[i];
+                           if (r.Owner.Name in ownersToEventTotal){
+                               ownersToEventTotal[r.Owner.Name] += 1;
+                           } else {
+                               ownersToEventTotal[r.Owner.Name] = 1;
+                           }
+                       }
+                       data.addColumn('string', 'Sales Associate');
+                       data.addColumn('number', 'Number of events');
+                       for (var owners in ownersToEventTotal) {
+                           data.addRow([owners, ownersToEventTotal[owners]]);
+                       }
+                      var options = {
+                        legend: 'none',
+                        chartArea: {
+                            left: "9%",
+                            top: "10%",
+                            height: "85%",
+                            width: "85%"
+                        },
+                        legend: { position: "left" },
+                        pieSliceText: 'value',
+                        title: 'Number of Events by Sales Associate MTD',
+                        pieStartAngle: 100,
+                      };
+                      var chart = new google.visualization.PieChart(document.getElementById('recentEventsPie'));
+                      chart.draw(data, options);
+                  }
+              }, {escape:true});
+          }
+
+        // resizes and redraws the charts if the page is resized ------> makes project mobile resonisve
+        $(window).resize(function () {
+            initCharts();
+        });
+
+
+        // when getting query results the first of month metrics is yielding previous months last day as the date
+        // this sets the month to the next month so the user sees the correct month string on their chart
+
+        function returnMonth(m){
+
+            if ((m.charAt(0) == "1" && m.charAt(1) == "/") || m.substr(0, 3) == "Jan") return("Feb");
+            if ((m.charAt(0) == "2" && m.charAt(1) == "/") || m.substr(0, 3) == "Feb") return("Mar");
+            if ((m.charAt(0) == "3" && m.charAt(1) == "/") || m.substr(0, 3) == "Mar") return("Apr");
+            if ((m.charAt(0) == "4" && m.charAt(1) == "/") || m.substr(0, 3) == "Apr") return("May");
+            if ((m.charAt(0) == "5" && m.charAt(1) == "/") || m.substr(0, 3) == "May") return("Jun");
+            if ((m.charAt(0) == "6" && m.charAt(1) == "/") || m.substr(0, 3) == "Jun") return("Jul");
+            if ((m.charAt(0) == "7" && m.charAt(1) == "/") || m.substr(0, 3) == "Jul") return("Aug");
+            if ((m.charAt(0) == "8" && m.charAt(1) == "/") || m.substr(0, 3) == "Aug") return("Sep");
+            if ((m.charAt(0) == "9" && m.charAt(1) == "/") || m.substr(0, 3) == "Sep") return("Oct");
+            if ((m.charAt(0) == "1" && m.charAt(1) == "0") || m.substr(0, 3) == "Oct") return("Nov");
+            if ((m.charAt(0) == "1" && m.charAt(1) == "1") || m.substr(0, 3) == "Nov") return("Dec");
+            if ((m.charAt(0) == "1" && m.charAt(1) == "2") || m.substr(0, 3) == "Dec") return("Jan");
+
+        }
+
+        function admitsHtml(YTD, PY){
+            if (YTD != null && PY != null){
+                var ytdInt = parseInt(YTD);
+                var pyInt = parseInt(PY);
+                var percent = ytdInt/pyInt;
+                percent = percent * 100;
+                percent = Math.floor(percent);
+                var color;
+                if (percent >= 105){
+                    color = 'info';
+                } else if (percent >= 100){
+                    color = 'success';
+                } else if (percent >= 85){
+                    color = 'warning';
+                } else {
+                    color = 'danger';
+                }
+                    var today = new Date();
+                    var year = today.getFullYear();
+                    if(percent > 100){
+                        return '<div>'+YTD+' Admits YTD ('+year+') vs '+PY+' Admits PY ('+(year-1)+')</div><div class="progress"><div class="progress-bar progress-bar-'+color+'" role="progressbar" aria-valuenow="'+percent+'" aria-valuemin="0" aria-valuemax="100" style="width:100%;"><b>'+percent+'%</b></div></div>';
+                    } else {
+                        return '<div>'+YTD+' Admits YTD ('+year+') vs '+PY+' Admits PY ('+(year-1)+')</div><div class="progress"><div class="progress-bar progress-bar-'+color+'" role="progressbar" aria-valuenow="'+percent+'" aria-valuemin="0" aria-valuemax="100" style="width:'+percent+'%;"><b>'+percent+'%</b></div></div>';
+                    }
+            } else {
+                return '<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>';
+            }
+        }
+
+        AccountDashboardExt.queryAdmits('{!$CurrentPage.parameters.acctid}', function(result, event){
+                var r = result[0];
+                document.getElementById("hhAdmits").innerHTML = admitsHtml(r.KAH_HH_PPS_Admits_YTD__c, r.KAH_HH_PPS_Prior_Year_Admits_Prior__c);
+                document.getElementById("hpAdmits").innerHTML = admitsHtml(r.KAH_HP_Qualified_Admits_YTD__c, r.KAH_HP_Qualified_Admits_PY__c);
+                // document.getElementById("ncdAdmits").innerHTML = admitsHtml(r.KAH_NCD_Admits_YTD__c, r.NCD_Admits_PY__c);
+                // document.getElementById("hdAdmits").innerHTML = admitsHtml(r.KAH_HD_Admits_YTD__c, r.HD_Admits_PY__c);
+            }, {escape:true});
+
+        AccountDashboardExt.queryBirthdays('{!$CurrentPage.parameters.acctid}', function(result, event){
+            if (result.length == 0){
+                document.getElementById("birthdaysNumber").innerHTML = '0';
+                document.getElementById("birthdays").innerHTML = '<div class="alert alert-info" role="alert"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span><b> There are no recent birthdays for contacts associated to this account! </b>Please check again soon, or contact your supervisor for more information.</div>';
+            } else {
+                document.getElementById("birthdaysNumber").innerHTML = result.length;
+                var html = '';
+                for (var i=0; i<result.length; i++){
+                    var r = result[i];
+                    var date = new Date(r.Birthdate);
+                    date.setDate(date.getDate() + 1);
+                    bday = date.toLocaleDateString();
+                    if(r.Title__c == null){
+                        title = '<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>';
+                    } else {
+                        title = r.Title__c;
+                    }
+
+                    html += '<div class="col-xs-12 col-sm-12 col-md-6"><div class="well well-sm" style=" min-height: 70px;">';
+                    html += '<span class="pull-left"><i class="fa fa-user-md fa-4x" aria-hidden="true"></i></span>';
+                    html += '<b style="font-size: 18px; line-height: 1px; padding-left: 10px;"><a href="javascript:goToRecord(&quot;'+r.Id+'&quot;)"> '+r.Name+'</a></b><p style="font-size: 14px; line-height: 13px; padding-left: 55px;"><b> Title: </b>'+title+'<b></br> Birthdate: </b>'+bday+'</p>';
+                    html += '</div></div>';
+                }
+                document.getElementById("birthdays").innerHTML = html;
+            }
+        }, {escape:true});
+
+        AccountDashboardExt.queryHms('{!$CurrentPage.parameters.acctid}', function(result, event){
+                  var r = result[0];
+
+                  //testing HH
+                  //if the field is null then set the content to an X icon
+                  //if not null set the content to the fields value
+                  if(r.KAH_HMS_ALL_HH_DR__c == null){
+                      document.getElementById("hh1").innerHTML = '<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>';
+                  } else {
+                      document.getElementById("hh1").innerHTML = r.KAH_HMS_ALL_HH_DR__c;
+                  }
+                  if(r.KAH_HMS_HH_Cancer_Bold_Vascular_DR__c == null){
+                      document.getElementById("hh2").innerHTML = '<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>';
+                  } else {
+                      document.getElementById("hh2").innerHTML = r. KAH_HMS_HH_Cancer_Bold_Vascular_DR__c;
+                  }
+                  if(r.KAH_HMS_HH_CHF_Stroke_COPD_DR__c == null){
+                      document.getElementById("hh3").innerHTML = '<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>';
+                  } else {
+                      document.getElementById("hh3").innerHTML = r. KAH_HMS_HH_CHF_Stroke_COPD_DR__c;
+                  }
+                  if(r.KAH_HMS_HH_Endo_Wounds_DR__c == null){
+                      document.getElementById("hh4").innerHTML = '<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>';
+                  } else {
+                      document.getElementById("hh4").innerHTML = r. KAH_HMS_HH_Endo_Wounds_DR__c;
+                  }
+                  if(r.KAH_HMS_HH_Urinary_Kidney_GI_DR__c == null){
+                      document.getElementById("hh5").innerHTML = '<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>';
+                  } else {
+                      document.getElementById("hh5").innerHTML = r.KAH_HMS_HH_Urinary_Kidney_GI_DR__c;
+                  }
+                  if(r.KAH_HMS_HH_Ortho_DR__c == null){
+                      document.getElementById("hh6").innerHTML = '<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>';
+                  } else {
+                      document.getElementById("hh6").innerHTML = r.KAH_HMS_HH_Ortho_DR__c;
+                  }
+
+                  //testing HP
+                  //if the field is null then set the content to an X icon
+                  //if not null set the content to the fields value
+                  if(r.KAH_HMS_All_HP_DR__c == null){
+                      document.getElementById("hp1").innerHTML = '<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>';
+                  } else {
+                      document.getElementById("hp1").innerHTML = r.KAH_HMS_All_HP_DR__c;
+                  }
+                  if(r.KAH_HMS_HP_Cancer_DR__c == null){
+                      document.getElementById("hp2").innerHTML = '<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>';
+                  } else {
+                      document.getElementById("hp2").innerHTML = r. KAH_HMS_HP_Cancer_DR__c;
+                  }
+                  if(r.KAH_HMS_HP_CHF_DR__c == null){
+                      document.getElementById("hp3").innerHTML = '<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>';
+                  } else {
+                      document.getElementById("hp3").innerHTML = r. KAH_HMS_HP_CHF_DR__c;
+                  }
+                  if(r.KAH_HMS_HP_COPD_DR__c == null){
+                      document.getElementById("hp4").innerHTML = '<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>';
+                  } else {
+                      document.getElementById("hp4").innerHTML = r.KAH_HMS_HP_COPD_DR__c;
+                  }
+                  if(r.KAH_HMS_HP_Debility_DR__c == null){
+                      document.getElementById("hp5").innerHTML = '<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>';
+                  } else {
+                      document.getElementById("hp5").innerHTML = r.KAH_HMS_HP_Debility_DR__c;
+                  }
+                  if(r.KAH_HMS_HP_Dementia_DR__c == null){
+                      document.getElementById("hp6").innerHTML = '<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>';
+                  } else {
+                      document.getElementById("hp6").innerHTML = r.KAH_HMS_HP_Dementia_DR__c;
+                  }
+                  if(r.KAH_HMS_HP_Influencer_Network_DR__c == null){
+                      document.getElementById("hp7").innerHTML = '<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>';
+                  } else {
+                      document.getElementById("hp7").innerHTML = r.KAH_HMS_HP_Influencer_Network_DR__c;
+                  }
+              }, {escape:true});
+
+              AccountDashboardExt.queryEvent180('{!$CurrentPage.parameters.acctid}', function(result, event){
+                  if (result.length != 0){
+                      var d = new Date();
+                      var month = d.getMonth()+1;
+                      var year = d.getFullYear();
+                      var html = '';
+                      var dateshtml = '';
+                      var ownershtml = '';
+                      html += '<tr>';
+                      html += '<th style="padding: 1px; font-size: 11px;">Sales Associate</th>';
+                      var ownersToEventTotal = {};
+                      for (var i=0; i<result.length; i++){
+                          var r = result[i];
+                          var date = new Date(r.ActivityDate);
+                          date.setDate(date.getDate() + 1);
+                          month2 = date.getMonth();
+                          var totalsByMonth = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                          if (r.Owner.Name in ownersToEventTotal){
+                              totalsByMonth = ownersToEventTotal[r.Owner.Name];
+                              totalsByMonth[month2] += 1;
+                              ownersToEventTotal[r.Owner.Name] = totalsByMonth;
+                          } else {
+                              totalsByMonth[month2] += 1;
+                              ownersToEventTotal[r.Owner.Name] = totalsByMonth;
+                          }
+                      }
+                      for (var owners in ownersToEventTotal) {
+                          var totalsByMonth = ownersToEventTotal[owners];
+                          ownershtml += '<tr>';
+                          ownershtml += '<td style="padding: 1px; font-size: 11px;">'+owners+'</td>';
+                          var month3 = d.getMonth();
+                          var ownersdateshtml = '';
+                          for (var i=0; i<6; i++){
+                              if (month3 < 0){
+                                  month3 = month3+12;
+                              }
+                              ownersdateshtml = '<td style="padding: 1px; font-size: 11px;">'+totalsByMonth[month3]+'</td>'+ ownersdateshtml;
+                              month3--;
+                          }
+                          ownershtml += ownersdateshtml +'</tr>';
+                      }
+                      for (var i=0; i<6; i++){
+                          if (month <= 0){
+                              month = month+12;
+                              year = year-1;
+                          }
+                          dateshtml = '<th style="padding: 1px; font-size: 11px;">'+month+'/'+year+'</th>'+dateshtml;
+                          month--;
+                      }
+                      html += dateshtml+'</tr>';
+                      document.getElementById("activityTableHead").innerHTML = html;
+                      document.getElementById("activityTableBody").innerHTML = ownershtml;
+                  } else {
+                      document.getElementById("recentEvents").innerHTML = '<div class="alert alert-info" role="alert"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span><b> There are no recent events for this account! </b>Please check again soon, or contact your supervisor for more information.</div>';
+                  }
+              }, {escape:true});
+
+              AccountDashboardExt.queryTouchpoints('{!$CurrentPage.parameters.acctid}', function(result, event){
+                  if (result.length != 0){
+                      var html = '';
+                      for (var i=0; i<result.length; i++){
+                          var r = result[i];
+                          var date = new Date(r.ActivityDate);
+                          date.setDate(date.getDate() + 1);
+                          date = date.toLocaleDateString();
+                          html += '<tr>';
+                          html += '<td style="padding: 1px; font-size: 11px;">'+r.Owner.Name+'</td>';
+                          if (r.WhoId == null){
+                              html += '<td style="padding: 1px; font-size: 11px;"><i class="fa fa-times-circle-o" aria-hidden="true"></i></td>';
+                          } else {
+                              html += '<td style="padding: 1px; font-size: 11px;"><a href="javascript:goToRecord(&quot;'+r.WhoId+'&quot;)">'+r.Who.Name+'</a></td>';
+                          }
+                          html += '<td style="padding: 1px; font-size: 11px;">'+date+'</td>';
+                          if (r.Complete__c){
+                              html += '<td style="padding: 1px;"><i class="fa fa-check fa-1x" aria-hidden="true" style="color: #5cb85c;"></i> Completed</td>';
+                          } else {
+                              html += '<td style="padding: 1px;"><i class="fa fa-times fa-1x" aria-hidden="true" style="color: #b52b27;"></i> Incomplete</td>';
+                          }
+                          html += '</tr>';
+                      }
+                      document.getElementById("touchpointsTableBody").innerHTML = html;
+
+                  } else {
+                      document.getElementById("recentTouchpoints").innerHTML = '<div class="alert alert-info" role="alert"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span><b> There are no recent touchpoints for this account! </b>Please check again soon, or contact your supervisor for more information.</div>';
+                  }
+              }, {escape:true});
+
+    </script>
+
+</apex:page>

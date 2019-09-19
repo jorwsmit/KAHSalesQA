@@ -1,0 +1,110 @@
+<aura:component controller="AA_Dashboard" access="global" implements="force:appHostable,flexipage:availableForAllPageTypes">
+    <ltng:require styles="/resource/SLDSv213/assets/styles/salesforce-lightning-design-system.css"/>
+    <aura:attribute name="selRoles" type="String[]" />
+    <aura:attribute name="selRoleList" type="String[]" />
+    <aura:attribute name="selReports" type="String[]" />
+    <aura:attribute name="selIndLst" type="String[]" />
+    <aura:attribute name="selDteFrom" type="String"/>
+    <aura:attribute name="selDteTo" type="String"/>
+    <aura:attribute name="selIndividual" type="String" />
+    <aura:attribute name="selFacilities" type="String[]"/>
+    <aura:attribute name="errorString" type="String"/>
+    <aura:attribute name="showFacilities" type="boolean"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:registerEvent name="DashboardEvent" type="c:DashboardEvent"/>
+    
+    <div class="slds" style="min-height: 500px; max-width:1300px; width:1300px;">
+        <div class="slds-grid paddingTop">
+            <div style="max-width:90%">
+                <div class=" slds-text-align--left">
+                    <div class="slds-grid">
+                        
+                        <div class="slds-col"> 
+                            <div class="slds-form-element reportDiv paddingleft" style="width: 200px">
+                                <div class="slds-form-element__label">Dashboard:</div>
+                                <div>
+                                    <ui:inputSelect class="slds-select" change="{!c.onReportChange}" aura:id="InputSelectReport">
+                                        <aura:iteration items="{!v.selReports}" var="roleVal"> 
+                                            <ui:inputSelectOption text="{!roleVal}"/> 
+                                        </aura:iteration>
+                                    </ui:inputSelect>
+                                    <br/>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="slds-col">
+                            <div class="slds-form-element roleDiv" style="min-width: 110px">
+                                <div class="slds-form-element__label">Level: </div>
+                                <div>
+                                    <ui:inputSelect class="slds-select" aura:id="InputSelectRole" change="{!c.onRoleChange}" >
+                                        <aura:iteration items="{!v.selRoles}" var="roleName"> 
+                                            <ui:inputSelectOption text="{!roleName}"/> 
+                                        </aura:iteration>
+                                    </ui:inputSelect>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="slds-col">
+                            <div class="slds-form-element hierarchyDiv paddingleft" style="min-width: 170px">
+                                <div class="slds-form-element__label">Role Hierarchy: </div>
+                                
+                                <ui:inputSelect class="slds-select" aura:id="InputSelectRoleHierarchy" change="{!c.onRoleHierarchyChange}" disabled="true">
+                                    <aura:iteration items="{!v.selRoleList}" var="roleVal"> 
+                                        <ui:inputSelectOption text="{!roleVal}"/> 
+                                    </aura:iteration>
+                                </ui:inputSelect>
+                            </div>
+                        </div>
+                        
+                        <div class="slds-col">
+                            <div class="slds-form-element hierarchyDiv paddingleft" style="min-width: 170px">
+                                <div class="slds-form-element__label">Individual: </div>
+                                <ui:inputSelect class="slds-select" aura:id="InputSelectIndividual" disabled="true">
+                                    <aura:iteration items="{!v.selIndLst}" var="indVal"> 
+                                        <ui:inputSelectOption text="{!indVal}"/> 
+                                    </aura:iteration>
+                                </ui:inputSelect>
+                            </div>
+                        </div>
+                        
+                        <div class ="slds-col">
+                            <div class="slds-form-element reportDiv paddingleft" style="width: 190px">
+                                <div class="slds-form-element__label"> Date Range From:</div>
+                                <div>
+                                    <ui:inputDate aura:id="InputDteFrom" class="field" value="{!v.selDteFrom}" displayDatePicker="true" /> 
+                                </div>	
+                            </div>
+                        </div>
+                        
+                        <div class ="slds-col">
+                            <div class="slds-form-element reportDiv paddingleft" style="width: 190px">
+                                <div class="slds-form-element__label"> Date Range To:</div>
+                                <div>
+                                    <ui:inputDate aura:id="InputDteTo" class="field" value="{!v.selDteTo}" displayDatePicker="true" /> 
+                                </div>	
+                            </div>
+                        </div>  
+                        
+                        <div class="slds-col paddingleft paddingTop">
+                            <div class="slds-form-element">
+                                
+                                <lightning:button aura:id="searchButton" label="Go" onclick="{!c.showChart}"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        <div id="errors">
+            <ui:outputText value="{!v.errorString}" />
+        </div>
+        <div id="Charts">
+            <c:TBN_VisualCharts /> 
+        </div>
+        
+    </div>
+    
+</aura:component>

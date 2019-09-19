@@ -1,0 +1,1183 @@
+<apex:page controller="Sales_ReferralSourceTrendReport" showHeader="false" standardStylesheets="false" sidebar="false" applyHtmlTag="true" applyBodyTag="false" docType="html-5.0">
+
+<html>
+
+<head>
+    <title>Referral Source Trend Report</title>
+    <link rel="stylesheet" href="https://cdn.linearicons.com/free/1.0.0/icon-font.min.css"/>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"
+    integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous"/>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="https://cdn.linearicons.com/free/1.0.0/icon-font.min.css"/>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,500,700" rel="stylesheet"/>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.10.16/b-1.5.1/b-flash-1.5.1/b-html5-1.5.1/fh-3.1.3/r-2.2.1/datatables.min.css"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+</head>
+<style>
+body{
+    font-family: 'Roboto', sans-serif;
+    margin: 0px !important;
+    padding: 0px !important;
+}
+.btn{
+    border-radius: 25px !important;
+}
+.btn-grouped:first-child{
+    border-radius: 25px 0px 0px 25px !important;
+}
+.btn-grouped:last-child{
+    border-radius: 0px 25px 25px 0px !important;
+}
+.btn-grouped:not(:first-child):not(:last-child){
+    border-radius: 0px !important;
+}
+.mr-2{
+    margin-bottom: 10px;
+}
+table.dataTable{
+    border-collapse: collapse !important;
+}
+.dropdown-menu{
+    border-radius: 15px !important;
+    max-height: 345px;
+    overflow-y: auto;
+}
+.btm-alert{
+    text-align: center;
+    position: absolute;
+    bottom: 0px;
+    border-radius: 0px;
+    margin-bottom: 0px;
+    width:100%;
+}
+
+#loading{
+    z-index: 2;
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0,0,0,0.5);
+    color: white;
+    font-size: 50px;
+}
+#loading i{
+    position: relative;
+    top: 50%;
+    left: 50%;
+    width: 50px;
+    height: 50px;
+    margin-top: -25px;
+    margin-left: -25px;
+}
+#search{
+    width: 100%;
+    height: 30px;
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, .2);
+    border: 1px solid #e3e3e3;
+}
+#search input{
+    font-size: 17px;
+    padding: 3px;
+    padding-left: 35px;
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+#search .lnr-magnifier{
+    position: absolute;
+    top: 7px;
+    left: 10px;
+    font-size: 17px;
+}
+#search input:focus{
+    outline: none;
+}
+#users{
+    font-size: 15px;
+    display: none;
+    max-height: 400px;
+    overflow-y: auto;
+    list-style: none;
+    padding-left: 35px;
+    background-color: #6c757d;
+    color: white;
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, .2);
+}
+#users a{
+    color: white;
+    display: block;
+}
+#users a:hover{
+    color: white;
+}
+.main-container{
+    margin: 20px !important;
+}
+.alert-info{
+    background-color: #007bff !important;
+    border: none !important;
+    color: white !important;
+}
+th{
+    background-color: #007bff !important;
+    color: white !important;
+    font-size: 12px;
+}
+.slds-is-resizable{
+    height: 20px;
+    padding: 10px;
+}
+table{
+    font-size: 12px !important;
+}
+table th, table tr{
+    white-space: nowrap;
+}
+table tbody tr:nth-child(even) td{
+    background-color: #dbdbdb;
+}
+table tbody tr td:first-child{
+    border-right: 1px solid #8e8e8e;
+}
+table tbody tr:last-child{
+    border-bottom: 1px solid #8e8e8e;
+}
+.right-border{
+    border-right: 1px solid #8e8e8e;
+}
+#report_wrapper{
+    padding: 0px;
+}
+#report_wrapper .btn-group{
+    margin-left: 20px;
+}
+#report_filter input{
+    margin-left: 20px;
+}
+.dataTables_filter {
+    padding-top: 15px;
+    text-align: left !important;
+}
+#bottombuttons{
+    display: none;
+    width: 325px;
+    height: 100px;
+    position: fixed;
+    bottom: 10px;
+    padding-left: 20px;
+    z-index: 1;
+}
+#bottombuttons .btn-group .btn{
+    margin-bottom: 5px;
+    border-radius: 0px !important;
+}
+#bottombuttons .btn-group .btn:first-child{
+    border-radius: 25px 0px 0px 25px !important;
+}
+#bottombuttons .btn-group .btn:last-child{
+    border-radius: 0px 25px 25px 0px !important;
+}
+#bottombuttons .btn-group .btn:only-child{
+    border-radius: 25px !important;
+}
+.btn-warning{
+    background-color:#f5bf1b;
+}
+.alert-warning{
+    background-color:#f5bf1b !important;
+    color: white !important;
+}
+.nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active {
+    border-color: #999999 #999999 #fff;
+}
+.nav-tabs{
+    border-bottom: #999999;
+}
+.dataTables_info{
+    font-size:12px;
+}
+.icon{
+    margin-left:2px;
+    font-size:10px;
+    text-align:center;
+    border-radius:8px;
+    height:18px;
+    width:25px;
+    background-color:#007bff;
+    border:1px solid white;
+    color:white;
+    float:right;
+}
+#report_wrapper{
+    margin-top: -35px;
+}
+</style>
+<body>
+    <div id="loading">
+        <i class="fa fa-circle-o-notch fa-spin fa-fw"></i>
+    </div>
+    <div id="search">
+        <i class="lnr lnr-magnifier"></i>
+        <input placeholder="Search By Name" />
+    </div>
+    <div id="bottombuttons">
+        <div class="btn-group btn-group-sm" role="group">
+            <button type="button" class="btn btn-success">TOP</button>
+            <button type="button" style="color:white;" class="btn btn-warning">FLAT</button>
+            <button type="button" class="btn btn-danger">BOTTOM</button>
+        </div>
+        <div class="btn-group btn-group-sm" role="group">
+            <button type="button" class="btn btn-secondary">REMOVE</button>
+        </div>
+        <div class="btn-group btn-group-sm" role="group">
+            <button type="button" class="btn btn-primary" id="newBusiness">NEW BUSINESS</button>
+        </div>
+        <div class="btn-group btn-group-sm" role="group">
+            <button type="button" class="btn btn-primary">PLAN</button>
+        </div>
+        <div class="btn-group btn-group-sm" role="group">
+            <button type="button" class="btn btn-secondary">CLOSE</button>
+        </div>
+    </div>
+
+    <ul id="users"></ul>
+    <div id="yearAlert" class="alert alert-info btm-alert" role="alert" style="display:none;">
+        <strong>You can't add another year right now!</strong> You must first deselect a year before you can choose another one.
+    </div>
+    <div id="yearSelect" class="alert alert-info btm-alert" role="alert" style="display:none;">
+        <strong>You must select a year!</strong> At least one year must be selected.
+    </div>
+    <div id="userSelect" class="alert alert-info btm-alert" role="alert" style="display:none;">
+        <strong>You must select a user!</strong> Select a user using the search above.
+    </div>
+    <div class="main-container">
+        <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+            <div class="btn-group mr-2 dropdown">
+                <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="year" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Year
+                </button>
+                <div id="yearDrop" class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                </div>
+            </div>
+
+            <div class="btn-group mr-2 dropdown">
+                <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="reportType" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Qualified Admits
+                </button>
+                <div id="reportTypeDrop" class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <a class="dropdown-item active" href="#">Qualified Admits</a>
+                    <a class="dropdown-item" href="#">Admits</a>
+                    <a class="dropdown-item" href="#">Referrals</a>
+                    <a class="dropdown-item" href="#">Conversion %</a>
+                    <a class="dropdown-item" href="#">Sales Calls</a>
+                    <a class="dropdown-item" href="#">Qualified Admits / Calls</a>
+                </div>
+            </div>
+
+            <!--
+            <div class="btn-group mr-2 btn-group-sm" role="group" aria-label="Large button group">
+            <button type="button" class="btn btn-secondary" id="focus">Focus Accounts</button>
+        </div>
+    -->
+
+    <div class="btn-group mr-2 btn-group-sm" role="group" aria-label="Large button group" id="lob">
+        <button type="button" class="btn btn-primary btn-grouped" id="HHbtn">HH</button>
+        <button type="button" class="btn btn-secondary btn-grouped" id="HPbtn">HP</button>
+    </div>
+
+    <div class="btn-group mr-2 btn-group-sm" role="group" aria-label="Large button group" id="filters">
+        <button type="button" class="btn btn-primary btn-grouped">All</button>
+        <button type="button" class="btn btn-secondary btn-grouped">Focus Accounts</button>
+        <button type="button" class="btn btn-secondary btn-grouped">Plans</button>
+        <button type="button" class="btn btn-secondary btn-grouped">-</button>
+    </div>
+    <div class="btn-group mr-2 btn-group-sm" role="group" aria-label="Large button group" id="saveBtn">
+    </div>
+</div>
+</div>
+
+<div class="modal fade" id="planModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header d-block">
+                <div class="d-flex">
+                    <h3 class="modal-title">Plan</h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <h6 class="modal-title" id="planName"></h6>
+            </div>
+            <div class="modal-body">
+                <nav>
+                    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                        <a class="nav-item nav-link active" id="nav-plan-tab" data-toggle="tab" href="#nav-plan" role="tab" aria-controls="nav-tab" aria-selected="true">PLAN</a>
+                        <a class="nav-item nav-link" id="nav-swot-tab" data-toggle="tab" href="#nav-swot" role="tab" aria-controls="nav-swot" aria-selected="false">SWOT</a>
+                        <a class="nav-item nav-link" id="nav-compete-tab" data-toggle="tab" href="#nav-compete" role="tab" aria-controls="nav-compete" aria-selected="false">COMPETITORS</a>
+                    </div>
+                </nav>
+                <div class="tab-content" id="nav-tabContent">
+                    <div class="tab-pane fade show active" id="nav-plan" role="tabpanel" aria-labelledby="nav-plan-tab"><textarea style="width:100%;height:60vh;" placeholder="Enter a Plan Here"></textarea></div>
+                    <div class="tab-pane fade" id="nav-swot" role="tabpanel" aria-labelledby="nav-swot-tab">
+                        <div>
+                            <textarea id="nav-strength" style="width:100%;height:14vh;" placeholder="Enter Strengths Here"></textarea>
+                        </div>
+                        <div>
+                            <textarea id="nav-weakness" style="width:100%;height:14vh;" placeholder="Enter Weaknesses Here"></textarea>
+                        </div>
+                        <div>
+                            <textarea id="nav-opportunity" style="width:100%;height:14vh;" placeholder="Enter Opportunities Here"></textarea>
+                        </div>
+                        <div>
+                            <textarea id="nav-threat" style="width:100%;height:15vh;" placeholder="Enter Threats Here"></textarea>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="nav-compete" role="tabpanel" aria-labelledby="nav-compete-tab"><textarea style="width:100%;height:60vh;" placeholder="Enter the Competitors Here"></textarea></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="saveplan">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="table-responsive" style="display:block;">
+    <table id="report" style="width:100%; padding:0px;">
+        <thead>
+            <tr class="slds-text-title--caps" style="z-index:2;">
+                <th class="slds-is-resizable" scope="col" data-sortable-type="alpha">
+                    <div style="text-align:left; border-right:1px;" class="slds-truncate" title="effectiveDate"><b>ACCOUNT / CONTACT</b></div>
+                </th>
+                <th class="slds-is-resizable" scope="col" data-sortable-type="numeric">
+                    <div class="slds-truncate" title="effectiveDate"><b>JAN</b></div>
+                </th>
+                <th class="slds-is-resizable" scope="col" data-sortable-type="numeric">
+                    <div class="slds-truncate" title="effectiveDate"><b>FEB</b></div>
+                </th>
+                <th class="slds-is-resizable" scope="col" data-sortable-type="numeric">
+                    <div class="slds-truncate" title="effectiveDate"><b>MAR</b></div>
+                </th>
+                <th class="slds-is-resizable" scope="col" data-sortable-type="numeric">
+                    <div class="slds-truncate" title="effectiveDate"><b>APR</b></div>
+                </th>
+                <th class="slds-is-resizable" scope="col" data-sortable-type="numeric">
+                    <div class="slds-truncate" title="effectiveDate"><b>MAY</b></div>
+                </th>
+                <th class="slds-is-resizable" scope="col" data-sortable-type="numeric">
+                    <div class="slds-truncate" title="effectiveDate"><b>JUN</b></div>
+                </th>
+                <th class="slds-is-resizable" scope="col" data-sortable-type="numeric">
+                    <div class="slds-truncate" title="effectiveDate"><b>JUL</b></div>
+                </th>
+                <th class="slds-is-resizable" scope="col" data-sortable-type="numeric">
+                    <div class="slds-truncate" title="effectiveDate"><b>AUG</b></div>
+                </th>
+                <th class="slds-is-resizable" scope="col" data-sortable-type="numeric">
+                    <div class="slds-truncate" title="effectiveDate"><b>SEP</b></div>
+                </th>
+                <th class="slds-is-resizable" scope="col" data-sortable-type="numeric">
+                    <div class="slds-truncate" title="effectiveDate"><b>OCT</b></div>
+                </th>
+                <th class="slds-is-resizable" scope="col" data-sortable-type="numeric">
+                    <div class="slds-truncate" title="effectiveDate"><b>NOV</b></div>
+                </th>
+                <th class="slds-is-resizable" scope="col" data-sortable-type="numeric">
+                    <div class="slds-truncate" title="effectiveDate"><b>DEC</b></div>
+                </th>
+                <th class="slds-is-resizable" scope="col" data-sortable-type="numeric">
+                    <div class="slds-truncate" title="effectiveDate"><b>YTD</b></div>
+                </th>
+                <th class="slds-is-resizable" scope="col" data-sortable-type="numeric">
+                    <div class="slds-truncate" title="effectiveDate"><b>TOTAL</b></div>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+        <tfoot style="display:none;">
+            <tr id="footer" class="slds-text-title--caps" style="z-index:2;">
+                <th>TOTAL</th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+
+<div id="successAlert" class="alert alert-success btm-alert" role="alert" style="display:none;"></div>
+<div id="errorAlert" class="alert alert-danger btm-alert" role="alert" style="display:none;"></div>
+<div id="warningAlert" class="alert alert-warning btm-alert" role="alert" style="display:none;"></div>
+
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"
+integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/pdfmake.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/vfs_fonts.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.10.16/b-1.5.1/b-flash-1.5.1/b-html5-1.5.1/fh-3.1.3/r-2.2.1/datatables.min.js"></script>
+<script>
+Visualforce.remoting.timeout = 120000;
+var years=[], userId='', reportType='Qualified Admits', lob='HH';
+$(document).ready(function(){
+
+    Sales_ReferralSourceTrendReport.NewBusinessAccess(function(hasAccess, event){
+        if(!hasAccess) $("#newBusiness").remove();
+    }, {escape:false});
+
+    if('{!$User.ProfileId}'=='00e1300000225C9AAI'){
+        $("#employeeSearch").remove();
+        if('{!TEXT($User.Line_of_Business__c)}'=='HP') lob = 'HP';
+        else lob = 'HH';
+        userId='{!$User.Id}';
+        $("#lob").find("button").removeClass("btn-primary").addClass("btn-secondary");
+        $("#"+lob+"btn").removeClass("btn-secondary").addClass("btn-primary");
+        $("#search input").val($(this).text()).keyup();
+        $("#search").remove();
+        getData();
+    }
+
+    for(var i=2015; i<=new Date().getFullYear(); i++){
+        $("#yearDrop").append('<a class="dropdown-item" href="#">'+i+'</a>');
+    }
+
+    $("#lob").find("button").click(function(){
+        $("#lob").find("button").removeClass("btn-primary").addClass("btn-secondary");
+        $(this).removeClass("btn-secondary").addClass("btn-primary");
+        lob = $(this).text();
+        getData();
+    });
+
+    $("#saveplan").click(function(){
+        Sales_ReferralSourceTrendReport.saveSwot(referralId, userId, $("#nav-strength").val(), $("#nav-weakness").val(), $("#nav-opportunity").val(), $("#nav-threat").val(), $("#nav-compete textarea").val(), $("#nav-plan textarea").val(), function(result, event){
+            if(!result){
+                $("#errorAlert").html('<strong>The swot analysis was not saved. </strong>Please try again later, or if the problem persists contact sales support.');
+                $("#errorAlert").slideDown().delay(3500).slideUp();
+            } else{
+                $("#successAlert").html('<strong>The swot analysis was saved successfully. </strong>');
+                $("#successAlert").slideDown().delay(3500).slideUp();
+            }
+            $('#planModal').modal('hide');
+            getData();
+            $('#bottombuttons').slideUp();
+        }, {escape:false});
+    });
+
+    $("#search").click(function(){
+        $("#users").slideDown();
+    });
+
+    $("#filters").find("button").click(function(){
+        $("#filters").find("button").removeClass("btn-primary").addClass("btn-secondary");
+        $(this).removeClass("btn-secondary").addClass("btn-primary");
+        if($.fn.DataTable.isDataTable( '#report' )){
+            var table = $("#report").DataTable();
+            $('#report').DataTable().rows().invalidate('data').draw(false);
+            $.fn.DataTable.ext.search.push(
+                function(settings, data, dataIndex) {
+                    if($("#filters").find(".btn-primary").text()=='Focus Accounts'){
+                        return $(table.row(dataIndex).node()).attr('data-rating') == 'true';
+                    } else if($("#filters").find(".btn-primary").text()=='New Business'){
+                        return $(table.row(dataIndex).node()).attr('data-new') == 'true';
+                    } else if($("#filters").find(".btn-primary").text()=='Plans'){
+                        return $(table.row(dataIndex).node()).attr('data-plan') == 'true';
+                    }  else{
+                        return true;
+                    }
+                }
+            );
+            table.draw();
+            $.fn.dataTable.ext.search.pop();
+        }
+    });
+
+    $("#yearDrop > a").click(function(){
+        if(!$(this).hasClass("active") && $("#yearDrop .active").length<2){
+            $(this).addClass("active");
+            years.push($(this).text());
+            $("#yearAlert").stop().slideUp();
+            $("#yearSelect").stop().slideUp();
+        } else if(!$(this).hasClass("active")){
+            $("#yearAlert").slideDown().delay(3500).slideUp();
+        }else{
+            years.splice(years.indexOf($(this).text()), 1);
+            $(this).removeClass("active");
+            $("#yearAlert").stop().slideUp();
+            $("#yearSelect").stop().slideUp();
+        }
+        years.sort();
+        getData();
+    });
+
+    $("#reportTypeDrop > a").click(function(){
+        $("#reportTypeDrop > a").removeClass("active");
+        $(this).addClass("active");
+        $("#reportType").text($(this).text());
+        reportType = $(this).text();
+        getData();
+    });
+
+    $(document).click(function(e){
+        if (!$("#users").is(e.target) && !$("#users").children().is(e.target) && !$("#search").is(e.target) && !$("#search").children().is(e.target)) {
+            $("#users").slideUp();
+        }
+    });
+
+    var usersLob = new Map();
+    Sales_ReferralSourceTrendReport.getUsers_2(function(users, event){
+        if(users.length>0){
+            for(var i=0; i<users.length; i++){
+                $("#users").append('<a href="#" id="'+users[i].Id+'">' + users[i].Name + '</a>');
+                if(users[i].Line_of_Business__c && users[i].Line_of_Business__c == 'HP') usersLob.set(users[i].Id, 'HP');
+                else usersLob.set(users[i].Id, 'HH');
+            }
+        } else {
+            $("#search").hide();
+        }
+        $("#loading").hide();
+
+        $("#users > a").click(function(){
+            // console.log(usersLob.get($(this).attr("id")));
+            if(usersLob.get($(this).attr("id")) && usersLob.get($(this).attr("id"))=='HP') lob = 'HP';
+            else lob = 'HH';
+            userId=$(this).attr("id");
+            $("#lob").find("button").removeClass("btn-primary").addClass("btn-secondary");
+            $("#"+lob+"btn").removeClass("btn-secondary").addClass("btn-primary");
+            $("#search input").val($(this).text()).keyup();
+            $("#users").slideUp();
+            getData();
+        });
+
+    }, {escape:false});
+
+    $('#search input').keyup(function(){
+        var valThis = $(this).val().toLowerCase();
+        $('#users > a').each(function(){
+            var text = $(this).text().toLowerCase();
+            (text.indexOf(valThis) > -1) ? $(this).show() : $(this).hide();
+        });
+    });
+
+
+    // $("#focus").click(function(){
+    //  if($.fn.DataTable.isDataTable( '#report' )){
+    //      $("#focus").toggleClass('btn-secondary btn-primary');
+    //      var table = $("#report").DataTable();
+    //      $.fn.DataTable.ext.search.push(
+    //          function(settings, data, dataIndex) {
+    //              if($("#focus").hasClass('btn-primary')){
+    //                  // console.log($(table.row(dataIndex).node()).attr('data-five'));
+    //                  return $(table.row(dataIndex).node()).attr('data-five') == 'true';
+    //              } else {
+    //                  return true;
+    //              }
+    //          }
+    //      );
+    //      table.draw();
+    //  }
+    // });
+
+    $("#bottombuttons button").click(function(){
+        if($(this).text() && $(this).text()!='CLOSE' && $(this).text()!='PLAN' && $(this).text()!='NEW BUSINESS') rateReferral($(this).text());
+        else if($(this).text()=='CLOSE') $("#bottombuttons").slideUp();
+        else if($(this).text()=='PLAN') businessPlan();
+        else if($(this).text()=='NEW BUSINESS') addRemoveBusiness();
+    });
+
+});
+
+var ratings;
+var swots;
+var calls;
+var newBusiness;
+var empty1 = [], empty2 = [];
+for(var i=0; i<12; i++) empty1.push(null);
+for(var i=0; i<24; i++) empty2.push(null);
+function getData(){
+    var table = $("#report").DataTable();
+    table.destroy();
+    $("#report tbody").empty();
+    $("#filters button").removeClass('btn-primary').addClass('btn-secondary');
+    $("#filters button:first").removeClass('btn-secondary').addClass('btn-primary');
+    $("#focus").removeClass('btn-primary').addClass('btn-secondary');
+    $("#report thead").html(getHeaders());
+    $("#footer").html(getFooters());
+
+    if(years.length==0) $("#yearSelect").slideDown().delay(3500).slideUp();
+    else if(userId=='') $("#userSelect").slideDown().delay(3500).slideUp();
+    else {
+        $("#loading").show();
+        Sales_ReferralSourceTrendReport.getData_2(userId, years, lob, function(data, event){
+            data = JSON.parse(data);
+            // console.log(data.swotData);
+            if(data.callData) calls = data.callData;
+            if(data.ratingsData) ratings = data.ratingsData;
+            if(data.swotData) swots = data.swotData;
+            if(data.newBusinessData) newBusiness = data.newBusinessData;
+
+            if(years.length==1){
+                for(rows in data.admitData){
+
+                    if(reportType == 'Qualified Admits') $("#report tbody").append(oneYearQualifiedAdmit(data.admitData[rows], rows));
+                    else if(reportType == 'Admits') $("#report tbody").append(oneYearAdmit(data.admitData[rows], rows));
+                    else if(reportType == 'Referrals') $("#report tbody").append(oneYearReferrals(data.admitData[rows], rows));
+                    else if(reportType == 'Conversion %') $("#report tbody").append(oneYearConversion(data.admitData[rows], rows));
+                    else if(reportType == 'Sales Calls' && calls[rows.substring(0, 18)]) $("#report tbody").append(oneYearCalls(calls[rows.substring(0, 18)], rows));
+                    else if(reportType == 'Sales Calls') $("#report tbody").append(oneYearCalls(empty1, rows));
+                    else if(reportType == 'Qualified Admits / Calls') $("#report tbody").append(oneYearAdmitCalls(data.admitData[rows], rows));
+                }
+            } else if(years.length==2){
+                for(rows in data.admitData){
+                    if(reportType == 'Qualified Admits') $("#report tbody").append(twoYearQualifiedAdmit(data.admitData[rows], rows));
+                    else if(reportType == 'Admits') $("#report tbody").append(twoYearAdmit(data.admitData[rows], rows));
+                    else if(reportType == 'Referrals') $("#report tbody").append(twoYearReferrals(data.admitData[rows], rows));
+                    else if(reportType == 'Conversion %') $("#report tbody").append(twoYearConversion(data.admitData[rows], rows));
+                    else if(reportType == 'Sales Calls' && calls[rows.substring(0, 18)]) $("#report tbody").append(twoYearCalls(calls[rows.substring(0, 18)], rows));
+                    else if(reportType == 'Sales Calls') $("#report tbody").append(twoYearCalls(empty2, rows));
+                    else if(reportType == 'Qualified Admits / Calls') $("#report tbody").append(twoYearAdmitCalls(data.admitData[rows], rows));
+                }
+            }
+
+            var table = $('#report').dataTable({
+                language: { search: "" },
+                "scrollY": 500,
+                "scrollX": true,
+                "paging": false,
+                dom: 'Bfrtip',
+                buttons: [{
+                    extend: "excel",
+                    footer: true,
+                    className: "btn-sm btn-success",
+                    title: '',
+                    filename: 'Referral Source Trend Report - '+formatDate(),
+                    text: 'Export to Excel',
+                    init: function(api, node, config) {
+                        $(node).removeClass('btn-secondary')
+                    }
+                }]
+            });
+
+            // var tableTools = new $.fn.dataTable.TableTools( table, {
+            //  "buttons": [{
+            //      extend: "excel",
+            //      footer: true,
+            //      className: "btn-sm btn-success",
+            //      title: '',
+            //      filename: 'Referral Source Trend Report - '+formatDate(),
+            //      text: 'Export to Excel',
+            //      init: function(api, node, config) {
+            //          $(node).removeClass('btn-secondary')
+            //      }
+            //  }]
+            // });
+            $("#report_wrapper .dt-buttons button").appendTo("#saveBtn");
+            $(".buttons-excel").html("<span>Export to Excel</span>");
+            $('.dataTables_filter input[type="search"]').attr('placeholder', 'Search');
+            $("#loading").hide();
+        }, {escape:false});
+    }
+}
+
+function oneYearAdmit(data, key){
+    return oneYearHtml(0, data, key);
+}
+
+function oneYearQualifiedAdmit(data, key){
+    return oneYearHtml(24, data, key);
+}
+
+function oneYearReferrals(data, key){
+    return oneYearHtml(12, data, key);
+}
+
+function oneYearCalls(data, key){
+    return oneYearHtml(0, data, key);
+}
+
+function oneYearAdmitCalls(data, key){
+    var ytdAdmits_1=0, totalAdmits_1=0, ytdCalls_1=0, totalCalls_1=0;
+    for(var i=0; i<12; i++){
+        var admit = '<span class="lnr lnr-cross"></span>';
+        var call = '0';
+
+        if(calls[key.substring(0, 18)] && calls[key.substring(0, 18)][i]){
+            call = calls[key.substring(0, 18)][i];
+            if(i < (new Date().getMonth()+1)) ytdCalls_1+=parseInt(calls[key.substring(0, 18)][i]);
+            totalCalls_1+=parseInt(calls[key.substring(0, 18)][i]);
+        }
+
+        if(data[i+24]){
+            admit = data[i+24];
+            if(i < (new Date().getMonth()+1)) ytdAdmits_1+=parseInt(data[i+24]);
+            totalAdmits_1+=parseInt(data[i+24]);
+        }
+
+        data[i] = admit + ' / ' + call;
+    }
+
+    var ytd_1 = ytdAdmits_1 + ' / ' + ytdCalls_1;
+    var total_1 = totalAdmits_1 + ' / ' + totalCalls_1;
+
+    var html = '';
+
+    html += trHtml(key);
+
+    for(var i=0; i<12; i++) html += '<td class="right-border">'+data[i]+'</td>';
+    html += '<td class="borderleft"><div class="slds-truncate" style="font-weight:bold;color:#007bff;"><div>'+ytd_1+'</div></div></td>';
+    html += '<td class="borderleft"><div class="slds-truncate" style="font-weight:bold;color:#007bff;">'+total_1+'</div></td>';
+    html += '</tr>';
+    return html;
+}
+
+function oneYearHtml(offset, data, key){
+    var html = '';
+    var accountName = '';
+
+    var ytd_1=0, total_1=0;
+    var quarters1 = [0,0,0,0];
+
+    for(var i=0;i<4;i++){
+        for(var j=0;j<3;j++){
+            if(data[offset+(i*3)+j]!=null && parseInt(data[offset+(i*3)+j])){
+                quarters1[i] += parseInt(data[offset+(i*3)+j]);
+                total_1 += parseInt(data[offset+(i*3)+j]);
+                if( ((i*3)+j) < (new Date().getMonth()+1)) ytd_1+=parseInt(data[offset+(i*3)+j]);
+            } else data[offset+(i*3)+j] = '<div class="lnr lnr-cross"></div>';
+        }
+    }
+
+    html += trHtml(key);
+
+    html += '<td class="borderleft right-border"><div class="slds-truncate">'+data[offset+0]+'</div></td>';
+    html += '<td class="right-border"><div class="slds-truncate">'+data[offset+1]+'</div></td>';
+    html += '<td class="right-border"><div class="slds-truncate">'+data[offset+2]+'</div></td>';
+    html += '<td class="borderleft right-border"><div class="slds-truncate">'+data[offset+3]+'</div></td>';
+    html += '<td class="right-border"><div class="slds-truncate">'+data[offset+4]+'</div></td>';
+    html += '<td class="right-border"><div class="slds-truncate">'+data[offset+5]+'</div></td>';
+    html += '<td class="borderleft right-border"><div class="slds-truncate">'+data[offset+6]+'</div></td>';
+    html += '<td class="right-border"><div class="slds-truncate">'+data[offset+7]+'</div></td>';
+    html += '<td class="right-border"><div class="slds-truncate">'+data[offset+8]+'</div></td>';
+    html += '<td class="borderleft right-border"><div class="slds-truncate">'+data[offset+9]+'</div></td>';
+    html += '<td class="right-border"><div class="slds-truncate">'+data[offset+10]+'</div></td>';
+    html += '<td class="right-border"><div class="slds-truncate">'+data[offset+11]+'</div></td>';
+    html += '<td class="borderleft right-border"><div class="slds-truncate" style="font-weight:bold;color:#007bff;"><div>'+ytd_1+'</div></div></td>';
+    html += '<td class="borderleft"><div class="slds-truncate" style="font-weight:bold;color:#007bff;">'+total_1+'</div></td>';
+    html += '</tr>';
+    return html;
+}
+
+function trHtml(key){
+    var ratingsStr = 'data-rating="false"';
+    var planStr = 'data-plan="false"';
+    var planIcon = '<span class="icon" style="background-color:transparent;border:none;"></span>';
+    var newStr = 'data-new="false"';
+    var newIcon = '';
+    var ratingColor = '';
+    var linkColor = '';
+    if(ratings && ratings.hasOwnProperty(key.substring(0, 18))){
+        ratingsStr='data-rating="true"';
+        linkColor = 'style="color:white;"';
+        ratingColor = 'style="background-color:'+ratings[key.substring(0, 18)]+'"'
+    }
+    if(swots && swots.indexOf(key.substring(0, 18))>=0){
+        planStr='data-plan="true"';
+        planIcon='<span style="font-size:14px;padding-top:1px;" class="lnr lnr-license icon"></span>';
+    }
+    if(newBusiness && newBusiness.indexOf(key.substring(0, 18))>=0){
+        newStr='data-new="true"';
+        newIcon='<span class="icon">new</span>';
+    }
+    return '<tr '+ratingsStr+' '+planStr+' '+newStr+'><td '+ratingColor+'><div class="slds-truncate"><a '+linkColor+' href="#" onclick="openRating(\''+key.substring(0, 18)+'\', \''+escapeQuote(key.substring(18, key.length))+'\')">'+key.substring(18, key.length)+'</a> '+planIcon+newIcon+'</div></td>';
+}
+
+function escapeQuote(str){
+    return str.replace(/'/g, "\\'");
+}
+
+function oneYearConversion(data, key){
+
+    var html = '';
+    var accountName = '';
+
+    var months1 = ['','','','','','','','','','','',''];
+
+    for(var i=0;i<months1.length;i++){
+        months1[i] = getConversion(data[i+24], data[i+12]);
+    }
+
+    var ytdAdmits_1=0, totalAdmits_1=0, ytdReferrals_1=0, totalReferrals_1=0;
+    var quarters1 = [0,0,0,0];
+
+    for(var i=0;i<4;i++){
+        var admit_1=0, referral_1=0;
+        for(var j=0;j<3;j++){
+            if(data[24+(i*3)+j]!=null && parseInt(data[24+(i*3)+j])){
+                admit_1 += parseInt(data[24+(i*3)+j]);
+                totalAdmits_1 += parseInt(data[24+(i*3)+j]);
+                if(((i*3)+j) < new Date().getMonth()+1) ytdAdmits_1+=parseInt(data[24+(i*3)+j]);
+            }
+            if(data[12+(i*3)+j]!=null && parseInt(data[12+(i*3)+j])){
+                referral_1 += parseInt(data[12+(i*3)+j]);
+                totalReferrals_1 += parseInt(data[12+(i*3)+j]);
+                if(((i*3)+j) < new Date().getMonth()+1) ytdReferrals_1+=parseInt(data[12+(i*3)+j]);
+            }
+            quarters1[i] = getConversion(admit_1.toString(), referral_1.toString());
+        }
+    }
+
+    html += trHtml(key);
+
+    html += '<td class="borderleft right-border"><div class="slds-truncate">'+months1[0]+'</div></td>';
+    html += '<td class="right-border"><div class="slds-truncate">'+months1[1]+'</div></td>';
+    html += '<td class="right-border"><div class="slds-truncate">'+months1[2]+'</div></td>';
+    html += '<td class="borderleft right-border"><div class="slds-truncate">'+months1[3]+'</div></td>';
+    html += '<td class="right-border"><div class="slds-truncate">'+months1[4]+'</div></td>';
+    html += '<td class="right-border"><div class="slds-truncate">'+months1[5]+'</div></td>';
+    html += '<td class="borderleft right-border"><div class="slds-truncate">'+months1[6]+'</div></td>';
+    html += '<td class="right-border"><div class="slds-truncate">'+months1[7]+'</div></td>';
+    html += '<td class="right-border"><div class="slds-truncate">'+months1[8]+'</div></td>';
+    html += '<td class="borderleft right-border"><div class="slds-truncate">'+months1[9]+'</div></td>';
+    html += '<td class="right-border"><div class="slds-truncate">'+months1[10]+'</div></td>';
+    html += '<td class="right-border"><div class="slds-truncate">'+months1[11]+'</div></td>';
+    html += '<td class="borderleft right-border"><div class="slds-truncate" style="font-weight:bold;color:#007bff;"><div>'+getConversion(ytdAdmits_1.toString(), ytdReferrals_1.toString())+'</div></div></td>';
+    html += '<td class="borderleft"><div class="slds-truncate" style="font-weight:bold;color:#007bff;">'+getConversion(totalAdmits_1.toString(), totalReferrals_1.toString())+'</div></td>';
+    html += '</tr>';
+    return html;
+
+}
+
+function getConversion(admit, referral){
+    var html='';
+    if(referral!=null && parseInt(referral) && parseInt(referral)!=0) html = ((parseFloat(admit)/parseFloat(referral))*100).toFixed(1)+'%';
+    else html = '<div class="lnr lnr-cross"></div>';
+    return html;
+}
+
+function twoYearConversion(data, key){
+    var html = '';
+    var accountName = '';
+
+    var months1 = ['','','','','','','','','','','',''];
+    var months2 = ['','','','','','','','','','','',''];
+
+    for(var i=0;i<months1.length;i++){
+        months1[i] = getConversion(data[i+48], data[i+24]);
+        months2[i] = getConversion(data[i+60], data[i+36]);
+    }
+
+    var ytdAdmits_1=0, totalAdmits_1=0, ytdReferrals_1=0, totalReferrals_1=0,
+    ytdAdmits_2=0, totalAdmits_2=0, ytdReferrals_2=0, totalReferrals_2=0;
+
+    for(var i=0;i<4;i++){
+        var admit_1=0, referral_1=0, admit_2=0, referral_2=0;
+        for(var j=0;j<3;j++){
+            if(data[48+(i*3)+j]!=null && parseInt(data[48+(i*3)+j])){
+                admit_1 += parseInt(data[48+(i*3)+j]);
+                totalAdmits_1 += parseInt(data[48+(i*3)+j]);
+                if(((i*3)+j) < new Date().getMonth()+1) ytdAdmits_1+=parseInt(data[48+(i*3)+j]);
+            }
+            if(data[60+(i*3)+j]!=null && parseInt(data[60+(i*3)+j])){
+                admit_2 += parseInt(data[60+(i*3)+j]);
+                totalAdmits_2 += parseInt(data[60+(i*3)+j]);
+                if(((i*3)+j) < new Date().getMonth()+1) ytdAdmits_2+=parseInt(data[60+(i*3)+j]);
+            }
+            if(data[24+(i*3)+j]!=null && parseInt(data[24+(i*3)+j])){
+                referral_1 += parseInt(data[24+(i*3)+j]);
+                totalReferrals_1 += parseInt(data[24+(i*3)+j]);
+                if(((i*3)+j) < new Date().getMonth()+1) ytdReferrals_1+=parseInt(data[24+(i*3)+j]);
+            }
+            if(data[36+(i*3)+j]!=null && parseInt(data[36+(i*3)+j])){
+                referral_2 += parseInt(data[36+(i*3)+j]);
+                totalReferrals_2 += parseInt(data[36+(i*3)+j]);
+                if(((i*3)+j) < new Date().getMonth()+1) ytdReferrals_2+=parseInt(data[36+(i*3)+j]);
+            }
+            // quarters1[i] = getConversion(admit_1.toString(), referral_1.toString());
+        }
+    }
+
+    html += trHtml(key);
+
+    for(var i=0; i<12; i++){
+        html += '<td>'+months1[i]+'</td>';
+        html += '<td class="right-border">'+months2[i]+'</td>';
+    }
+
+    html += '<td class="borderleft"><div class="slds-truncate" style="font-weight:bold;color:#007bff;"><div>'+getConversion(ytdAdmits_1.toString(), ytdReferrals_1.toString())+'</div></div></td>';
+    html += '<td class="borderleft right-border"><div class="slds-truncate" style="font-weight:bold;color:#007bff;"><div>'+getConversion(ytdAdmits_2.toString(), ytdReferrals_2.toString())+'</div></div></td>';
+    html += '<td class="borderleft"><div class="slds-truncate" style="font-weight:bold;color:#007bff;">'+getConversion(totalAdmits_1.toString(), totalReferrals_1.toString())+'</div></td>';
+    html += '<td class="borderleft right-border"><div class="slds-truncate" style="font-weight:bold;color:#007bff;">'+getConversion(totalAdmits_2.toString(), totalReferrals_2.toString())+'</div></td>';
+    html += '</tr>';
+    return html;
+
+}
+
+function twoYearAdmit(data, key){
+    return twoYearHtml(0, data, key);
+}
+
+function twoYearQualifiedAdmit(data, key){
+    return twoYearHtml(48, data, key);
+}
+
+function twoYearReferrals(data, key){
+    return twoYearHtml(24, data, key);
+}
+
+function twoYearCalls(data, key){
+    return twoYearHtml(0, data, key);
+}
+
+function twoYearAdmitCalls(data, key){
+    var ytdAdmits_1=0, totalAdmits_1=0, ytdCalls_1=0, totalCalls_1=0;
+    var ytdAdmits_2=0, totalAdmits_2=0, ytdCalls_2=0, totalCalls_2=0;
+    var data_1, data_2;
+    for(var i=0; i<12; i++){
+        var admit_1 = '<span class="lnr lnr-cross"></span>', admit_2 = '<span class="lnr lnr-cross"></span>';
+        var call_1 = '0', call_2 = '0';
+
+        if(calls[key.substring(0, 18)]){
+            if(calls[key.substring(0, 18)][i]){
+                call_1 = calls[key.substring(0, 18)][i];
+                if(i < (new Date().getMonth()+1)) ytdCalls_1+=parseInt(calls[key.substring(0, 18)][i]);
+                totalCalls_1+=parseInt(calls[key.substring(0, 18)][i]);
+            }
+            if(calls[key.substring(0, 18)][i+12]){
+                call_2 = calls[key.substring(0, 18)][i+12];
+                if(i < (new Date().getMonth()+1)) ytdCalls_2+=parseInt(calls[key.substring(0, 18)][i+12]);
+                totalCalls_2+=parseInt(calls[key.substring(0, 18)][i+12]);
+            }
+        }
+
+        if(data[i+48]){
+            admit_1 = data[i+48];
+            if(i < (new Date().getMonth()+1)) ytdAdmits_1+=parseInt(data[i+48]);
+            totalAdmits_1+=parseInt(data[i+48]);
+        }
+
+        if(data[i+60]){
+            admit_2 = data[i+60];
+            if(i < (new Date().getMonth()+1)) ytdAdmits_2+=parseInt(data[i+60]);
+            totalAdmits_2+=parseInt(data[i+60]);
+        }
+
+        data[i] = admit_1 + ' / ' + call_1;
+        data[i+12] = admit_2 + ' / ' + call_2;
+    }
+
+    var ytd_1 = ytdAdmits_1 + ' / ' + ytdCalls_1;
+    var ytd_2 = ytdAdmits_2 + ' / ' + ytdCalls_2;
+    var total_1 = totalAdmits_1 + ' / ' + totalCalls_1;
+    var total_2 = totalAdmits_2 + ' / ' + totalCalls_2;
+
+    var html = '';
+
+    html += trHtml(key);
+
+    for(var i=0; i<12; i++){
+        html += '<td>'+data[i]+'</td>';
+        html += '<td class="right-border">'+data[i+12]+'</td>';
+    }
+    html += '<td class="borderleft"><div class="slds-truncate" style="font-weight:bold;color:#007bff;"><div>'+ytd_1+'</div></div></td>';
+    html += '<td class="borderleft right-border"><div class="slds-truncate" style="font-weight:bold;color:#007bff;"><div>'+ytd_2+'</div></div></td>';
+    html += '<td class="borderleft"><div class="slds-truncate" style="font-weight:bold;color:#007bff;">'+total_1+'</div></td>';
+    html += '<td class="borderleft right-border"><div class="slds-truncate" style="font-weight:bold;color:#007bff;">'+total_2+'</div></td>';
+    html += '</tr>';
+    return html;
+}
+
+function twoYearHtml(offset, data, key){
+    var html = '';
+    var accountName = '';
+
+    var ytd_1=0, total_1=0, ytd_2=0, total_2=0;
+    var quarters1 = [0,0,0,0];
+    var quarters2 = [0,0,0,0];
+
+    for(var i=0;i<4;i++){
+        for(var j=0;j<3;j++){
+            if(data[offset+(i*3)+j]!=null && parseInt(data[offset+(i*3)+j])){
+                quarters1[i] += parseInt(data[offset+(i*3)+j]);
+                total_1 += parseInt(data[offset+(i*3)+j]);
+                if( ((i*3)+j) < (new Date().getMonth()+1)) ytd_1+=parseInt(data[offset+(i*3)+j]);
+            } else data[offset+(i*3)+j] = '<div class="lnr lnr-cross"></div>';
+
+            if(data[offset+12+(i*3)+j]!=null && parseInt(data[offset+12+(i*3)+j])){
+                quarters2[i] += parseInt(data[offset+12+(i*3)+j]);
+                total_2 += parseInt(data[offset+12+(i*3)+j]);
+                if(((i*3)+j) < (new Date().getMonth()+1)) ytd_2+=parseInt(data[offset+12+(i*3)+j]);
+            } else data[offset+12+(i*3)+j] = '<div class="lnr lnr-cross"></div>';
+        }
+    }
+
+    html += trHtml(key);
+
+    html += '<td class="borderleft"><div class="slds-truncate">'+data[offset+0]+'</div></td>';
+    html += '<td class="borderleft right-border"><div class="slds-truncate">'+data[offset+12]+'</div></td>';
+    html += '<td><div class="slds-truncate">'+data[offset+1]+'</div></td>';
+    html += '<td class="right-border"><div class="slds-truncate">'+data[offset+13]+'</div></td>';
+    html += '<td><div class="slds-truncate">'+data[offset+2]+'</div></td>';
+    html += '<td class="right-border"><div class="slds-truncate">'+data[offset+14]+'</div></td>';
+    html += '<td class="borderleft"><div class="slds-truncate">'+data[offset+3]+'</div></td>';
+    html += '<td class="borderleft right-border"><div class="slds-truncate">'+data[offset+15]+'</div></td>';
+    html += '<td><div class="slds-truncate">'+data[offset+4]+'</div></td>';
+    html += '<td class="right-border"><div class="slds-truncate">'+data[offset+16]+'</div></td>';
+    html += '<td><div class="slds-truncate">'+data[offset+5]+'</div></td>';
+    html += '<td class="right-border"><div class="slds-truncate">'+data[offset+17]+'</div></td>';
+    html += '<td class="borderleft"><div class="slds-truncate">'+data[offset+6]+'</div></td>';
+    html += '<td class="borderleft right-border"><div class="slds-truncate">'+data[offset+18]+'</div></td>';
+    html += '<td><div class="slds-truncate">'+data[offset+7]+'</div></td>';
+    html += '<td class="right-border"><div class="slds-truncate">'+data[offset+19]+'</div></td>';
+    html += '<td><div class="slds-truncate">'+data[offset+8]+'</div></td>';
+    html += '<td class="right-border"><div class="slds-truncate">'+data[offset+20]+'</div></td>';
+    html += '<td class="borderleft"><div class="slds-truncate">'+data[offset+9]+'</div></td>';
+    html += '<td class="borderleft"><div class="slds-truncate">'+data[offset+21]+'</div></td>';
+    html += '<td><div class="slds-truncate">'+data[offset+10]+'</div></td>';
+    html += '<td class="right-border"><div class="slds-truncate">'+data[offset+22]+'</div></td>';
+    html += '<td><div class="slds-truncate">'+data[offset+11]+'</div></td>';
+    html += '<td class="right-border"><div class="slds-truncate">'+data[offset+23]+'</div></td>';
+    html += '<td class="borderleft"><div class="slds-truncate" style="font-weight:bold;color:#007bff;"><div>'+ytd_1+'</div></div></td>';
+    html += '<td class="borderleft right-border"><div class="slds-truncate" style="font-weight:bold;color:#007bff;"><div>'+ytd_2+'</div></div></td>';
+    html += '<td class="borderleft"><div class="slds-truncate" style="font-weight:bold;color:#007bff;">'+total_1+'</div></td>';
+    html += '<td class="borderleft"><div class="slds-truncate" style="font-weight:bold;color:#007bff;">'+total_2+'</div></td>';
+    html += '</tr>';
+    return html;
+
+    return html;
+}
+
+function getHeaders(){
+    var html = '';
+    var headers = ['ACCOUNT / CONTACT', 'JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC', 'YTD', 'TOTAL'];
+
+    html += '<tr class="slds-text-title--caps" style="z-index:2;">';
+
+    html += '<th class="slds-is-resizable" scope="col" data-sortable-type="alpha"><div style="text-align:left;" class="slds-truncate" title="effectiveDate"><b>'+headers[0]+'</b></div></th>';
+    for(var i=1; i<headers.length; i++){
+        if(years.length>0){
+            for(var j=0; j<years.length; j++){
+                if(j==0) html += '<th style="border-left:1px solid white;" class="slds-is-resizable" scope="col" data-sortable-type="alpha"><div style="text-align:left;" class="slds-truncate" title="effectiveDate"><b>'+headers[i]+' '+years[j].substring(years[j].length-2, years[j].length)+'</b></div></th>';
+                else html += '<th class="slds-is-resizable" scope="col" data-sortable-type="alpha"><div style="text-align:left;" class="slds-truncate" title="effectiveDate"><b>'+headers[i]+' '+years[j].substring(years[j].length-2, years[j].length)+'</b></div></th>';
+            }
+        } else {
+            html += '<th class="slds-is-resizable" scope="col" data-sortable-type="alpha"><div style="text-align:left;" class="slds-truncate" title="effectiveDate"><b>'+headers[i]+'</b></div></th>';
+        }
+    }
+    html += '</tr>';
+    return html;
+
+}
+
+function getFooters(){
+    var html = '<th>TOTAL</th>';
+    if(years.length>0){
+        for(var i=0; i<14*years.length; i++){
+            html += '<th></th>';
+        }
+    } else {
+        for(var i=0; i<14; i++){
+            html += '<th></th>';
+        }
+    }
+    return html;
+}
+
+function formatDate()
+{
+    var d = new Date();
+    if(d.getMonth()+1 < 10){
+        return '0' + (d.getMonth()+1) + '' + d.getDate() + '' + d.getFullYear();
+    } else {
+        return d.getMonth()+1 + '' + d.getDate() + '' + d.getFullYear();
+    }
+}
+
+var referralId;
+var refferalName;
+function openRating(id, name){
+    referralId = id;
+    referralName = name;
+    if(newBusiness && newBusiness.indexOf(referralId)>=0){
+        $("#newBusiness").removeClass("btn-primary").addClass("btn-danger");
+    } else {
+        $("#newBusiness").removeClass("btn-danger").addClass("btn-primary");
+    }
+    $("#bottombuttons").slideDown();
+}
+
+function rateReferral(type){
+    var table = $("#report").DataTable();
+    table.rows().invalidate().draw();
+    Sales_ReferralSourceTrendReport.rateReferral(referralId, userId, type, function(success, event){
+        if(success) getData();
+        $("#bottombuttons").slideUp();
+    }, {escape:false});
+}
+
+function businessPlan(){
+    Sales_ReferralSourceTrendReport.getSwot(referralId, userId, function(result, event){
+        if(result){
+            $("#planName").html('<a href="/'+referralId+'" target="_blank">'+referralName+'</a>');
+            var bp = JSON.parse(result);
+            if(bp.hasSwot){
+                $("#nav-strength").val(bp.strength);
+                $("#nav-weakness").val(bp.weakness);
+                $("#nav-opportunity").val(bp.opportunity);
+                $("#nav-threat").val(bp.threat);
+                $("#nav-compete textarea").val(bp.competitor);
+                $("#nav-plan textarea").val(bp.plan);
+            } else{
+                $("#nav-strength").val('');
+                $("#nav-weakness").val('');
+                $("#nav-opportunity").val('');
+                $("#nav-threat").val('');
+                $("#nav-swot textarea").val('');
+                $("#nav-compete textarea").val('');
+                $("#nav-plan textarea").val('');
+            }
+            $('#planModal').modal({backdrop: 'static', keyboard: false});
+        }
+    }, {escape:false});
+}
+
+function addRemoveBusiness(){
+    Sales_ReferralSourceTrendReport.saveNewBusiness(referralId, userId, function(result, event){
+        if(result){
+            var json = JSON.parse(result);
+            if(json.success && json.string){
+                $("#successAlert").html(json.string);
+                $("#successAlert").slideDown().delay(3500).slideUp();
+            } else if(!json.success && json.string){
+                $("#warningAlert").html(json.string);
+                $("#warningAlert").slideDown().delay(3500).slideUp();
+            }
+        } else{
+            $("#errorAlert").html('<strong>The new business was not able to be saved. </strong>Please try again later, or if the problem persists contact sales support.');
+            $("#errorAlert").slideDown().delay(3500).slideUp();
+        }
+        $('#bottombuttons').slideUp();
+        getData();
+    }, {escape:false});
+}
+
+</script>
+
+</body>
+</html>
+
+</apex:page>

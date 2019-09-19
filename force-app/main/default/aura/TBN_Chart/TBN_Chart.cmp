@@ -1,0 +1,53 @@
+<aura:component >
+	<aura:attribute name="chartTitle" type="String" access="public" default="Accounts Without Activity"/>
+    <aura:attribute name="chart" type="Object" access="public" description="A chart instance to refer to chart"/>
+    <aura:attribute name="chartLegend" type="Object" access="public" description="An object for chart legends"/>
+    <aura:attribute name="chartData" access="public" type="string" description="Chart data in JSON format. This attribute is optional. If this is not set, Chartjs Component retrieve latest data by itself." />
+    
+    <aura:attribute name="chartList" access="public" type="string[]"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" description="Initialization process." />
+    
+    <aura:handler event="aura:waiting" action="{!c.waiting}"/>
+    <aura:handler event="aura:doneWaiting" action="{!c.doneWaiting}"/>
+
+    <ltng:require scripts="/resource/ChartJS/Chartjs1.min.js" afterScriptsLoaded="{!c.createChart}"/>
+    <link rel="stylesheet" href="/resource/ChartJS/Chartjs.css" />
+	 
+    <br/>
+    <div class = "chartDiv" >  
+        <div aura:id="xi-spinner" class="slds-spinner_container xc-hidden">
+            <div class="slds-spinner--brand slds-spinner slds-spinner--large" aria-hidden="false" role="alert">
+                <div class="slds-spinner__dot-a"></div>
+                <div class="slds-spinner__dot-b"></div>
+            </div>
+        </div>
+        
+        <div>
+            <div class="slds-clearfix containerDiv">
+                <!-- Chart Container -->
+                <div class="slds-float--left width50" id="{!globalId + '_chartContainer'}">
+                    <canvas id="{!globalId + '_chart'}" class="width100 height200"></canvas>
+                    
+                </div>
+             
+                <!-- Chart Container -->
+                
+                <!-- Legend -->
+                <div class="slds-float--right" style="min-width:230px">
+                    <ul >
+                        <aura:iteration items="{!v.chartLegend}" var="item">
+                            <li style="{!'display: inline-flex; color:' + item.color}">
+                                <div style="{!'width:15px; height:10px; margin-top: 4px; background-color:' + item.color}"/> &nbsp;
+                                {!item.label}
+                                <aura:if isTrue="{!item.amount != null}">&nbsp;({!item.amount})
+                                </aura:if>
+                            </li><br/>
+                        </aura:iteration>
+                    </ul>
+                </div>
+                <!-- Legend -->
+                 
+            </div>
+        </div>
+    </div>
+</aura:component>

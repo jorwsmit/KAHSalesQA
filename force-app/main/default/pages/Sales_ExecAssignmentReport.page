@@ -1,0 +1,213 @@
+<apex:page controller="Sales_ExecAssignmentReport" showHeader="true" standardStylesheets="false" sidebar="false" applyHtmlTag="true" applyBodyTag="false" docType="html-5.0">
+
+<html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<head>
+	<title>Executive Assignment Report</title>
+	<apex:stylesheet value="{!URLFOR($Resource.LightningDesign, 'assets/styles/salesforce-lightning-design-system-vf.css')}"/>
+	<link rel="stylesheet" href="https://cdn.linearicons.com/free/1.0.0/icon-font.min.css"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
+</head>
+<style>
+.blue{
+	background-color: #64a3e5;
+}
+.blue:hover{
+	background-color: #5484b7;
+}
+.red{
+	background-color: #dd786c;
+}
+.red:hover{
+	background-color: #b26259;
+}
+.roundButton{
+	display: inline-block;
+	height: 50px;
+	width: 188px;
+	border-radius: 25px;
+	padding: 7px;
+	text-align: center;
+	font-size: 25px;
+	color: white;
+	cursor: pointer;
+	margin-right: 15px;
+}
+.noSidebarCell, #bodyTable{
+	padding: 0;
+}
+#reportTable > thead{
+	position: sticky;
+	top:0;
+	z-index:1;
+	font-size: 14px;
+	color: white;
+	background-color: #64a3e5;
+}
+#reportTable > thead > tr > th{
+	height: 35px;
+	text-align: left;
+	padding:0px;
+}
+#reportTable > tbody > tr > td{
+	height: 35px;
+	text-align: left;
+}
+</style>
+<body>
+	<!-- REQUIRED SLDS WRAPPER -->
+	<div class="LightningDesign">
+
+		<div id="save" class="roundButton blue" style="margin:10px;"><span class="lnr lnr-cloud-download"></span> Save</div>
+
+		<div class="slds-spinner_container" id="spinner" style="position:fixed; width:100vw; height:100vh;">
+			<div class="slds-spinner slds-spinner--large slds-spinner--brand">
+				<div class="slds-spinner__dot-a"></div>
+				<div class="slds-spinner__dot-b"></div>
+			</div>
+		</div>
+
+		<table class="slds-table slds-table--bordered slds-table--cell-buffer" id="reportTable" data-sortable="true">
+			<thead>
+				<tr class="slds-text-title--caps" style="z-index:2;">
+					<th class="slds-is-resizable" scope="col" data-sortable-type="alpha" style="border-left:1pt solid black solid black; border-bottom:1pt solid black; border-top:1pt solid black; solid black">
+						<div style="padding-left:10px;" class="slds-truncate"><b>Name<i style="padding-left:20px;" class="fa fa-sort" aria-hidden="true"></i></b></div>
+					</th>
+					<th class="slds-is-resizable" scope="col" data-sortable-type="date" style="border-bottom:1pt solid black; border-top:1pt solid black;">
+						<div class="slds-truncate"><b>Hire Date<i style="padding-left:20px;" class="fa fa-sort" aria-hidden="true"></i></b></div>
+					</th>
+					<th class="slds-is-resizable" scope="col" data-sortable-type="alpha" style="border-right:1pt solid black; border-bottom:1pt solid black; border-top:1pt solid black;">
+						<div class="slds-truncate"><b>Title<i style="padding-left:20px;" class="fa fa-sort" aria-hidden="true"></i></b></div>
+					</th>
+					<th class="slds-is-resizable" scope="col" data-sortable-type="alpha" style="border-bottom:1pt solid black; border-top:1pt solid black;">
+						<div class="slds-truncate"><b>Region<i style="padding-left:20px;" class="fa fa-sort" aria-hidden="true"></i></b></div>
+					</th>
+					<th class="slds-is-resizable" scope="col" data-sortable-type="alpha" style="border-bottom:1pt solid black; border-top:1pt solid black;">
+						<div class="slds-truncate"><b>Area<i style="padding-left:20px;" class="fa fa-sort" aria-hidden="true"></i></b></div>
+					</th>
+					<th class="slds-is-resizable" scope="col" data-sortable-type="alpha" style="border-bottom:1pt solid black; border-top:1pt solid black;">
+						<div class="slds-truncate"><b>Market<i style="padding-left:20px;" class="fa fa-sort" aria-hidden="true"></i></b></div>
+					</th>
+					<th class="slds-is-resizable" scope="col" data-sortable-type="alpha" style="border-bottom:1pt solid black; border-top:1pt solid black;">
+						<div class="slds-truncate"><b>Home Facility<i style="padding-left:20px;" class="fa fa-sort" aria-hidden="true"></i></b></div>
+					</th>
+					<th class="slds-is-resizable" scope="col" data-sortable-type="alpha" style="border-right:1pt solid black; border-bottom:1pt solid black; border-top:1pt solid black;">
+						<div class="slds-truncate"><b>Manger<i style="padding-left:20px;" class="fa fa-sort" aria-hidden="true"></i></b></div>
+					</th>
+					<th class="slds-is-resizable" scope="col" data-sortable-type="numeric" style="border-bottom:1pt solid black; border-top:1pt solid black;">
+						<div class="slds-truncate"><b>Total Assignments<i style="padding-left:20px;" class="fa fa-sort" aria-hidden="true"></i></b></div>
+					</th>
+					<th class="slds-is-resizable" scope="col" data-sortable-type="numeric" style="border-bottom:1pt solid black; border-top:1pt solid black;">
+						<div class="slds-truncate"><b>Ref Accounts<i style="padding-left:20px;" class="fa fa-sort" aria-hidden="true"></i></b></div>
+					</th>
+					<th class="slds-is-resizable" scope="col" data-sortable-type="numeric" style="border-bottom:1pt solid black; border-top:1pt solid black;">
+						<div class="slds-truncate"><b>Ref Contacts<i style="padding-left:20px;" class="fa fa-sort" aria-hidden="true"></i></b></div>
+					</th>
+					<th class="slds-is-resizable" scope="col" data-sortable-type="numeric" style="border-bottom:1pt solid black; border-top:1pt solid black;">
+						<div class="slds-truncate"><b>Non-Ref Accounts<i style="padding-left:20px;" class="fa fa-sort" aria-hidden="true"></i></b></div>
+					</th>
+					<th class="slds-is-resizable" scope="col" data-sortable-type="numeric" style="border-right:1pt solid black; border-bottom:1pt solid black; border-top:1pt solid black;">
+						<div class="slds-truncate"><b>Non-Ref Contacts<i style="padding-left:20px;" class="fa fa-sort" aria-hidden="true"></i></b></div>
+					</th>
+					<th class="slds-is-resizable" scope="col" data-sortable-type="numeric" style="border-bottom:1pt solid black; border-top:1pt solid black;">
+						<div class="slds-truncate"><b>YTD Target<i style="padding-left:20px;" class="fa fa-sort" aria-hidden="true"></i></b></div>
+					</th>
+					<th class="slds-is-resizable" scope="col" data-sortable-type="numeric" style="border-bottom:1pt solid black; border-top:1pt solid black;">
+						<div class="slds-truncate"><b>YTD Referrals<i style="padding-left:20px;" class="fa fa-sort" aria-hidden="true"></i></b></div>
+					</th>
+					<th class="slds-is-resizable" scope="col" data-sortable-type="numeric" style="border-bottom:1pt solid black; border-top:1pt solid black;">
+						<div class="slds-truncate"><b>YTD Admits<i style="padding-left:20px;" class="fa fa-sort" aria-hidden="true"></i></b></div>
+					</th>
+					<th class="slds-is-resizable" scope="col" data-sortable-type="numeric" style="border-right:1pt solid black; border-bottom:1pt solid black; border-top:1pt solid black;">
+						<div class="slds-truncate"><b>YTD Conv %<i style="padding-left:20px;" class="fa fa-sort" aria-hidden="true"></i></b></div>
+					</th>
+					<th class="slds-is-resizable" scope="col" data-sortable-type="numeric" style="border-bottom:1pt solid black; border-top:1pt solid black;">
+						<div class="slds-truncate"><b>YTD Planned Calls<i style="padding-left:20px;" class="fa fa-sort" aria-hidden="true"></i></b></div>
+					</th>
+					<th class="slds-is-resizable" scope="col" data-sortable-type="numeric" style="border-right:1pt solid black; border-bottom:1pt solid black; border-top:1pt solid black;">
+						<div class="slds-truncate"><b>YTD Completed Calls<i style="padding-left:20px;" class="fa fa-sort" aria-hidden="true"></i></b></div>
+					</th>
+					<th class="slds-is-resizable" scope="col" data-sortable-type="date" style="border-right:1pt solid black; border-bottom:1pt solid black; border-top:1pt solid black;">
+						<div class="slds-truncate"><b>Last Login<i style="padding-left:20px;" class="fa fa-sort" aria-hidden="true"></i></b></div>
+					</th>
+					<th class="slds-is-resizable" scope="col" data-sortable-type="numeric" style="border-bottom:1pt solid black; border-top:1pt solid black;">
+						<div class="slds-truncate"><b>Perner<i style="padding-left:20px;" class="fa fa-sort" aria-hidden="true"></i></b></div>
+					</th>
+					<th class="slds-is-resizable" scope="col" data-sortable-type="alpha" style="border-right:1pt solid black; border-bottom:1pt solid black; border-top:1pt solid black;">
+						<div class="slds-truncate"><b>User ID<i style="padding-left:20px;" class="fa fa-sort" aria-hidden="true"></i></b></div>
+					</th>
+				</tr>
+			</thead>
+			<tbody id="reportBody">
+			</tbody>
+		</table>
+
+		<div id="errorModal" class="slds-modal slds-fade-in-open" style="display:none;">
+			<div class="slds-modal__container" style="z-index:2;">
+				<div style="color:white;background-color:#dd786c;" class="slds-modal__header">
+					<h2 class="slds-text-heading--medium" style="font-size:24px;font-weight:bold;"><span class="lnr lnr-thumbs-down"></span> AN ERROR HAS OCCURED!</h2>
+				</div>
+				<div class="slds-modal__content slds-p-around--medium">
+					<h3 style="text-align:center;font-size:16px;text-decoration:underline;">ERROR INFORMATION</h3>
+					<p id="errorMessage" style="text-align:center;font-size:14px;"></p>
+				</div>
+				<div class="slds-modal__footer" style="text-align:center;">
+					<div onclick="$('#errorModal').fadeOut()" class="roundButton red" style="padding:4px;height:30px;width:120px;font-size:16px;margin:0px;"><span class="lnr lnr-cross"></span> Close</div>
+				</div>
+			</div>
+			<div class="slds-backdrop slds-backdrop--open" style="z-index:1;"></div>
+		</div>
+
+	</div>
+	<!-- / REQUIRED SLDS WRAPPER -->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/sortable/0.8.0/js/sortable.min.js"></script>
+	<script>
+
+	var batchSize = 100; var html='';
+
+	{!$RemoteAction.Sales_ExecAssignmentReport.getData}(null, batchSize, handleAssignments, {escape:false, timeout:120000});
+
+	function handleAssignments(object, event){
+		if(event.message){
+			$("#errorMessage").text(event.message);
+			$("#errorModal").fadeIn();
+			$("#spinner").hide();
+		} else{
+			var obj = JSON.parse(object);
+			if(obj.size!=0) $("#reportBody").append(obj.html);
+			if(obj.size==batchSize){
+				{!$RemoteAction.Sales_ExecAssignmentReport.getData}(obj.offsetId, batchSize, handleAssignments, {escape:false, timeout:120000});
+			} else {
+				if(html!=''){
+					$("#reportBody").append(obj.html);
+				}
+				$("#spinner").hide();
+			}
+		}
+	}
+
+	$("#save").click(function(e) {
+		e.preventDefault();
+		var data_type = 'data:application/vnd.ms-excel';
+		var table_div = document.getElementById('reportTable');
+		var table_html = table_div.outerHTML.replace(/<span class="lnr lnr-cross"><\/span>/g, '0').replace(/ /g, '%20');
+		var a = document.createElement('a');
+		a.href = data_type + ', ' + table_html;
+		var d = new Date();
+		var s = '';
+		if(d.getMonth()+1<10==1) s += '0'+(d.getMonth()+1).toString();
+		else s += (d.getMonth()+1).toString();
+
+		if(d.getDate()<10) s += '0'+(d.getDate()).toString();
+		else s += (d.getDate()).toString();
+
+		s += (d.getFullYear()).toString();
+
+		a.download = 'Executive Assignment Report '+s+'.xls';
+		a.click();
+	});
+	</script>
+</body>
+</html>
+</apex:page>

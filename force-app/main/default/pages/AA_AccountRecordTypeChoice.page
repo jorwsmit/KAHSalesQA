@@ -1,0 +1,16 @@
+<apex:page standardController="Account">
+	<apex:includeScript value="/lightning/lightning.out.js"/>
+
+    <apex:includeLightning />
+    <div class="slds">
+        <!-- Target div for the Lightning component -->
+        <div id="customObjectEdit"></div>
+        </div> 
+    <script>
+        $Lightning.use("c:AA_AccountChoiceApp", function(){
+            var targetElementId = 'customObjectEdit';
+            $Lightning.createComponent("c:AA_AccountChoice",  {}, targetElementId, function(components, status){
+            });
+        });
+    </script>
+</apex:page>

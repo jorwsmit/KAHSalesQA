@@ -1,0 +1,63 @@
+<apex:page showHeader="false" controller="TBN_PostChatVisitorFormController" action="{!fetchPresences}">
+    <!--
+    Request Time:  <apex:outputText id="c_rt" value="{!$CurrentPage.parameters.requestTime}" /><br/>
+    Start Time:  <apex:outputText id="c_st" value="{!$CurrentPage.parameters.startTime}" /><br/>
+    Deployment Id: <apex:outputText value="{!$CurrentPage.parameters.deploymentId}" /><br/>
+    Button Id: <apex:outputText value="{!$CurrentPage.parameters.buttonId}" /><br/>
+    Chat Key: <apex:outputText value="{!$CurrentPage.parameters.chatKey}" /><br />
+    Last Visited Page: <apex:outputText value="{!$CurrentPage.parameters.lastVisitedPage}" /><br/>
+    Original Referrer: <apex:outputText value="{!$CurrentPage.parameters.originalReferrer}" /><br/>
+    Latitude: <apex:outputText value="{!$CurrentPage.parameters.latitude}" /><br/>  
+    Longitude: <apex:outputText value="{!$CurrentPage.parameters.longitude}" /><br/>
+    City: <apex:outputText value="{!$CurrentPage.parameters.city}" /><br/>
+    Region: <apex:outputText value="{!$CurrentPage.parameters.region}" /><br/>
+    Country: <apex:outputText value="{!$CurrentPage.parameters.country}" /><br/>
+    Organization: <apex:outputText value="{!$CurrentPage.parameters.organization}" /><br/>
+    Disconnected By: <apex:outputText value="{!$CurrentPage.parameters.disconnectedBy}" /><br/>
+    Window Language: <apex:outputText value="{!$CurrentPage.parameters.windowLanguage}" /><br/>
+    Chat Details: <apex:outputText value="{!$CurrentPage.parameters.chatDetails}" /><br />
+    Transcript: <apex:outputText value="{!$CurrentPage.parameters.transcript}" /><br/>    
+    Attached Records : <apex:outputText value="{!$CurrentPage.parameters.attachedRecords}" /><br />
+    Error: <apex:outputText value="{!$CurrentPage.parameters.error}" /><br />
+    -->
+    
+    <apex:stylesheet value="{!URLFOR($Resource.SLDSv213, 'assets/styles/salesforce-lightning-design-system.css')}"/>
+    
+    <style>
+    
+        @media only screen and (max-device-width: 480px) {
+                
+            .slds-form-element__label {
+                font-size: 25px;
+            }
+        }
+        
+    </style>
+    <script>
+        window.onload = function() {
+            
+            var stringvalue='{!strIsAgent}';
+            setTimeout(function(){
+                if(stringvalue == 'true')
+                 window.location = '{!srtRedirectURL}'
+            }, 
+            30000);    
+        }
+        
+    </script>
+    <apex:include pageName="TBN_ChatVisitorFormHeader" />
+    <br/>
+    <apex:outputPanel id="opId1" rendered="{!strIsAgent}">
+        <div class="slds-form-element__label slds-text-heading--small slds-p-horizontal--small">
+            <apex:outputLabel value="{!$Label.Live_Agent_Post_Chat_Message2}" />
+            
+        </div>
+    </apex:outputPanel>
+    
+    <apex:outputPanel rendered="{!!strIsAgent}">
+        <div class="slds-form-element__label slds-text-heading--small slds-p-horizontal--small">
+            <apex:outputLabel value="{!$Label.Live_Agent_Post_Chat_Message1}" />
+        </div>
+    </apex:outputPanel>
+    <br/><br/>
+</apex:page>

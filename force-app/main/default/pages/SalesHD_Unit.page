@@ -1,0 +1,1589 @@
+<apex:page showHeader="false" lightningStyleSheets="true" standardController="Account_Unit__c" extensions="SalesHD_Unit"
+ action="{!accountRedirect}" standardStylesheets="false" sidebar="false" applyHtmlTag="false" applyBodyTag="false" docType="html-5.0">
+
+	<html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" lang="en">
+
+	<head>
+		<title>Unit Page</title>
+		<!-- <apex:stylesheet value="{!URLFOR($Resource.LightningDesign, 'assets/styles/salesforce-lightning-design-system-vf.css')}" /> -->
+		<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/> -->
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/"
+		 crossorigin="anonymous" />
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4"
+		 crossorigin="anonymous" />
+		<link rel="stylesheet" href="https://cdn.linearicons.com/free/1.0.0/icon-font.min.css" />
+		<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.0/themes/smoothness/jquery-ui.css" />
+		<meta name="viewport" content="width=device-width, initial-scale=1,minimum-scale=1, maximum-scale=1, user-scalable=no" />
+		<apex:slds />
+		<style>
+			a {
+				color: #FFFFFF !important;
+				text-decoration: underline !important;
+			}
+
+			a:hover {
+				color: #E0E2E7 !important;
+			}
+
+			.ui-autocomplete {
+				z-index: 10000 !important;
+				max-height: 400px;
+				overflow: auto;
+			}
+
+			.ui-menu-item a {
+				color: #3E3E3C !important;
+			}
+
+			div {
+				font-size: 20px;
+			}
+
+			body {
+				font-family: "Salesforce Sans", Arial, sans-serif !important;
+				margin: 0px;
+				background-color: #E0E2E7;
+			}
+
+			input {
+				display: block;
+			}
+
+			form {
+				width: 100%;
+			}
+
+			form label {
+				font-size: 24px !important;
+				font-weight: bold !important;
+			}
+
+			textarea,
+			input {
+				color: #3E3E3C !important;
+				font-size: 18px !important;
+			}
+
+			textarea::placeholder,
+			input::placeholder {
+				font-size: 18px !important;
+			}
+
+			.LightningDesign {
+				color: #3E3E3C !important;
+			}
+
+			.LightningDesign::selection {
+				color: #3E3E3C !important;
+			}
+
+			.reassignButton {
+				position: fixed;
+				bottom: 0px;
+				left: 50%;
+				margin-left: -250px;
+			}
+
+			.reassignButton button {
+				width: 500px !important;
+			}
+
+			.l-space {
+				margin: 20px;
+			}
+
+			.s-space {
+				margin: 10px;
+			}
+
+			.tableCheck {
+				position: relative;
+				left: 45%;
+			}
+
+			.btn {
+				border: none !important;
+				color: #FFFFFF !important;
+			}
+
+			.row {
+				margin-left: 0px !important;
+				margin-right: 0px !important;
+			}
+
+			table {
+				overflow: hidden;
+			}
+
+			table td,
+			table th {
+				border: 1px solid #ddd;
+				padding-left: 4px !important;
+				padding-right: 4px !important;
+			}
+
+			table thead th {
+				text-align: center !important;
+			}
+
+			table tbody td {
+				text-align: center !important;
+				vertical-align: middle !important;
+			}
+
+			.userList {
+				border: 1px solid #ced4da !important;
+				border-radius: 7px;
+				max-height: 450px;
+				overflow: auto;
+				display: none;
+			}
+
+			.userList li {
+				cursor: pointer;
+				padding-left: 5px;
+				padding-right: 5px;
+				border-bottom: 1px solid #ced4da !important;
+			}
+
+			.shadow {
+				-webkit-box-shadow: 0px 3px 7px 0px rgba(0, 0, 0, 0.25);
+				-moz-box-shadow: 0px 3px 7px 0px rgba(0, 0, 0, 0.25);
+				box-shadow: 0px 3px 7px 0px rgba(0, 0, 0, 0.25);
+			}
+
+			.header {
+				padding-top: 120px;
+				padding-bottom: 20px;
+				width: 100vw;
+				color: white;
+				text-align: center;
+				background-color: #2BC100;
+			}
+
+			.header h1 {
+				z-index: 10;
+				position: fixed;
+				background-color: #2BC100;
+				padding-top: 10px;
+				padding-bottom: 10px;
+				top: 49px;
+				width: 100%;
+			}
+
+			.back-btn {
+				z-index: 100;
+				position: fixed;
+				top: 0px;
+				left: 10px;
+				font-size: 48px !important;
+				cursor: pointer;
+			}
+
+			.modal {
+				font-family: "Salesforce Sans", Arial, sans-serif !important;
+				color: #3E3E3C !important;
+			}
+
+			.modal ul li {
+				border-bottom: 1px solid #e9ecef;
+				padding: 10px;
+				font-size: 18px;
+				font-weight: bold;
+			}
+
+			.modal-body {
+				max-height: 375px;
+				overflow-y: auto;
+				-webkit-overflow-scrolling: touch;
+			}
+
+			.modal-title {
+				font-weight: normal !important;
+				color: #157DFA !important;
+			}
+
+			.modal-subtitle {
+				font-weight: lighter !important;
+			}
+
+			.btn-primary {
+				background-color: #157DFA !important;
+			}
+
+			.btn-primary:active {
+				background-color: #1f6bc6 !important;
+			}
+
+			.btn-success {
+				background-color: #42ce5a !important;
+			}
+
+			.btn-success:active {
+				background-color: #3ab74f !important;
+			}
+
+			.btn-secondary {
+				background-color: #808285 !important;
+			}
+
+			.btn-secondary:active {
+				background-color: #6c6e70 !important;
+			}
+
+			#profilePhoto,
+			#profilePhoto img {
+				z-index: 200;
+				position: fixed;
+				right: 10px;
+				top: 3px;
+				width: 42px;
+				height: 42px;
+				border-radius: 100%;
+				border: 2px solid #FFFFFF;
+				background-color: #E0E2E7;
+				cursor: pointer;
+			}
+
+			h1 {
+				font-size: 35px !important;
+				font-weight: bold !important;
+			}
+
+			.name {
+				font-weight: lighter !important;
+			}
+
+			h2 {
+				font-size: 36px !important;
+				font-weight: lighter !important;
+			}
+
+			h3 {
+				font-size: 29px !important;
+				font-weight: bold !important;
+			}
+
+			h4 {
+				font-size: 22px !important;
+				font-weight: normal !important;
+			}
+
+			h5 {
+				font-size: 18px !important;
+				font-weight: lighter !important;
+			}
+
+			.bold {
+				font-weight: bold !important;
+			}
+
+			.thin {
+				font-weight: lighter !important;
+			}
+
+			.italic {
+				font-style: italic !important;
+			}
+
+			.icon {
+				color: white;
+				margin-left: 10px;
+				border-radius: 7px;
+			}
+
+			.icon-green {
+				background-color: #2BC100;
+			}
+
+			.icon-blue {
+				background-color: #157DFA;
+			}
+
+			.icon-yellow {
+				background-color: #FFD000;
+			}
+
+			.icon-red {
+				background-color: #FF0036;
+			}
+
+			.icon-grey {
+				background-color: #808285;
+			}
+
+			.card {
+				border-radius: 7px;
+				cursor: pointer;
+			}
+
+			.card-header i {
+				font-size: 50px;
+			}
+
+			.card-body {
+				height: 200px;
+				overflow: auto;
+			}
+
+			.ppt {
+				color: #FF6600;
+			}
+
+			.col-md-4 {
+				padding: 0px 10px 0px 10px;
+				margin-bottom: 20px;
+			}
+
+			.white-bg {
+				background-color: #FFFFFF !important;
+			}
+
+			.rounded {
+				padding: 15px 0px 15px 0px !important;
+				border-radius: 7px !important;
+			}
+
+			.inner-container {
+				padding: 0px !important;
+			}
+
+			.inner-container div:not(:last-child) {
+				padding-right: 10px !important;
+			}
+
+			.container {
+				padding: 15px !important;
+				margin-top: 20px;
+				margin-bottom: 20px;
+				border-radius: 7px;
+			}
+
+			.container:nth-of-type(2) {
+				margin-top: 20px;
+				margin-bottom: 10px;
+			}
+
+			.container:last-of-type {
+				margin-top: 10px;
+				margin-bottom: 20px;
+			}
+
+			.no-bg-container {
+				background-color: transparent !important;
+			}
+
+			.action-item-label {
+				font-size: 20px !important;
+				font-weight: bold !important;
+			}
+
+			.action-items,
+			.action-items div {
+				font-size: 18px !important;
+				padding: 5px !important;
+			}
+
+			.action-items .row {
+				border: 1px solid #d8dde6;
+			}
+
+			.action-items .row:first-child {
+				border-radius: .25rem .25rem 0px 0px;
+				border-bottom: 0px;
+			}
+
+			.action-items .row:not(:first-child):not(:last-child) {
+				border-top: 1px solid #d8dde6;
+				border-bottom: 0px;
+			}
+
+			.action-items .row:last-child {
+				border-radius: 0px 0px .25rem .25rem;
+			}
+
+			.action-items .row:only-child {
+				border: 1px solid #d8dde6;
+				border-radius: .25rem;
+			}
+
+			.no-padding {
+				padding: 0px !important;
+			}
+
+			.no-margin {
+				margin: 0px !important;
+			}
+
+			.incomplete {
+				text-decoration: underline;
+				cursor: pointer;
+				color: #FF3B39 !important;
+			}
+
+			.complete {
+				text-decoration: underline;
+				cursor: pointer;
+				color: #25D96B !important;
+			}
+
+			.red {
+				color: #FF3B39 !important;
+			}
+
+			.green {
+				color: #4CD964 !important;
+			}
+
+			.blue {
+				color: #208FFF !important;
+			}
+
+			.no-pad {
+				padding: 0px !important;
+			}
+
+			.blue-link {
+				color: #208FFF !important;
+				text-decoration: underline !important;
+				padding-right: 10px;
+			}
+
+			.blue-link:hover {
+				color: #1773d1 !important;
+			}
+
+			@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) and (orientation: landscape) {
+				.container {
+					max-width: 1004px !important;
+					margin: 20px 10px 20px 10px;
+				}
+				.container:nth-of-type(2) {
+					margin: 20px 10px 10px 10px;
+				}
+				.container:last-of-type {
+					margin: 10px 10px 20px 10px;
+				}
+			}
+
+			.upcoming-events {
+				display: inline-block !important;
+			}
+
+			#new-event {
+				width: 200px;
+				padding: 5px !important;
+				display: inline-block;
+				float: right;
+			}
+
+			@media (max-width:499px) {
+				.upcoming-events {
+					display: block;
+				}
+				#new-event {
+					margin-top: 10px;
+					margin-left: 10px;
+					float: none;
+				}
+
+				.inner-container div:not(:last-child) {
+					padding-right: 0px !important;
+				}
+
+				.container {
+					padding: 2px !important;
+				}
+
+			}
+
+			/* Calendar styling */
+
+			#ui-datepicker-div {
+				border-radius: 0.25rem;
+			}
+
+			#ui-datepicker-div a {
+				color: #208FFF !important;
+			}
+
+			.ui-datepicker-calendar,
+			.ui-datepicker-header {
+				background-color: white;
+				padding: 5px;
+				border: 1px solid #d8dde6;
+			}
+
+			.ui-datepicker-header {
+				margin-top: 5px;
+				border-radius: 0.25rem 0.25rem 0 0;
+			}
+
+			.ui-datepicker-calendar {
+				border-radius: 0 0 0.25rem 0.25rem;
+			}
+
+			.ui-datepicker-next {
+				position: relative;
+				left: 90px;
+			}
+
+			.ui-datepicker-calendar th,
+			.ui-datepicker-calendar td {
+				padding: 2px 5px 2px 5px;
+			}
+
+			/* End calendar styling */
+
+			.round-border {
+				border: 1px solid #ddd;
+				padding: 5px 7px 5px 7px;
+				border-radius: 100%;
+			}
+
+			.border-blue {
+				border-color: #208FFF !important;
+			}
+
+			ul {
+				padding-left: 0px;
+			}
+
+			ul li {
+				font-size: 15px;
+				line-height: 23px;
+				padding: 10px 0px 10px 0px;
+				margin-left: 10px !important;
+				border-bottom: 1px solid #ddd;
+				cursor: pointer;
+				list-style: none;
+			}
+
+			.cursor-default {
+				cursor: default;
+			}
+
+			.contact-icon {
+				position: absolute;
+				font-size: 50px;
+			}
+
+			ul li:hover {
+				border-bottom: 1px solid #afafaf;
+			}
+
+			.contact-group:hover {
+				border-bottom: 1px solid #E0E5E6;
+			}
+
+			.contact-group {
+				background-color: #E0E5E6;
+				padding: 10px !important;
+				text-align: center;
+				font-weight: bold;
+				font-size: 18px;
+				cursor: default;
+				margin: 0px !important;
+			}
+
+			.contact-list li {
+				padding: 10px !important;
+				font-size: 16px !important;
+				cursor: pointer;
+				margin: 0px !important;
+			}
+
+			.contact-list li div {
+				font-size: 16px !important;
+			}
+
+			.modal-content {
+				border-radius: 7px;
+			}
+
+			.modal-header {
+				background-color: #157DFA;
+				color: white !important;
+			}
+
+			.icon-contact-blue {
+				background-color: #00A6FF !important;
+			}
+
+			.form-group {
+				font-size: 18px;
+			}
+
+			.form-group input {
+				font-size: 18px;
+			}
+
+			.btn {
+				border-radius: 7px;
+			}
+
+			#contactList {
+				border: 1px solid #ced4da !important;
+				border-radius: 7px;
+				display: none;
+			}
+
+			#notes {
+				max-height: 400px;
+				overflow: auto;
+			}
+
+			.nav-list li {
+				font-size: 20px;
+				display: inline-block;
+				border: none;
+				font-style: italic;
+				color: #FFFFFF;
+				padding: 10px 15px 10px 15px;
+				margin: 0px !important;
+				border-radius: 25px;
+			}
+
+			.nav-list li:hover {
+				border: none;
+			}
+
+			.nav-list li:hover:not(.selected) {
+				background-color: #afafaf;
+			}
+
+			.nav-list .selected {
+				background-color: #FFFFFF;
+				color: #157DFA;
+			}
+
+			.nav-container {
+				width: 100%;
+				padding: 3px !important;
+				margin-bottom: 15px !important;
+				z-index: 11;
+				position: fixed;
+				padding-left: 70px !important;
+			}
+
+			.blue-bg {
+				background-color: #157DFA !important;
+			}
+
+			.event-userimage {
+				margin-right: 5px;
+				margin-top: -5px;
+				width: 29px;
+				height: 29px;
+				border-radius: 20px;
+			}
+
+			label {
+				font-size: 20px !important;
+				font-weight: bold !important;
+				margin-bottom: 5px;
+				margin-top: 10px;
+			}
+
+			.form-control {
+				color: #495057 !important;
+				margin-left: 0px !important;
+			}
+		</style>
+	</head>
+
+	<body>
+
+		<!-- REQUIRED SLDS WRAPPER -->
+		<div class="slds-scope">
+
+			<div class="slds-spinner_container" id="spinner" style="position:fixed; width:100vw; height:100vh; display:none;">
+				<div class="slds-spinner slds-spinner--large slds-spinner--brand">
+					<div class="slds-spinner__dot-a"></div>
+					<div class="slds-spinner__dot-b"></div>
+				</div>
+			</div>
+
+			<div class="nav-container blue-bg">
+				<div class="row">
+					<ul class="nav-list">
+						<li onclick="window.location.href='/apex/saleshd_homepage'">
+							<i class="fas fa-home"></i> HOME
+						</li>
+						<li onclick="window.location.href='/apex/saleshd_accounts'">
+							<i class="fas fa-hospital"></i> MY ACCOUNTS
+						</li>
+						<li onclick="window.location.href='/apex/saleshd_contacts'">
+							<i class="fas fa-user-md"></i> MY CONTACTS
+						</li>
+						<li onclick="window.location.href='/apex/saleshd_encounters'">
+							<i class="fas fa-phone"></i> ENCOUNTERS
+						</li>
+					</ul>
+				</div>
+			</div>
+
+			<div class="header">
+				<span class="lnr lnr-arrow-left back-btn" onclick="window.history.back();"></span>
+				<!-- <div id="profilePhoto"></div> -->
+				<h1 class="name">
+					<b>{!Account_Unit__c.Unit__r.Name}</b>
+					<br/>{!Account_Unit__c.Account__r.Name}</h1>
+				<p>
+					<b>
+						<a href="https://www.google.com/maps/place/{!Account_Unit__c.Account__r.ShippingAddress__c}">{!Account_Unit__c.Account__r.ShippingAddress__c}</a>
+					</b>
+				</p>
+				<p>
+					<b>Website:</b> {!Account_Unit__c.Account__r.Website}</p>
+				<!-- <p>
+					<b>Total Beds:</b> {!Account_Unit__c.Account__r.Total_Beds__c}</p> -->
+				<p>
+					<b>Referral Mechanism:</b> {!Account_Unit__c.Account__r.Referral_Mechanism__c}</p>
+				<p>
+					<b>Current Census:</b>
+					<span id="census">{!currentCensus}</span>
+				</p>
+				<p>
+					<b>Total Beds:</b>
+					<span id="beds">{!currentBeds}</span>
+				</p>
+				<p>
+					<b>Current Census Date:</b>
+					<span id="censusDate">{!currentCensusDateString}</span>
+				</p>
+				<p>
+					<a style="cursor:pointer;padding-left:10px;" data-toggle="modal" data-target="#censusModal">
+						<i aria-hidden="true" class="fa fa-edit"></i> Edit Census
+					</a>
+				</p>
+				<h5 style="padding-top:20px;font-size:25px!important;">
+					<apex:outputPanel id="nicknameField">
+						<b>Unit Nickname:</b> {!Account_Unit__c.SalesHD_Unit_Nickname__c}
+					</apex:outputPanel>
+						<i style="cursor:pointer;font-size:20px;" aria-hidden="true" class="fa fa-edit" data-toggle="modal" data-target="#nicknameModal"></i>
+				</h5>
+			</div>
+
+			<div class="container shadow white-bg" style="display: none;">
+				<div class="row">
+					<table id="accountDataTable">
+						<thead>
+							<tr>
+								<th></th>
+								<th>Referrals YTD</th>
+								<th>Admits YTD</th>
+								<th>Conversion %</th>
+								<th>Net Revenue</th>
+								<th>CMI</th>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table>
+				</div>
+			</div>
+
+			<div class="container no-pad">
+
+				<div class="row inner-container" style="margin-bottom:10px;">
+					<div id="breadcrumb">
+					</div>
+				</div>
+
+				<div class="row inner-container">
+					<div class="col-md-6 no-pad">
+						<div class="shadow white-bg rounded" style="padding: 10px 0px 0px 0px !important;">
+							<h3 class="thin italic">
+								<i class="fa fa-users icon icon-yellow" style="padding:10px 9px 10px 9px;" aria-hidden="true"></i> Contacts</h3>
+							<div style="padding:10px">
+								<button class="btn btn-success btn-block rounded" id="add-contact" style="padding: 5px !important;" data-toggle="modal" data-target="#contactModal">
+									<i class="fa fa-plus-circle" aria-hidden="true"></i> Associate a Contact</button>
+							</div>
+							<div id="contactsSpinner" class="demo-only" style="position:relative; height:60px; margin-top:-10px;">
+								<div role="status" class="slds-spinner slds-spinner_medium slds-spinner_brand">
+									<span class="slds-assistive-text">Loading</span>
+									<div class="slds-spinner__dot-a"></div>
+									<div class="slds-spinner__dot-b"></div>
+								</div>
+							</div>
+							<ul id="contacts" style="padding-bottom:20px; display:none;">
+
+								<li class="contact-group">Directors</li>
+								<ul class="contact-list" id="Director">
+									<!-- <li id="RespiratoryTherapistDirector">
+								<div class="row">
+								<div class="col-6"><span class="lnr lnr-cross"></span></div><div class="col-6">Respiratory Therapist Director</div>
+							</div>
+						</li> -->
+									<li id="UnitMedicalDirector">
+										<div class="row">
+											<div class="col-6">
+												<span class="lnr lnr-cross"></span>
+											</div>
+											<div class="col-6">Unit Medical Director</div>
+										</div>
+									</li>
+									<!-- <li id="CaseManager">
+						<div class="row">
+						<div class="col-6"><span class="lnr lnr-cross"></span></div><div class="col-6">Case Manager</div>
+					</div>
+				</li>
+				<li id="SocialWorker">
+				<div class="row">
+				<div class="col-6"><span class="lnr lnr-cross"></span></div><div class="col-6">Social Worker</div>
+			</div>
+		</li> -->
+									<li></li>
+								</ul>
+
+								<li class="contact-group">Providers</li>
+								<ul class="contact-list" id="Provider">
+									<!-- <li id="DirectorofCriticalCareMD">
+			<div class="row">
+				<div class="col-6"><span class="lnr lnr-cross"></span></div><div class="col-6">Director of Critical Care (MD)</div>
+			</div>
+		</li> -->
+									<li id="Hospitalist">
+										<div class="row">
+											<div class="col-6">
+												<span class="lnr lnr-cross"></span>
+											</div>
+											<div class="col-6">Hospitalist</div>
+										</div>
+									</li>
+									<li id="Intensivist">
+										<div class="row">
+											<div class="col-6">
+												<span class="lnr lnr-cross"></span>
+											</div>
+											<div class="col-6">Intensivist</div>
+										</div>
+									</li>
+									<li id="PalliativeCarePhysician">
+										<div class="row">
+											<div class="col-6">
+												<span class="lnr lnr-cross"></span>
+											</div>
+											<div class="col-6">Palliative Care Physician</div>
+										</div>
+									</li>
+									<li id="NursePractitioner">
+										<div class="row">
+											<div class="col-6">
+												<span class="lnr lnr-cross"></span>
+											</div>
+											<div class="col-6">Nurse Practitioner</div>
+										</div>
+									</li>
+									<li id="PhysicianAssistant">
+										<div class="row">
+											<div class="col-6">
+												<span class="lnr lnr-cross"></span>
+											</div>
+											<div class="col-6">Physician Assistant</div>
+										</div>
+									</li>
+									<li id="Fellow">
+										<div class="row">
+											<div class="col-6">
+												<span class="lnr lnr-cross"></span>
+											</div>
+											<div class="col-6">Fellow</div>
+										</div>
+									</li>
+									<li id="Physician">
+										<div class="row">
+											<div class="col-6">
+												<span class="lnr lnr-cross"></span>
+											</div>
+											<div class="col-6">Physician</div>
+										</div>
+									</li>
+
+									<!-- <li id="OtherMDsIMPulmIDetc">
+			<div class="row">
+				<div class="col-6"><span class="lnr lnr-cross"></span></div><div class="col-6">Other MDs (IM, Pulm, ID, etc.)</div>
+			</div>
+		</li> -->
+
+
+									<li></li>
+								</ul>
+								<li class="contact-group">Nursing and Unit Staff</li>
+								<ul class="contact-list" id="Nursing">
+									<li id="Nurse">
+										<div class="row">
+											<div class="col-6">
+												<span class="lnr lnr-cross"></span>
+											</div>
+											<div class="col-6">Nurse</div>
+										</div>
+									</li>
+									<li id="NurseSupervisor">
+										<div class="row">
+											<div class="col-6">
+												<span class="lnr lnr-cross"></span>
+											</div>
+											<div class="col-6">Nurse Supervisor</div>
+										</div>
+									</li>
+									<li id="NurseManager">
+										<div class="row">
+											<div class="col-6">
+												<span class="lnr lnr-cross"></span>
+											</div>
+											<div class="col-6">Nurse Manager</div>
+										</div>
+									</li>
+									<li id="WoundCareCoordinator">
+										<div class="row">
+											<div class="col-6">
+												<span class="lnr lnr-cross"></span>
+											</div>
+											<div class="col-6">Wound Care Coordinator</div>
+										</div>
+									</li>
+									<li id="CaseManager">
+										<div class="row">
+											<div class="col-6">
+												<span class="lnr lnr-cross"></span>
+											</div>
+											<div class="col-6">Case Manager</div>
+										</div>
+									</li>
+									<li id="CaseManagementManager">
+										<div class="row">
+											<div class="col-6">
+												<span class="lnr lnr-cross"></span>
+											</div>
+											<div class="col-6">Case Management Manager</div>
+										</div>
+									</li>
+									<li id="SocialWorker">
+										<div class="row">
+											<div class="col-6">
+												<span class="lnr lnr-cross"></span>
+											</div>
+											<div class="col-6">Social Worker</div>
+										</div>
+									</li>
+									<li id="SocialWorkerManager">
+										<div class="row">
+											<div class="col-6">
+												<span class="lnr lnr-cross"></span>
+											</div>
+											<div class="col-6">Social Worker Manager</div>
+										</div>
+									</li>
+									<li id="RespiratoryTherapist">
+										<div class="row">
+											<div class="col-6">
+												<span class="lnr lnr-cross"></span>
+											</div>
+											<div class="col-6">Respiratory Therapist</div>
+										</div>
+									</li>
+									<li id="Educator">
+										<div class="row">
+											<div class="col-6">
+												<span class="lnr lnr-cross"></span>
+											</div>
+											<div class="col-6">Educator</div>
+										</div>
+									</li>
+
+									<!-- <li id="RegisteredNurse">
+			<div class="row">
+				<div class="col-6"><span class="lnr lnr-cross"></span></div><div class="col-6">Registered Nurse</div>
+			</div>
+		</li> -->
+
+									<!-- <li id="Navigator">
+			<div class="row">
+				<div class="col-6"><span class="lnr lnr-cross"></span></div><div class="col-6">Navigator</div>
+			</div>
+		</li> -->
+
+								</ul>
+
+							</ul>
+						</div>
+					</div>
+					<div class="col-md-6 no-pad">
+						<div class="shadow white-bg rounded">
+							<h3 class="thin italic">
+								<i class="fa fa-clipboard-list icon icon-blue" style="padding:10px 13px 10px 13px;" aria-hidden="true"></i> Notes</h3>
+							<div style="padding:10px">
+								<button class="btn btn-success btn-block rounded" id="add-note" style="padding: 5px !important;" data-toggle="modal" data-target="#noteModal">
+									<i class="fa fa-plus-circle" aria-hidden="true"></i> Add Note</button>
+							</div>
+							<ul id="notes">
+								<div class="demo-only" style="position:relative; height:50px;">
+									<div role="status" class="slds-spinner slds-spinner_medium slds-spinner_brand">
+										<span class="slds-assistive-text">Loading</span>
+										<div class="slds-spinner__dot-a"></div>
+										<div class="slds-spinner__dot-b"></div>
+									</div>
+								</div>
+							</ul>
+						</div>
+
+						<div style="padding:10px 0px 10px 0px!important;">
+							<!-- <button class="btn btn-primary btn-block rounded" data-toggle="modal" data-target="#followupModal"><i class="fas fa-calendar-plus"></i> Follow Up</button> -->
+							<button class="btn btn-primary btn-block rounded" onclick="window.location.href='/apex/saleshd_newencounter?unitId={!Account_Unit__c.Id}'">
+								<i class="fas fa-phone"></i> New Encounter</button>
+						</div>
+					</div>
+
+				</div>
+
+				<div class="row inner-container">
+					<div class="col-md-12" style="padding:10px 0px 10px 0px!important;">
+						<div class="shadow white-bg rounded">
+							<h3 class="thin italic">
+								<i class="fas fa-phone icon icon-blue" style="padding:10px;" aria-hidden="true"></i> Upcoming Encounters</h3>
+							<div style="padding:10px">
+								<ul id="futureevents" style="max-height:400px;overflow:auto;">
+									<div class="demo-only" style="position:relative; height:50px;">
+										<div role="status" class="slds-spinner slds-spinner_medium slds-spinner_brand">
+											<span class="slds-assistive-text">Loading</span>
+											<div class="slds-spinner__dot-a"></div>
+											<div class="slds-spinner__dot-b"></div>
+										</div>
+									</div>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-12 no-pad">
+						<div class="shadow white-bg rounded">
+							<h3 class="thin italic">
+								<i class="fas fa-phone icon icon-grey" style="padding:10px;" aria-hidden="true"></i> Past Encounters</h3>
+							<div style="padding:10px">
+								<ul id="pastevents" style="max-height:400px;overflow:auto;">
+									<div class="demo-only" style="position:relative; height:50px;">
+										<div role="status" class="slds-spinner slds-spinner_medium slds-spinner_brand">
+											<span class="slds-assistive-text">Loading</span>
+											<div class="slds-spinner__dot-a"></div>
+											<div class="slds-spinner__dot-b"></div>
+										</div>
+									</div>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+
+			<div class="modal fade" id="followupModal">
+				<div class="modal-dialog modal-dialog-centered">
+					<div class="modal-content">
+						<div class="modal-header bg-primary">
+							<h3 class="bold">
+								<i aria-hidden="true" class="fas fa-calendar-plus" style="padding-right:10px;"></i> Follow Up</h3>
+						</div>
+						<div class="modal-body">
+							<form>
+								<div class="form-group">
+									<label>Select a date for a follow up notification.</label>
+									<input class="form-control" id="followup-date" placeholder="Select a date" />
+								</div>
+							</form>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="$('#followup-date').val('');">Cancel</button>
+							<button type="button" class="btn btn-primary" id="saveFollowup">Save Follow Up</button>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="modal fade" id="contactModal">
+				<div class="modal-dialog modal-dialog-centered">
+					<div class="modal-content">
+						<div class="modal-header icon-contact-blue">
+							<h3 class="bold">
+								<i aria-hidden="true" class="fa fa-users" style="padding-right:10px;"></i> Associate a Contact</h3>
+						</div>
+						<div class="modal-body">
+							<form>
+								<div class="form-group">
+									<label>Contact</label>
+									<!-- <input type="text" class="form-control" value="{!contactSearchString}" id="contactSearchInput"/> -->
+									<input class="form-control" id="contactInput" placeholder="Select a Favorited Contact" />
+									<ul id="contactList">
+
+									</ul>
+									<!-- <input style="margin-left:0px;" type="text" class="form-control" value="{!selectedContactId}" id="contactSelectedId"/> -->
+								</div>
+								<div class="form-group">
+									<label for="exampleFormControlSelect1">Title</label>
+									<select class="form-control" id="selectedTitle">
+										<option></option>
+
+										<option>Unit Medical Director</option>
+
+										<option>Hospitalist</option>
+										<option>Intensivist</option>
+										<option>Palliative Care Physician</option>
+										<option>Nurse Practitioner</option>
+										<option>Physician Assistant</option>
+										<option>Fellow</option>
+										<option>Physician</option>
+
+										<option>Nurse</option>
+										<option>Nurse Supervisor</option>
+										<option>Nurse Manager</option>
+										<option>Wound Care Coordinator</option>
+										<option>Case Manager</option>
+										<option>Case Management Manager</option>
+										<option>Social Worker</option>
+										<option>Social Worker Manager</option>
+										<option>Respiratory Therapist</option>
+										<option>Educator</option>
+
+									</select>
+								</div>
+							</form>
+
+							<div class="text-danger" id="contactError" style="display:none;">
+								<p>
+									<i class="fas fa-exclamation-triangle"></i> You must first select a contact and a title.
+								</p>
+							</div>
+
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="$('#contactInput').val('');$('#selectedTitle').val('');$('#contactInput').data('contactid', '');$('#contactError').hide()">Cancel</button>
+							<button type="button" class="btn btn-primary" id="saveContact">Save Contact</button>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="modal fade" id="noteModal">
+				<div class="modal-dialog modal-dialog-centered">
+					<div class="modal-content">
+						<div class="modal-header bg-primary">
+							<h3 class="bold">
+								<i aria-hidden="true" class="fa fa-clipboard-list"></i> Add Note</h3>
+						</div>
+						<div class="modal-body">
+							<form>
+								<div class="form-group">
+									<label>Enter your note</label>
+									<input class="form-control" id="titleInput" placeholder="Note Title" />
+									<textarea style="margin-top:10px;" class="form-control" id="noteInput" placeholder="Note Body" />
+								</div>
+							</form>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="$('#noteInput').val('');">Cancel</button>
+							<button type="button" class="btn btn-primary" id="saveNote">Save Note</button>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="modal fade" id="noteRemoveModal">
+				<div class="modal-dialog modal-dialog-centered">
+					<div class="modal-content">
+						<div class="modal-header bg-danger">
+							<h3 class="bold">
+								<i aria-hidden="true" class="fa fa-clipboard-list"></i> Remove Note</h3>
+						</div>
+						<div class="modal-body">
+							Are you sure that you want to remove this note?
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+							<button type="button" class="btn btn-danger" id="removeNote">Remove</button>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="modal fade" id="noteEditModal">
+				<div class="modal-dialog modal-dialog-centered">
+					<div class="modal-content">
+						<div class="modal-header bg-primary">
+							<h3 class="bold">
+								<i aria-hidden="true" class="fa fa-clipboard-list" style="padding-right:10px"></i> Edit Note</h3>
+						</div>
+						<div class="modal-body">
+							<form>
+								<div class="form-group">
+									<label>Edit the note below</label>
+									<input class="form-control" id="editTitleInput" placeholder="Note Title" />
+									<textarea style="margin-top:10px;" class="form-control" id="editBodyInput" placeholder="Note Body" />
+								</div>
+							</form>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="$('.form-control').val('');">Cancel</button>
+							<button type="button" class="btn btn-primary" id="updateNote">Edit Note</button>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="modal fade" id="censusModal">
+				<div class="modal-dialog modal-dialog-centered">
+					<apex:outputPanel style="width: 100%;" id="censusBlock">
+						<apex:form style="width: 100%;" id="unitForm">
+							<div class="modal-content">
+								<div class="modal-header bg-primary">
+									<h3 class="bold">
+										<i aria-hidden="true" class="fa fa-users"></i> Edit Census</h3>
+								</div>
+								<div class="modal-body" style="overflow:hidden;">
+									<form>
+										<!-- <label style="width: 100%;">Census</label>
+										<apex:inputField type="number" styleClass="form-control" value="{!Account_Unit__c.SalesHD_Unit_Census__c}" html-placeholder="Census"
+										 id="censusInput" /> -->
+
+										<label style="width: 100%;">Census</label>
+										<apex:input type="number" styleClass="form-control" value="{!census}" html-placeholder="Census" required="true" />
+										<label style="width: 100%;">Beds</label>
+										<apex:input type="number" styleClass="form-control" value="{!beds}" html-placeholder="Beds" required="true" />
+										<label style="width: 100%;">Census Date</label>
+										<apex:input type="date" styleClass="form-control" value="{!censusDate}" html-placeholder="Census Date" required="true" />
+
+									</form>
+								</div>
+								<div class="modal-footer">
+
+									<apex:actionStatus id="statusSpinner">
+										<apex:facet name="start">
+
+											<div class="slds-spinner slds-spinner--medium slds-spinner--brand" style="margin-top:180px;">
+												<div class="slds-spinner__dot-a"></div>
+												<div class="slds-spinner__dot-b"></div>
+											</div>
+
+										</apex:facet>
+									</apex:actionStatus>
+
+									<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+									<!-- <button type="button" class="btn btn-primary" id="removeNote">Save</button> -->
+									<!-- <apex:commandButton styleClass="btn btn-primary" status="statusSpinner" action="{!saveCensus}" oncomplete="updateCensus();"
+									 value="Save" rerender="censusBlock" id="saveNew" style="padding:6px 12px;font-size:20px;vertical-align:bottom;border-radius:7px;margin-top:0px!important;"
+									/> -->
+									<apex:commandButton styleClass="btn btn-primary" status="statusSpinner" action="{!saveCensus}" value="Save" rerender="censusBlock, updateCensusScript"
+									 id="saveNew" style="padding:6px 12px;font-size:20px!important;vertical-align:bottom;border-radius:7px;margin-top:0px!important;"
+									 oncomplete="updateCensus();" />
+								</div>
+								<apex:pageMessages />
+							</div>
+
+						</apex:form>
+					</apex:outputPanel>
+				</div>
+			</div>
+
+			<div class="modal fade" id="nicknameModal">
+					<div class="modal-dialog modal-dialog-centered">
+						<apex:outputPanel style="width: 100%;" id="nicknameBlock">
+							<apex:form style="width: 100%;" id="nicknameForm">
+								<div class="modal-content">
+									<div class="modal-header bg-primary">
+										<h3 class="bold">
+											<i aria-hidden="true" class="fa fa-users"></i> Edit Nickname</h3>
+									</div>
+									<div class="modal-body" style="overflow:hidden;">
+										<form>
+											<label style="width: 100%;">Unit Nickname</label>
+											<apex:inputField styleClass="form-control" value="{!Account_Unit__c.SalesHD_Unit_Nickname__c}" html-placeholder="Unit Nickname" />
+										</form>
+									</div>
+									<div class="modal-footer">
+	
+										<apex:actionStatus id="statusSpinner">
+											<apex:facet name="start">
+	
+												<div class="slds-spinner slds-spinner--medium slds-spinner--brand" style="margin-top:90px;">
+													<div class="slds-spinner__dot-a"></div>
+													<div class="slds-spinner__dot-b"></div>
+												</div>
+	
+											</apex:facet>
+										</apex:actionStatus>
+	
+										<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+										<apex:commandButton styleClass="btn btn-primary" status="statusSpinner" action="{!saveNickname}" value="Save" rerender="nicknameBlock, nicknameField"
+										 id="saveNew" style="padding:8px 12px;font-size:20px!important;vertical-align:bottom;border-radius:7px;margin-top:0px!important;"
+										  oncomplete="$('#nicknameModal').modal('hide');"/>
+									</div>
+									<apex:pageMessages />
+								</div>
+	
+							</apex:form>
+						</apex:outputPanel>
+					</div>
+				</div>
+
+		</div>
+		<!-- / REQUIRED SLDS WRAPPER -->
+
+		<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+		 crossorigin="anonymous"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+		 crossorigin="anonymous"></script>
+		<script src="//code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
+		<script>
+			var unitContactsHtml = $('#contacts').html();
+			$(document).ready(function () {
+				// document.getElementById('{!$Component.unitForm.censusInput}').value = '{!Account_Unit__c.SalesHD_Unit_Census__c}';
+				$("#followup-date").datepicker({ minDate: 0 });
+
+				$("#contactsSpinner").hide();
+				$("#contacts").show();
+				showBreadCrumb();
+				loadPage();
+
+				$('#contactInput').click(function () {
+					$('#contactList').show();
+				});
+
+				$(document).click(function (e) {
+					if (!$('#contactInput').is(e.target) && $('#contactInput').has(e.target).length === 0) {
+						$('#contactList').hide();
+					}
+				});
+
+				$('#contactInput').keyup(function () {
+					$("#contactList li").each(function () {
+						if ($(this).text().toUpperCase().replace(/\s/g, '').indexOf($("#contactInput").val().toUpperCase().replace(/\s/g, '')) > -1) {
+							$(this).show();
+						} else {
+							$(this).hide();
+						}
+					});
+				});
+
+				$('#saveContact').click(function () {
+					$('#contactError').hide();
+					var contactId = $('#contactInput').data('contactid');
+					var title = $('#selectedTitle').children("option:selected").val();
+					if (contactId && title) {
+						$('#contactModal').modal('hide');
+						$('#contactInput').val('');
+						$('#selectedTitle').val('');
+						$('#contactInput').data('contactid', '');
+						SalesHD_Unit.saveContact('{!account_unit__c}', contactId, title, function (callback, event) {
+							// console.log(callback);
+							loadPage();
+						}, { escape: false });
+					} else {
+						$('#contactError').show();
+					}
+				});
+
+				$('#removeNote').click(function () {
+					if (noteId) {
+						$("#notes").html('<div class="demo-only" style="position:relative; height:50px;">' +
+							'<div role="status" class="slds-spinner slds-spinner_medium slds-spinner_brand">' +
+							'<span class="slds-assistive-text">Loading</span>' +
+							'<div class="slds-spinner__dot-a"></div>' +
+							'<div class="slds-spinner__dot-b"></div>' +
+							'</div>' +
+							'</div>');
+						SalesHD_Unit.deleteNote(noteId, function (callback, event) {
+							loadPage();
+						}, { escape: false });
+					}
+					$("#noteRemoveModal").modal('hide');
+				});
+
+				$('#updateNote').click(function () {
+					// console.log(noteId);
+					if (noteId) {
+						$("#notes").html('<div class="demo-only" style="position:relative; height:50px;">' +
+							'<div role="status" class="slds-spinner slds-spinner_medium slds-spinner_brand">' +
+							'<span class="slds-assistive-text">Loading</span>' +
+							'<div class="slds-spinner__dot-a"></div>' +
+							'<div class="slds-spinner__dot-b"></div>' +
+							'</div>' +
+							'</div>');
+						SalesHD_Unit.updateNote(noteId, $('#editBodyInput').val(), $('#editTitleInput').val(), function (callback, event) {
+							loadPage();
+						}, { escape: false });
+					}
+					$("#noteEditModal").modal('hide');
+				});
+
+				$('#saveFollowup').click(function () {
+					$('#followupModal').modal('hide');
+					// SalesHD_Unit.saveFollowup('{!account_unit__c}', $('#followup-date').val(), function(callback, event){
+					// 	$('#followup-date').val('');
+					// 	loadPage();
+					// }, {escape:false});
+				});
+
+			});
+
+			function navToAccount(accountId) {
+				breadcrumbStateSaver('{!account_unit__c.Id}', '{!Account_Unit__c.Unit__r.Name}');
+				window.location = '/apex/SalesHD_Account?id=' + accountId;
+			}
+
+			function navToContact(contactId) {
+				breadcrumbStateSaver('{!account_unit__c.Id}', '{!Account_Unit__c.Unit__r.Name}');
+				window.location = '/apex/SalesHD_Contact?id=' + contactId;
+			}
+
+			function navToUnit(unitId) {
+				breadcrumbStateSaver('{!account_unit__c.Id}', '{!Account_Unit__c.Unit__r.Name}');
+				window.location = '/apex/SalesHD_Unit?id=' + unitId;
+			}
+
+			function navHome(accountId) {
+				window.location = '/apex/SalesHD_Homepage';
+			}
+
+			function showBreadCrumb() {
+				$("#breadcrumb").html(sessionStorage.hdBreadcrumb);
+				$("#breadcrumb a").click(function () {
+					var link;
+					link = $(this).data('link');
+					$("#breadcrumb").find('a').slice($(this).index()).remove();
+					$("#breadcrumb").find('span').slice($(this).index() - 1).remove();
+					sessionStorage.hdBreadcrumb = $("#breadcrumb").html();
+					if ($(this).data('type') == 'contact') navToContact(link);
+					else if ($(this).data('type') == 'account') navToAccount(link);
+					else if ($(this).data('type') == 'unit') navToUnit(link);
+					else navHome();
+				});
+			}
+
+			function breadcrumbStateSaver(link, text) {
+				if (typeof (Storage) != "undefined") {
+					if (sessionStorage.hdBreadcrumb) {
+						var breadcrumb = sessionStorage.hdBreadcrumb;
+						sessionStorage.hdBreadcrumb = breadcrumb + '<span>></span> <a class="blue-link" data-link="' + link + '" data-type="unit">' + text + '</a>';
+					} else {
+						sessionStorage.hdBreadcrumb = '<a class="blue-link" data-link="' + link + '" data-type="unit">' + text + '</a>';
+					}
+				}
+			}
+
+			var noteId;
+
+			function loadPage() {
+				SalesHD_Unit.getFavoriedContacts(function (callback, event) {
+					var data = JSON.parse(callback);
+					$("#contactList").html('');
+					for (var contacts of data) {
+						var contact = contacts.Contact__r;
+						$("#contactList").append('<li data-contactid="' + contact.Id + '">' + contact.Name + '</li>');
+					}
+					$('#contactList li').click(function () {
+						$('#contactInput').val($(this).text()).data('contactid', $(this).data('contactid'));
+					});
+				}, { escape: false });
+
+				SalesHD_Unit.getContacts('{!account_unit__c}', function (callback, event) {
+					var data = JSON.parse(callback);
+					$('#contacts').html(unitContactsHtml);
+					for (var titles in data) {
+						for (var contacts of data[titles]) {
+							var contact = contacts.Contact__r;
+
+							var specialty = '';
+							if (contact.HD_Specialties__c != null) specialty = '<b>' + contact.HD_Specialties__c + '</b>';
+
+							link = 'onclick="navToContact(\'' + contact.Id + '\')"';
+
+							$('#' + contact.Title__c.replace(/[^a-zA-Z]/g, '')).hide();
+							$('#' + titles.replace(/[^a-zA-Z]/g, '')).prepend('<li ' + link + '><div class="row">' +
+								'<div class="col-6"><div>' + contact.Name + '</div><div style="font-size:13px!important;">' + specialty + '</div></div><div class="col-6">' + contact.Title__c + '</div>' +
+								'</div></li>');
+						}
+					}
+					$("#spinner").hide();
+				}, { escape: false });
+
+				SalesHD_Unit.getNotes('{!account_unit__c}', function (callback, event) {
+					var data = JSON.parse(callback);
+					$("#notes").html('');
+					for (var note of data) {
+						$('#notes').append('<li id="' + note.Id + '" style="cursor:default;"><b class="note-title">' + note.Title + '</b> <span style="float:right;"> <span class="text-primary editNote" style="cursor:pointer; padding-right:5px;"><i class="fas fa-edit"></i> Edit </span> <span class="text-danger removeNote" style="cursor:pointer;"><i class="fas fa-trash-alt"></i> Delete</span> </span> <br/> <span class="note-body">' + note.TextPreview + '</span></li>');
+					}
+
+					$(".removeNote").click(function () {
+						noteId = $(this).closest('li').attr('Id');
+						$("#noteRemoveModal").modal('show');
+					});
+
+					$(".editNote").click(function () {
+						noteId = $(this).closest('li').attr('Id');
+						$("#editBodyInput").val($(this).closest('li').find('.note-body').text());
+						$("#editTitleInput").val($(this).closest('li').find('.note-title').text());
+						$("#noteEditModal").modal('show');
+					});
+
+				}, { escape: false });
+
+				$('#saveNote').unbind().click(function () {
+					if ($('#noteInput').val() && $('#titleInput').val()) {
+						$("#spinner").show();
+						$('#noteModal').modal('hide');
+						SalesHD_Unit.saveNote('{!account_unit__c}', $('#noteInput').val(), $('#titleInput').val(), function (callback, event) {
+							$('#noteInput').val('');
+							$('#titleInput').val('');
+							loadPage();
+						}, { escape: false });
+					}
+				});
+
+				SalesHD_Unit.getEncounters('{!account_unit__c}', function (callback, event) {
+					var events = JSON.parse(callback);
+					$("#pastevents").html('');
+					$("#futureevents").html('');
+					for (var eventRelation of events.pastEvents) {
+						var event = eventRelation.Event;
+						var account = '<i class="fas fa-times"></i>';
+						var unit = '<i class="fas fa-times"></i>';
+						if (event.hasOwnProperty('What')) account = event.What.Name;
+						if (event.hasOwnProperty('SalesHD_Account_Unit__r')) unit = event.SalesHD_Account_Unit__r.Unit__r.Name
+						$("#pastevents").append('<li onclick="window.location.href=\'/apex/saleshd_encounter?id=' + event.Id + '\'">' +
+							'<img src="' + event.CreatedBy.SmallPhotoUrl + '" class="event-userimage"/><b>' + event.CreatedBy.Name + '</b> - ' + event.ActivityDate + '<br/><b>'
+							+ event.Subject + ': ' + eventRelation.Relation.Name + ' at ' + account + ' - ' + unit + '</b><br/>' + event.SalesHD_Call_Objective__c + '</li>');
+					}
+					for (var eventRelation of events.futureEvents) {
+						var event = eventRelation.Event;
+						var account = '<i class="fas fa-times"></i>';
+						var unit = '<i class="fas fa-times"></i>';
+						if (event.hasOwnProperty('What')) account = event.What.Name;
+						if (event.hasOwnProperty('SalesHD_Account_Unit__r')) unit = event.SalesHD_Account_Unit__r.Unit__r.Name
+						$("#futureevents").append('<li onclick="window.location.href=\'/apex/saleshd_encounter?id=' + event.Id + '\'">' +
+							'<img src="' + event.CreatedBy.SmallPhotoUrl + '" class="event-userimage"/><b>' + event.CreatedBy.Name + '</b> - ' + event.ActivityDate + '<br/><b>'
+							+ event.Subject + ': ' + eventRelation.Relation.Name + ' at ' + account + ' - ' + unit + '</b><br/>' + event.SalesHD_Call_Objective__c + '</li>');
+					}
+				}, { escape: false });
+
+			}
+
+		</script>
+		<apex:outputPanel id="updateCensusScript">
+			<script>
+				function updateCensus() {
+					SalesHD_Unit.getCensus('{!account_unit__c}', function (callback, event) {
+						var data = JSON.parse(callback);
+						if ({!censusModal
+					}) $('#censusModal').modal('hide');
+					$("#census").text(data.census);
+					$("#beds").text(data.beds);
+					$("#censusDate").text(data.censusDate);
+				}, { escape: false });
+			}
+			</script>
+		</apex:outputPanel>
+
+	</body>
+
+	</html>
+</apex:page>

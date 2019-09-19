@@ -1,0 +1,1039 @@
+<aura:component controller="AA_CaseEntryController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,lightning:isUrlAddressable,lightning:actionOverride" access="global" >
+
+    <aura:attribute name="points" type="string[]" default="[]"/>
+    <aura:attribute name="activeCase" type="Case" />
+    <aura:attribute name="activePatient" type="Patient_NEW__c"/>
+    <aura:attribute name="activeContact" type="Contact"/>
+    <aura:attribute name="activeAccount" type="Account"/>
+    <aura:attribute name="activeAssessment" type="Assessment__c"/>
+    <aura:attribute name="referralRequired" type="boolean" default="false"/>
+    <aura:attribute name="payorRequired" type="boolean" default="false"/>
+    <aura:attribute name="patientAge" type="Integer" default="0"/>
+    
+    <aura:attribute name="fromUrl" type="Id" access="public"/>
+    
+    <aura:attribute name="subtab" type="boolean" default="false"/>
+    
+    <aura:attribute name="locList" type="string[]"/>
+    
+    <aura:attribute name="eStatusList" type="string[]"/>
+    
+    <aura:attribute name="attachmentItems" type="sObject[]"/>
+    
+    <aura:attribute name="locationDetails" type="sObject[]"/>
+    
+    <aura:attribute name="processObject" type="string"/>
+    <aura:attribute name="noteBody" type="string"/>
+    <aura:attribute name="parentID" type="ID"/>
+    
+    <aura:attribute name="currentPhone" type="string" default=""/>
+    
+    <aura:attribute name="patientLastName" type="string" default=""/>
+    
+    <aura:attribute name="activeTranscript" type="LiveChatTranscript"/>
+    
+    <aura:attribute name="phoneOptions" type="string[]"/>
+    
+    <aura:attribute name="mapMarkers" type="Object" default=""/>
+    <aura:attribute name="zoomLevel" type="Integer" default="16"/>
+    
+    <aura:attribute name="showWebInfo" type="boolean" default="false"/>
+    <aura:attribute name="showPatientInfo" type="boolean" default="false"/>
+    <aura:attribute name="showPayorInfo" type="boolean" default="false"/>
+    
+    <aura:attribute name="articleTypeFilter" type="string" default="All"/>
+    <aura:attribute name="articleSearchString" type="string"/>
+    <aura:attribute name="articleList" type="sObject[]"/>
+    <aura:attribute name="caseHistory" type="sObject[]"/>
+    <aura:attribute name="assessmentHistory" type="sObject[]"/>
+    
+    <aura:attribute name="Spinner" type="boolean" default="false"/>
+    <aura:attribute name="recordIdAlt" type="string" access="public"/>
+    
+    <aura:attribute name="isLEX" type="boolean" default="true"/>
+    
+    <aura:attribute name="requiredPayor" type="boolean" default="false"/>
+    <aura:attribute name="showModalSearch" type="boolean" default="false"/>
+    
+    <aura:attribute name="formReady" type="boolean" default="false"/>
+    
+    <aura:attribute name="callingObject" type="string"/>
+    
+    <aura:attribute name="chosenFacility" type="string"/>
+    <aura:attribute name="facilityList" type="sObject[]"/>
+    <Aura:attribute name="showAccounts" type="boolean" default="false"/>
+    
+    <aura:attribute name="contactGeo" type="string"/>
+    <aura:attribute name="patientGeo" type="string"/>
+    
+    <aura:attribute name="facilityTypeList" type="string[]"/>
+    <aura:attribute name="facilityType" type="string"/>
+    <aura:attribute name="facilitySelectLocked" type="boolean" default="true"/>
+    
+    <aura:attribute name="fileList" type="string[]"/>
+    <aura:attribute name="allowContentSearch" type="boolean" default="false"/>
+    <aura:attribute name="selAccounts" type="string[]"/>
+    
+    <aura:attribute name="showContentModal" type="boolean" default="false"/>
+    <aura:attribute name="consentRequired" type="boolean" default="false"/>
+    
+    <aura:attribute name="url" type="String"/>
+    <aura:attribute name="pageReference" type="Object"/>
+    
+    <aura:attribute name="isEdit" type="boolean" default="false"/>
+    <aura:attribute name="accept" type="List" default="['.jpg', '.jpeg' , '.doc', '.docx', '.pdf', '.msg', '.txt', '.html', '.htm']"/>
+    <aura:attribute name="attachParentId" type="string"/>
+    
+    <aura:attribute name="preferredFacilityName" type="string" />
+    
+    <aura:attribute name="lacunaFileList" type="sObject[]"/>
+    
+    <aura:attribute name="showFacilityList2" type="boolean" default="false"/>
+    <aura:attribute name="facilityList2" type="sObject[]"/>
+    
+    <aura:attribute name="displayLegend" type="boolean" default="false"/>
+    
+    <aura:attribute name="formToDisplay" type="string"/>
+    <aura:attribute name="showForm" type="boolean" default="false"/>
+    
+    <aura:attribute name="disableExtension" type="boolean" default="false"/>
+    
+    <aura:attribute name="map" type="Object"/>
+    <aura:attribute name="mapsPlaceholder" type="string"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <lightning:workspaceAPI aura:id="workspace" />
+    <lightning:navigation aura:id="navService"/>
+    
+    <aura:if isTrue="{!v.Spinner}">
+        <div aura:id="spinnerId" class="slds-spinner_container">
+            <div class="slds-spinner--brand  slds-spinner slds-spinner--large" role="alert">
+                <span class="slds-assistive-text">Loading</span>
+                <div class="slds-spinner__dot-a"></div>
+                <div class="slds-spinner__dot-b"></div>
+            </div>
+        </div>
+    </aura:if>
+    <aura:if isTrue="{!v.showAccounts}">
+        <div role="dialog"  class="slds-modal slds-fade-in-open slds-scrollable" style="width: 800px; margin:0 auto" >
+            <header class="slds-modal__footer" style="width: 800px">
+                    <button class="slds-button slds-button_neutral" onclick="{!c.hideAccountModal}">Close</button>
+                </header>
+            <div class="slds-modal__content slds-p-around--medium slds-scrollable" width="800px">
+                <div class="slds-scrollable">
+                	<table>
+                        <thead>
+                            <tr class="slds-text-title--caps">
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                <th scope="row" >
+                                   <span title="Name">Name</span>  
+                                 </th>
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                <th scope="row" >
+                                   <span title="Name">Facility Number</span>  
+                                 </th>
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                <th scope="row" >
+                                  <span title="Name">Address</span>  
+                                </th>
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                <th scope="row" >
+                                  <span title="Name">City</span>  
+                                </th>
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                <th scope="row" >
+                                  <span title="Name">State</span>  
+                                </th>
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                <th scope="row" >
+                                  <span title="Name">Zip</span>  
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <aura:iteration items="{!v.facilityList}" var="add">  
+                                <aura:if isTrue="{!add != null}">
+                                    <tr>
+                                        <th scope="row">
+                                        	<ui:inputCheckbox name="{!add.Name}" aura:id="accbox" text="{!add.Id}" change="{!c.setFacility}"/>
+                                        </th>
+                                        <th scope="row">
+                                            <div title="{!add.Name}"><ui:outputText value="{!add.Name}"/></div>
+                                        </th>
+                                        &nbsp;&nbsp;
+                                        <th scope="row">
+                                            <div class="slds-truncate" title="{!add.Facility_Number__c}"><ui:outputText value="{!add.Facility_Number__c}"/></div>
+                                        </th>
+                                        &nbsp;&nbsp;
+                                        <th scope="row">
+                                            <div class="slds-truncate" title="{!add.ShippingStreet}"><ui:outputText value="{!add.ShippingStreet}"/></div>
+                                        </th>
+                                        &nbsp;&nbsp;
+                                        <th scope="row">
+                                            <div title="{!add.ShippingCity}"><ui:outputText value="{!add.ShippingCity}"/></div>
+                                        </th>
+                                        &nbsp;&nbsp;
+                                        <th scope="row">
+                                            <div title="{!add.ShippingState}"><ui:outputText value="{!add.ShippingState}"/></div>
+                                        </th>
+                                        &nbsp;&nbsp;
+                                        <th scope="row">
+                                            <div title="{!add.ShippingPostalCode}"><ui:outputText value="{!add.ShippingPostalCode}"/></div>
+                                        </th>
+                                    </tr>
+                                    <br/>
+                                </aura:if>
+                            </aura:iteration>
+                        </tbody>
+                    </table>
+                    </div>
+               	<footer class="slds-modal__footer" style="width: 800px">
+                    <button class="slds-button slds-button_neutral" onclick="{!c.hideAccountModal}">Close</button>
+                </footer>
+            </div>
+        </div>
+        <div class="slds-backdrop slds-backdrop--open"></div>
+    </aura:if>
+    
+    <aura:if isTrue="{!v.showFacilityList2}">
+        <div role="dialog"  class="slds-modal slds-fade-in-open slds-scrollable" style="width: 800px; margin:0 auto" >
+            <header class="slds-modal__footer" style="width: 800px">
+                    <button class="slds-button slds-button_neutral" onclick="{!c.hideAccountModal2}">Close</button>
+                </header>
+            <div class="slds-modal__content slds-p-around--medium slds-scrollable" width="800px">
+                <div class="slds-scrollable">
+                	<table>
+                        <thead>
+                            <tr class="slds-text-title--caps">
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                <th scope="row" >
+                                   <span title="Name">Name</span>  
+                                 </th>
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                <th scope="row" >
+                                   <span title="Name">Facility Number</span>  
+                                 </th>
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                <th scope="row" >
+                                  <span title="Name">Address</span>  
+                                </th>
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                <th scope="row" >
+                                  <span title="Name">City</span>  
+                                </th>
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                <th scope="row" >
+                                  <span title="Name">State</span>  
+                                </th>
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                <th scope="row" >
+                                  <span title="Name">Zip</span>  
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <aura:iteration items="{!v.facilityList2}" var="add">  
+                                <aura:if isTrue="{!add != null}">
+                                    <tr>
+                                        <th scope="row">
+                                        	<ui:inputCheckbox name="{!add.Name}" aura:id="accbox" text="{!add.Id}" change="{!c.setFacility2}"/>
+                                        </th>
+                                        <th scope="row">
+                                            <div title="{!add.Name}"><ui:outputText value="{!add.Name}"/></div>
+                                        </th>
+                                        &nbsp;&nbsp;
+                                        <th scope="row">
+                                            <div class="slds-truncate" title="{!add.Facility_Number__c}"><ui:outputText value="{!add.Facility_Number__c}"/></div>
+                                        </th>
+                                        &nbsp;&nbsp;
+                                        <th scope="row">
+                                            <div class="slds-truncate" title="{!add.ShippingStreet}"><ui:outputText value="{!add.ShippingStreet}"/></div>
+                                        </th>
+                                        &nbsp;&nbsp;
+                                        <th scope="row">
+                                            <div title="{!add.ShippingCity}"><ui:outputText value="{!add.ShippingCity}"/></div>
+                                        </th>
+                                        &nbsp;&nbsp;
+                                        <th scope="row">
+                                            <div title="{!add.ShippingState}"><ui:outputText value="{!add.ShippingState}"/></div>
+                                        </th>
+                                        &nbsp;&nbsp;
+                                        <th scope="row">
+                                            <div title="{!add.ShippingPostalCode}"><ui:outputText value="{!add.ShippingPostalCode}"/></div>
+                                        </th>
+                                    </tr>
+                                    <br/>
+                                </aura:if>
+                            </aura:iteration>
+                        </tbody>
+                    </table>
+                    </div>
+               	<footer class="slds-modal__footer" style="width: 800px">
+                    <button class="slds-button slds-button_neutral" onclick="{!c.hideAccountModal2}">Close</button>
+                </footer>
+                    
+            </div>
+        </div>
+        <div class="slds-backdrop slds-backdrop--open"></div>
+    </aura:if>
+    
+    <aura:if isTrue="{!v.showContentModal}">
+        <div role="dialog" tabindex="-1" aria-labelledby="header99" class="slds-modal slds-fade-in-open" style="width: 100%">
+            <div class="slds-modal__container" style="width: 100%">
+                <footer class="slds-modal__footer" style="width: 100%">
+                    <table>
+                        <thead>
+                            <tr class="slds-text-title--caps">
+                                <th scope="row" >
+                                    
+                                        
+                                        <span title="Name">Title</span> 
+                                   
+                                </th>
+                                <th scope="row" >
+                                    
+                                        
+                                        <span title="Name">File Type</span> 
+                                    
+                                </th>
+                                <th scope="row" >
+                                    
+                                        <span class="slds-assistive-text">Sort</span>
+                                        <span title="Name">Content Size</span> 
+                                    
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <aura:iteration items="{!v.fileList}" var="add">  
+                                <aura:if isTrue="{!add != null}">
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="slds-truncate" style="width:350px" title="{!add.Title}"><ui:outputURL value="{!'/'+add.Id}" label="{!add.Title}" target="_blank"/></div>
+                                        </th>
+                                        
+                                        <th scope="row">
+                                            <div class="slds-truncate" title="{!add.FileType}"><ui:outputText value="{!add.FileType}"/></div>
+                                        </th>
+                                        
+                                        <th scope="row">
+                                            <div class="slds-truncate" title="{!add.ContentSize}"><ui:outputText value="{!add.ContentSize}"/></div>
+                                        </th>
+                                    </tr>
+                                </aura:if>
+                            </aura:iteration>
+                        </tbody>
+                    </table>
+                    <button class="slds-button slds-button_neutral" onclick="{!c.hideContentModal}">Close</button>
+                </footer>
+            </div>
+        </div>
+        <div class="slds-backdrop slds-backdrop--open"></div>
+    </aura:if>
+    <div id="OverlapBS" style="background-color:white">
+    <div id="caseForm">
+        <div class="slds-grid slds-gutters">
+            <div class="slds-col" id="formCol">
+                <label for="cNumber"><span style="font-weight: bold">Case Number: </span></label>
+                <lightning:formattedText value="{!v.activeCase.CaseNumber}"/>
+                <br/>
+                <lightning:recordEditForm
+                                          recordId="{!v.activeCase.Id}"
+                                          objectApiName="Case"
+                                          aura:id="editForm1"
+                                          recordTypeId="{!v.activeCase.RecordTypeId}">
+                    <lightning:messages />
+                    <aura:if isTrue="{!v.activeCase.Id != null}">
+                        <table width="25%" class="smallMarginLeft smallMarginTop smallMarginBottom" >
+                            <tr>
+                                <td>
+                                    <lightning:inputField class="customRequired" fieldName="Type" value="{!v.activeCase.Type}" aura:id="inputSelectType" required="true" onchange="{!c.readSelection}" />
+                                </td>
+                                <td>
+                                    <lightning:inputField class="customRequired" fieldName="Subtype__c" value="{!v.activeCase.Subtype__c}" aura:id="inputSelectSubType" required="true" onchange="{!c.readSelection}"/>
+                                </td>
+                                <td>
+                                    <lightning:inputField class="customRequired" fieldName="Call_Type__c" value="{!v.activeCase.Call_Type__c}" aura:id="inputSelectCallType" required="true"/>
+                                </td>
+                            </tr>
+                        </table>
+                        <br/>
+                        <table width="25%" class="smallMarginLeft smallMarginTop smallMarginBottom" >
+                            <tr>
+                                <td>
+                                    <label for="subject">Subject</label>
+                                    <br/>
+                                    <ui:outputText value="{!v.activeCase.Subject}"/>
+                                </td>
+                                <td>
+                                    <aura:if isTrue="{!v.isEdit}">
+                                    	<lightning:inputField fieldName="Status" aura:id="caseStatus"/>
+                                    </aura:if>
+                                </td>
+                            </tr>
+                        </table>
+                    </aura:if>
+                </lightning:recordEditForm>
+                <br/>
+                <lightning:recordEditForm
+                                          recordId="{!v.activeContact.Id}"
+                                          objectApiName="Contact"
+                                          aura:id="editForm2"
+                                          recordTypeId="{!v.activeContact.RecordTypeId}">                      
+                    <aura:if isTrue="{!v.activeContact.Id != null}">
+                        <table width="25%" class="smallMarginLeft smallMarginTop smallMarginBottom" >
+                            <tr >
+                                <td >
+                                    <lightning:inputField fieldName="FirstName" value="{!v.activeContact.FirstName}" aura:id="fName"/>
+                                </td>
+                                <td>
+                                    <aura:if isTrue="{!!v.isEdit}">
+                                    	<lightning:inputField fieldName="LastName" aura:id="lName" required="true" value=""/>
+                                    </aura:if>
+                                    <aura:if isTrue="{!v.isEdit}">
+                                    	<lightning:inputField fieldName="LastName" aura:id="lName" value="{!v.activeContact.LastName}"/>
+                                    </aura:if>
+                                </td>
+                            </tr>
+                        </table>
+                        <br/>
+                        <table>
+                            <tr>
+                                <td>
+                                    <label for="phoneTypePicklist">Phone Number</label>
+                                    <br/>
+                                    <div style="width: 100px;">
+                                    	<ui:inputSelect aura:id="inputSelectPhoneType" change="{!c.getPhones}">
+                                        	<aura:iteration items="{!v.phoneOptions}" var="phoneLst"> 
+                                            	<ui:inputSelectOption text="{!phoneLst}" /> 
+                                        	</aura:iteration>
+                                    	</ui:inputSelect>
+                                    </div>
+                                </td>
+                                <td>
+                                <div style="width: 200px;">
+                                        <br/>
+                                        <ui:inputText value="{!v.currentPhone}" placeholder="{!v.activeContact.Phone}" aura:id="cPhone" blur="{!c.updatePhones}"/>
+                                    </div>
+                                </td>
+                                <td>
+                                    <lightning:inputField fieldName="Extension__c" value="{!v.activeContact.Extension__c}" aura:id="phoneExt" disabled="{!v.disableExtension}"/>
+                                </td>
+                            </tr>
+                        </table>
+                        <br/>
+                        <table width="25%" class="smallMarginLeft smallMarginTop smallMarginBottom" >
+                            <tr >
+                                <td >
+                                    <div >
+                                        <lightning:inputField fieldName="MailingStreet" aura:id="conStreet" value="{!v.activeContact.MailingStreet}" onchange="{!c.readAddressContact}"/>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                        <br/>
+                        <table width="25%" class="smallMarginLeft smallMarginTop smallMarginBottom" >
+                            <tr>
+                                <td>
+                                    <lightning:inputField fieldName="MailingCity" aura:id="conCity" value="{!v.activeContact.MailingCity}" onchange="{!c.readAddressContact}" />
+                                </td>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <td >
+                                    State<br/>
+                                    <lightning:inputField fieldName="Case_State__c" aura:id="conState" value="{!v.activeContact.MailingState}" onchange="{!c.readAddressContact}" variant="label-hidden"/>
+                                </td>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <td>
+                                    <lightning:inputField fieldName="MailingPostalCode" aura:id="conZip" value="{!v.activeContact.MailingPostalCode}" onchange="{!c.readAddressContact}"/>
+                                </td>
+                            </tr>
+                        </table>
+                        <br/>
+                        <table width="25%" class="smallMarginLeft smallMarginTop smallMarginBottom" >
+                            <tr>
+                                <td>
+                                    <div class="customRequired">Email Status<br/></div>
+                                    <ui:inputSelect class="slds-select custom-background" aura:id="inputEmailStatus" change="{!c.evalEmailStatus}">
+                                		<aura:iteration items="{!v.eStatusList}" var="stat"> 
+                                    		<ui:inputSelectOption text="{!stat}"/> 
+                                		</aura:iteration>
+                            		</ui:inputSelect>
+                                 </td>
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                <td>
+                                    <lightning:inputField fieldName="Email" value="{!v.activeContact.Email}" aura:id="inputEmail" />
+                                </td>
+                                <td>
+                                    <ui:outputText value="Facility"/><br/>
+                                    <ui:inputText value="{!v.chosenFacility}" aura:id="inputConFac"/>
+                                </td>
+                                <td>
+                                    <br/>
+                                	<ui:button label="Search" press="{!c.searchFacilties}"/>
+                                </td>
+                            </tr>
+                        </table>
+                    </aura:if>
+                </lightning:recordEditForm>
+                <br/>
+                <br/>
+                <span style="Font-weight:bold;"><ui:outputText value="Patient Information" />&nbsp;<aura:if isTrue="{!!v.showPatientInfo}"><ui:button label="+" press="{!c.showHidePatient}" /></aura:if></span><span style="Font-weight:bold"><aura:if isTrue="{!v.showPatientInfo}"><ui:button label="-" press="{!c.showHidePatient}" /></aura:if></span>
+                <aura:if isTrue="{!v.showPatientInfo}">
+                    <br/>
+                    <br/>
+                    <ui:button label="Copy Contact Information" press="{!c.copyContactToPatient}"/>
+                    <br/>
+                    <br/>
+                    <div style="border-bottom: 2px solid black; border-top: 2px solid black">
+                        <br/>
+                    <aura:if isTrue="{!v.activePatient != null}">
+                        <lightning:recordEditForm
+                                                  recordId="{!v.activePatient.Id}"
+                                                  objectApiName="Patient_NEW__c"
+                                                  aura:id="editForm5"
+                                                  recordTypeId="{!v.activePatient.RecordTypeId}">
+                            <table class="smallMarginLeft smallMarginTop smallMarginBottom" >
+                                <tr>
+                                    <td>
+                                        <lightning:inputField fieldName="First_Name__c" value="{!v.activePatient.First_Name__c}" aura:id="pfName" onchange="{!c.writeToPatient}"/>
+                                    </td>
+                                    <td>
+                                        <lightning:inputField fieldName="Middle_Initial__c" value="{!v.activePatient.Middle_Initial__c}" aura:id="pfMidName" onchange="{!c.writeToPatient}"/>
+                                    </td>
+                                    <td>
+                                        <aura:if isTrue="{!!v.isEdit}">
+                                        	<lightning:inputField fieldName="Last_Name__c" class="customRequired" required="{!v.referralRequired}" value="{!v.patientLastName}" aura:id="plName" onchange="{!c.writeToPatient}"/>
+                                        </aura:if>
+                                        <aura:if isTrue="{!v.isEdit}">
+                                        	<lightning:inputField fieldName="Last_Name__c" aura:id="plNameEdit" onchange="{!c.writeToPatient}" value="{!v.activePatient.Last_Name__c}"/>
+                                        </aura:if>
+                                    </td>
+                                    <td>
+                                        <lightning:inputField fieldName="Suffix__c" value="{!v.activePatient.Suffix__c}" aura:id="pfSufName" onchange="{!c.writeToPatient}"/>
+                                    </td>
+                                </tr>
+                            </table>
+                            <br/>
+                            <table class="smallMarginLeft smallMarginTop smallMarginBottom" style="width:500px">
+                                <tr >
+                                    <td >
+                                        <ui:outputText value="Date of Birth"/><br/>
+                                        <div style="width: 200px"><ui:inputDate displayDatePicker="true" value="{!v.activePatient.Date_of_Birth__c}" format="MM/dd/yyyy" aura:id="InputDOB" blur="{!c.writeToPatient}"/></div> <ui:button label="Calculate Age" press="{!c.getAgeCalc}"/>
+                                    </td>
+                                    <td >
+                                        <label for="age">Age</label>
+                                        <br/>
+                                        <ui:outputText value="{!v.patientAge}"/>
+                                    </td>
+                                </tr>
+                            </table>
+                            <br/>
+                            <table width="100%" class="smallMarginLeft smallMarginTop smallMarginBottom" >
+                                <tr width="100%">
+                                    <td width="20%">
+                                        <lightning:inputField fieldName="Sex__c" value="{!v.activePatient.Sex__c}" aura:id="pSex" onchange="{!c.writeToPatient}"/>
+                                    </td>
+                                    <td width="40%">
+                                        <lightning:inputField fieldName="E_mail__c" value="{!v.activePatient.E_mail__c}" aura:id="pEmail" onchange="{!c.writeToPatient}"/>
+                                    </td>
+                                    <td width="40%">
+                                        <lightning:inputField fieldName="Phone__c" aura:id="pPhone" value="{!v.activePatient.Phone__c}" onchange="{!c.writeToPatient}"/>
+                                    </td>
+                                </tr>
+                            </table>
+                            <br/>
+                            <table width="100%" class="smallMarginLeft smallMarginTop smallMarginBottom" >
+                                <tr width="100%">
+                                    <td width="100%">
+                                        <div >
+                                            <lightning:inputField fieldName="Street__c" value="{!v.activePatient.Street__c}" aura:id="ptStreet" onchange="{!c.readAddressPatient}" />
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                            <br/>
+                            <table width="75%" class="smallMarginLeft smallMarginTop smallMarginBottom" >
+                                <tr width="75%">
+                                    <td width="25%">
+                                        <lightning:inputField fieldName="City__c" value="{!v.activePatient.City__c}" aura:id="ptCity" onchange="{!c.readAddressPatient}" />
+                                    </td>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <td width="25%">
+                                        <lightning:inputField fieldName="State__c" value="{!v.activePatient.State__c}" aura:id="ptState" onchange="{!c.readAddressPatient}" />
+                                    </td>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <td width="25%">
+                                        <lightning:inputField fieldName="Postal_Code__c" value="{!v.activePatient.Postal_Code__c}" aura:id="ptZip" onchange="{!c.readAddressPatient}" />
+                                    </td>
+                                </tr>
+                            </table>
+                        </lightning:recordEditForm>
+                    </aura:if>
+                	<br/>
+                    <aura:if isTrue="{!v.activeAssessment != null}">
+                        <lightning:recordEditForm
+                                                  recordId="{!v.activeAssessment.Id}"
+                                                  objectApiName="Assessment__c"
+                                                  aura:id="editForm6"
+                                                  recordTypeId="{!v.activeAssessment.RecordTypeId}">    
+                            <table class="smallMarginLeft smallMarginTop smallMarginBottom" >
+                                <tr>
+                                    <td >
+                                        <div >
+                                            <ui:outputText value="Preferred Facility" /><br/>
+                                            <ui:inputText value="{!v.preferredFacilityName}" aura:id="assessPrefFac"/>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <br/>
+                                    	<ui:button label="Search" press="{!c.searchFacilties2}"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </lightning:recordEditForm>
+                    </aura:if>
+                    <br/>
+                    <aura:if isTrue="{!v.activePatient != null}">    
+                        <lightning:recordEditForm
+                                                  recordId="{!v.activePatient.Id}"
+                                                  objectApiName="Patient_NEW__c"
+                                                  aura:id="editForm7"
+                                                  recordTypeId="{!v.activePatient.RecordTypeId}">    
+                            <table>
+                                <tr>
+                                    <td>
+                                        <lightning:inputField fieldName="Status__c" value="{!v.activePatient.Status__c}" aura:id="inputPtStatus" class="customRequired" required="{!v.referralRequired}" onchange="{!c.writeToPatient}"/>
+                                    </td>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <td>
+                                        <lightning:inputField fieldName="Status_Detail__c" value="{!v.activePatient.Status_Detail__c}" class="customRequired" aura:id="inputPtStatusDetail" required="{!v.referralRequired}" onchange="{!c.writeToPatient}"/>
+                                    </td>
+                                    <td>
+                                        <lightning:inputField fieldName="Consent_for_Callback__c" value="{!v.activePatient.Consent_for_Callback__c}" class="customRequired" aura:id="inputPtConsent" required="{!v.consentRequired}" onchange="{!c.writeToPatient}"/>
+                                    </td>
+                                </tr>
+                            </table>
+                            <br/>
+                            <table>
+                                <tr>
+                                    <td>
+                                        <lightning:inputField fieldName="Next_Call_Date__c" value="{!v.activePatient.Next_Call_Date__c}" aura:id="pNextCall" onchange="{!c.writeToPatient}"/>
+                                    </td>
+                                    
+                                    <td>
+                                        <lightning:inputField fieldName="Lead_Lost_Date__c" value="{!v.activePatient.Lead_Lost_Date__c}" aura:id="pLeadLost" onchange="{!c.writeToPatient}"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </lightning:recordEditForm>
+                    </aura:if>
+                    <br/>
+                    <table>
+                        <tr>
+                            <td>
+                                <lightning:fileUpload label="Attachments"
+        									name="fileUploader" 
+        									multiple="false" 
+        									accept="{!v.accept}"
+        									recordId="{!v.activeCase.Id}" 
+        									onuploadfinished="{!c.handleUploadFinished}" />
+                            </td>
+                        </tr>
+                    </table>
+                    <table>
+                        <thead>
+                    <tr class="slds-text-title--caps">
+                                <th scope="row">
+                                    <span title="Name">Title</span>
+                                </th>
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                <th scope="row">
+                                    <span title="Name">Content Type</span> 
+                                </th>
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                <th scope="row">
+                                	<span title="Name">Created Date</span> 
+                                </th>
+                            </tr>
+                            </thead>
+                        	<tbody>
+                        	<aura:iteration items="{!v.attachmentItems}" var="add">  
+                                <aura:if isTrue="{!add != null}">
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="slds-truncate" title="{!add.Name}"><ui:outputText value="{!add.Title}"/></div>
+                                        </th>
+                                        &nbsp;&nbsp;&nbsp;&nbsp;
+                                        <th scope="row">
+                                            <div class="slds-truncate" style="width:100px" title="{!add.FileType}"><ui:outputText value="{!add.FileType}"/></div>
+                                        </th>
+                                        &nbsp;&nbsp;&nbsp;&nbsp;
+                                        <th scope="row">
+                                            <div class="slds-truncate" title="{!add.CreatedDate}"><ui:outputDateTime value="{!add.CreatedDate}" format="MM/dd/yyyy"/></div>
+                                        </th>
+                                    </tr>
+                                </aura:if>
+                            </aura:iteration>
+                        	</tbody>
+                    </table>
+                    <br/>
+                    <br/>
+                    </div>
+                </aura:if>
+                <br/>
+                <br/>
+                <span style="font-weight: bold;">Payor Information &nbsp;<aura:if isTrue="{!!v.showPayorInfo}"><ui:button label="+" press="{!c.showHidePayor}"/></aura:if><aura:if isTrue="{!v.showPayorInfo}"><ui:button label="-" press="{!c.showHidePayor}"/></aura:if></span>
+                <aura:if isTrue="{!v.activeAssessment != null}">    
+                    <lightning:recordEditForm
+                                              recordId="{!v.activeAssessment.Id}"
+                                                  objectApiName="Assessment__c"
+                                                  aura:id="editForm9"
+                                                  recordTypeId="{!v.activeAssessment.RecordTypeId}">                
+                        <aura:if isTrue="{!v.showPayorInfo}">
+                            <br/>
+                            <div style="border-bottom: 2px solid black; border-top: 2px solid black">
+                            <br/>
+                            <table>
+                                <span style="font-weight:bold"><ui:outputText value="Primary Payor"/></span>
+                                <tr>
+                                    <td>
+                                        <lightning:inputField aura:id="payorName" class="customRequired" fieldName="Payor__c" required="{!v.payorRequired}" value="{!v.activeAssessment.Payor__c}" onchange="{!c.writeToAssessment}"/>
+                                    </td>
+                                    <td>
+                                        <lightning:inputField aura:id="payorMemberId" class="customRequired" fieldName="Member_ID__c" required="{!v.payorRequired}" value="{!v.activeAssessment.Member_ID__c}" onchange="{!c.writeToAssessment}"/>
+                                    </td>
+                                    <td>
+                                        <lightning:inputField aura:id="payorSubscriberName" class="customRequired" fieldName="Subscriber_Name__c" required="{!v.payorRequired}" value="{!v.activeAssessment.Subscriber_Name__c}" onchange="{!c.writeToAssessment}"/>
+                                    </td>
+                                </tr>
+                                <br/>
+                                <span style="font-weight:bold"><ui:outputText value="Secondary Payor"/></span>
+                                <tr>
+                                    <td>
+                                        <lightning:inputField aura:id="payorName2" fieldName="Secondary_Payor__c" value="{!v.activeAssessment.Secondary_Payor__c}" onchange="{!c.writeToAssessment}"/>
+                                    </td>
+                                    
+                                    <td>
+                                        <lightning:inputField aura:id="payorMemberId2" fieldName="Secondary_Member_ID__c" value="{!v.activeAssessment.Secondary_Member_ID__c}" onchange="{!c.writeToAssessment}"/>
+                                    </td>
+                                    <td>
+                                        <lightning:inputField aura:id="payorSubscriberName2" fieldName="Secondary_Subscriber_Name__c" value="{!v.activeAssessment.Secondary_Subscriber_Name__c}" onchange="{!c.writeToAssessment}"/>
+                                    </td>
+                                </tr>
+                            </table>
+                                <br/>
+                            </div>
+                        </aura:if>
+                    </lightning:recordEditForm>
+                </aura:if>
+                <br/>
+                <lightning:recordEditForm
+                                          recordId="{!v.activeCase.Id}"
+                                          objectApiName="Case"
+                                          aura:id="editForm3"
+                                          recordTypeId="{!v.activeCase.RecordTypeId}">
+                    <aura:if isTrue="{!v.activeCase.Id != null}">
+                        <table>
+                            <tr>
+                                <td style="width: 200px">
+                                    <ui:outputText value="How did caller find Kindred?"/>
+                                    <br/>
+                                    <lightning:inputField fieldName="Case_Source__c" aura:id="caseSource" variant="label-hidden"/>
+                                </td>
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                <td>
+                                    <lightning:inputField fieldName="Origin" aura:id="caseOrigin"/>
+                                </td>
+                                &nbsp;&nbsp;&nbsp;
+                                <td>
+                                    <lightning:recordEditForm
+                                                              recordId="{!v.activeAccount.Id}"
+                                                              objectApiName="Account"
+                                                              aura:id="editForm4"
+                                                              recordTypeId="{!v.activeAccount.RecordTypeId}">
+                                        
+                                            <ui:outputText value="Level of Care" class="customRequired"/>
+                                    		<br/>
+                                        	<ui:inputSelect class="slds-select custom-background" aura:id="accType" blur="{!c.writeToAccount}">
+                                				<aura:iteration items="{!v.locList}" var="loc"> 
+                                    			<ui:inputSelectOption text="{!loc}"/> 
+                               					 </aura:iteration>
+                            				</ui:inputSelect>
+                                    </lightning:recordEditForm>
+                                </td>
+                            </tr>
+                        </table>
+                        <br/>
+                        <table class="smallMarginLeft smallMarginTop smallMarginBottom" >
+                            <tr>
+                                <td>
+                                    <lightning:inputField fieldName="Case_Notes__c" aura:id="caseDescription"/>
+                                </td>
+                            </tr>
+                            <tr>
+                            	<td>
+                                    <br/>
+                                    Description Note History<br/>
+                                    <table>
+                                    	<thead>
+                            <tr class="slds-text-title--caps">
+                                <th scope="row">
+                                    <span title="Name">Title</span>
+                                </th>
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                <th scope="row">
+                                    <span title="Name">Content</span> 
+                                </th>
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                <th scope="row">
+                                	<span title="Name">Created Date</span> 
+                                </th>
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                <th scope="row">
+                                	<span title="Name">Created By</span> 
+                                </th>
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                <th scope="row">
+                                	<span title="Name">Last Modified</span> 
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <aura:iteration items="{!v.caseHistory}" var="add">  
+                                <aura:if isTrue="{!add != null}">
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="slds-truncate" title="{!add.n.Title}"><ui:outputText value="{!add.n.Title}"/></div>
+                                        </th>
+                                        &nbsp;&nbsp;&nbsp;&nbsp;
+                                        <th scope="row">
+                                            <div class="slds-truncate" style="width:125px" title="{!add.n.TextPreview}"><ui:outputText value="{!add.n.TextPreview}"/></div>
+                                        </th>
+                                        &nbsp;&nbsp;&nbsp;&nbsp;
+                                        <th scope="row">
+                                            <div class="slds-truncate" title="{!add.n.CreatedDate}"><ui:outputDateTime value="{!add.n.CreatedDate}" format="MM/dd/yyyy"/></div>
+                                        </th>
+                                        &nbsp;&nbsp;&nbsp;&nbsp;
+                                        <th scope="row">
+                                            <div class="slds-truncate" title="{!add.CreatedBy}"><ui:outputText value="{!add.userName}"/></div>
+                                        </th>
+                                        &nbsp;&nbsp;&nbsp;&nbsp;
+                                        <th scope="row">
+                                            <div class="slds-truncate" title="{!add.n.LastModifiedDate}"><ui:outputDateTime value="{!add.n.LastModifiedDate}" format="MM/dd/yyyy hh:mm a z"/></div>
+                                        </th>
+                                    </tr>
+                                </aura:if>
+                            </aura:iteration>
+                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </aura:if>
+                </lightning:recordEditForm>
+                <br/>
+                <aura:if isTrue="{!v.activeCase.Origin == 'Web'}">
+                    <div>
+                        <span style="color:black;font-size: 13px; font-weight:bold">Web Information</span>
+                        <br/>
+                        <ui:button label="Show/Hide" press="{!c.showHideWeb}"/>
+                        <aura:if isTrue="{!v.showWebInfo}">
+                            <table>
+                                <span>
+                                    <b>Web Name</b> <br/>
+                                    <p style="margin-left: 5px;"><ui:outputText value="{!v.activeCase.Web_Last_Name__c}"/></p>
+                                </span>
+                                <span>
+                                    <b> Web Address</b> <br/>
+                                    <p style="margin-left: 5px;"><ui:outputText value="{!v.activeCase.Web_Street_Address__c}" /><br/>
+                                        <ui:outputText value="{!v.activeCase.Web_City__c}"/>,&nbsp; <ui:outputText value="{!v.activeCase.Web_State__c}"/>&nbsp; <ui:outputText value="{!v.activeCase.Web_Zip_Code__c}"/></p>
+                                </span>
+                                <span>
+                                    <b>Web Phone</b><br/>
+                                    <p style="margin-left: 5px;"><ui:outputText value="{!v.activeCase.SuppliedPhone}"/></p>
+                                </span>
+                                <span> 
+                                    <b>Web Email</b><br/>
+                                    <p style="margin-left: 5px;"><ui:outputText value="{!v.activeCase.SuppliedEmail}"/></p>
+                                </span>
+                            </table>
+                        </aura:if>
+                    </div>
+                </aura:if>
+                <br/>
+                <br/>
+                <br/>
+                <table style="margin-left: auto;margin-right: auto;">
+                    <tr width="100%">
+                        <td>
+                            <lightning:button class="slds-m-top_small" variant="brand" name="save" label="Save" onclick="{!c.saveRecords}" />
+                        </td>
+                        <td>
+                            <span style="color:white">______________</span>
+                        </td>
+                        <td>
+                            <lightning:button class="slds-m-top_small" variant="brand" name="saveClose" label="Save and Close" onclick="{!c.saveClose}" />
+                        </td>
+                        <td>
+                            <span style="color:white">______________</span>
+                        </td>
+                        <td>
+                            <lightning:button class="slds-m-top_small" variant="brand" name="cancel" label="Cancel" onclick="{!c.cancelCase}" />
+                        </td>
+                    </tr>
+                </table>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+            </div>
+            
+            <div class="slds-col" id="mapCol" style="width:25%">
+                <div aura:id="mapContainer" style="width:300px">		                
+                    <!--<lightning:map aura:id="mapComponent"		
+                               mapMarkers="{!v.markers}"		
+                markersTitle="Kindred Facilities"/>-->		
+                </div>
+                <br/>
+                <div style="color:blue" onmouseover="{!c.showLegend}" onmouseout="{!c.hideLegend}"> Show Legend</div>
+                <aura:if isTrue="{!v.displayLegend}">
+                	<div>
+                		<img src="{!$Resource.legendIcon}"/>
+                	</div>
+                </aura:if>
+                <br/>
+                <table>
+                    <tr>
+                        <td>
+                            Select Facility Type:
+                            <ui:inputSelect class="slds-select custom-background" aura:id="inputSelectFacility" change="{!c.onFacilityChange}" disabled="{!v.facilitySelectLocked}">
+                                <aura:iteration items="{!v.facilityTypeList}" var="fac"> 
+                                    <ui:inputSelectOption text="{!fac}"/> 
+                                </aura:iteration>
+                            </ui:inputSelect>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                        Facilities with Content: 
+                        <br/>
+                            <ui:inputSelect class="slds-select" aura:id="inputSelectAccount" disabled="{!!v.allowContentSearch}">
+                                        <aura:iteration items="{!v.selAccounts}" var="acc"> 
+                                            <ui:inputSelectOption text="{!acc}"/> 
+                                        </aura:iteration>
+                                    </ui:inputSelect>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <ui:button label="Get Content" press="{!c.getContent}" disabled="{!!v.allowContentSearch}"/>
+                        </td>
+                    </tr>
+                </table>
+                <br/>
+                <div class="slds-scrollable" style="height: 400px;">
+                    <span style="font-size:18px; font-weight: bold">Kindred Facilities</span>
+                <table>
+	                <aura:iteration items="{!v.locationDetails}" var="loc">
+                    <tr style="outline: thin solid">
+                        <td>
+                            <ui:inputCheckbox aura:id="abox" name="{!loc.title}" text="{!loc.accId}" change="{!c.setPreferredFac}"/>
+                            <br/>
+                            <aura:if isTrue="{!loc.accType == 'ALF'}">
+                            	<img src="{!$Resource.alfIcon}"/>
+                            </aura:if>
+                            <aura:if isTrue="{!loc.accType == 'ARU'}">
+                            	<img src="{!$Resource.aruIcon}"/>
+                            </aura:if>
+                            <aura:if isTrue="{!loc.accType == 'CC'}">
+                            	<img src="{!$Resource.ccIcon}"/>
+                            </aura:if>
+                            <aura:if isTrue="{!loc.accType == 'HH'}">
+                            	<img src="{!$Resource.hhIcon}"/>
+                            </aura:if>
+                            <aura:if isTrue="{!loc.accType == 'IHPC'}">
+                            	<img src="{!$Resource.hhIcon}"/>
+                            </aura:if>
+                            <aura:if isTrue="{!loc.accType == 'HP'}">
+                            	<img src="{!$Resource.hpIcon}"/>
+                            </aura:if>
+                            <aura:if isTrue="{!loc.accType == 'IRF'}">
+                            	<img src="{!$Resource.irfIcon}"/>
+                            </aura:if>
+                            <aura:if isTrue="{!loc.accType == 'SAU'}">
+                            	<img src="{!$Resource.sauIcon}"/>
+                            </aura:if>
+                            <aura:if isTrue="{!loc.accType == 'TCH'}">
+                            	<img src="{!$Resource.tchIcon}"/>
+                            </aura:if>
+                            <aura:if isTrue="{!loc.accType == 'TCC/SNF'}">
+                            	<img src="{!$Resource.tccsnfIcon}"/>
+                            </aura:if>
+                        </td>
+                        <td>
+                        	<span style="font-weight:bold"><ui:outputURL label="{!loc.title}" title="{!loc.location}" click="{!c.recenterMap}"/></span>
+                        	<br/>
+                        	<ui:outputText value="{!loc.street}"/>
+                            <br/>
+                            <ui:outputText value="{!loc.city}"/>,&nbsp;<ui:outputText value="{!loc.state}"/>&nbsp; <ui:outputText value="{!loc.zip}"/>
+                            <br/>
+                            <ui:outputText value="{!loc.phone}"/>&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-weight:bold"><ui:outputText value="{!loc.dist}"/></span>
+                        </td>
+                    </tr>
+                        <br/>
+                    </aura:iteration>
+                </table>
+                </div>
+            </div>
+            <div class="slds-col" id="articleCol" style="width:25%">
+                <div style = "font-size:14px"><b>Knowledge Center</b></div><br/>
+                <div>
+                    <label style ="font-weight: 400;"><ui:inputRadio name="All" aura:id="allKnowledgeBase" value="true" change="{!c.filterArticles}" />All</label>
+                    &nbsp;&nbsp;
+                    <label style ="font-weight: 400;"><ui:inputRadio name="Kindred" aura:id="kindredKnowledgeBase" change="{!c.filterArticles}" />Kindred</label>
+                    &nbsp;&nbsp;
+                    <label style ="font-weight: 400;"><ui:inputRadio name="Gentiva" aura:id="gentivaKnowledgeBase" change="{!c.filterArticles}"  />Gentiva</label>
+                </div><br/>
+                <table>
+                    <ui:inputText class="form-control" aura:id="articleSearchString" value="{!v.articleSearchString}" />
+                    &nbsp;     
+                    <ui:button class ="btn btn-default" label="Go" press="{!c.searchArticles}"/>
+                </table>
+                <div class="slds-scrollable" style="height: 250px;">
+                    <div id = "scrollArticle">
+                                    <aura:iteration items="{!v.articleList}" var="article">
+                                        <div class="articleBox" style="border-bottom:1px solid blue">
+                                            <b><!--<ui:outputURL value="{!'/'+article.record.Id}" label="{!article.record.Title}" target="_blank"/>--></b>
+                                            <ui:outputURL title="{!article.record.Id}" label="{!article.record.Title}" click="{!c.openKnowledge}"/>
+                                            <br/>
+                                            <ui:outputText class="slds-truncate" value="{!article.record.How_To_Resolve__c}" />
+                                            <br/>
+                                            </div>
+                                        <br/>
+                        			</aura:iteration>
+                                </div>
+                </div>
+                <br/>
+                <br/>
+                <br/>
+                <div style = "font-size:14px; border-top:1px solid black"><b>Lacuna Documentation</b></div><br/>
+                <div class="slds-scrollable" style="height: 450px;">
+                    <div id = "scrollArticle">
+                                    <aura:iteration items="{!v.lacunaFileList}" var="content">
+                                        <div class="articleBox" style="border-bottom:1px solid blue">
+                                            <b>
+                                                <!--<ui:outputURL value="{!'/'+content.Id}" label="{!content.Title}" target="_blank"/>-->
+                                                <ui:outputURL title="{!content.Id}" label="{!content.Title}" click="{!c.openLibrary}"/>
+                                            </b>
+                                            <br/>
+                                            <br/>
+                                        </div>
+                        			</aura:iteration>
+                                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</aura:component>

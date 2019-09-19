@@ -1,0 +1,541 @@
+<apex:page showHeader="false" lightningStyleSheets="true" standardStylesheets="false" sidebar="false" applyHtmlTag="false" applyBodyTag="false" docType="html-5.0">
+<html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<head>
+	<title>Social Style</title>
+
+	<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/> -->
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+	integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous"/>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"
+	integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous"/>
+	<link rel="stylesheet" href="https://cdn.linearicons.com/free/1.0.0/icon-font.min.css"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1,minimum-scale=1, maximum-scale=1, user-scalable=no"/>
+	<apex:slds />
+	<style>
+	.custom-control-input{
+		width: 0px !important;
+		margin-right: 0px !important;
+	}
+	.custom-control-label{
+		padding-top:3px;
+	}
+	.radio-row{
+		margin-top: 6px;
+		margin-bottom: 0px;
+		border-bottom: 1px solid #e9ecef;
+		padding-bottom: 6px;
+	}
+	.radio-row:first-child{
+		margin-top: 12px;
+		margin-bottom: 0px;
+	}
+	.radio-row:last-child{
+		margin-top: 6px;
+		margin-bottom: 12px;
+	}
+	.modal-body{
+			font-size: 18px;
+	}
+	.modal-body div{
+			margin-bottom: 20px;
+			display: none;
+	}
+	</style>
+</head>
+
+<body>
+
+	<div class="slds-scope">
+
+		<div class="container">
+
+			<div class="row justify-content-md-center radio-row">
+				<div class="col col-lg-3">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" class="custom-control-input"/>
+						<label class="custom-control-label">Outgoing</label>
+					</div>
+				</div>
+				<div class="col col-lg-3">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" class="custom-control-input"/>
+						<label class="custom-control-label">Forcefull</label>
+					</div>
+				</div>
+				<div class="col col-lg-3">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" class="custom-control-input"/>
+						<label class="custom-control-label">Easygoing</label>
+					</div>
+				</div>
+				<div class="col col-lg-3">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" class="custom-control-input"/>
+						<label class="custom-control-label">Reserved</label>
+					</div>
+				</div>
+			</div>
+
+			<div class="row justify-content-md-center radio-row">
+				<div class="col col-lg-3">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" class="custom-control-input"/>
+						<label class="custom-control-label">Pictures</label>
+					</div>
+				</div>
+				<div class="col col-lg-3">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" class="custom-control-input"/>
+						<label class="custom-control-label">Awards</label>
+					</div>
+				</div>
+				<div class="col col-lg-3">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" class="custom-control-input"/>
+						<label class="custom-control-label">Keepsakes</label>
+					</div>
+				</div>
+				<div class="col col-lg-3">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" class="custom-control-input"/>
+						<label class="custom-control-label">Order</label>
+					</div>
+				</div>
+			</div>
+
+			<div class="row justify-content-md-center radio-row">
+				<div class="col col-lg-3">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" class="custom-control-input"/>
+						<label class="custom-control-label">People Orientated</label>
+					</div>
+				</div>
+				<div class="col col-lg-3">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" class="custom-control-input"/>
+						<label class="custom-control-label">Goal Oriented</label>
+					</div>
+				</div>
+				<div class="col col-lg-3">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" class="custom-control-input"/>
+						<label class="custom-control-label">Consensus Oriented</label>
+					</div>
+				</div>
+				<div class="col col-lg-3">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" class="custom-control-input"/>
+						<label class="custom-control-label">Detail Oriented</label>
+					</div>
+				</div>
+			</div>
+
+			<div class="row justify-content-md-center radio-row">
+				<div class="col col-lg-3">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" class="custom-control-input"/>
+						<label class="custom-control-label">Friendly/Spontaneous</label>
+					</div>
+				</div>
+				<div class="col col-lg-3">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" class="custom-control-input"/>
+						<label class="custom-control-label">Active/Urgent</label>
+					</div>
+				</div>
+				<div class="col col-lg-3">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" class="custom-control-input"/>
+						<label class="custom-control-label">Steady/Approachable</label>
+					</div>
+				</div>
+				<div class="col col-lg-3">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" class="custom-control-input"/>
+						<label class="custom-control-label">Structured/Slow</label>
+					</div>
+				</div>
+			</div>
+
+			<div class="row justify-content-md-center radio-row">
+				<div class="col col-lg-3">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" class="custom-control-input"/>
+						<label class="custom-control-label">Drifting</label>
+					</div>
+				</div>
+				<div class="col col-lg-3">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" class="custom-control-input"/>
+						<label class="custom-control-label">Pointed</label>
+					</div>
+				</div>
+				<div class="col col-lg-3">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" class="custom-control-input"/>
+						<label class="custom-control-label">Willing</label>
+					</div>
+				</div>
+				<div class="col col-lg-3">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" class="custom-control-input"/>
+						<label class="custom-control-label">Selective</label>
+					</div>
+				</div>
+			</div>
+
+			<div class="row justify-content-md-center radio-row">
+				<div class="col col-lg-3">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" class="custom-control-input"/>
+						<label class="custom-control-label">About People</label>
+					</div>
+				</div>
+				<div class="col col-lg-3">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" class="custom-control-input"/>
+						<label class="custom-control-label">About Outcomes</label>
+					</div>
+				</div>
+				<div class="col col-lg-3">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" class="custom-control-input"/>
+						<label class="custom-control-label">About Cooperation</label>
+					</div>
+				</div>
+				<div class="col col-lg-3">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" class="custom-control-input"/>
+						<label class="custom-control-label">About Details</label>
+					</div>
+				</div>
+			</div>
+
+			<div class="row justify-content-md-center radio-row">
+				<div class="col col-lg-3">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" class="custom-control-input"/>
+						<label class="custom-control-label">Socializes With Others</label>
+					</div>
+				</div>
+				<div class="col col-lg-3">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" class="custom-control-input"/>
+						<label class="custom-control-label">Directs Others</label>
+					</div>
+				</div>
+				<div class="col col-lg-3">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" class="custom-control-input"/>
+						<label class="custom-control-label">Concerned About Others</label>
+					</div>
+				</div>
+				<div class="col col-lg-3">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" class="custom-control-input"/>
+						<label class="custom-control-label">Does not impose on others</label>
+					</div>
+				</div>
+			</div>
+
+			<div class="row justify-content-md-center radio-row">
+				<div class="col col-lg-3">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" class="custom-control-input"/>
+						<label class="custom-control-label">Impulsive/Emotional</label>
+					</div>
+				</div>
+				<div class="col col-lg-3">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" class="custom-control-input"/>
+						<label class="custom-control-label">Quick/Risk-taker</label>
+					</div>
+				</div>
+				<div class="col col-lg-3">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" class="custom-control-input"/>
+						<label class="custom-control-label">Deliberate/Flexible</label>
+					</div>
+				</div>
+				<div class="col col-lg-3">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" class="custom-control-input"/>
+						<label class="custom-control-label">Logical/Indecisive</label>
+					</div>
+				</div>
+			</div>
+
+			<div class="row justify-content-md-center radio-row">
+				<div class="col col-lg-3">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" class="custom-control-input"/>
+						<label class="custom-control-label">Socializes</label>
+					</div>
+				</div>
+				<div class="col col-lg-3">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" class="custom-control-input"/>
+						<label class="custom-control-label">Pushed for time/urgent</label>
+					</div>
+				</div>
+				<div class="col col-lg-3">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" class="custom-control-input"/>
+						<label class="custom-control-label">Respects time, not pushed</label>
+					</div>
+				</div>
+				<div class="col col-lg-3">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" class="custom-control-input"/>
+						<label class="custom-control-label">Values/manages time well</label>
+					</div>
+				</div>
+			</div>
+
+			<div class="row justify-content-md-center radio-row">
+				<div class="col col-lg-3">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" class="custom-control-input"/>
+						<label class="custom-control-label">Fast</label>
+					</div>
+				</div>
+				<div class="col col-lg-3">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" class="custom-control-input"/>
+						<label class="custom-control-label">Focused</label>
+					</div>
+				</div>
+				<div class="col col-lg-3">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" class="custom-control-input"/>
+						<label class="custom-control-label">Steady</label>
+					</div>
+				</div>
+				<div class="col col-lg-3">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" class="custom-control-input"/>
+						<label class="custom-control-label">Deliberate</label>
+					</div>
+				</div>
+			</div>
+
+			<div class="row justify-content-md-center radio-row">
+				<div class="col col-lg-3">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" class="custom-control-input"/>
+						<label class="custom-control-label">Loud/Inflected</label>
+					</div>
+				</div>
+				<div class="col col-lg-3">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" class="custom-control-input"/>
+						<label class="custom-control-label">Direct/Monotone</label>
+					</div>
+				</div>
+				<div class="col col-lg-3">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" class="custom-control-input"/>
+						<label class="custom-control-label">Low Keyed/Animated</label>
+					</div>
+				</div>
+				<div class="col col-lg-3">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" class="custom-control-input"/>
+						<label class="custom-control-label">Reserved/Monotone</label>
+					</div>
+				</div>
+			</div>
+
+			<div class="row justify-content-md-center radio-row">
+				<div class="col col-lg-3">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" class="custom-control-input"/>
+						<label class="custom-control-label">Animated</label>
+					</div>
+				</div>
+				<div class="col col-lg-3">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" class="custom-control-input"/>
+						<label class="custom-control-label">Hurried</label>
+					</div>
+				</div>
+				<div class="col col-lg-3">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" class="custom-control-input"/>
+						<label class="custom-control-label">Casual</label>
+					</div>
+				</div>
+				<div class="col col-lg-3">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" class="custom-control-input"/>
+						<label class="custom-control-label">Rigid</label>
+					</div>
+				</div>
+			</div>
+
+			<div class="row justify-content-md-center radio-row">
+				<div class="col col-lg-3">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" class="custom-control-input"/>
+						<label class="custom-control-label">Friendly</label>
+					</div>
+				</div>
+				<div class="col col-lg-3">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" class="custom-control-input"/>
+						<label class="custom-control-label">Direct</label>
+					</div>
+				</div>
+				<div class="col col-lg-3">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" class="custom-control-input"/>
+						<label class="custom-control-label">Cooperating</label>
+					</div>
+				</div>
+				<div class="col col-lg-3">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" class="custom-control-input"/>
+						<label class="custom-control-label">Formal</label>
+					</div>
+				</div>
+			</div>
+
+			<div class="row justify-content-md-center radio-row">
+				<div class="col col-lg-3">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" class="custom-control-input"/>
+						<label class="custom-control-label">Ideas</label>
+					</div>
+				</div>
+				<div class="col col-lg-3">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" class="custom-control-input"/>
+						<label class="custom-control-label">Results</label>
+					</div>
+				</div>
+				<div class="col col-lg-3">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" class="custom-control-input"/>
+						<label class="custom-control-label">Consensus</label>
+					</div>
+				</div>
+				<div class="col col-lg-3">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" class="custom-control-input"/>
+						<label class="custom-control-label">Process</label>
+					</div>
+				</div>
+			</div>
+
+			<div class="row justify-content-md-center" style="margin-top:20px;color:white;font-size:20px;">
+				<div class="col col-lg-4">
+					<button type="button" class="btn btn-primary btn-lg btn-block" id="reveal"><i class="fas fa-envelope-open-text"></i> Reveal Social Style</button>
+				</div>
+			</div>
+
+			<div class="row justify-content-md-center" style="margin-top:20px;color:white;font-size:20px;">
+				<div class="col col-lg-12 text-danger" style="text-align:center;display:none;" id="alert">
+					<i class="fas fa-times"></i> You must first select some options above before revealing your social style.
+				</div>
+			</div>
+
+		</div>
+
+		<div class="modal fade" id="result">
+			<div class="modal-dialog modal-dialog-centered" role="document">
+				<div class="modal-content">
+					<div class="modal-body">
+						<div id="expressive">
+							You are <b>EXPRESSIVE</b>. You are outgoing, enthusiastic, value personal relationships, and often make decisions that are based on emotion.  Your "opposite" is Analytical.
+						</div>
+						<div id="driver">
+							You are a <b>DRIVER</b>. You can be direct, quick to make decisions, and communicate information in a concise manner.  Your "opposite" is Amiable.
+						</div>
+						<div id="amiable">
+							You are <b>AMIABLE</b>.  You are often warm, cooperative, friendly, and like to establish trusting relationships. Your "opposite" is Driver.
+						</div>
+						<div id="analytical">
+							You are <b>ANALYTICAL</b>. You are focused on detail, rely on facts, and prefer to weigh alternatives before acting. Your "opposite" is Expressive.
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+	<!-- Lightning Wrapper -->
+
+	<script src="https://code.jquery.com/jquery-3.2.1.min.js"
+	integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+	integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+	<script src="//code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@0.0.2/dist/confetti.browser.min.js"></script>
+	<script>
+
+	var matrixTotals = [0,0,0,0];
+	var result = ['expressive', 'driver', 'amiable', 'analytical'];
+
+	$(document).ready(function(){
+
+		$('.radio-row .col').click(function(){
+			$('#alert').hide();
+			if($(this).closest('.radio-row').find('.active').closest('.col').index()>=0) matrixTotals[$(this).closest('.radio-row').find('.active').closest('.col').index()]--;
+			// console.log('before: '+$(this).closest('.radio-row').find('.active').closest('.col').index());
+			$(this).closest('.radio-row').find('.custom-control-label').removeClass('active').siblings('input[type=radio]').prop('checked',false);
+			$(this).find('.custom-control-label').addClass('active').siblings().closest('input[type=radio]').prop('checked',true);
+			// console.log('after: '+$(this).index());
+			matrixTotals[$(this).index()]++;
+		});
+
+		$('#reveal').click(function(){
+
+			var maxValue = Math.max(...matrixTotals);
+			var maximumIndexes = [];
+
+			for(var i = 0; i < matrixTotals.length; i++){
+				if (maxValue!=0 && matrixTotals[i] == maxValue) maximumIndexes.push(i);
+			}
+
+			for(var elementId of result){
+				$('#'+elementId).hide();
+			}
+
+			for(var index of maximumIndexes){
+				$('#'+result[index]).show();
+			}
+
+			if(maximumIndexes.length == 1){
+				$("#result").modal('show');
+				$('#alert').hide();
+				confetti({
+					zIndex: 100000,
+					particleCount: 100,
+					spread: 150,
+					origin: {
+						y: 0.6
+					}
+				});
+			} else if(maximumIndexes.length > 1){
+				$('#alert').hide();
+				$("#result").modal('show');
+				confetti({
+					particleCount: 100,
+					spread: 150,
+					origin: {
+						y: 0.6
+					}
+				});
+			} else{
+				$('#alert').show();
+			}
+
+		});
+
+	});
+
+	</script>
+</body>
+</html>
+</apex:page>

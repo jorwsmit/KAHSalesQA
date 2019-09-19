@@ -1,0 +1,7 @@
+<apex:page showHeader="false" sidebar="false" standardController="Contact" extensions="AA_ReferralAssignController" action="{!assignUnassignContactAlt}">
+<apex:form >
+<apex:messages />
+
+<apex:commandbutton onClick="window.top.close();" value="Close"/>
+</apex:form>
+</apex:page>

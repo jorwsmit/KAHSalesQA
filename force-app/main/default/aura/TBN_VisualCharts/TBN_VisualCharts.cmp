@@ -1,0 +1,280 @@
+<aura:component controller="AA_VisualChartController" access="global" implements="flexipage:availableForAllPageTypes" description="The component to draw various charts using Chart.js Library. Refer to http://www.chartjs.org/ for the library detail.">
+	
+    <aura:attribute name="chartTitle" type="String" access="global"/>
+    <aura:attribute name="chart" type="Object" access="public" description="A chart instance to refer to chart"/>
+    <aura:attribute name="chartLegend" type="Object" access="public" description="An object for chart legends"/>
+    <aura:attribute name="chartData" access="public" type="string" description="Chart data in JSON format. This attribute is optional. If this is not set, Chartjs Component retrieve latest data by itself." />
+    <aura:attribute name="chartlstData" access="public" type="string[]"/>
+    <aura:attribute name="chartlstCount" access="public" type="integer"/>
+    <aura:attribute name="tableData" access="public" type="string[]" />
+    <aura:attribute name="tableTitle" access="public" type="string" />
+    <aura:attribute name="report" access="public" type="string"/>
+    <aura:attribute name="person" access="public" type="string"/>
+    <aura:attribute name="role" access="public" type="string"/>
+    <aura:attribute name="roleName" access="public" type="string"/>
+    <aura:attribute name="dteFrom" access="public" type="string"/>
+    <aura:attribute name="dteTo" access="public" type="string"/>
+    <aura:attribute name="showButton" access="public" type="boolean"/>
+    <aura:attribute name="ListOfContact" type="contact[]"/>           
+    <aura:attribute name="arrowDirection" type="string" default="arrowup" description="Use for change arrow sign direction on header based on click"/>
+    <aura:attribute name="isAsc" type="boolean" default="true" description="boolean flag for pass sorting condition to apex class"/> 
+    <aura:attribute name="selectedTabsoft" type="string" default="firstName" description="Use for show/hide arraow sign on header based on conditions"/>
+    <aura:attribute name="paginationList" type="string[]"/>
+    <aura:attribute name="pageSize" type="Integer" default="20"/>
+ 	<aura:attribute name="totalSize" type="Integer"/>
+    <aura:attribute name="start" type="Integer" />
+ 	<aura:attribute name="end" type="Integer"/>
+    <aura:attribute name="totalAccounts" type="Integer"/>
+    <aura:attribute name="showTotal" type="boolean"/>
+    <aura:attribute name="showStandardReport" access="public" type="boolean" default="false"/>
+    <aura:attribute name="showADOReport" access="public" type="boolean" default="false"/>
+    
+    <!--<aura:handler name="init" value="{!this}" action="{!c.createChart1}" description="Initialization process." />-->
+  	
+    <aura:handler event="c:DashboardEvent" action="{!c.handleComponentEvent}"/>
+    <div class="slds-grid slds-wrap">
+        <aura:iteration items="{!v.chartlstData}" var="var">
+            <div class="slds-col slds-size--1-of-2">
+                <div class="slds-form-element__label reportLable" >{!var.label}</div>
+                <c:TBN_Chart chartTitle="{!var.label}" chartData="{!var.lstSNFRatio}"/>
+                <aura:If isTrue="{!v.showTotal == true}">Total Accounts: {!v.totalAccounts}</aura:If>
+                <br/>
+                <br/>
+            </div>
+        </aura:iteration>
+        
+    </div>
+    <aura:If isTrue="{!v.showButton}">
+    <div>
+    	<ui:button press="{!c.showDetail}">Show Chart Details</ui:button>
+    </div>
+    </aura:If>
+        <br/>
+    <aura:If isTrue="{!v.showStandardReport}">
+    <div class="slds-grid slds-wrap" id="reportSec">
+        <div class="slds-form-element__label reportLabel">{!v.tableTitle}</div>
+        <br/>
+        
+        <table class="slds-table slds-table--bordered slds-table--cell-buffer">
+  <thead>
+    <tr class="slds-text-title--caps">
+       
+        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortAccountName}">
+        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+            <span class="slds-assistive-text">Sort</span>
+          <span class="slds-truncate" title="accountName">Account Name</span>  
+            <aura:if isTrue="{! and(v.arrowDirection == 'arrowdown', v.selectedTabsoft == 'accountName') }">&nbsp;  &#9660; </aura:if>  
+            <aura:if isTrue="{! and(v.arrowDirection != 'arrowdown', v.selectedTabsoft == 'accountName') }"> &nbsp;  &#9650; </aura:if>                        
+        </a>
+       </th>
+        
+       <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortOwner}">
+        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+            <span class="slds-assistive-text">Sort</span>
+          <span class="slds-truncate" title="ownerName">Owner</span>
+            <aura:if isTrue="{! and(v.arrowDirection == 'arrowdown', v.selectedTabsoft == 'ownerName') }">&nbsp;  &#9660;</aura:if>
+            <aura:if isTrue="{! and(v.arrowDirection != 'arrowdown', v.selectedTabsoft == 'ownerName') }">&nbsp;  &#9650;</aura:if>     
+          
+        </a>
+       </th>
+        
+        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortActivity}">
+        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+            <span class="slds-assistive-text">Sort</span>
+          <span class="slds-truncate" title="activity">Last Activity Date</span>
+            <aura:if isTrue="{! and(v.arrowDirection == 'arrowdown', v.selectedTabsoft == 'activity') }">&nbsp;  &#9660;</aura:if>
+            <aura:if isTrue="{! and(v.arrowDirection != 'arrowdown', v.selectedTabsoft == 'activity') }">&nbsp;  &#9650;</aura:if>     
+        </a>
+       </th>
+        
+        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortRisk}">
+        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+            <span class="slds-assistive-text">Sort</span>
+          <span class="slds-truncate" title="Department">Reason for Risk</span>
+            <aura:if isTrue="{! and(v.arrowDirection == 'arrowdown', v.selectedTabsoft == 'risk') }">&nbsp;  &#9660;</aura:if>
+            <aura:if isTrue="{! and(v.arrowDirection != 'arrowdown', v.selectedTabsoft == 'risk') }">&nbsp;  &#9650;</aura:if>     
+        </a>
+       </th>
+       
+       <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortRiskDate}">
+        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+            <span class="slds-assistive-text">Sort</span>
+          <span class="slds-truncate" title="Department">Risk Date</span>
+            <aura:if isTrue="{! and(v.arrowDirection == 'arrowdown', v.selectedTabsoft == 'riskDate') }">&nbsp;  &#9660;</aura:if>
+            <aura:if isTrue="{! and(v.arrowDirection != 'arrowdown', v.selectedTabsoft == 'riskDate') }">&nbsp;  &#9650;</aura:if>     
+        </a>
+       </th> 
+        
+       <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortTier}">
+        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+            <span class="slds-assistive-text">Sort</span>
+          <span class="slds-truncate" title="Department">Tier</span>
+            <aura:if isTrue="{! and(v.arrowDirection == 'arrowdown', v.selectedTabsoft == 'tier') }">&nbsp;  &#9660;</aura:if>
+            <aura:if isTrue="{! and(v.arrowDirection != 'arrowdown', v.selectedTabsoft == 'tier') }">&nbsp;  &#9650;</aura:if>     
+        </a>
+       </th> 
+        
+    </tr>
+  </thead>
+    
+  <tbody>
+    <aura:iteration items="{!v.paginationList}" var="con">  
+        <tr>
+      <aura:if isTrue="{!con != null}">      
+      <th scope="row">
+        <div class="slds-truncate" title="{!con.Name}"><ui:outputURL value="{!'/'+con.Id}" label="{!con.Name}" target="_blank"/></div>
+      	<div class="slds-truncate" title="{!con.Account.Name}"><ui:outputURL value="{!'/'+con.Account.Id}" label="{!con.Account.Name}" target="_blank"/></div>
+      </th>
+        
+      <th scope="row">
+        <div class="slds-truncate" title="{!con.Owner.Name}">{!con.Owner.Name}</div>
+		<div class="slds-truncate" title="{!con.Account.Owner.Name}">{!con.Account.Owner.Name}</div>          
+      </th>
+       
+        <th scope="row">
+        <div class="slds-truncate" title="{!con.PF_Last_Activity_Date__c}">{!con.PF_Last_Activity_Date__c}</div>
+        <div class="slds-truncate" title="{!con.Account.PF_Last_Activity_Date__c}">{!con.Account.PF_Last_Activity_Date__c}</div>
+      </th>
+       
+        <th scope="row">
+        <div class="slds-truncate" title="{!con.PF_Reason_for_Risk__c}">{!con.PF_Reason_for_Risk__c}</div>
+        <div class="slds-truncate" title="{!con.Account.PF_Reason_for_Risk__c}">{!con.Account.PF_Reason_for_Risk__c}</div>    
+      </th>
+        
+      <th scope="row">
+        <div class="slds-truncate" title="{!con.PF_Risk_Date_Stamp__c}"><ui:outputDate aura:id="aDate" value="{!con.PF_Risk_Date_Stamp__c}" /></div>
+        <div class="slds-truncate" title="{!con.Account.PF_Risk_Date_Stamp__c}"><ui:outputDate aura:id="atDate" value="{!con.Account.PF_Risk_Date_Stamp__c}" /></div>    
+      </th>  
+       
+        <th scope="row">
+        <div class="slds-truncate" title="{!con.PF_Tier__c}">{!con.PF_Tier__c}</div>
+        <div class="slds-truncate" title="{!con.Account.PF_Tier__c}">{!con.Account.PF_Tier__c}</div>    
+      </th>
+       </aura:if>  
+    </tr>
+       
+    </aura:iteration>
+    <lightning:button label="Previous" disabled="{!v.start == 0}"  onclick="{!c.previous}" />
+    <lightning:button label="Next" disabled="{!v.end >= v.totalSize}" onclick="{!c.next}" /><br/>
+  </tbody>
+</table> 
+    </div>
+        <ui:button press="{!c.downloadCsv}">Export</ui:button> <br/><br/>
+    </aura:If>
+    
+    
+    <aura:if isTrue="{!v.showADOReport}">
+    	<table class="slds-table slds-table--bordered slds-table--cell-buffer">
+  <thead>
+    <tr class="slds-text-title--caps">
+       
+        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortAccName}">
+        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+            <span class="slds-assistive-text">Sort</span>
+          <span class="slds-truncate" title="accName">Account Name</span>  
+            <aura:if isTrue="{! and(v.arrowDirection == 'arrowdown', v.selectedTabsoft == 'accName') }">&nbsp;  &#9660; </aura:if>  
+            <aura:if isTrue="{! and(v.arrowDirection != 'arrowdown', v.selectedTabsoft == 'accName') }"> &nbsp;  &#9650; </aura:if>                        
+        </a>
+       </th>
+        
+        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortADOName}">
+        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+            <span class="slds-assistive-text">Sort</span>
+          <span class="slds-truncate" title="adoName">ADO Name</span>  
+            <aura:if isTrue="{! and(v.arrowDirection == 'arrowdown', v.selectedTabsoft == 'adoName') }">&nbsp;  &#9660; </aura:if>  
+            <aura:if isTrue="{! and(v.arrowDirection != 'arrowdown', v.selectedTabsoft == 'adoName') }"> &nbsp;  &#9650; </aura:if>                        
+        </a>
+       </th>
+        
+       <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortActDate}">
+        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+            <span class="slds-assistive-text">Sort</span>
+          <span class="slds-truncate" title="actDate">Activity Date</span>
+            <aura:if isTrue="{! and(v.arrowDirection == 'arrowdown', v.selectedTabsoft == 'actDate') }">&nbsp;  &#9660;</aura:if>
+            <aura:if isTrue="{! and(v.arrowDirection != 'arrowdown', v.selectedTabsoft == 'actDate') }">&nbsp;  &#9650;</aura:if>     
+          
+        </a>
+       </th>
+        
+        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortType}">
+        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+            <span class="slds-assistive-text">Sort</span>
+          <span class="slds-truncate" title="type">Activity Type</span>
+            <aura:if isTrue="{! and(v.arrowDirection == 'arrowdown', v.selectedTabsoft == 'type') }">&nbsp;  &#9660;</aura:if>
+            <aura:if isTrue="{! and(v.arrowDirection != 'arrowdown', v.selectedTabsoft == 'type') }">&nbsp;  &#9650;</aura:if>     
+        </a>
+       </th>
+       
+        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortDescription}">
+        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+            <span class="slds-assistive-text">Sort</span>
+          <span class="slds-truncate" title="Department">Description</span>
+            <aura:if isTrue="{! and(v.arrowDirection == 'arrowdown', v.selectedTabsoft == 'tier') }">&nbsp;  &#9660;</aura:if>
+            <aura:if isTrue="{! and(v.arrowDirection != 'arrowdown', v.selectedTabsoft == 'tier') }">&nbsp;  &#9650;</aura:if>     
+        </a>
+       </th>
+        
+        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortRisk}">
+        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+            <span class="slds-assistive-text">Sort</span>
+          <span class="slds-truncate" title="Department">Reason for Risk</span>
+            <aura:if isTrue="{! and(v.arrowDirection == 'arrowdown', v.selectedTabsoft == 'risk') }">&nbsp;  &#9660;</aura:if>
+            <aura:if isTrue="{! and(v.arrowDirection != 'arrowdown', v.selectedTabsoft == 'risk') }">&nbsp;  &#9650;</aura:if>     
+        </a>
+       </th>
+       
+       <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortRiskDate}">
+        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+            <span class="slds-assistive-text">Sort</span>
+          <span class="slds-truncate" title="Department">Risk Date</span>
+            <aura:if isTrue="{! and(v.arrowDirection == 'arrowdown', v.selectedTabsoft == 'riskDate') }">&nbsp;  &#9660;</aura:if>
+            <aura:if isTrue="{! and(v.arrowDirection != 'arrowdown', v.selectedTabsoft == 'riskDate') }">&nbsp;  &#9650;</aura:if>     
+        </a>
+       </th> 
+    
+      </tr>
+  </thead>
+    
+  <tbody>
+    <aura:iteration items="{!v.paginationList}" var="con">  
+        <tr>
+      <aura:if isTrue="{!con != null}">      
+      <th scope="row">
+        <div class="slds-truncate" title="{!con.Account.Name}"><ui:outputURL value="{!'/'+con.Account.Id}" label="{!con.Account.Name}" target="_blank"/></div>
+      </th>
+        
+      <th scope="row">
+        <div class="slds-truncate" title="{!con.Owner.Name}">{!con.Owner.Name}</div>
+	  </th>
+       
+        <th scope="row">
+        <div class="slds-truncate" title="{!con.ActivityDate}"><ui:outputDate aura:id="aDate" value="{!con.ActivityDate}" /></div>
+      	</th>
+      
+        <th scope="row">
+        <div class="slds-truncate" title="{!con.Type}">{!con.Type}</div>
+        </th>
+          
+        <th scope="row">
+        <div class="slds-truncate" title="{!con.Description}">{!con.Description}</div>
+        </th>  
+          
+        <th scope="row">
+        <div class="slds-truncate" title="{!con.Account.PF_Reason_for_Risk__c}">{!con.Account.PF_Reason_for_Risk__c}</div>
+        </th>
+        
+      <th scope="row">
+        <div class="slds-truncate" title="{!con.Account.PF_Risk_Date_Stamp__c}"><ui:outputDate aura:id="aDate" value="{!con.Account.PF_Risk_Date_Stamp__c}" /></div>
+        
+      </th>  
+        
+       </aura:if>  
+    </tr>
+       
+    </aura:iteration>
+    <lightning:button label="Previous" disabled="{!v.start == 0}"  onclick="{!c.previous}" />
+    <lightning:button label="Next" disabled="{!v.end >= v.totalSize}" onclick="{!c.next}" /><br/>
+  </tbody>
+</table> 
+    </aura:if>
+</aura:component>

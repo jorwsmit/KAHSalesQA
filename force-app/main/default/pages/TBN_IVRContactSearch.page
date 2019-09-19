@@ -1,0 +1,223 @@
+<apex:page sidebar="false">
+    <!--  
+    <!-- Scripts needed for making page responsive 
+    <apex:includeScript value="{!URLFOR($Resource.TBN_Supporting_JS_CSS, '/jQuery-1.11.3.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.TBN_Supporting_JS_CSS, '/jquery-ui-1.11.3.js')}" />
+    
+    <apex:stylesheet value="{!URLFOR($Resource.TBN_Supporting_JS_CSS, '/jqueryCss.css')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.TBN_Supporting_JS_CSS, '/BootstrapJS.js')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.TBN_Supporting_JS_CSS, '/Bootstrap.css')}"/>
+    
+    <!-- Scripts needed for Service Console 
+    <apex:includeScript value="/support/console/31.0/integration.js"/>
+    <apex:includeScript value="/soap/ajax/20.0/connection.js"/>
+ 
+    <style>
+        a:hover {
+            
+            text-decoration: none; 
+        }
+        
+        @media (min-width: 75em) {
+            .card-columns {
+                -webkit-column-count: 2 !important;
+                -moz-column-count: 2 !important;
+                column-count: 2 !important;
+                
+                flex-basis: 100%;
+                max-width: 100%;
+                float: none;
+                
+            }
+        }
+        
+        .card-columns > .card {clear:both}
+    </style>
+    
+    <div id = "OverlapBS">
+        <apex:pageMessages id="msg"/>
+        <apex:form id="formID">
+            <apex:inputHidden value="{!isConsole}" id="myHiddenValue"/>
+            <apex:actionFunction name="isConsoleSet" rerender="myHiddenValue">
+            </apex:actionFunction>
+
+            <!--<apex:inputtext value="{!hasCases}" id="theHiddenInput"/>            <apex:variable value="{!0}" var="count"/>
+            <h1>{!objContact.Name}'s Cases: </h1><br/><br/>
+            <div class="well">
+                <div class="form-group" id = "row3_Phone1" style = "display: -webkit-box;display: flex; width: 100%;">
+                    <div class="card-columns">
+                        <apex:repeat value="{!objContact.Cases}" var="case">
+                            <apex:variable value="{!count + 1}" var="count"/>
+                            <span class="card" id="card{!count}" style="width: 450px; min-height: 120px; min-width: 300px; padding: 10px; margin: 5px !important; display: inline-block; margin-right: 10px; border: 1px solid #ccc!important; border-radius: 8px !important;">
+                                <span style="width: 100% !important;">
+                                    <table>
+                                        <tr class="card-block col-xs-6" style="float:none !important;">
+                                            <td style="vertical-align: top !important; padding-right: 10px; padding-top: 12px !important;">
+                                                <a href="{!strRedirectURL}&id={!case.id}&retURL=/{!case.id}">Edit</a>
+                                            </td>
+                                            <td>
+                                                <span style="width: 100%!important;">
+                                                    <apex:repeat value="{!$ObjectType.Case.FieldSets.TBN_ContactSearchCaseFields}" var="field" rows="1">
+                                                        <h4 class="card-title" style="float:left; width: 87%;">{!case[field.fieldPath]}</h4><br/>
+                                                    </apex:repeat>
+                                                    <table width="100%">
+                                                        <apex:repeat value="{!$ObjectType.Case.FieldSets.TBN_ContactSearchCaseFields}" var="field" first="1">
+                                                            <tr>
+                                                                <td>
+                                                                    <p class="card-text"><b>{!field.label}: </b><apex:outputField value="{!case[field.fieldPath]}"/></p>
+                                                                </td>
+                                                            </tr>
+                                                        </apex:repeat>
+                                                    </table>
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </span> 
+                            </span>
+                        </apex:repeat>
+                    </div>
+                </div>
+            </div><br/><br/>
+            <div class="form-group" >
+                <a class="btn btn-default" href="{!strRedirectURL}" id="newCaseBtn">Open New Case</a>
+            </div><br/>
+        </apex:form>
+    </div>
+    
+    <script>
+      /*  $( document ).ready(function() {
+            sforce.console.setTabTitle('My New Title');
+            }
+        });*/
+        setHeight();
+        
+        function setHeight() {
+            
+            var maxHeight = 0;
+            
+            for(var i = 1; i <= $('.card').length; i++) {
+
+                maxHeight = ($('#card'+i).height() < maxHeight) ? maxHeight : $('#card'+i).height();
+            }
+            
+            for(var i = 1; i <= $('.card').length; i++) {
+                
+                $('#card'+i).height(maxHeight);
+            }
+        }
+          
+        (function (c, d, w) {
+                 
+            // select all anchor tags
+            // cache array size for performance if there are many links
+            // define a click listener function once for reuse
+            var anchors = document.getElementsByTagName('a'),
+            
+                anchorCount = anchors.length, 
+                
+                dynamicLink = function (e) {
+                    var redirectLink = this.href;
+                    if (sforce.console.isInConsole()) {
+                        
+                        // in the console, you don't want to change the page
+                        // instead, open a new primary tab and switch focus to it
+                        e.preventDefault();
+
+                        var tabTitle = (this.id == 'newCaseBtn') ? 'Create Case' : 'Edit Case';
+                        var tabId = c.getEnclosingPrimaryTabId(
+                            function(result) {
+                                
+                                var tabId = result.id;
+                                c.openSubtab(tabId, redirectLink, true, tabTitle, null, callback);
+                            }
+                        );
+                        
+                    }
+                    else {
+                        console.log('1 = ',this.href);
+                        // out of the console, do the redirect  
+                        w.top.location = this.href;
+                    }
+                };
+            
+            var callback = function callback() {
+                if (result.error) {
+                   console.log("Error message is " + result.error);
+                }
+            };
+            
+            // on ready, add click listeners
+            // if you don't wait for page load, they will get overwritten
+            d.addEventListener('DOMContentLoaded', function() {
+                for (var index = 0; index < anchorCount; index++) {
+                    anchors[index].addEventListener('click', dynamicLink);
+                }
+            });
+            
+         //   document.getElementsByClassName("card").style.width=("450px");
+            
+        }(sforce.console, document, window)); 
+        
+        
+        /*function testSetTabTitle() {
+            sforce.console.getFocusedPrimaryTabId(function(result) {
+               
+            }); 
+        }*/
+    </script>
+    
+    <script type="text/javascript">
+        function testSetTabTitle() {
+            //Set the current tab's title
+            
+            var stringvalue='{!hasCases}';
+            if(stringvalue == 'false')
+                sforce.console.setTabTitle('Open Cases');
+            else   
+                sforce.console.setTabTitle('Create a Case');
+        }
+        var pageLoad = window.onload;
+          window.onload = function() {
+                
+                if (sforce.console.isInConsole()) 
+                    isConsoleSet(true);
+                else
+                    isConsoleSet(false);
+                if (pageLoad) {
+                        pageLoad();
+                }
+                  testSetTabTitle();
+          }
+               //  setTimeout(function(){ testSetTabTitle(); }, 500);
+               
+               /*var focusedTabId = "";
+                var eventHandler = function (result) {
+                    sforce.console.getEnclosingPrimaryTabId(function(result) { 
+                        focusedTabId=result.id;
+                        thereCanBeOnlyOne();
+                    });
+                }        
+                
+                eventHandler();
+                
+                var thereCanBeOnlyOne = function() { 
+                   console.log('>>>>>>>' + focusedTabId);
+                    sforce.console.getSubtabIds(focusedTabId, function(result) { 
+                        for(i=0;i<result.ids.length;i++){
+                            console.log('>>>>>>>' + result.ids[i]);
+                            if(i == (result.ids.length-1)) {
+                               sforce.console.closeTab(result.ids[i], callback); 
+                            }
+                        }
+                
+                    });
+                }
+                
+                var callback = function callback() {
+                    if (result.error) {
+                       console.log("Error message is " + result.error);
+                    }
+                };*/
+    </script>-->
+</apex:page>

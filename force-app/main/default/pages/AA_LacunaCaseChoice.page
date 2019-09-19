@@ -1,0 +1,16 @@
+<apex:page sidebar="false" standardController="Case" showHeader="false" >
+    <apex:includeScript value="/lightning/lightning.out.js"/>
+
+    <apex:includeLightning />
+    <div class="slds">
+        <!-- Target div for the Lightning component -->
+        <div id="customObjectEdit"></div>
+        </div> 
+    <script>
+        $Lightning.use("c:AA_LacunaCaseChoiceApp", function(){
+            var targetElementId = 'customObjectEdit';
+            $Lightning.createComponent("c:AA_LacunaCaseChoice",  {}, targetElementId, function(components, status){
+            });
+        });
+    </script>
+</apex:page>

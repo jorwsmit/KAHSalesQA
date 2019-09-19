@@ -1,0 +1,315 @@
+<apex:page showHeader="false" controller="Sales_MissedOpportunityHD" standardStylesheets="false" sidebar="false" applyHtmlTag="false" applyBodyTag="false" docType="html-5.0">
+
+<html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<head>
+  <title>Missed Opportunities</title>
+  <apex:stylesheet value="{!URLFOR($Resource.LightningDesign, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css"/>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"
+  integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous"/>
+  <link rel="stylesheet" href="https://cdn.linearicons.com/free/1.0.0/icon-font.min.css"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1,minimum-scale=1, maximum-scale=1, user-scalable=no"/>
+
+  <style>
+  .form-group{
+    width: 500px;
+  }
+  .slds-form-element{
+    padding-bottom: 10px;
+    padding-top: 5px;
+  }
+  button{
+    color: white !important;
+  }
+  ul{
+    width: 100%;
+    max-height: 300px;
+    position: absolute;
+    z-index: 1;
+    overflow: auto;
+    border: 1px solid #d8dde6;
+    border-radius: 0.24rem;
+    background-color: white;
+  }
+  #ui-datepicker-div{
+    border-radius: 0.25rem;
+  }
+  .ui-datepicker-calendar, .ui-datepicker-header{
+    background-color: white;
+    padding: 5px;
+    border: 1px solid #d8dde6;
+  }
+  .ui-datepicker-header{
+    margin-top: 5px;
+    border-radius: 0.25rem 0.25rem 0 0;
+  }
+
+  .ui-datepicker-calendar{
+    border-radius: 0 0 0.25rem 0.25rem;
+  }
+
+  .ui-datepicker-next{
+    position: relative;
+    left: 90px;
+  }
+  .ui-datepicker-calendar th, .ui-datepicker-calendar td{
+    padding: 2px 5px 2px 5px;
+  }
+  ul li{
+    padding: 2px 10px 2px 10px;
+    cursor: pointer;
+  }
+  ul li:hover{
+    text-decoration: underline;
+  }
+  @media only screen and (max-width: 375px) {
+    .form-group{
+      width: 80vw;
+    }
+  }
+  </style>
+</head>
+
+<body style="margin:0px;">
+
+  <!-- REQUIRED SLDS WRAPPER -->
+  <div class="LightningDesign">
+
+    <!-- MASTHEAD -->
+    <div class="slds-page-header">
+      <div class="slds-media">
+        <div class="slds-media__figure">
+          <span class="slds-icon_container slds-icon-standard-opportunity" title="Description of icon when needed">
+            <i style="color:white; padding:10px 12px 10px 10px; font-size: 30px;" class="fa fa-cart-arrow-down" aria-hidden="true"></i>
+          </span>
+        </div>
+        <div class="slds-media__body">
+          <h1 class="slds-page-header__title slds-truncate slds-align-middle" title="Rohde Corp - 80,000 Widgets">Missed Opportunities</h1>
+          <p class="slds-text-body_small slds-line-height_reset">Use the form below to send an explanation to Jack Holbrook</p>
+        </div>
+      </div>
+    </div>
+    <!-- / MASTHEAD -->
+
+    <!-- PRIMARY CONTENT WRAPPER -->
+    <div class="slds-grid" style="margin-bottom:20px;">
+      <article class="slds-card" style="margin:auto;margin-top:20px;padding:10px;">
+        <div class="slds-card__body slds-card__body_inner">
+
+          <div class="form-group">
+            <div class="slds-form slds-form_compound">
+              <fieldset class="slds-form-element">
+                <div class="slds-form-element__group">
+                  <div class="slds-form-element__row">
+                    <div class="slds-form-element slds-size_1-of-2">
+                      <span style="padding-right:5px; color:#c23934;">*</span>
+                      <label class="slds-form-element__label" for="input-01">Clinical Liaison</label>
+                      <input autocomplete="off" type="text" id="cl" class="slds-input" />
+                      <label class="slds-radio_button__label" for="delayed" style="margin-top:5px;">
+                        <span style="color:#c23934; text-decoration:underline;" class="slds-radio_faux" id="cl_error"></span>
+                      </label>
+                      <ul id="clList" style="margin-top:-15px; display:none;">
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                <div class="slds-form-element__group">
+                  <div class="slds-form-element__row">
+                    <div class="slds-form-element slds-size_1-of-1">
+                      <label class="slds-form-element__label" for="input-03">Patient Name</label>
+                      <input autocomplete="off" type="text" id="patient" class="slds-input" />
+                    </div>
+                  </div>
+                  <div class="slds-form-element__row">
+                    <div class="slds-form-element slds-size_1-of-2">
+                      <label class="slds-form-element__label" for="input-04">Referring Facility</label>
+                      <input autocomplete="off" type="text" id="facility" class="slds-input" />
+                    </div>
+                    <div class="slds-form-element slds-size_1-of-2">
+                      <label class="slds-form-element__label" for="input-05">Payor</label>
+                      <input autocomplete="off" type="text" id="payor" class="slds-input" />
+                    </div>
+                  </div>
+                  <div class="slds-form-element__row">
+                    <div class="slds-form-element slds-size_1-of-2">
+                      <label class="slds-form-element__label" for="input-06">Referral Date</label>
+                      <input onkeydown="return false;" autocomplete="off" type="text" id="referralDate" class="slds-input" />
+                    </div>
+                  </div>
+                  <div class="slds-form-element__row">
+                    <div class="slds-form-element slds-size_1-of-1">
+                      <label class="slds-form-element__label" for="input-03">Reason</label>
+                      <input onkeydown="return false;" autocomplete="off" type="text" id="reason" class="slds-input" />
+                      <ul id="reasonList" style="margin-top:6px; display:none;">
+                        <li>Staffing Issue</li>
+                        <li>Physician Issue</li>
+                        <li>Beds full</li>
+                        <li>Insurance Approval Time</li>
+                        <li>Equipment Delays</li>
+                        <li>Medication Delays</li>
+                        <li>Infectious Disease Delays</li>
+                        <li>Hospital LOS issue</li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  <div class="slds-form-element slds-size_1-of-2">
+                    <div class="slds-form-element__control">
+                      <div class="slds-radio_button-group">
+                        <span class="slds-button slds-radio_button">
+                          <span style="padding-right:5px; color:#c23934;">*</span>
+                          <input type="radio" name="radio" id="lost" value="lost" />
+                          <label class="slds-radio_button__label" for="lost" style="margin-bottom:0px;">
+                            <span class="slds-radio_faux">Lost Admission</span>
+                          </label>
+                        </span>
+                        <span class="slds-button slds-radio_button">
+                          <input type="radio" name="radio" id="delayed" value="delayed" />
+                          <label class="slds-radio_button__label" for="delayed" style="margin-bottom:0px;">
+                            <span class="slds-radio_faux">Delayed Admission</span>
+                          </label>
+                        </span>
+                      </div>
+                      <label class="slds-radio_button__label" for="delayed">
+                        <span style="color:#c23934; text-decoration:underline;" class="slds-radio_faux" id="admission_error"></span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="slds-form-element slds-size_1-of-1" style="display:none;" id="days">
+                    <label class="slds-form-element__label" for="input-03">Days Delayed</label>
+                    <input autocomplete="off" type="number" id="days" class="slds-input" />
+                  </div>
+
+                  <div class="slds-form-element slds-size_1-of-2">
+                    <label class="slds-form-element__label" for="input-05">Comments</label>
+                    <textarea autocomplete="off" type="text" id="comments" class="slds-textarea" />
+                  </div>
+
+                  <div style="margin-top:20px;" class="slds-form-element__row">
+                    <button type="button" class="btn btn-primary btn-lg" id="submit">Submit</button>
+                  </div>
+                </div>
+              </fieldset>
+            </div>
+          </div>
+
+        </div>
+        <footer class="slds-card__footer">
+        </footer>
+      </article>
+
+
+
+    </div>
+    <!-- / PRIMARY CONTENT WRAPPER -->
+    <div class="slds-spinner_container" id="spinner" style="position:fixed; width:100vw; height:100vh;">
+      <div class="slds-spinner slds-spinner--large slds-spinner--brand">
+        <div class="slds-spinner__dot-a"></div>
+        <div class="slds-spinner__dot-b"></div>
+      </div>
+    </div>
+
+    <div class="slds-spinner_container" id="success" style="position:fixed; width:100vw; height:100vh; display:none;">
+      <span style="position:absolute; right:0px; font-size:50px; cursor:pointer;" class="lnr lnr-cross" onclick="$('#success').hide()"></span>
+      <div style="text-align:center; color:white; border-radius:0.25rem; border:1px solid #d8dde6; background-color:#04844b; position:absolute; margin-right:-175px; margin-top:-150px; right:50%; top:50%; height:300px; width:350px;">
+        <h1 style="margin-top:15px; font-size:25px; padding:10px;">Your email has been sent successfully to Jack Holbrook.</h1>
+        <span style="font-size:100px;" class="lnr lnr-checkmark-circle"></span>
+        <br/>
+        <button style="margin-top:20px; margin-left:-10px; color:black !important;" type="button" class="btn btn-light" onclick="$('#success').hide()">Close</button>
+      </div>
+
+    </div>
+  </div>
+  <!-- / REQUIRED SLDS WRAPPER -->
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js"
+  integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+  integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  <script src="//code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>
+  <script>
+  $(document).ready(function(){
+    $( "#referralDate" ).datepicker();
+    Sales_MissedOpportunityHD.getUsers(function(users, event){
+      if(users!='') $("#clList").html(users);
+      $("#clList li").click(function (){
+        $("#cl").val($(this).text()).keyup();
+      });
+      $("#spinner").hide();
+    }, {escape:false});
+
+    $("#delayed").click(function(){
+      $("#days").slideDown();
+    });
+
+    $("#lost").click(function(){
+      $("#days").slideUp();
+      $("#days").find("input").val('');
+    });
+
+    $("#cl").click(function (){
+      $("#clList").slideDown();
+    });
+
+    $('#cl').keyup(function(){
+        var valThis = $(this).val().toLowerCase();
+        $('#clList > li').each(function(){
+            var text = $(this).text().toLowerCase();
+            (text.indexOf(valThis) > -1) ? $(this).show() : $(this).hide();
+        });
+    });
+
+    $("#reason").click(function (){
+      $("#reasonList").slideDown();
+    });
+
+    $("#reasonList li").click(function (){
+      $("#reason").val($(this).text());
+    });
+
+    $(document).click(function(e){
+      if (!$("#cl").is(e.target) && !$("#cl").children().is(e.target)) {
+        $("#clList").slideUp();
+      }
+
+      if (!$("#reason").is(e.target) && !$("#reason").children().is(e.target)) {
+        $("#reasonList").slideUp();
+      }
+    });
+
+    $("#submit").click(function(){
+      $("#spinner").show();
+      var json = '{';
+      $("input, textarea").not("#lost, #delayed").each(function(){
+        json += '"'+$(this).attr("id")+'": "'+$(this).val()+'",';
+      });
+      $("#lost, #delayed").each(function(){
+        json += '"'+$(this).attr("id")+'": '
+        if($(this).is(':checked')) json += 'true,';
+        else json += 'false,';
+      });
+      json = json.substring(0, json.length - 1);
+      json += '}';
+
+      Sales_MissedOpportunityHD.sendEmail(json, function(result, event){
+        var json_r = JSON.parse(result);
+        if(json_r.success){
+          $("#cl_error, #admission_error").text('');
+          $("#success").show();
+        } else{
+          if(json_r.hasOwnProperty('cl_error')){
+            $("#cl_error").text(json_r.cl_error);
+          }
+          if(json_r.hasOwnProperty('admission_error')){
+            $("#admission_error").text(json_r.admission_error);
+          }
+        }
+        $("#spinner").hide();
+      }, {escape:false});
+    });
+  });
+  </script>
+</body>
+</html>
+</apex:page>

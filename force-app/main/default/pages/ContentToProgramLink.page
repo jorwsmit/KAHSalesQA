@@ -1,0 +1,46 @@
+<apex:page standardController="Program__c" extensions="ContentToProgramLinkController" id="ContentAssignment" sidebar="false" showHeader="false" standardStylesheets="true">
+    <apex:form >
+        <apex:pageBlock title="" id="pBlock">
+            <table style="width:100%">
+                <tr>
+                    <td style="width:47%" valign="top">
+                        <apex:pageBlock title="Available Documents" id="availableRelatedDocs" >                         
+                            <apex:pageBlockTable id="pbtSearchAccount" value="{!lstContentWrapper}" var="cntWrapper" rendered="{!IF(lstContentWrapper.SIZE>0,true,false)}">
+                                <apex:column width="5px">                       
+                                    <apex:inputCheckbox id="checkBox" value="{!cntWrapper.isSelected}"/>
+                                    </apex:column> 
+                                    <apex:column >  
+                                        <apex:facet name="header">Document Title</apex:facet>
+                                        {!cntWrapper.content.Title}
+                                   </apex:column>                  
+                            </apex:pageBlockTable>  
+                        </apex:pageBlock>
+                    </td>
+                   <td width="6%" align="center" valign="top">
+                    <br></br>
+                    <br></br>
+                      <apex:commandButton id="btn1" value=">>" action="{!CreateContentLink}" />            
+                    <br></br><br></br>
+                    <apex:commandButton id="btn2" value="<<" action="{!DeleteContentLink}"/>              
+                   </td>
+                   <td width="47%" valign="top">
+                    <apex:pageBlock title="Content Link" id="pbCreateContentLink">
+                    <apex:pageBlockTable value="{!lstContentLinkWrapperCls}" var="clWrapper" rendered="{!IF(lstContentLinkWrapperCls.SIZE>0,true,false)}">
+                                <apex:column width="5px">
+                                    <apex:inputCheckbox id="ceheckBox" value="{!clWrapper.isSelected}"/>
+                                </apex:column> 
+                                <apex:column >  
+                                    <apex:facet name="header">Content Link</apex:facet>
+                                    {!clWrapper.ContentLink.Document_Name__c}
+                                </apex:column>                 
+                            </apex:pageBlockTable>             
+                        </apex:pageBlock>
+                    </td>
+                </tr>
+            </table>
+            
+            
+        </apex:pageBlock>
+       
+    </apex:form>
+</apex:page>

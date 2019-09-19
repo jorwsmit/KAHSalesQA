@@ -1,0 +1,157 @@
+<aura:component controller="AA_CaseEntryController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    
+    <aura:attribute name="afterHours" type="id"/>
+    <aura:attribute name="recordId" type="Id" access="public"/>
+    <aura:attribute name="pageURL" type="string"/>
+    <aura:attribute name="recordTypeId" type="Id"/>
+    
+    <aura:attribute name="newPt" type="Patient_NEW__c"/>
+    <aura:attribute name="newCtc" type="Contact"/>
+    <aura:attribute name="newAcc" type="Account"/>
+    <aura:attribute name="fields" type="String[]" default="['Patient_First_Name__c','Patient_Last_Name__c','Subject','Patient_DOB__c','AfterHours_Call_Type__c','Patient_Gender__c','Contact_First_Name__c','Patient_Room_Number__c','Contact_Last_Name__c','Patient_Provider__c','Contact_Phone__c','AH_Patient_Status__c','Contact_Type__c','Provider_Notified_Name__c','Location_Type__c','Reason_for_Call__c','Facility_Name__c','Call_Outcome__c','Facility_Type__c','Status','Origin','Priority','Case_Notes__c']" />
+    
+    <lightning:workspaceAPI aura:id="workspace" />
+    <lightning:navigation aura:id="navService"/>
+    
+    <aura:handler event="c:AA_LacunaCaseID" action="{!c.getValueFromEvent}"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <aura:if isTrue="{!v.afterHours != null}">
+    <div style="background-color:white">
+        <lightning:recordForm
+                         objectApiName="Case"
+                         recordTypeId="{!v.recordTypeId}"
+                         recordId="{!v.recordId}"
+                         oncancel="{!c.onCancel}"
+                         onsuccess="{!c.handleSuccess}"
+                         fields="{!v.fields}"
+                         columns="2">
+        <lightning:messages />
+        <!--<table>
+            <tr>
+                <td>
+                    <lightning:outputField field-name="Owner"/>
+                </td>
+                <td>
+                    <lightning:inputField field-name="Patient_First_Name__c"/>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>
+                    <lightning:outputField field-name="Name"/>
+                </td>
+                <td>
+                    <lightning:inputField field-name="Patient_Last_Name__c"/>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>
+                    <lightning:inputField field-name="Subject"/>
+                </td>
+                <td>
+                    <lightning:inputField field-name="Patient_DOB__c"/>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>
+                    <lightning:inputField field-name="AfterHours_Call_Type__c"/>
+                </td>
+                <td>
+                    <lightning:inputField field-name="Patient_Gender__c"/>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>
+                    <lightning:inputField field-name="Contact_First_Name__c"/>
+                </td>
+                <td>
+                    <lightning:inputField field-name="Patient_Room_Number__c"/>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>
+                    <lightning:inputField field-name="Contact_Last_Name__c"/>
+                </td>
+                <td>
+                    <lightning:inputField field-name="Patient_Provider__c"/>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>
+                    <lightning:inputField field-name="Contact_Phone__c"/>
+                </td>
+                <td>
+                    <lightning:inputField field-name="AH_Patient_Status__c"/>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>
+                    <lightning:inputField field-name="Contact_Type__c"/>
+                </td>
+                <td>
+                    <lightning:inputField field-name="Provider_Notified_Name__c"/>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>
+                    <lightning:inputField field-name="Location_Type__c"/>
+                </td>
+                <td>
+                    <lightning:inputField field-name="Reason_for_Call__c"/>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>
+                    <lightning:inputField field-name="Facility_Name__c"/>
+                </td>
+                <td>
+                    <lightning:inputField field-name="Call_Outcome__c"/>
+                </td>
+            </tr>
+        </table>
+        <br/>
+        
+        <table>
+            <tr>
+            	<td>
+                    <lightning:inputField field-name="Facility_Type__c"/>
+                </td>
+                <td>
+                	&nbsp;
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <lightning:inputField field-name="Status"/>
+                </td>
+                <td>
+                    <lightning:inputField field-name="Case_Origin__c"/>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>
+                    <lightning:inputField field-name="Priority"/>
+                </td>
+                <td>
+                    <lightning:inputField field-name="Case_Notes__c"/>
+                </td>
+            </tr>
+        </table>-->
+    </lightning:recordForm>
+    </div>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        </aura:if>
+</aura:component>

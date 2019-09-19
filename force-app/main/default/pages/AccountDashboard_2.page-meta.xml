@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ApexPage xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>43.0</apiVersion>
+    <availableInTouch>true</availableInTouch>
+    <confirmationTokenRequired>false</confirmationTokenRequired>
+    <description>Opened by dashboard button on KAH account layout. This JavaScript remotes into AccountDashboardExt to query data, and then presents it neatly with bootstrap. Google Charts API is also used in this VF page.</description>
+    <label>AccountDashboard_2</label>
+</ApexPage>

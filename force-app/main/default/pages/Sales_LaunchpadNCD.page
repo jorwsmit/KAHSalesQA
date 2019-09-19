@@ -1,0 +1,382 @@
+<apex:page controller="Sales_LaunchpadNCDController" standardStylesheets="false" sidebar="false" applyHtmlTag="true" applyBodyTag="false" docType="html-5.0">
+
+<html>
+
+<head>
+  <title>Sales Launchpad</title>
+  <apex:stylesheet value="{!URLFOR($Resource.LightningDesign, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+  <link rel="stylesheet" href="https://cdn.linearicons.com/free/1.0.0/icon-font.min.css"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1,minimum-scale=1, maximum-scale=1, user-scalable=no"/>
+</head>
+<style>
+body {
+  margin-top: 0px;
+  margin-right: 0px;
+  margin-bottom: 0px;
+  margin-left: 0px
+}
+.bannerIcon{
+  magrin-right:10px;
+  font-size:30px;
+  color:white;
+  background-color:#7F8DE1;
+  padding:8px;
+  border-radius:4px;
+}
+.mainContent{
+  padding:10px;
+}
+.title{
+  font-size: 18px;
+  border-style: solid;
+  border-width: 0px 0px 1px 0px;
+  broder-color: #16325c;
+}
+.spTitle{
+  color:white;
+  font-size: 18px;
+}
+a{
+  padding:5px;
+  display: block;
+}
+.fixedHeight{
+  min-height:150px;
+  max-height:150px;
+}
+.padBottom{
+  padding-bottom:10px;
+}
+.spReport{
+  width:100%;
+  height:100%;
+}
+.spin{
+  animation: spin 1.25s linear infinite;
+  margin-top:45px;
+  font-size: 30px;
+}
+
+@keyframes spin{
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.spData{
+  color:white;
+}
+
+.extraMargin{
+  margin-right: 40px;
+  maring-left: 40px;
+}
+.progressBarLeft{
+  border-radius: 3px 0px 0px 3px;
+  background-color: white;
+  width:0%;
+  height: 10px;
+  display: inline-block;
+}
+.progressBarRight{
+  border-radius: 3px;
+  background-color: #bababa;
+  width:100%;
+  height: 10px;
+  display: inline-block;
+}
+.nopadb{
+  padding-bottom: 0px;
+}
+
+.noSidebarCell{
+  padding: 0px;
+}
+</style>
+<body>
+
+  <!-- REQUIRED SLDS WRAPPER -->
+  <div class="LightningDesign">
+
+    <!-- BANNER -->
+    <div class="slds-page-header" role="banner">
+      <div class="slds-grid">
+        <div class="slds-col slds-has-flexi-truncate">
+          <div class="slds-media slds-no-space slds-grow">
+            <i class="lnr lnr-rocket bannerIcon" aria-hidden="true" style="margin-right:10px;"></i>
+            <div class="slds-media__body">
+              <h1 class="slds-page-header__title slds-m-right--small slds-align-middle slds-truncate">Sales Launchpad</h1>
+              <p class="slds-text-title--caps slds-line-height--reset">A place to review your performance</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- / BANNER -->
+
+    <!-- SP -->
+    <div class="slds-grid slds-wrap slds-grid--pull-padded mainContent nopadb">
+      <div class="slds-p-horizontal--small slds-size--1-of-1 slds-medium-size--1-of-3 padBottom">
+        <div class="slds-box slds-box--small slds-theme--shade slds-text-align--center fixedHeight" id="admit">
+          <div class="lnr lnr-sync spin" aria-hidden="true"></div>
+        </div>
+      </div>
+      <div class="slds-p-horizontal--small slds-size--1-of-1 slds-medium-size--1-of-3 padBottom">
+        <div class="slds-box slds-box--small slds-theme--shade slds-text-align--center fixedHeight" id="revenue">
+          <div class="lnr lnr-sync spin" aria-hidden="true"></div>
+        </div>
+      </div>
+      <div class="slds-p-horizontal--small slds-size--1-of-1 slds-medium-size--1-of-3 padBottom">
+        <div class="slds-box slds-box--small slds-theme--shade slds-text-align--center fixedHeight" id="calls">
+          <div class="lnr lnr-sync spin" aria-hidden="true"></div>
+        </div>
+      </div>
+    </div>
+    <!-- / SP -->
+
+
+    <!-- LINKS -->
+    <div class="slds-grid slds-wrap slds-grid--pull-padded mainContent">
+      <div class="slds-p-horizontal--small slds-size--1-of-1 slds-medium-size--1-of-3 padBottom">
+        <div class="slds-box slds-box--small slds-theme--shade slds-text-align--center fixedHeight"><div class="title">Performance Reports</div>
+        <a onclick="navigate('00O13000008mTqN', false)">Sales Performance</a>
+        <a onclick="navigate('00O13000008mX27', false)">Sales Calls</a>
+        <a onclick="navigate('00O13000008mX3o', false)">Sales Call Details</a>
+      </div>
+    </div>
+    <div class="slds-p-horizontal--small slds-size--1-of-1 slds-medium-size--1-of-3 padBottom">
+      <div class="slds-box slds-box--small slds-theme--shade slds-text-align--center fixedHeight"><div class="title">FCR Reports</div>
+      <a onclick="navigate('00O13000008nrQk', false)">YTD Trending</a>
+      <a onclick="navigate('00O13000008z6ac', false)">Competency Performance Summary</a>
+    </div>
+  </div>
+  <div class="slds-p-horizontal--small slds-size--1-of-1 slds-medium-size--1-of-3 padBottom">
+    <div class="slds-box slds-box--small slds-theme--shade slds-text-align--center fixedHeight"><div class="title">Dashboards</div>
+    <a onclick="navigate('01Z13000000fkNI', true)" style="display:none;">HD CL Leaderboard</a>
+    <a onclick="navigate('01Z13000000jnVO', true)" style="display:none;">NCD CL Leaderboard</a>
+    <a onclick="navigate('01Z13000000jnVO', true)" style="display:none;">NCD CL Monthly Leaderboard</a>
+  </div>
+</div>
+</div>
+<!-- / LINKS -->
+
+<div class="slds-notify_container" id="alert" style="display:none;">
+  <div class="slds-notify slds-notify--toast" style="background-color:#edbe5e;" role="alert">
+    <div class="slds-notify__content">
+      <h2 class="slds-text-heading--small slds-text-align--center"><span class="lnr lnr-warning" aria-hidden="true"></span> Unable to retrieve the sales performance for this month.</h2>
+    </div>
+  </div>
+</div>
+
+</div>
+<!-- / REQUIRED SLDS WRAPPER -->
+
+<div id="admitReport" style="display:none">
+  <div class="spTitle slds-text-align--center">Admits</div>
+  <div class="slds-grid slds-grid--pull-padded slds-grid--align-center">
+    <div class="spData slds-p-horizontal--small">Target<div id="admitTar" class="spData slds-text-align--center"></div></div>
+    <div class="extraMargin slds-p-horizontal--small"></div>
+    <div class="spData slds-p-horizontal--small">Actual<div id="admitAct" class="spData slds-text-align--center"></div></div>
+  </div>
+  <div class="progressBarLeft" id="progressBarLeft"></div><div class="progressBarRight" id="progressBarRight"></div>
+  <div id="goal" class="spData slds-text-align--center"></div>
+</div>
+
+<div id="revenueReport" style="display:none">
+  <div class="spTitle">Revenue</div>
+  <div class="slds-grid slds-grid--pull-padded slds-grid--align-center">
+    <div class="spData slds-p-horizontal--small">Target<div id="revTar" class="spData slds-text-align--center"></div></div>
+    <div class="extraMargin slds-p-horizontal--small"></div>
+    <div class="spData slds-p-horizontal--small">Actual<div id="revAct" class="spData slds-text-align--center"></div></div>
+  </div>
+  <div class="progressBarLeft" id="progressBarLeft"></div><div class="progressBarRight" id="progressBarRight"></div>
+  <div id="goal" class="spData slds-text-align--center"></div>
+</div>
+
+<div id="callsReport" style="display:none">
+  <div class="spTitle">Calls</div>
+  <div class="slds-grid slds-grid--pull-padded slds-grid--align-center">
+    <div class="spData slds-p-horizontal--small">Target<div id="callNumTar" class="spData slds-text-align--center"></div></div>
+    <div class="extraMargin slds-p-horizontal--small"></div>
+    <div class="spData slds-p-horizontal--small">Actual<div id="callNum" class="spData slds-text-align--center"></div></div>
+  </div>
+  <div class="progressBarLeft" id="progressBarLeft"></div><div class="progressBarRight" id="progressBarRight"></div>
+  <div id="goal" class="spData slds-text-align--center"></div>
+</div>
+
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script>
+
+if('{!$Profile.Name}'.includes('System Administrator')){
+  $("a").each( function(index, element){
+    $(this).show();
+  });
+} else if('{!$Profile.Name}'.includes('NCD')){
+  $("a").each( function(index, element){
+    if($(this).text().includes('NCD')) $(this).show();
+  });
+} else if('{!$Profile.Name}'.includes('Marketo') || '{!$Profile.Name}'.includes('HD')){
+  $("a").each( function(index, element){
+    if($(this).text().includes('HD')) $(this).show();
+  });
+}
+
+
+Sales_LaunchpadNCDController.getSPdata( function(result, event){
+
+  //var callNum=obj.callNum, callNumTar=168, admitTar=obj.admitTar, admitAct=obj.admitAct, revTar=obj.revTar, revAct=obj.revAct, per, color;
+  if(result!=null){
+
+    var obj = JSON.parse(result);
+    console.log(obj);
+    var callNum, callNumTar=168, admitTar, admitAct, revTar, revAct, per, color;
+    if(obj.callNum!=null) callNum=obj.callNum;
+    else callNum='<i class="lnr lnr-cross" aria-hidden="true"></i>';
+
+    if(obj.admitTar!=null) admitTar=obj.admitTar;
+    else admitTar='<i class="lnr lnr-cross" aria-hidden="true"></i>';
+
+    if(obj.admitAct!=null) admitAct=obj.admitAct;
+    else admitAct='<i class="lnr lnr-cross" aria-hidden="true"></i>';
+
+    if(obj.revTar!=null) revTar=obj.revTar;
+    else revTar='<i class="lnr lnr-cross" aria-hidden="true"></i>';
+
+    if(obj.revAct!=null) revAct=obj.revAct;
+    else revAct='<i class="lnr lnr-cross" aria-hidden="true"></i>';
+
+    per=Math.round((admitAct/admitTar)*100);
+    console.log(per);
+    if(per>=125){
+      $("#admitReport > #goal").html('<i class="lnr lnr-thumbs-up" aria-hidden="true" style="margin-right:10px;"></i>You have exceded your goal by '+(per-100)+'%');
+      color='#3487d1';
+      $("#admitReport > #progressBarLeft").css("border-radius", "3px");
+      $("#admitReport > #progressBarLeft").css("width", "100%");
+      $("#admitReport > #progressBarRight").css("width", "0%");
+    } else if(per>=100){
+      if(per==100) $("#admitReport > #goal").html('<i class="lnr lnr-thumbs-up" aria-hidden="true" style="margin-right:10px;"></i>You have met your goal');
+      else  $("#admitReport > #goal").html('<i class="lnr lnr-thumbs-up" aria-hidden="true" style="margin-right:10px;"></i>You have exceded your goal by '+(per-100)+'%');
+      color='#4BC076';
+      $("#admitReport > #progressBarLeft").css("border-radius", "3px");
+      $("#admitReport > #progressBarLeft").css("width", "100%");
+      $("#admitReport > #progressBarRight").css("width", "0%");
+    }else if(per>=85){
+      if((admitTar-admitAct)>1) $("#admitReport > #goal").html('You need '+(admitTar-admitAct)+' more admits to meet your goal');
+      else  $("#admitReport > #goal").html('You need '+(admitTar-admitAct)+' more admit to meet your goal');
+      color='#edbe5e';
+      $("#admitReport > #progressBarLeft").css("width", per.toString()+"%");
+      $("#admitReport > #progressBarRight").css({"width" : 100-per.toString()+"%", "border-radius" : "0px 3px 3px 0px"});
+    }else if(per>0){
+      if((admitTar-admitAct)>1) $("#admitReport > #goal").html('You need '+(admitTar-admitAct)+' more admits to meet your goal');
+      else  $("#admitReport > #goal").html('You need '+(admitTar-admitAct)+' more admit to meet your goal');
+      color='#ce6161';
+      $("#admitReport > #progressBarLeft").css("width", per.toString()+"%");
+      $("#admitReport > #progressBarRight").css({"width" : 100-per.toString()+"%", "border-radius" : "0px 3px 3px 0px"});
+    }else{
+      color='#ce6161';
+    }
+
+    $("#admitTar").html(admitTar);
+    $("#admitAct").html(admitAct);
+    $("#admit").empty();
+    $("#admitReport").clone().appendTo('#admit');
+    $("#admit > #admitReport").show();
+    $("#admit").css("background-color", color);
+
+    per=Math.round((revAct/revTar)*100);
+    console.log(per);
+    if(per>=125){
+      $("#revenueReport > #goal").html('<i class="lnr lnr-thumbs-up" aria-hidden="true" style="margin-right:10px;"></i>You have exceded your goal by '+(per-100)+'%');
+      color='#3487d1';
+      $("#revenueReport > #progressBarLeft").css("border-radius", "3px");
+      $("#revenueReport > #progressBarLeft").css("width", "100%");
+      $("#revenueReport > #progressBarRight").css("width", "0%");
+    } else if(per>=100){
+      if(per==100) $("#revenueReport > #goal").html('<i class="lnr lnr-thumbs-up" aria-hidden="true" style="margin-right:10px;"></i>You have met your goal');
+      else  $("#revenueReport > #goal").html('<i class="lnr lnr-thumbs-up" aria-hidden="true" style="margin-right:10px;"></i>You have exceded your goal by '+(per-100)+'%');
+      color='#4BC076';
+      $("#revenueReport > #progressBarLeft").css("border-radius", "3px");
+      $("#revenueReport > #progressBarLeft").css("width", "100%");
+      $("#revenueReport > #progressBarRight").css("width", "0%");
+    }else if(per>=85){
+      $("#revenueReport > #goal").html('You need $'+(revTar-revAct)+' to meet your goal');
+      color='#edbe5e';
+      $("#revenueReport > #progressBarLeft").css("width", per.toString()+"%");
+      $("#revenueReport > #progressBarRight").css({"width" : 100-per.toString()+"%", "border-radius" : "0px 3px 3px 0px"});
+    }else if(per>0){
+      $("#revenueReport > #goal").html('You need $'+(revTar-revAct)+' to meet your goal');
+      color='#ce6161';
+      $("#revenueReport > #progressBarLeft").css("width", per.toString()+"%");
+      $("#revenueReport > #progressBarRight").css({"width" : 100-per.toString()+"%", "border-radius" : "0px 3px 3px 0px"});
+    }else{
+      color='#ce6161';
+    }
+
+    $("#revTar").html(revTar);
+    $("#revAct").html(revAct);
+    $("#revenue").empty();
+    $("#revenueReport").clone().appendTo('#revenue');
+    $("#revenue > #revenueReport").show();
+    $("#revenue").css("background-color", color);
+
+    per=Math.round((callNum/callNumTar)*100);
+    console.log(per);
+    if(per>=125){
+      $("#callsReport > #goal").html('<i class="lnr lnr-thumbs-up" aria-hidden="true" style="margin-right:10px;"></i>You have exceded your goal by '+(per-100)+'%');
+      color='#3487d1';
+      $("#callsReport > #progressBarLeft").css("border-radius", "3px");
+      $("#callsReport > #progressBarLeft").css("width", "100%");
+      $("#callsReport > #progressBarRight").css("width", "0%");
+    } else if(per>=100){
+      if(per==100) $("#callsReport > #goal").html('<i class="lnr lnr-thumbs-up" aria-hidden="true" style="margin-right:10px;"></i>You have met your goal');
+      else  $("#callsReport > #goal").html('<i class="lnr lnr-thumbs-up" aria-hidden="true" style="margin-right:10px;"></i>You have exceded your goal by '+(per-100)+'%');
+      color='#4BC076';
+      $("#callsReport > #progressBarLeft").css("border-radius", "3px");
+      $("#callsReport > #progressBarLeft").css("width", "100%");
+      $("#callsReport > #progressBarRight").css("width", "0%");
+    }else if(per>=85){
+      if((callNumTar-callNum)>1) $("#callsReport > #goal").html('You need '+(callNumTar-callNum)+' more calls to meet your goal');
+      else  $("#callsReport > #goal").html('You need '+(callNumTar-callNum)+' more call to meet your goal');
+      color='#edbe5e';
+      $("#callsReport > #progressBarLeft").css("width", per.toString()+"%");
+      $("#callsReport > #progressBarRight").css({"width" : 100-per.toString()+"%", "border-radius" : "0px 3px 3px 0px"});
+    }else if(per>0){
+      if((callNumTar-callNum)>1) $("#callsReport > #goal").html('You need '+(callNumTar-callNum)+' more calls to meet your goal');
+      else  $("#callsReport > #goal").html('You need '+(callNumTar-callNum)+' more call to meet your goal');
+      color='#ce6161';
+      $("#callsReport > #progressBarLeft").css("width", per.toString()+"%");
+      $("#callsReport > #progressBarRight").css({"width" : 100-per.toString()+"%", "border-radius" : "0px 3px 3px 0px"});
+    }else{
+      color='#ce6161';
+    }
+
+    $("#callNumTar").html(callNumTar);
+    $("#callNum").html(callNum);
+    $("#calls").empty();
+    $("#callsReport").clone().appendTo('#calls');
+    $("#calls > #callsReport").show();
+    $("#calls").css("background-color", color);
+  } else {
+    $("#alert").css({"margin-top" : "-20px", "opacity" : "0"}).show().animate({"margin-top" : "0px", "opacity" : "1"}, 450, "swing").delay(3500).animate({"margin-top" : "-20px", "opacity" : "0"}, 450, "swing");
+    $("#admit").hide();
+    $("#revenue").hide();
+    $("#calls").hide();
+  }
+}, {escape:false});
+
+function navigate(id, isDashboard){
+  if( (typeof sforce != 'undefined') && sforce && (!!sforce.one) ) {
+    var target = '/'+id;
+    if(isDashboard) target+='?isdtp=nv';
+    else target+='?isdtp=p1';
+    window.open("{!LEFT($CurrentPage.URL,FIND('/',$CurrentPage.URL,9))}"+target);
+  } else {
+    var target = '/'+id;
+    window.open("{!LEFT($CurrentPage.URL,FIND('/',$CurrentPage.URL,9))}"+target);
+  }
+}
+</script>
+
+</body>
+</html>
+</apex:page>

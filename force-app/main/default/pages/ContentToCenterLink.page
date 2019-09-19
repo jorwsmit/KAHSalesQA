@@ -1,0 +1,56 @@
+<apex:page standardController="Account" extensions="ContentToCenterLinkController" id="ProgramAssignment" sidebar="false" showHeader="false" standardStylesheets="true">
+    <apex:form >
+       
+            <table style="width:100%">
+                <tr>
+                    <td width="47%" valign="top">
+                        <apex:pageBlock title="Available Content" id="pbSearchResult">
+                            <apex:pageBlockTable id="pbtSearchProgram" value="{!lstContentWrapper}" var="contWrapper" rendered="{!IF(lstContentWrapper.SIZE>0,true,false)}">
+                                <apex:column width="5px">                       
+                                    <apex:inputCheckbox id="ceheckBox" value="{!contWrapper.isSelected}"/>
+                                </apex:column> 
+                            <apex:column >  
+                                <apex:facet name="header">Content</apex:facet>
+                                {!contWrapper.content.Title}
+                                </apex:column>                 
+                            </apex:pageBlockTable>  
+                        </apex:pageBlock> 
+                    </td>
+                    <td width="6%" align="center" valign="top">
+                    <br></br>
+                    <br></br>
+                  <apex:commandButton id="btn1" value=">>" action="{!CreateContentLink}" />            
+                    <br></br><br></br>
+                    <apex:commandButton id="btn2" value="<<" action="{!DeleteContentLink}"/>              
+                    </td>
+                    <td width="47%" valign="top">
+                        <apex:pageBlock title="Content Link" id="pbCreateContentLink">
+                <!--  <apex:pageBlockButtons location="top" rendered="{!IF(lstContentLinkWrapperCls.SIZE>0,true,false)}">  
+                    <apex:commandButton value="Delete Center from Program" onclick="deleteContent();return false;"/>              
+                </apex:pageBlockButtons>  -->
+                            <apex:pageBlockTable value="{!lstContentLinkWrapperCls}" var="clWrapper" rendered="{!IF(lstContentLinkWrapperCls.SIZE>0,true,false)}">
+                                <apex:column width="5px">
+                                    <apex:inputCheckbox id="ceheckBox" value="{!clWrapper.isSelected}"/>
+                                </apex:column> 
+                           <!--  <apex:column value="{!clWrapper.ContentLink.Name}"/>   --> 
+                                <apex:column >  
+                                    <apex:facet name="header">Content Link</apex:facet>
+                                    {!clWrapper.ContentLink.Document_Name__c}
+                                </apex:column>                 
+                            </apex:pageBlockTable>             
+                        </apex:pageBlock>
+                    </td>
+                </tr>
+            </table>
+            
+        <!--  </apex:pageBlock> -->
+        
+     <!--   <apex:actionFunction name="Search" action="{!SearchProgram}" Status="opStatus" rerender="pbSearchResult">           
+        </apex:actionFunction>
+        <apex:actionFunction name="deleteContent" action="{!DeleteContentLink}" Status="opStatus" rerender="pbSearchResult,pbCreateContentLink" oncomplete="document.getElementById('{!$Component.btn1}').disabled = false;document.getElementById('{!$Component.btn2}').disabled = false;">            
+        </apex:actionFunction>
+        <apex:actionFunction name="create" action="{!CreateContentLink}" Status="opStatus" rerender="pbSearchResult,pbCreateContentLink" oncomplete="document.getElementById('{!$Component.btn1}').disabled = false;document.getElementById('{!$Component.btn2}').disabled = false;" >       
+        </apex:actionFunction>  -->  
+    </apex:form>
+    
+</apex:page>

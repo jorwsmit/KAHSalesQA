@@ -1,0 +1,726 @@
+<apex:component controller="TBN_AutoCompleteController">
+    
+    <apex:attribute name="autocomplete_textbox" description="The ID for the Autocomplete List Textbox." type="String" required="true"/>
+    
+    <style>
+        .ui-state-hover { margin: 0px !important; margin-left: 17px !important; }
+        .list-group-item { border: 0px; }
+        .ui-menu { z-index: 999; min-width: 394px; }
+        .ui-state-focus { background-color: #ddd; }
+        
+    </style>
+    
+    <script type="text/javascript">
+        
+        if (navigator.userAgent.match(/AppleWebKit/) && ! navigator.userAgent.match(/Chrome/)) {
+                    
+            j$('.ui-menu').attr('min-width','490px');        
+
+        }   
+       
+        var j$ = jQuery.noConflict();
+        var queryTerm;
+        var pageIndex = 0;
+        
+        j$(document).ready(function() {
+            
+            j$.extend(j$.ui.autocomplete.prototype, {
+                _renderMenu: function (ul, items) {
+                    
+                    //remove scroll event to prevent attaching multiple scroll events to one container element
+                    j$(ul).unbind("scroll");
+
+                    var self = this;
+                    self._scrollMenu(ul, items);
+                },
+
+                _scrollMenu: function (ul, items) {
+                    
+                    var self = this;
+                    var maxShow = 15;
+                    var results = [];
+                    var pages = Math.ceil(items.length / maxShow);
+                    results = items.slice(0, maxShow);
+
+                    if (pages > 1) {
+                        j$(ul).scroll(function () {
+                            if (isScrollbarBottom(j$(ul)) && items.length >= j$(ul).find('li').length) {
+                                
+                                pageIndex++;
+                                //if (pageIndex >= pages) return;
+                                var minSize = pageIndex * maxShow;
+                                var maxSize = pageIndex * maxShow + maxShow;
+                                
+                                results = items.slice(pageIndex * maxShow, pageIndex * maxShow + maxShow);
+
+                                //append item to ul
+                                j$.each(results, function (index, item) {
+                                    self._renderItem(ul, item);
+                                });
+                                
+                                //refresh menu
+                                self.menu.refresh();
+                                
+                                // size and position menu
+                                ul.show();
+                                self._resizeMenu();
+                                
+                                ul.position(j$.extend({
+                                    of: self.element
+                                }, self.options.position));
+                                
+                                if (self.options.autoFocus) {
+                                    self.menu.next(new j$.Event("mouseover"));
+                                }
+                            }
+                        });
+                    }
+
+                    j$.each(results, function (index, item) {
+                        self._renderItem(ul, item);
+                    });
+                }
+            });
+            
+            // Autocomplete method uses minimum 2 character to search
+            // On focus of an element, its displayed in the corresponding textbox
+            // On select it displays the selected value
+            
+            j$(esc('{!autocomplete_textbox}')).autocomplete({
+                minLength: 0,
+                delay: 0,
+                
+                source: function(request, response) {
+                        
+                     pageIndex = 0;
+                     queryTerm = request.term;
+                     queryTerm = queryTerm.trim(); 
+                     
+                     if('{!autocomplete_textbox}' == 'AccountId')
+                     {
+                        TBN_AutoCompleteController.fetchAccount(queryTerm,
+                             function(result, event){
+                                 if(event.type != 'exception') {
+                                     response(result);
+                                 }
+                             }, 
+                        {escape: false});
+                     }
+                     else if('{!autocomplete_textbox}' == 'reassignUser')
+                     {
+                         TBN_AutoCompleteController.findUsers(queryTerm,
+                         function(result, event){
+                             if(event.type != 'exception') {
+                                 
+                                 response(result);
+                             }
+                         }, 
+                        {escape: false});
+                     }
+                     else
+                     {
+                        TBN_AutoCompleteController.findActiveUsers(queryTerm,
+                         function(result, event){
+                             if(event.type != 'exception') {
+                                 
+                                 response(result);
+                             }
+                         }, 
+                        {escape: false});    
+                     }
+                },
+                focus: function( event, ui ) {
+                     
+                     console.log('?????????????????inside Focus ');
+                     itemName = '<table width="100%"><tr><td width="65%">';
+                      //event.preventDefault();
+                     if('{!autocomplete_textbox}' == 'AccountId'){
+                         
+                         var strName;
+                         strName = htmlDecodeString( unescape(escape(ui.item.Name)));
+                         var trimmedString = '';
+                         if(strName.length >20){
+                             
+                             var length = 20;
+                             trimmedString = strName.substring(0, length);
+                             trimmedString = trimmedString + '...';
+                         }
+                         if(trimmedString != '')  
+                                itemName += trimmedString
+                            else    
+                            itemName += htmlDecodeString( unescape(escape(ui.item.Name)));
+                         
+                         if(htmlDecodeString( unescape(escape(ui.item.Facility_Number__c))) != 'undefined' && htmlDecodeString( unescape(escape(ui.item.Type))) != 'undefined')
+                            itemName += ' </td><td width="25%" style="text-align: left; font-weight:bold">'+htmlDecodeString(unescape(escape(ui.item.Facility_Number__c)))
+                                            +'</td><td width="25%" style="text-align: left; font-weight:bold">'+htmlDecodeString(unescape(escape(ui.item.Type)));
+                            
+                        if(htmlDecodeString( unescape(escape(ui.item.Facility_Number__c))) == 'undefined' && htmlDecodeString( unescape(escape(ui.item.Type))) != 'undefined')
+                            itemName +='</td><td width="25%" style="text-align: left; font-weight:bold">' +htmlDecodeString(unescape(escape(ui.item.Type)));
+                            
+                        if(htmlDecodeString( unescape(escape(ui.item.Facility_Number__c))) != 'undefined' && htmlDecodeString( unescape(escape(ui.item.Type))) == 'undefined')
+                            itemName +='</td><td width="25%" style="text-align: left; font-weight:bold"> '+htmlDecodeString(unescape(escape(ui.item.Facility_Number__c)));
+                            
+                     }   
+                     //reset result list's pageindex when focus on
+                     else{
+                         var strName;
+                         if(htmlDecodeString(unescape(escape(ui.item.FirstName))) == 'undefined'){
+                             
+                             strName = htmlDecodeString( unescape(escape(ui.item.LastName)));
+                         }
+                         else{
+                             
+                             strName = htmlDecodeString( unescape(escape(ui.item.LastName))) +', '+ htmlDecodeString( unescape(escape(ui.item.FirstName)));
+                         }
+                         var trimmedString = '';
+                         if(strName.length >25){
+                             
+                             var length = 25;
+                             trimmedString = strName.substring(0, length);
+                             trimmedString = trimmedString + '...';
+                         }
+                         
+                         var srtPerner = '';
+                         if(htmlDecodeString(unescape(escape(ui.item.PERNER__c))) !='undefined'){
+                             
+                             srtPerner = htmlDecodeString(unescape(escape(ui.item.PERNER__c)));
+                         }
+                         var trimmedStringPerner = '';
+                         if(srtPerner!='' && srtPerner.length>6){
+                            
+                            var length = 6;
+                            trimmedStringPerner = srtPerner.substring(0, length);
+                            trimmedStringPerner = trimmedStringPerner + '...'; 
+                         }
+                         
+                         var srtLineOfBusiness = '';
+                         if(htmlDecodeString(unescape(escape(ui.item.Line_of_Business__c))) !='undefined'){
+                             
+                             srtLineOfBusiness = htmlDecodeString(unescape(escape(ui.item.Line_of_Business__c)));
+                         }
+                         var trimmedStringLineofBusiness = '';
+                         if(srtLineOfBusiness!='' && srtLineOfBusiness.length>6){
+                            
+                            var length = 6;
+                            trimmedStringLineofBusiness = srtLineOfBusiness.substring(0, length);
+                            trimmedStringLineofBusiness = trimmedStringLineofBusiness + '...'; 
+                         }
+                         
+                         if(htmlDecodeString(unescape(escape(ui.item.FirstName))) != 'undefined' && htmlDecodeString(unescape(escape(ui.item.PERNER__c))) != 'undefined'
+                          && htmlDecodeString(unescape(escape(ui.item.Line_of_Business__c))) != 'undefined' ) {
+                            if(trimmedString != '')  
+                                itemName += trimmedString
+                            else    
+                                itemName += htmlDecodeString( unescape(escape(ui.item.LastName)) +', '+ unescape(escape(ui.item.FirstName)))
+                            
+                            itemName+='</td><td width="20%" style="text-align: left; font-weight:bold">'
+                            if(trimmedStringLineofBusiness != '')  
+                                itemName += trimmedStringLineofBusiness
+                            else 
+                                itemName += htmlDecodeString( unescape(escape(ui.item.Line_of_Business__c)))
+                            //+ htmlDecodeString(unescape(escape(ui.item.Line_of_Business__c)))
+                            itemName+='</td><td width="20%" style="text-align: left; font-weight:bold">'
+                            if(trimmedStringPerner != '')  
+                                itemName += trimmedStringPerner
+                            else 
+                                itemName += htmlDecodeString( unescape(escape(ui.item.PERNER__c)))
+                         }
+                         else if(htmlDecodeString(unescape(escape(ui.item.FirstName))) != 'undefined' && htmlDecodeString(unescape(escape(ui.item.PERNER__c))) == 'undefined'
+                         && htmlDecodeString(unescape(escape(ui.item.Line_of_Business__c))) == 'undefined' ) {
+                            if(trimmedString != '')  
+                                itemName += trimmedString
+                            else    
+                                itemName += htmlDecodeString( unescape(escape(ui.item.LastName)) +', '+ unescape(escape(ui.item.FirstName)))
+                            
+                         }
+                         else if(htmlDecodeString(unescape(escape(ui.item.FirstName))) == 'undefined' && htmlDecodeString(unescape(escape(ui.item.PERNER__c))) != 'undefined'
+                         && htmlDecodeString(unescape(escape(ui.item.Line_of_Business__c))) == 'undefined' ) {
+                             if(trimmedString != '')  
+                                itemName += trimmedString
+                            else
+                                itemName += htmlDecodeString( unescape(escape(ui.item.LastName)))
+                            itemName+='</td><td width="20%" style="text-align: left; font-weight:bold">'
+                            if(trimmedStringPerner != '')  
+                                itemName += trimmedStringPerner
+                            else 
+                                itemName += htmlDecodeString( unescape(escape(ui.item.PERNER__c)))
+                         }
+                         else if(htmlDecodeString(unescape(escape(ui.item.FirstName))) == 'undefined' && htmlDecodeString(unescape(escape(ui.item.PERNER__c))) != 'undefined'
+                         && htmlDecodeString(unescape(escape(ui.item.Line_of_Business__c))) != 'undefined' ) {
+                             if(trimmedString != '')  
+                                itemName += trimmedString
+                            else
+                                itemName += htmlDecodeString( unescape(escape(ui.item.LastName)))
+                                
+                            itemName+='</td><td width="20%" style="text-align: left; font-weight:bold">'
+                            if(trimmedStringLineofBusiness != '')  
+                                itemName += trimmedStringLineofBusiness
+                            else 
+                                itemName += htmlDecodeString( unescape(escape(ui.item.Line_of_Business__c)))
+                                
+                            itemName+='</td><td width="20%" style="text-align: left; font-weight:bold">'
+                            if(trimmedStringPerner != '')  
+                                itemName += trimmedStringPerner
+                            else 
+                                itemName += htmlDecodeString( unescape(escape(ui.item.PERNER__c)))
+                            
+                         }
+                         else if(htmlDecodeString(unescape(escape(ui.item.FirstName))) != 'undefined' && htmlDecodeString(unescape(escape(ui.item.PERNER__c))) == 'undefined'
+                         && htmlDecodeString(unescape(escape(ui.item.Line_of_Business__c))) != 'undefined' ) {
+                             if(trimmedString != '')  
+                                itemName += trimmedString
+                            else
+                                itemName += htmlDecodeString( unescape(escape(ui.item.LastName)) +', '+ unescape(escape(ui.item.FirstName)))
+                            itemName+='</td><td width="20%" style="text-align: left; font-weight:bold">'
+                            if(trimmedStringLineofBusiness != '')  
+                                itemName += trimmedStringLineofBusiness
+                            else 
+                                itemName += htmlDecodeString( unescape(escape(ui.item.Line_of_Business__c)))
+                         }
+                         else if(htmlDecodeString(unescape(escape(ui.item.FirstName))) != 'undefined' && htmlDecodeString(unescape(escape(ui.item.PERNER__c))) != 'undefined'
+                         && htmlDecodeString(unescape(escape(ui.item.Line_of_Business__c))) == 'undefined' ) {
+                             if(trimmedString != '')  
+                                itemName += trimmedString
+                            else
+                                itemName += htmlDecodeString( unescape(escape(ui.item.LastName)) +', '+ unescape(escape(ui.item.FirstName)))
+                            itemName+='</td><td width="20%" style="text-align: left; font-weight:bold">'
+                            if(trimmedStringPerner != '')  
+                                itemName += trimmedStringPerner
+                            else 
+                                itemName += htmlDecodeString( unescape(escape(ui.item.PERNER__c)))
+                         }
+                         else if(htmlDecodeString(unescape(escape(ui.item.FirstName))) == 'undefined' && htmlDecodeString(unescape(escape(ui.item.PERNER__c))) != 'undefined'
+                         && htmlDecodeString(unescape(escape(ui.item.Line_of_Business__c))) == 'undefined' ) {
+                             if(trimmedString != '')  
+                                itemName += trimmedString
+                            else
+                                itemName += htmlDecodeString( unescape(escape(ui.item.LastName)))
+                            itemName+='</td><td width="20%" style="text-align: left; font-weight:bold">'
+                            if(trimmedStringPerner != '')  
+                                itemName += trimmedStringPerner
+                            else 
+                                itemName += htmlDecodeString( unescape(escape(ui.item.PERNER__c)))
+                         }
+                         else if(htmlDecodeString(unescape(escape(ui.item.FirstName))) == 'undefined' && htmlDecodeString(unescape(escape(ui.item.PERNER__c))) == 'undefined'
+                         && htmlDecodeString(unescape(escape(ui.item.Line_of_Business__c))) != 'undefined' ) {
+                             if(trimmedString != '')  
+                                itemName += trimmedString
+                            else
+                                itemName += htmlDecodeString( unescape(escape(ui.item.LastName)))
+                            itemName+='</td><td width="20%" style="text-align: left; font-weight:bold">'
+                            if(trimmedStringLineofBusiness != '')  
+                                itemName += trimmedStringLineofBusiness
+                            else 
+                                itemName += htmlDecodeString( unescape(escape(ui.item.Line_of_Business__c)))
+                         }
+                         else{
+                             if(trimmedString != '')  
+                                itemName += trimmedString
+                            else
+                                itemName += htmlDecodeString( unescape(escape(ui.item.LastName)));
+                         }
+                            
+                         itemName += '</td></tr></table>';  
+                         
+                         
+                     }
+                     j$(esc('{!autocomplete_textbox}')).html( itemName );
+                     
+                     return false;
+                     
+                },
+               
+                select: function( event, ui ) {
+                     j$('#userNameId').blur();
+                     j$('#inputUser').blur();
+                     itemName = '<table id = "idUserName" width="100%"><tr><td width="65%">';
+                     if('{!autocomplete_textbox}' == 'AccountId'){
+                         
+                         var strName;
+                         strName = htmlDecodeString( unescape(escape(ui.item.Name)));
+                         var trimmedString = '';
+                         if(strName.length >20){
+                             
+                             var length = 20;
+                             trimmedString = strName.substring(0, length);
+                             trimmedString = trimmedString + '...';
+                         }
+                         if(trimmedString != '')  
+                                itemName += trimmedString
+                            else    
+                            itemName += htmlDecodeString( unescape(escape(ui.item.Name)));
+                            
+                         if(htmlDecodeString( unescape(escape(ui.item.Facility_Number__c))) != 'undefined' && htmlDecodeString( unescape(escape(ui.item.Type))) != 'undefined')
+                            itemName += ' </td><td width="25%" style="text-align: left; font-weight:bold">'+htmlDecodeString(unescape(escape(ui.item.Facility_Number__c)))
+                                            +'</td><td width="25%" style="text-align: left; font-weight:bold">'+htmlDecodeString(unescape(escape(ui.item.Type)));
+                            
+                        if(htmlDecodeString( unescape(escape(ui.item.Facility_Number__c))) == 'undefined' && htmlDecodeString( unescape(escape(ui.item.Type))) != 'undefined')
+                            itemName +='</td><td width="25%" style="text-align: left; font-weight:bold">' +htmlDecodeString(unescape(escape(ui.item.Type)));
+                            
+                        if(htmlDecodeString( unescape(escape(ui.item.Facility_Number__c))) != 'undefined' && htmlDecodeString( unescape(escape(ui.item.Type))) == 'undefined')
+                            itemName +='</td><td width="25%" style="text-align: left; font-weight:bold"> '+htmlDecodeString(unescape(escape(ui.item.Facility_Number__c)));
+                            
+                    //  j$(esc('{!autocomplete_textbox}')).html( itemNameAcc );    
+                         
+                     }
+                     else{
+                         var strName;
+                         if(htmlDecodeString(unescape(escape(ui.item.FirstName))) == 'undefined'){
+                             
+                             strName = htmlDecodeString( unescape(escape(ui.item.LastName)));
+                         }
+                         else{
+                             
+                             strName = htmlDecodeString( unescape(escape(ui.item.LastName))) +', '+ htmlDecodeString( unescape(escape(ui.item.FirstName)));
+                         }
+                         
+                         console.log('>>>>>>>>>>>>>>>>>>>> ', strName);
+                         var trimmedString = '';
+                         if(strName.length >25){
+                             
+                             var length = 25;
+                             trimmedString = strName.substring(0, length);
+                             trimmedString = trimmedString + '...';
+                         }
+                         
+                         var srtPerner='';
+                         if(htmlDecodeString(unescape(escape(ui.item.PERNER__c))) !='undefined'){
+                             
+                             srtPerner = htmlDecodeString(unescape(escape(ui.item.PERNER__c)));
+                         }
+                         var trimmedStringPerner = '';
+                         if(srtPerner!='' && srtPerner.length>6){
+                            
+                            var length = 6;
+                            trimmedStringPerner = srtPerner.substring(0, length);
+                            trimmedStringPerner = trimmedStringPerner + '...'; 
+                         }
+                         
+                         var srtLineOfBusiness = '';
+                         if(htmlDecodeString(unescape(escape(ui.item.Line_of_Business__c))) !='undefined'){
+                             
+                             srtLineOfBusiness = htmlDecodeString(unescape(escape(ui.item.Line_of_Business__c)));
+                         }
+                         var trimmedStringLineofBusiness = '';
+                         if(srtLineOfBusiness!='' && srtLineOfBusiness.length>6){
+                            
+                            var length = 6;
+                            trimmedStringLineofBusiness = srtLineOfBusiness.substring(0, length);
+                            trimmedStringLineofBusiness = trimmedStringLineofBusiness + '...'; 
+                         }
+                         
+                        if(htmlDecodeString(unescape(escape(ui.item.FirstName))) != 'undefined' && htmlDecodeString(unescape(escape(ui.item.PERNER__c))) != 'undefined'
+                          && htmlDecodeString(unescape(escape(ui.item.Line_of_Business__c))) != 'undefined' ) {
+                            console.log(';;;;;;;;;;;;;1;;;;;;;');
+                            if(trimmedString != '')  
+                                itemName += trimmedString
+                            else 
+                                itemName += htmlDecodeString( unescape(escape(ui.item.LastName)) +', '+ unescape(escape(ui.item.FirstName)))
+                            
+                            itemName+='</td><td width="20%" style="text-align: left; font-weight:bold">'
+                            if(trimmedStringLineofBusiness != '')  
+                                itemName += trimmedStringLineofBusiness
+                            else 
+                                itemName += htmlDecodeString( unescape(escape(ui.item.Line_of_Business__c)))
+                                
+                            itemName+='</td><td width="20%" style="text-align: left; font-weight:bold">'
+                            if(trimmedStringPerner != '')  
+                                itemName += trimmedStringPerner
+                            else 
+                                itemName += htmlDecodeString( unescape(escape(ui.item.PERNER__c)))
+                            
+                         }
+                         else if(htmlDecodeString(unescape(escape(ui.item.FirstName))) != 'undefined' && htmlDecodeString(unescape(escape(ui.item.PERNER__c))) == 'undefined'
+                         && htmlDecodeString(unescape(escape(ui.item.Line_of_Business__c))) == 'undefined' ) {
+                            console.log(';;;;;;;;;;;;;;;;;;;2;');
+                            if(trimmedString != '')  
+                                itemName += trimmedString
+                            else 
+                                itemName += htmlDecodeString( unescape(escape(ui.item.LastName)) +', '+ unescape(escape(ui.item.FirstName)));
+                            
+                         }
+                         else if(htmlDecodeString(unescape(escape(ui.item.FirstName))) == 'undefined' && htmlDecodeString(unescape(escape(ui.item.PERNER__c))) != 'undefined'
+                         && htmlDecodeString(unescape(escape(ui.item.Line_of_Business__c))) == 'undefined' ) {
+                            console.log(';;;;;;;;;;;;;;;;3;;;;');
+                            if(trimmedString != '')  
+                                itemName += trimmedString
+                            else
+                                itemName += htmlDecodeString( unescape(escape(ui.item.LastName)))
+                            itemName+='</td><td width="20%" style="text-align: left; font-weight:bold">'
+                            if(trimmedStringPerner != '')  
+                                itemName += trimmedStringPerner
+                            else 
+                                itemName += htmlDecodeString( unescape(escape(ui.item.PERNER__c)))
+                         }
+                         else if(htmlDecodeString(unescape(escape(ui.item.FirstName))) == 'undefined' && htmlDecodeString(unescape(escape(ui.item.PERNER__c))) != 'undefined'
+                         && htmlDecodeString(unescape(escape(ui.item.Line_of_Business__c))) != 'undefined' ) {
+                            console.log(';;;;;;;;;;;;;;;;;;4;;');
+                            if(trimmedString != '')  
+                                itemName += trimmedString
+                            else 
+                                itemName += htmlDecodeString( unescape(escape(ui.item.LastName)))
+                                
+                            itemName+='</td><td width="20%" style="text-align: left; font-weight:bold">'
+                            if(trimmedStringLineofBusiness != '')  
+                                itemName += trimmedStringLineofBusiness
+                            else 
+                                itemName += htmlDecodeString( unescape(escape(ui.item.Line_of_Business__c)))
+                            itemName+='</td><td width="20%" style="text-align: left; font-weight:bold">'
+                            if(trimmedStringPerner != '')  
+                                itemName += trimmedStringPerner
+                            else 
+                                itemName += htmlDecodeString( unescape(escape(ui.item.PERNER__c)))
+                            
+                         }
+                         else if(htmlDecodeString(unescape(escape(ui.item.FirstName))) != 'undefined' && htmlDecodeString(unescape(escape(ui.item.PERNER__c))) == 'undefined'
+                         && htmlDecodeString(unescape(escape(ui.item.Line_of_Business__c))) != 'undefined' ) {
+                            console.log(';;;;;;;;;;;;;;;;5;;;;');
+                            if(trimmedString != '')  
+                                itemName += trimmedString
+                            else 
+                                itemName += htmlDecodeString( unescape(escape(ui.item.LastName)) +', '+ unescape(escape(ui.item.FirstName)))
+                            itemName+='</td><td width="20%" style="text-align: left; font-weight:bold">'
+                            if(trimmedStringLineofBusiness != '')  
+                                itemName += trimmedStringLineofBusiness
+                            else 
+                                itemName += htmlDecodeString( unescape(escape(ui.item.Line_of_Business__c)))
+                         }
+                         
+                         else if(htmlDecodeString(unescape(escape(ui.item.FirstName))) != 'undefined' && htmlDecodeString(unescape(escape(ui.item.PERNER__c))) != 'undefined'
+                         && htmlDecodeString(unescape(escape(ui.item.Line_of_Business__c))) == 'undefined' ) {
+                            
+                            console.log(';;;;;;;;;;;;;;;;6;;;;');
+                            if(trimmedString != '')  
+                                itemName += trimmedString
+                            else 
+                                itemName += htmlDecodeString( unescape(escape(ui.item.LastName)) +', '+ unescape(escape(ui.item.FirstName)))
+                            itemName+='</td><td width="20%" style="text-align: left; font-weight:bold">'
+                            if(trimmedStringPerner != '')  
+                                itemName += trimmedStringPerner
+                            else 
+                                itemName += htmlDecodeString( unescape(escape(ui.item.PERNER__c)))
+                         }
+                         else if(htmlDecodeString(unescape(escape(ui.item.FirstName))) == 'undefined' && htmlDecodeString(unescape(escape(ui.item.PERNER__c))) != 'undefined'
+                         && htmlDecodeString(unescape(escape(ui.item.Line_of_Business__c))) == 'undefined' ) {
+                         console.log(';;;;;;;;;;;;;7;;;;;;;');
+                            if(trimmedString != '')  
+                                itemName += trimmedString
+                            else 
+                                itemName += htmlDecodeString( unescape(escape(ui.item.LastName)))
+                            itemName+='</td><td width="20%" style="text-align: left; font-weight:bold">'
+                            if(trimmedStringPerner != '')  
+                                itemName += trimmedStringPerner
+                            else 
+                                itemName += htmlDecodeString( unescape(escape(ui.item.PERNER__c)))
+                         }
+                         else if(htmlDecodeString(unescape(escape(ui.item.FirstName))) == 'undefined' && htmlDecodeString(unescape(escape(ui.item.PERNER__c))) == 'undefined'
+                         && htmlDecodeString(unescape(escape(ui.item.Line_of_Business__c))) != 'undefined' ) {
+                            
+                            console.log(';;;;;;;;;;8;;;;;;;;;;');
+                            if(trimmedString != '')  
+                                itemName += trimmedString
+                            else 
+                                itemName += htmlDecodeString( unescape(escape(ui.item.LastName)))
+                            itemName+='</td><td width="20%" style="text-align: left; font-weight:bold">'
+                            if(trimmedStringLineofBusiness != '')  
+                                itemName += trimmedStringLineofBusiness
+                            else 
+                                itemName += htmlDecodeString( unescape(escape(ui.item.Line_of_Business__c)))
+                         } 
+                         else {
+                         console.log(';;;;;;;;;;9;;;;;;;;;;');
+                            if(trimmedString != '')  
+                                itemName += trimmedString
+                            else 
+                                itemName += htmlDecodeString( unescape(escape(ui.item.LastName))); 
+                         }
+                             
+                            
+                         itemName += '</td></tr></table>';  
+                         console.log('???????????????????? ' ,itemName);
+                     }
+                     j$(esc('{!autocomplete_textbox}')).html( itemName ); 
+                 //    itemName += '</td></tr></table>';
+                     
+                        //itemName = htmlDecodeString( unescape(escape(ui.item.LastName)) +', '+ unescape(escape(ui.item.FirstName )));
+                     
+                     j$(escHidden('{!autocomplete_textbox}')).val( unescape(escape(ui.item.Id )));
+
+                     if('{!autocomplete_textbox}' == 'inputUser')
+                     {
+                        onUserSelect( unescape(escape(ui.item.Id )));
+
+                        if(j$('#tabs .active a').html() != 'Details')
+                        {
+                            j$('#tabs .active a').click();
+                        }
+                            
+                     }
+                     else if('{!autocomplete_textbox}' == 'reassignUser')
+                     {
+                        onFromUserSelect( unescape(escape(ui.item.Id )));
+                     }
+                     
+                     
+                     setVarName('{!autocomplete_textbox}', 'true');
+                     
+                     return false;
+                 }
+             },{escape: false})
+             .data( "ui-autocomplete" )._renderItem = function( ul, item ) {
+             console.log('?????????????????inside Data ');
+                 //   var entry = "<a style=\"margin-left:7px; cursor: pointer;\">";
+                    var entry = "<table table-layout: fixed; width=\"100%\"> <td width = \"65%\"><a style=\"margin-left:7px; cursor: pointer;\">";    
+                    var query = queryTerm.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, '\\$&');
+                    if('{!autocomplete_textbox}' != 'AccountId') {
+                        
+                        var lastName='';
+                        if(item.LastName != '') {
+                            
+                            var lastName = item.LastName.replace(new RegExp('(' + query + ')', 'ig'), function ($1, match) {
+                                return '<strong>' + match + '</strong>';
+                            });
+                        }
+                        var firstName='';
+                        if(item.FirstName !=undefined){
+                            
+                            firstName = item.FirstName.replace(new RegExp('(' + query + ')', 'ig'), function ($1, match) {
+                                return '<strong>' + match + '</strong>';
+                            });
+                            entry += lastName +', '+ firstName;
+                        }
+                        else
+                            entry += lastName;
+                        
+                        if(item.Line_of_Business__c !=undefined){
+                            
+                            lineOfBusiness = item.Line_of_Business__c.replace(new RegExp('(' + query + ')', 'ig'), function ($1, match) {
+                                return '<strong>' + match + '</strong>';
+                            });
+                        }
+                        
+                        
+                        entry += "</a></td> <td width=\"20%\" style=\"text-align: left; \">";
+                        if(item.Line_of_Business__c !=undefined){
+                            entry+="<b>"+lineOfBusiness+"</b>";
+                        }
+                        
+                        var perner='';
+                        var strPerner='';
+                        var trimmedStringPerner = '';
+                        if(item.PERNER__c !=undefined){
+                            strPerner= item.PERNER__c;
+                            if(strPerner.length >6){
+                                
+                                var length = 6;
+                                trimmedStringPerner = strPerner.substring(0, length);
+                                trimmedStringPerner = trimmedStringPerner + '...'; 
+                            }
+                            else{
+                                
+                                trimmedStringPerner = strPerner;
+                            }
+                            perner = item.PERNER__c.replace(new RegExp('(' + query + ')', 'ig'), function ($1, match) {
+                                return '<strong>' + match + '</strong>';
+                                
+                                
+                            });
+                        }
+                        
+                        entry += "</a></td> <td width=\"20%\" style=\"text-align: left;\">";
+                        if(item.PERNER__c !=undefined){
+                            entry+="<b>"+trimmedStringPerner+"</b>";
+                        }
+                        
+                        entry+="</td></tr></table>";
+                        return j$( "<li class=\"list-group-item\" style=\"cursor : pointer\"></li>" )
+                            .data( "ui-autocomplete-item", item )
+                            .append( entry )
+                            .appendTo( ul );      
+                    }
+                    else {
+                        var homeFacility= "<table width=\"100%\"> <td width = \"60%\"><a style=\"margin-left:7px; cursor: pointer;\">";  
+                        
+                        var accName = '';
+                        if(item.Name != ''){
+                            
+                            accName = item.Name.replace(new RegExp('(' + query + ')', 'ig'), function ($1, match) {
+                                return '<strong>' + match + '</strong>';
+                            });
+                        }
+                        homeFacility += accName; 
+                        homeFacility += "</a>";
+                        
+                        var FacilityNumber ='';
+                        if(item.Facility_Number__c != undefined){
+                                homeFacility += "</td> <td width=\"20%\" style=\"text-align: left;\">";
+                                FacilityNumber = item.Facility_Number__c.replace(new RegExp('(' + query + ')', 'ig'), function ($1, match) {
+                                return '<strong>' + match + '</strong>';
+                                });
+                                homeFacility +="<b>"+FacilityNumber+"</b>"; 
+                        }
+                        
+                        var FacilityType ='';
+                        if(item.Type != undefined){
+                                homeFacility += "</td> <td width=\"20%\" style=\"text-align: left;\">";
+                                FacilityType = item.Type.replace(new RegExp('(' + query + ')', 'ig'), function ($1, match) {
+                                return '<strong>' + match + '</strong>';
+                                });
+                                homeFacility +="<b>"+FacilityType+"</b>"; 
+                        }
+                        homeFacility += "</td></tr></table>";
+                        
+                        return j$( "<li class=\"list-group-item\" style=\"cursor : pointer\"></li>" )
+                            .data( "ui-autocomplete-item", item )
+                            .append( homeFacility )
+                            .appendTo( ul );      
+                    }
+                    
+                    
+                             
+            };
+        });
+        
+        function isScrollbarBottom(container) {
+            
+            var height = container.outerHeight();
+            var scrollHeight = container[0].scrollHeight;
+            var scrollTop = container.scrollTop();
+            
+            if (scrollTop >= scrollHeight - height) {
+                return true;
+            }
+            return false;
+        };
+            
+        // Method to parse a component's Id to make a component identifiable in javascript
+        function esc(myid) {
+            
+            return '#' + myid.replace(/(:|\.)/g,'\\\\$1');
+        }
+        
+        // Method to parse a hidden component's Id to make a component identifiable in javascript
+        function escHidden(myid) {
+            return '#' + myid.replace(/(:|\.)/g,'\\\\$1') + '_Hidden';
+        }
+        
+        // To decode to the node value
+        function htmlDecodeString(s) {
+            
+            console.log('????s????? ' , s);
+            var d = document.getElementById('divDecoder');
+            console.log('????d????? ' , d);
+            d.innerHTML = s;
+            console.log('????d inner????? ' , d.innerHTML);
+            console.log('????d.firstChild????? ' , d.firstChild.nodeValue);
+            return d.firstChild.nodeValue; 
+        } 
+        
+        function setAutocompleteText(newVal) {
+
+            j$(esc('{!autocomplete_textbox}')).val( newVal );
+        }  
+    </script>
+    
+    <div id="divDecoder" style="display:none"/>
+</apex:component>

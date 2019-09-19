@@ -1,0 +1,452 @@
+<apex:page controller="TBN_AssociateTargetAssignmentController" sidebar="false">
+    
+    <!--     Scripts to be included -->
+    <apex:includeScript value="{!URLFOR($Resource.TBN_Supporting_JS_CSS, '/jQuery-1.11.3.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.TBN_Supporting_JS_CSS, '/jquery-ui-1.11.3.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.TBN_Supporting_JS_CSS, '/BootstrapJS.js')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.TBN_Supporting_JS_CSS, '/Bootstrap.css')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.TBN_Supporting_JS_CSS, '/Target_Assignment/JS/JS_TargetAssignment.js')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.TBN_Supporting_JS_CSS, '/Target_Assignment/CSS/CSS_TargetAssignment.css')}"/>
+   
+    <apex:outputpanel Id="displayConfirmation">
+        <div class="modal"></div>
+        
+    </apex:outputpanel>
+    <div id="OverlapBS">
+        <apex:form id="theForm" >
+            <div style = "width:100%;height:15px;">
+                <div id="Showfadding" style = "display:none; margin-left: 2.5%;padding:5px; width:50%; background-color:#337AB7; border:1.5px solid #17140d;">
+                    <span id = "SaveMessage" style = "vertical-align:middle; color:#fff;"></span>
+                </div>
+            </div>
+            <!-- Action Functions --> 
+            
+            <apex:outputPanel id="actionFunctionsOP">
+                <apex:actionFunction name="refreshTable" rerender="picklistOP"/>
+                <apex:actionFunction name="revPanelrerenderAF" status="loading" action="{!checkisRev}" rerender="revPanel,admissionPanel"/>
+                <apex:actionFunction name="admissionPanelrerenderAF" status="loading" action="{!checkisAdm}" rerender="revPanel,admissionPanel"/>
+                <apex:actionFunction name="onTargetYearSelect" action="{!onTargetYearSelect}" status="loading" rerender="empAssignmentTableOP,actionFunctionsOP"/>
+                <apex:actionFunction name="onDivisionSelect" action="{!onDivisionSelect}" status="loading" rerender="RVPPicklist,VPPicklist,AVPPicklist,AreaDirectorPicklist,MarketManagerPicklist,empAssignmentTableOP,actionFunctionsOP" oncomplete="picklistValUpdated('{!strSelectedDivision}', 'RVPPicklistDiv,VPPicklistDiv,AVPPicklistDiv,AreaDirectorPicklistDiv,MarketManagerPicklistDiv');"/>
+                <apex:actionFunction name="upsertSalesPerformances" action="{!upsertSalesPerformances}" status="loading" reRender="pgMsgs, displayConfirmation, revPanel,admissionPanel" oncomplete="showConfirmation({!isSuccess});"/>
+                <apex:actionFunction name="refreshActionFunction" status="loading" action="{!fetchAssessments}" rerender="empAssignmentTableOP,errorMsg,actionFunctionsOP,revPanel,admissionPanel">
+                    <apex:param id="strforTarget" AssignTo="{!strSelectedUserId}" value="strforTarget" name="str"/>
+                </apex:actionFunction>
+            </apex:outputPanel>
+             
+            <!-- Page Message -->
+            <apex:outputpanel id="outputPanelPageMessge">
+                <apex:pageMessages id="msgs"/>
+            </apex:outputpanel>
+            <apex:outputpanel id="saveSuccessfulMsgId">
+                <div id="confirmAssignment" style = "display:none; margin-left: 2.5%; padding:5px; width:50%; background-color:#337AB7; border:1.5px solid #17140d;">
+                    <span style = "vertical-align:middle; color:#fff;">Sales Performance Inserted/Updated successfully.</span>
+                </div>
+            </apex:outputpanel>
+            <div class="alert alert-danger" id="divAlertMessages" style="margin-left: 11.8%;width: 62%;display:none;text-align:center;font-weight:bold; margin-top:2%;"></div>
+            <apex:outputpanel id="picklistOP">
+                <table style="position:relative; margin-top:4%; left:5%; width: 94%;" id="table1" >
+                    <tr Id = "row_0" class="spaceUnder firstRow"> 
+                        <td width="16%">
+                            <!-- Target Years to view all Assignees -->
+                            <div class="form-group" >
+                                <label for="targetYearPicklist">Target Year</label><br/>
+                                <apex:selectList id="targetYearPicklist" value="{!strSelectedYear}" size="1" onchange="onTargetYearSelect();" styleClass="form-control formElementsWidth">
+                                    <apex:selectOptions value="{!lstTargetYears}"/>
+                                </apex:selectList>
+                            </div>
+                        </td>
+                        <td width="28%">
+                            <!-- Division -->
+                            <div class="form-group" id="divisionPicklistDiv">
+                                <label for="divisionPicklist" style="height: 0px;">Division</label><br/>
+                                <select id = "pickVal_0" class="form-control formElementsWidth mediumMarginTop" size="1" onchange="fetchDependentRoles(this.value, this.id); ">'+
+                                    <apex:repeat value="{!lstDivisions}" var="option">
+                                        <option value="{!option.value}">{!option.label}</option>
+                                    </apex:repeat>
+                                </select>
+                                <!--<apex:selectList  value="{!strSelectedDivision}" size="1" onchange="refreshActionFunction(this.value); alert(this.id+'--'+this.value); fetchDependentRoles(this.value, this.Id);" styleClass="form-control formElementsWidth mediumMarginTop">
+                                    <apex:selectOptions value="{!lstDivisions}"/>
+                                </apex:selectList>-->
+                            </div>
+                        </td>
+                        <td colspan="2" width="56%">&nbsp;</td> 
+                    </tr>
+                </table>
+            </apex:outputpanel>
+            <br/><br/>
+            
+            <apex:outputPanel id="empAssignmentTableOP">
+                <apex:outputPanel id="errorMsg"  rendered="{!isPageMessage}">
+                    <apex:outputPanel rendered="{!LEN(strErrorMessage) > 0}" >
+                        <div class="alert alert-warning alert-dismissible" role="alert" style="{!IF((LEN(strErrorMessage) > 0), 'display:block', 'display:none;')}">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close" onclick="$('{!$Component.errorMsg}').hide();">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <strong>Error: </strong>{!strErrorMessage}
+                        </div>
+                    </apex:outputPanel>
+                </apex:outputPanel>
+                <apex:outputpanel rendered="{!lstEmployeeAssignments.size > 0}">
+                
+                <div style="margin-left: 6px;margin-bottom: 15px;    width: 12%">
+                    <input type="radio" name="Radio" value="adm"  Id = "admission" onclick="revPanelrerender(this.value); setTimeout('disablePaste();', 1000);"/>
+                    <label for="admission">Admission</label>
+                    <div id="revenueRadioId" style="float: right;">
+                        <input type="radio" name="Radio" value="rev" Id = "revenue"  onclick="revPanelrerender(this.value); setTimeout('disablePaste();', 1000);" style="margin-left:10px;"/>
+                        <label for="revenue">Revenue</label>
+                    </div>
+                    <script>
+                        if('{!isAdmSelected}' == 'true') {
+                            $('#admission').prop('checked', true);
+                        }
+                        else {
+                             $('#revenue').prop('checked', true);
+                        }
+                        
+                        var strSelectedRole = $('#pickVal_0').find(":selected").text(); 
+                        if(strSelectedRole == 'KHRS - VP' || strSelectedRole =='SVP - KAH') {
+                              $('#revenueRadioId').css('display','none');
+                              $('#admission').css('display','none');
+                        }
+                    </script>
+                </div>
+                </apex:outputpanel>
+                <apex:outputpanel id="admissionPanel">
+                    <apex:outputpanel rendered="{!isAdmSelected}">
+                        <apex:outputPanel rendered="{!lstEmployeeAssignments.size > 0}">
+                            <!-- Table for Employee Assignments -->
+                            <table class="table table-hover" width="100%">
+                                <thead> 
+                                    <tr width="100%">
+                                    <th width="23%">Employee</th>
+                                    <!-- <th width="12%">Facility</th> 
+                                    <th width="14%">Division</th>-->
+                                    <apex:repeat value="{!lstMonthNames}" var="month">
+                                        <th width="6%" class="textAlignCenter">{!month}</th>
+                                    </apex:repeat>
+                                    <th width="7%" class="textAlignCenter">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                <apex:repeat value="{!lstEmployeeAssignments}" var="empAssignment">
+                                    <tr id="{!empAssignment.strEmployeeId}">
+                                    <td width="23%">{!empAssignment.strEmployeeName}</td>
+                                    <!-- <td width="12%">{!empAssignment.strFacilityName}</td>
+                                    <td width="14%">{!empAssignment.strDivisionName}</td> -->
+                                    <td width="6%">
+                                        <apex:inputText value="{!empAssignment.mapMonthAssignments[1].Targeted_Admissions__c}" onchange="changeTotals('colMonth1Total', 'colMonth1', '{!empAssignment.strEmployeeId}');" 
+                                        onkeypress="return checkingstringAdm(event);" styleClass="form-control numCheck colMonth1 textAlignRight" style="width: 58px;"/>
+                                    </td>
+                                    <td width="6%">
+                                        <apex:inputText value="{!empAssignment.mapMonthAssignments[2].Targeted_Admissions__c}" onchange="changeTotals('colMonth2Total', 'colMonth2', '{!empAssignment.strEmployeeId}');" 
+                                         onkeypress="return checkingstringAdm(event);" styleClass="form-control numCheck colMonth2 textAlignRight" style="width: 58px;"/>
+                                    </td>
+                                    <td width="6%">
+                                        <apex:inputText value="{!empAssignment.mapMonthAssignments[3].Targeted_Admissions__c}" onchange="changeTotals('colMonth3Total', 'colMonth3', '{!empAssignment.strEmployeeId}');" 
+                                        onkeypress="return checkingstringAdm(event);" styleClass="form-control numCheck colMonth3 textAlignRight" style="width: 58px;"/>
+                                    </td>
+                                    <td width="6%" class="textAlignRight">
+                                        <apex:inputText value="{!empAssignment.mapMonthAssignments[4].Targeted_Admissions__c}" onchange="changeTotals('colMonth4Total', 'colMonth4', '{!empAssignment.strEmployeeId}');" 
+                                        onkeypress="return checkingstringAdm(event);" styleClass="form-control numCheck colMonth4 textAlignRight" style="width: 58px;"/>
+                                    </td>
+                                    <td width="6%" class="textAlignRight">
+                                        <apex:inputText value="{!empAssignment.mapMonthAssignments[5].Targeted_Admissions__c}" onchange="changeTotals('colMonth5Total', 'colMonth5', '{!empAssignment.strEmployeeId}');" 
+                                        onkeypress="return checkingstringAdm(event);"  styleClass="form-control numCheck colMonth5 textAlignRight" style="width: 58px;"/>
+                                    </td>
+                                    <td width="6%" class="textAlignRight">
+                                        <apex:inputText value="{!empAssignment.mapMonthAssignments[6].Targeted_Admissions__c}" onchange="changeTotals('colMonth6Total', 'colMonth6', '{!empAssignment.strEmployeeId}');" 
+                                        onkeypress="return checkingstringAdm(event);" styleClass="form-control numCheck colMonth6 textAlignRight" style="width: 58px;"/>
+                                    </td>
+                                    <td width="6%" class="textAlignRight">
+                                        <apex:inputText value="{!empAssignment.mapMonthAssignments[7].Targeted_Admissions__c}" onchange="changeTotals('colMonth7Total', 'colMonth7', '{!empAssignment.strEmployeeId}');" 
+                                        onkeypress="return checkingstringAdm(event);" styleClass="form-control numCheck colMonth7 textAlignRight" style="width: 58px;"/>
+                                    </td>
+                                    <td width="6%" class="textAlignRight">
+                                        <apex:inputText value="{!empAssignment.mapMonthAssignments[8].Targeted_Admissions__c}" onchange="changeTotals('colMonth8Total', 'colMonth8', '{!empAssignment.strEmployeeId}');" 
+                                        onkeypress="return checkingstringAdm(event);" styleClass="form-control numCheck colMonth8 textAlignRight" style="width: 58px;"/>
+                                    </td>
+                                    <td width="6%" class="textAlignRight">
+                                        <apex:inputText value="{!empAssignment.mapMonthAssignments[9].Targeted_Admissions__c}" onchange="changeTotals('colMonth9Total', 'colMonth9', '{!empAssignment.strEmployeeId}');" 
+                                        onkeypress="return checkingstringAdm(event);" styleClass="form-control numCheck colMonth9 textAlignRight" style="width: 58px;"/>
+                                    </td>
+                                    <td width="6%" class="textAlignRight"> 
+                                        <apex:inputText value="{!empAssignment.mapMonthAssignments[10].Targeted_Admissions__c}" onchange="changeTotals('colMonth10Total', 'colMonth10', '{!empAssignment.strEmployeeId}');" 
+                                        onkeypress="return checkingstringAdm(event);" styleClass="form-control numCheck colMonth10 textAlignRight" style="width: 58px;"/>
+                                    </td>
+                                    <td width="6%" class="textAlignRight">
+                                        <apex:inputText value="{!empAssignment.mapMonthAssignments[11].Targeted_Admissions__c}" onchange="changeTotals('colMonth11Total', 'colMonth11', '{!empAssignment.strEmployeeId}');" 
+                                        onkeypress="return checkingstringAdm(event);" styleClass="form-control numCheck colMonth11 textAlignRight" style="width: 58px;"/>
+                                    </td>
+                                    <td width="6%" class="textAlignRight">
+                                        <apex:inputText value="{!empAssignment.mapMonthAssignments[12].Targeted_Admissions__c}" onchange="changeTotals('colMonth12Total', 'colMonth12', '{!empAssignment.strEmployeeId}');" 
+                                        onkeypress="return checkingstringAdm(event);" styleClass="form-control numCheck colMonth12 textAlignRight" style="width: 58px;"/>
+                                    </td>
+                                    <td width="7%" class="textAlignRight" style="vertical-align: middle;" id="rowTotal{!empAssignment.strEmployeeId}">
+                                    <apex:inputText Styleclass="inputtextforaTotal" html-readonly="true" value="{!empAssignment.intUserTotalAdmissions}" id="opText" style="width: 65px;text-align: right;border-color: none;border:0px solid #58B9FA; display:none;"/>
+                                    <span id="admSpan{!empAssignment.strEmployeeId}"> </span>
+                                    <script>document.getElementById('admSpan{!empAssignment.strEmployeeId}').innerHTML = dollarFormatNumber(document.getElementById('{!$Component.opText}').value);</script>
+                                    
+                                    </td>
+                                            </tr>
+                                                    </apex:repeat>
+                                        <tr>
+                                            <td width="23%" colspan="1" class="fontWeightBold">Total</td>
+                                            <td width="6%" class="textAlignCenter fontWeightBold rowTotals" id="colMonth1Total">
+                                                <apex:inputText Styleclass="inputtextforaTotalRow" html-readonly="true" value="{!mapColumnarAssignmentsTotal[1]}" id="opText1" style="width: 65px;text-align: right;border-color: none;border:0px solid #58B9FA; display:none;"/>
+                                                <span id="admSpanRow1"> </span>
+                                                <script>document.getElementById('admSpanRow1').innerHTML = dollarFormatNumber(document.getElementById('{!$Component.opText1}').value);</script>
+                                            </td>
+                                            <td width="6%" class="textAlignCenter fontWeightBold rowTotals" id="colMonth2Total">
+                                                <apex:inputText Styleclass="inputtextforaTotalRow" html-readonly="true" value="{!mapColumnarAssignmentsTotal[2]}" id="opText2" style="width: 65px;text-align: right;border-color: none;border:0px solid #58B9FA; display:none;"/>
+                                                <span id="admSpanRow2"> </span>
+                                                <script>document.getElementById('admSpanRow2').innerHTML = dollarFormatNumber(document.getElementById('{!$Component.opText2}').value);</script>
+                                            </td>
+                                            <td width="6%" class="textAlignCenter fontWeightBold rowTotals" id="colMonth3Total">
+                                                <apex:inputText Styleclass="inputtextforaTotalRow" html-readonly="true" value="{!mapColumnarAssignmentsTotal[3]}" id="opText3" style="width: 65px;text-align: right;border-color: none;border:0px solid #58B9FA; display:none;"/>
+                                                <span id="admSpanRow3"> </span>
+                                                <script>document.getElementById('admSpanRow3').innerHTML = dollarFormatNumber(document.getElementById('{!$Component.opText3}').value);</script>
+                                            </td>
+                                            <td width="6%" class="textAlignCenter fontWeightBold rowTotals" id="colMonth4Total">
+                                                <apex:inputText Styleclass="inputtextforaTotalRow" html-readonly="true" value="{!mapColumnarAssignmentsTotal[4]}" id="opText4" style="width: 65px;text-align: right;border-color: none;border:0px solid #58B9FA; display:none;"/>
+                                                <span id="admSpanRow4"> </span>
+                                                <script>document.getElementById('admSpanRow4').innerHTML = dollarFormatNumber(document.getElementById('{!$Component.opText4}').value);</script>
+                                            </td>
+                                            <td width="6%" class="textAlignCenter fontWeightBold rowTotals" id="colMonth5Total">
+                                                <apex:inputText Styleclass="inputtextforaTotalRow" html-readonly="true" value="{!mapColumnarAssignmentsTotal[5]}" id="opText5" style="width: 65px;text-align: right;border-color: none;border:0px solid #58B9FA; display:none;"/>
+                                                <span id="admSpanRow5"> </span>
+                                                <script>document.getElementById('admSpanRow5').innerHTML = dollarFormatNumber(document.getElementById('{!$Component.opText5}').value);</script>
+                                            </td>
+                                            <td width="6%" class="textAlignCenter fontWeightBold rowTotals" id="colMonth6Total">
+                                                <apex:inputText Styleclass="inputtextforaTotalRow" html-readonly="true" value="{!mapColumnarAssignmentsTotal[6]}" id="opText6" style="width: 65px;text-align: right;border-color: none;border:0px solid #58B9FA; display:none;"/>
+                                                <span id="admSpanRow6"> </span>
+                                                <script>document.getElementById('admSpanRow6').innerHTML = dollarFormatNumber(document.getElementById('{!$Component.opText6}').value);</script>
+                                            </td>
+                                            <td width="6%" class="textAlignCenter fontWeightBold rowTotals" id="colMonth7Total">
+                                                <apex:inputText Styleclass="inputtextforaTotalRow" html-readonly="true" value="{!mapColumnarAssignmentsTotal[7]}" id="opText7" style="width: 65px;text-align: right;border-color: none;border:0px solid #58B9FA; display:none;"/>
+                                                <span id="admSpanRow7"> </span>
+                                                <script>document.getElementById('admSpanRow7').innerHTML = dollarFormatNumber(document.getElementById('{!$Component.opText7}').value);</script>
+                                            </td>
+                                            <td width="6%" class="textAlignCenter fontWeightBold rowTotals" id="colMonth8Total">
+                                                <apex:inputText Styleclass="inputtextforaTotalRow" html-readonly="true" value="{!mapColumnarAssignmentsTotal[8]}" id="opText8" style="width: 65px;text-align: right;border-color: none;border:0px solid #58B9FA; display:none;"/>
+                                                <span id="admSpanRow8"> </span>
+                                                <script>document.getElementById('admSpanRow8').innerHTML = dollarFormatNumber(document.getElementById('{!$Component.opText8}').value);</script>
+                                            </td>
+                                            <td width="6%" class="textAlignCenter fontWeightBold rowTotals" id="colMonth9Total">
+                                                <apex:inputText Styleclass="inputtextforaTotalRow" html-readonly="true" value="{!mapColumnarAssignmentsTotal[9]}" id="opText9" style="width: 65px;text-align: right;border-color: none;border:0px solid #58B9FA; display:none;"/>
+                                                <span id="admSpanRow9"> </span>
+                                                <script>document.getElementById('admSpanRow9').innerHTML = dollarFormatNumber(document.getElementById('{!$Component.opText9}').value);</script>
+                                            </td>
+                                            <td width="6%" class="textAlignCenter fontWeightBold rowTotals" id="colMonth10Total">
+                                                <apex:inputText Styleclass="inputtextforaTotalRow" html-readonly="true" value="{!mapColumnarAssignmentsTotal[10]}" id="opText10" style="width: 65px;text-align: right;border-color: none;border:0px solid #58B9FA; display:none;"/>
+                                                <span id="admSpanRow10"> </span>
+                                                <script>document.getElementById('admSpanRow10').innerHTML = dollarFormatNumber(document.getElementById('{!$Component.opText10}').value);</script>
+                                            </td>
+                                            <td width="6%" class="textAlignCenter fontWeightBold rowTotals" id="colMonth11Total">
+                                                <apex:inputText Styleclass="inputtextforaTotalRow" html-readonly="true" value="{!mapColumnarAssignmentsTotal[11]}" id="opText11" style="width: 65px;text-align: right;border-color: none;border:0px solid #58B9FA; display:none;"/>
+                                                <span id="admSpanRow11"> </span>
+                                                <script>document.getElementById('admSpanRow11').innerHTML = dollarFormatNumber(document.getElementById('{!$Component.opText11}').value);</script>
+                                            </td>
+                                            <td width="6%" class="textAlignCenter fontWeightBold rowTotals" id="colMonth12Total">
+                                                <apex:inputText Styleclass="inputtextforaTotalRow" html-readonly="true" value="{!mapColumnarAssignmentsTotal[12]}" id="opText12" style="width: 65px;text-align: right;border-color: none;border:0px solid #58B9FA; display:none;"/>
+                                                <span id="admSpanRow12"> </span>
+                                                <script>document.getElementById('admSpanRow12').innerHTML = dollarFormatNumber(document.getElementById('{!$Component.opText12}').value);</script>
+                                            </td>
+                                            <td width="7%" class="fontWeightBold textAlignRight" id="totalAssignedHours">
+                                                <apex:inputText Styleclass="inputtextforaTotalRow" html-readonly="true" value="{!totalAssignedHours}" id="totalAssignedHrs" style="width: 65px;text-align: right;border-color: none;border:0px solid #58B9FA; display:none;"/>
+                                                <span id="admSpanRowTotal"> </span>
+                                                <script>document.getElementById('admSpanRowTotal').innerHTML = dollarFormatNumber(document.getElementById('{!$Component.totalAssignedHrs}').value);</script>
+                                            </td>
+                                        </tr>
+                                            </tbody>
+                                    </table>                    
+                                    <br/>
+                            <table width="100%" style="text-align: center;">
+                                <tr><td width="100%">
+                                <button type="button" class="btn btn-default" onclick="this.disabled;upsertSalesPerformances(); window.scrollTo(0,0);">Save</button>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <input id="cancelButton" type="button" class="btn btn-default" value="Cancel" onclick="location.href='{!strRefererURL}';"/> 
+                                </td></tr>
+                            </table>
+                        </apex:outputPanel>
+                    </apex:outputpanel>
+                </apex:outputpanel>
+                <apex:outputpanel id="revPanel">
+                    <apex:outputpanel rendered="{!isRevSelected}">
+                        <apex:outputPanel rendered="{!lstEmployeeAssignments.size > 0}">
+                            <table class="table table-hover" width="100%">
+                                <thead> 
+                                    <tr width="100%">
+                                        <th width="23%">Employee</th>
+                                        <apex:repeat value="{!lstMonthNames}" var="month">
+                                            <th width="6%" class="textAlignCenter">{!month}</th>
+                                        </apex:repeat>
+                                        <th width="7%" class="textAlignCenter">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <apex:repeat value="{!lstEmployeeAssignments}" var="empAssignment">
+                                        <tr id="revenueRow{!empAssignment.strEmployeeId}" >
+                                            <td width="23%">{!empAssignment.strEmployeeName}</td>
+                                            <td width="6%" class="removeBorder">
+                                                <apex:inputText value="{!empAssignment.mapMonthAssignments[1].Targeted_Revenue__c}" onchange="changeTotalsRev('colMonth1TotalRev', 'colMonth1Rev', '{!empAssignment.strEmployeeId}');" 
+                                                         onkeypress="return checkingstring(event);" styleClass="form-control numCheck colMonth1Rev textAlignRight" style="width: 82px;"/>
+                                            </td>
+                                            <td width="6%" class="removeBorder">
+                                                <apex:inputText value="{!empAssignment.mapMonthAssignments[2].Targeted_Revenue__c}" onchange="changeTotalsRev('colMonth2TotalRev', 'colMonth2Rev', '{!empAssignment.strEmployeeId}');" 
+                                                         onkeypress="return checkingstring(event);"  styleClass="form-control numCheck colMonth2Rev textAlignRight" style="width: 82px;"/>
+                                            </td>
+                                            <td width="6%" class="removeBorder">
+                                                <apex:inputText value="{!empAssignment.mapMonthAssignments[3].Targeted_Revenue__c}" onchange="changeTotalsRev('colMonth3TotalRev', 'colMonth3Rev', '{!empAssignment.strEmployeeId}');" 
+                                                        onkeypress="return checkingstring(event);" styleClass="form-control numCheck colMonth3Rev textAlignRight" style="width: 82px;"/>
+                                            </td>
+                                            <td width="6%" class="textAlignRight removeBorder">
+                                                <apex:inputText value="{!empAssignment.mapMonthAssignments[4].Targeted_Revenue__c}" onchange="changeTotalsRev('colMonth4TotalRev', 'colMonth4Rev', '{!empAssignment.strEmployeeId}');" 
+                                                        onkeypress="return checkingstring(event);"  styleClass="form-control numCheck colMonth4Rev textAlignRight" style="width: 82px;"/>
+                                            </td>
+                                            <td width="6%" class="textAlignRight removeBorder">
+                                                <apex:inputText value="{!empAssignment.mapMonthAssignments[5].Targeted_Revenue__c}" onchange="changeTotalsRev('colMonth5TotalRev', 'colMonth5Rev', '{!empAssignment.strEmployeeId}');" 
+                                                        onkeypress="return checkingstring(event);"  styleClass="form-control numCheck colMonth5Rev textAlignRight" style="width: 82px;"/>
+                                            </td>
+                                            <td width="6%" class="textAlignRight removeBorder">
+                                                <apex:inputText value="{!empAssignment.mapMonthAssignments[6].Targeted_Revenue__c}" onchange="changeTotalsRev('colMonth6TotalRev', 'colMonth6Rev', '{!empAssignment.strEmployeeId}');" 
+                                                        onkeypress="return checkingstring(event);"  styleClass="form-control numCheck colMonth6Rev textAlignRight" style="width: 82px;"/>
+                                            </td>
+                                            <td width="6%" class="textAlignRight removeBorder">
+                                                <apex:inputText value="{!empAssignment.mapMonthAssignments[7].Targeted_Revenue__c}" onchange="changeTotalsRev('colMonth7TotalRev', 'colMonth7Rev', '{!empAssignment.strEmployeeId}');" 
+                                                        onkeypress="return checkingstring(event);" styleClass="form-control numCheck colMonth7Rev textAlignRight" style="width: 82px;"/>
+                                            </td>
+                                            <td width="6%" class="textAlignRight removeBorder">
+                                                <apex:inputText value="{!empAssignment.mapMonthAssignments[8].Targeted_Revenue__c}" onchange="changeTotalsRev('colMonth8TotalRev', 'colMonth8Rev', '{!empAssignment.strEmployeeId}');" 
+                                                        onkeypress="return checkingstring(event);" styleClass="form-control numCheck colMonth8Rev textAlignRight" style="width: 82px;"/>
+                                            </td>
+                                            <td width="6%" class="textAlignRight removeBorder">
+                                                <apex:inputText value="{!empAssignment.mapMonthAssignments[9].Targeted_Revenue__c}" onchange="changeTotalsRev('colMonth9TotalRev', 'colMonth9Rev', '{!empAssignment.strEmployeeId}');" 
+                                                       onkeypress="return checkingstring(event);" styleClass="form-control numCheck colMonth9Rev textAlignRight" style="width: 82px;"/>
+                                            </td>
+                                            <td width="6%" class="textAlignRight removeBorder">
+                                                <apex:inputText value="{!empAssignment.mapMonthAssignments[10].Targeted_Revenue__c}" onchange="changeTotalsRev('colMonth10TotalRev', 'colMonth10Rev', '{!empAssignment.strEmployeeId}');" 
+                                                        onkeypress="return checkingstring(event);" styleClass="form-control numCheck colMonth10Rev textAlignRight" style="width: 82px;"/>
+                                            </td>
+                                            <td width="6%" class="textAlignRight removeBorder">
+                                                <apex:inputText value="{!empAssignment.mapMonthAssignments[11].Targeted_Revenue__c}" onchange="changeTotalsRev('colMonth11TotalRev', 'colMonth11Rev', '{!empAssignment.strEmployeeId}');" 
+                                                        onkeypress="return checkingstring(event);" styleClass="form-control numCheck colMonth11Rev textAlignRight" style="width: 82px;"/>
+                                            </td>
+                                            <td width="6%" class="textAlignRight removeBorder">
+                                                <apex:inputText value="{!empAssignment.mapMonthAssignments[12].Targeted_Revenue__c}" onchange="changeTotalsRev('colMonth12TotalRev', 'colMonth12Rev', '{!empAssignment.strEmployeeId}');" 
+                                                         onkeypress="return checkingstring(event);" styleClass="form-control numCheck colMonth12Rev textAlignRight" style="width: 82px;"/>
+                                            </td>
+                                            <td width="7%" class="textAlignRight removeBorder" style="vertical-align: middle;" id="rowTotalrevenueRow{!empAssignment.strEmployeeId}">
+                                                <apex:inputText Styleclass="inputtextforaTotal" value="{!empAssignment.intUserTotalRevenue}" id="IpTextRev"  style="display:none;width: 65px;text-align: right;border-color: none;border:0px solid #58B9FA; "/>
+                                                <span id="revSpan{!empAssignment.strEmployeeId}"> </span>
+                                               <script>document.getElementById('revSpan{!empAssignment.strEmployeeId}').innerHTML = dollarFormat(document.getElementById('{!$Component.IpTextRev}').value);</script>  
+                                            </td>
+                                        </tr>
+                                        
+                                    </apex:repeat>
+                                    <tr>
+                                        <td width="23%" colspan="1" class="fontWeightBold">Total</td>
+                                        <td width="6%" class="textAlignCenter fontWeightBold rowTotalsRev revClass" id="colMonth1TotalRev">
+                                            <apex:inputText Styleclass="inputtextforaTotalRow" html-readonly="true" value="{!mapColumnarRevenueTotal[1]}" id="opTextRev1" style="width: 65px;text-align: right;border-color: none;border:0px solid #58B9FA; display:none;"/>
+                                            <span id="revSpanRow1"> </span>
+                                            <script>document.getElementById('revSpanRow1').innerHTML = dollarFormat(document.getElementById('{!$Component.opTextRev1}').value);</script>
+                                        </td>
+                                        <td width="6%" class="textAlignCenter fontWeightBold rowTotalsRev revClass" id="colMonth2TotalRev">
+                                            <apex:inputText Styleclass="inputtextforaTotalRow" html-readonly="true" value="{!mapColumnarRevenueTotal[2]}" id="opTextRev2" style="width: 65px;text-align: right;border-color: none;border:0px solid #58B9FA; display:none;"/>
+                                            <span id="revSpanRow2"> </span>
+                                            <script>document.getElementById('revSpanRow2').innerHTML = dollarFormat(document.getElementById('{!$Component.opTextRev2}').value);</script>
+                                        </td>
+                                        <td width="6%" class="textAlignCenter fontWeightBold rowTotalsRev revClass" id="colMonth3TotalRev">
+                                        <apex:inputText Styleclass="inputtextforaTotalRow" html-readonly="true" value="{!mapColumnarRevenueTotal[3]}" id="opTextRev3" style="width: 65px;text-align: right;border-color: none;border:0px solid #58B9FA; display:none;"/>
+                                            <span id="revSpanRow3"> </span>
+                                            <script>document.getElementById('revSpanRow3').innerHTML = dollarFormat(document.getElementById('{!$Component.opTextRev3}').value);</script>
+                                        </td>
+                                        <td width="6%" class="textAlignCenter fontWeightBold rowTotalsRev revClass" id="colMonth4TotalRev">
+                                            <apex:inputText Styleclass="inputtextforaTotalRow" html-readonly="true" value="{!mapColumnarRevenueTotal[4]}" id="opTextRev4" style="width: 65px;text-align: right;border-color: none;border:0px solid #58B9FA; display:none;"/>
+                                            <span id="revSpanRow4"> </span>
+                                            <script>document.getElementById('revSpanRow4').innerHTML = dollarFormat(document.getElementById('{!$Component.opTextRev4}').value);</script>
+                                        </td>
+                                        <td width="6%" class="textAlignCenter fontWeightBold rowTotalsRev revClass" id="colMonth5TotalRev">
+                                            <apex:inputText Styleclass="inputtextforaTotalRow" html-readonly="true" value="{!mapColumnarRevenueTotal[5]}" id="opTextRev5" style="width: 65px;text-align: right;border-color: none;border:0px solid #58B9FA; display:none;"/>
+                                            <span id="revSpanRow5"> </span>
+                                            <script>document.getElementById('revSpanRow5').innerHTML = dollarFormat(document.getElementById('{!$Component.opTextRev5}').value);</script>
+                                        </td>
+                                        <td width="6%" class="textAlignCenter fontWeightBold rowTotalsRev revClass" id="colMonth6TotalRev">
+                                            <apex:inputText Styleclass="inputtextforaTotalRow" html-readonly="true" value="{!mapColumnarRevenueTotal[6]}" id="opTextRev6" style="width: 65px;text-align: right;border-color: none;border:0px solid #58B9FA; display:none;"/>
+                                            <span id="revSpanRow6"> </span>
+                                            <script>document.getElementById('revSpanRow6').innerHTML = dollarFormat(document.getElementById('{!$Component.opTextRev6}').value);</script>
+                                        </td>
+                                        <td width="6%" class="textAlignCenter fontWeightBold rowTotalsRev revClass" id="colMonth7TotalRev">
+                                            <apex:inputText Styleclass="inputtextforaTotalRow" html-readonly="true" value="{!mapColumnarRevenueTotal[7]}" id="opTextRev7" style="width: 65px;text-align: right;border-color: none;border:0px solid #58B9FA; display:none;"/>
+                                            <span id="revSpanRow7"> </span>
+                                            <script>document.getElementById('revSpanRow7').innerHTML = dollarFormat(document.getElementById('{!$Component.opTextRev7}').value);</script>
+                                        </td>
+                                        <td width="6%" class="textAlignCenter fontWeightBold rowTotalsRev revClass" id="colMonth8TotalRev">
+                                            <apex:inputText Styleclass="inputtextforaTotalRow" html-readonly="true" value="{!mapColumnarRevenueTotal[8]}" id="opTextRev8" style="width: 65px;text-align: right;border-color: none;border:0px solid #58B9FA; display:none;"/>
+                                            <span id="revSpanRow8"> </span>
+                                            <script>document.getElementById('revSpanRow8').innerHTML = dollarFormat(document.getElementById('{!$Component.opTextRev8}').value);</script>
+                                        </td>
+                                        <td width="6%" class="textAlignCenter fontWeightBold rowTotalsRev revClass" id="colMonth9TotalRev">
+                                            <apex:inputText Styleclass="inputtextforaTotalRow" html-readonly="true" value="{!mapColumnarRevenueTotal[9]}" id="opTextRev9" style="width: 65px;text-align: right;border-color: none;border:0px solid #58B9FA; display:none;"/>
+                                            <span id="revSpanRow9"> </span>
+                                            <script>document.getElementById('revSpanRow9').innerHTML = dollarFormat(document.getElementById('{!$Component.opTextRev9}').value);</script>
+                                        </td>
+                                        <td width="6%" class="textAlignCenter fontWeightBold rowTotalsRev revClass" id="colMonth10TotalRev">
+                                            <apex:inputText Styleclass="inputtextforaTotalRow" html-readonly="true" value="{!mapColumnarRevenueTotal[10]}" id="opTextRev10" style="width: 65px;text-align: right;border-color: none;border:0px solid #58B9FA; display:none;"/>
+                                            <span id="revSpanRow10"> </span>
+                                            <script>document.getElementById('revSpanRow10').innerHTML = dollarFormat(document.getElementById('{!$Component.opTextRev10}').value);</script>
+                                        </td>
+                                        <td width="6%" class="textAlignCenter fontWeightBold rowTotalsRev revClass" id="colMonth11TotalRev">
+                                            <apex:inputText Styleclass="inputtextforaTotalRow" html-readonly="true" value="{!mapColumnarRevenueTotal[11]}" id="opTextRev11" style="width: 65px;text-align: right;border-color: none;border:0px solid #58B9FA; display:none;"/>
+                                            <span id="revSpanRow11"> </span>
+                                            <script>document.getElementById('revSpanRow11').innerHTML = dollarFormat(document.getElementById('{!$Component.opTextRev11}').value);</script>
+                                        </td>
+                                        <td width="6%" class="textAlignCenter fontWeightBold rowTotalsRev revClass" id="colMonth12TotalRev">
+                                            <apex:inputText Styleclass="inputtextforaTotalRow" html-readonly="true" value="{!mapColumnarRevenueTotal[12]}" id="opTextRev12" style="width: 65px;text-align: right;border-color: none;border:0px solid #58B9FA; display:none;"/>
+                                            <span id="revSpanRow12"> </span>
+                                            <script>document.getElementById('revSpanRow12').innerHTML = dollarFormat(document.getElementById('{!$Component.opTextRev12}').value);</script>
+                                        </td>
+                                        <td width="7%" class="fontWeightBold textAlignRight" id="totalAssignedHoursRev">
+                                            <apex:inputText Styleclass="inputtextforaTotalRow" html-readonly="true" value="{!totalAssignedHoursRev}" id="totalAssignedHrsRev" style="width: 65px;text-align: right;border-color: none;border:0px solid #58B9FA; display:none;"/>
+                                            <span id="revSpanRowTotal"> </span>
+                                            <script>document.getElementById('revSpanRowTotal').innerHTML = dollarFormat(document.getElementById('{!$Component.totalAssignedHrsRev}').value);</script>
+                                        </td>
+                                    </tr>
+                                </tbody> 
+                            </table>
+                            <br/>
+                            <table width="100%" style="text-align: center;">
+                                <tr><td width="100%">
+                                    
+                                    <button type="button" class="btn btn-default" onclick="this.disabled;upsertSalesPerformances(); window.scrollTo(0,0);">Save</button>
+                                
+                                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <input id="cancelButtonRev" type="button" class="btn btn-default" value="Cancel" onclick="location.href='{!strRefererURL}';"/> 
+                                </td></tr> 
+                            </table>
+                        </apex:outputPanel>
+                   </apex:outputpanel>     
+               </apex:outputpanel>
+            </apex:outputPanel>
+            
+            <!-- Start - StatusBar -->
+            <apex:actionstatus id="loading" startText="Requesting...">
+                <apex:facet name="start">
+                    <div id="salesforceSource_blurybackground" style="position:absolute; left:1px; top:1px; width:100%; height:100%; text-align:center; vertical-align: middle; z-index:300;background-color: #dcdcdc; opacity:0.5;filter:alpha(opacity=60) "></div>
+                    <div id="ManageMembersViewport_loading" class="waitingSearchDiv" style="width: 100%; height: 80%; display: ''; ">
+                        <div style="width: 144px;vertical-align: middle;" class="waitingHolder">
+                            <table align="center" valign="top" style="width: 100%; height: 30%">
+                                <tr align="center" valign="top" style="width: 100%; height: 30%">
+                                    <td valign="top"><img src="/img/loading.gif"/><span class="waitingDescription"><b>Loading...</b></span></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div> 
+                    <div id="ManageMembersViewport_loading" class="waitingSearchDiv" style="width: 100%; height: 100%; display: ''; "/>
+                    <script>document.getElementById('ManageMembersViewport_loading').height = window.innerHeight * (3/4);</script>
+               </apex:facet>
+               <apex:facet name="stop"></apex:facet>
+            </apex:actionstatus>
+            <!-- End - StatusBar -->
+        </apex:form>
+    </div> 
+</apex:page>

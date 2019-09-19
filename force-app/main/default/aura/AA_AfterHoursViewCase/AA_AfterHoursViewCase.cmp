@@ -1,0 +1,28 @@
+<aura:component controller="AA_CaseEntryController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    
+    <aura:attribute name="afterHours" type="id"/>
+    <aura:attribute name="recordId" type="Id" access="public"/>
+    <aura:attribute name="pageURL" type="string"/>
+    <aura:attribute name="fields" type="String[]" default="['Owner','Patient_First_Name__c','Name','Patient_Last_Name__c','Subject','Patient_DOB__c','AfterHours_Call_Type__c','Patient_Gender__c','Contact_First_Name__c','Patient_Room_Number__c','Contact_Last_Name__c','Patient_Provider__c','Contact_Phone__c','AH_Patient_Status__c','Contact_Type__c','Provider_Notified_Name__c','Location_Type__c','Reason_for_Call__c','Facility_Name__c','Call_Outcome__c','Facility_Type__c','Status','Origin','Priority','Case_Notes__c']" />
+    
+    <lightning:workspaceAPI aura:id="workspace" />
+    <lightning:navigation aura:id="navService"/>
+    
+    <aura:handler event="c:AA_LacunaCaseID" action="{!c.getValueFromEvent}"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <aura:if isTrue="{!v.afterHours != null}">
+    <div style="background-color:white">
+        <lightning:recordForm
+                         objectApiName="Case"
+                         recordTypeId="{!v.afterHours}"
+                         recordId="{!v.recordId}"
+                         mode="readonly"
+                         oncancel="{!c.onCancel}"
+                         fields="{!v.fields}"
+                         columns="2">
+        <lightning:messages />
+    </lightning:recordForm>
+    </div>
+        </aura:if>
+</aura:component>

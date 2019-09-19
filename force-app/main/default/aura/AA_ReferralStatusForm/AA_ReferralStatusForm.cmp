@@ -1,0 +1,922 @@
+<aura:component controller="AA_CaseEntryController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    
+    <aura:attribute name="caseID" type="ID"/>
+    <aura:attribute name="displayForm" type="string"/>
+    <aura:attribute name="activeCase" type="Case" />
+    <aura:attribute name="activePatient" type="Patient_NEW__c"/>
+    <aura:attribute name="activeContact" type="Contact"/>
+    <aura:attribute name="activeAccount" type="Account"/>
+    <aura:attribute name="activeAssessment" type="Assessment__c"/>
+    <aura:attribute name="patientAge" type="Integer"/>
+    
+    <aura:attribute name="formDisplay" type="sObject"/>
+    
+    <aura:attribute name="showLTACHForm" type="boolean" default="false"/>
+    <aura:attribute name="formCallEndTime" type="dateTime"/>
+    <aura:attribute name="contactRelationship" type="string"/>
+    <aura:attribute name="preferredFacilityNameAddressPhone" type="string"/>
+    <aura:attribute name="contactName" type="string"/>
+    <aura:attribute name="patientName" type="string"/>
+    <aura:attribute name="formSSN" type="string"/>
+    <aura:attribute name="formSituationConcerns" type="string"/>
+    <aura:attribute name="formDXHX" type="string"/>
+    <aura:attribute name="formPhysicianSpecialtyPhone" type="string"/>
+    <aura:attribute name="formUserName" type="string"/>
+    <aura:attribute name="formUserPhone" type="string"/>
+    <aura:attribute name="formUrgentNeed" type="string"/>
+    <aura:attribute name="formLocationAndDate" type="string"/>
+    
+    <aura:attribute name="showHHForm" type="boolean" default="false"/>
+    <aura:attribute name="formKindredLink" type="string" />
+    <aura:attribute name="formServicesRequested" type="string" />
+    <aura:attribute name="formSpecifySN" type="string" />
+    <aura:attribute name="formLastPhysicianDate" type="dateTime"/>
+    <aura:attribute name="formPhysicianConsent" type="boolean" default="false"/>
+    <aura:attribute name="formPhysicianF2F" type="string"/>
+    <aura:attribute name="formHomeboundStatus" type="string"/>
+    
+    <aura:attribute name="showHPForm" type="boolean" default="false"/>
+    <aura:attribute name="formCurrentHospiceProvider" type="string"/>
+    <aura:attribute name="formPatientDestination" type="string"/>
+    <aura:attribute name="formPlannedTravelDates" type="string"/>
+    
+    <aura:attribute name="showPalliativeForm" type="boolean" default="false"/>
+    
+    <aura:attribute name="showPHCAForm" type="boolean" default="false"/>
+    
+    <aura:attribute name="showIHPCForm" type="boolean" default="false"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <lightning:workspaceAPI aura:id="workspace" />
+    <lightning:navigation aura:id="navService"/>
+    
+    <div id="OverlapBS" style="background-color:white">
+    <aura:if isTrue="{!v.showLTACHForm}">
+        <div id="OverlapBS" style="background-color:white">
+            <head>
+                <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+                <title>LTAC IRF SAU Status Report</title>
+            </head>
+            <body>
+                <p align="right" class="MsoNormal" style="text-align: right; width: 260px; height: 70px; margin-left: 860px;">
+                    <img src="{!$Resource.kindredLogo}"/>
+                </p>
+                <p align="center" class="MsoNormal" style="text-align: center">
+                    <b style="mso-bidi-font-weight: normal">
+                        <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin; mso-no-proof: yes">
+                            LTAC IRF SAU</span><span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin"> 
+                        Status Report</span></b></p>
+                <p class="MsoNormal" style="text-align: left; width: 795px; margin-left: 1.16in">
+                    <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;;margin-left: 187px; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                        Hello, <b style="mso-bidi-font-weight: normal"></b></span></p>
+                <p class="MsoNormal" style="text-align: left; margin-left: 200px; margin-right:250px">
+                    <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;;margin-left: 100px; margin-right:50px; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                        I am forwarding information regarding a Service Recommendation for <ui:outputText value="{!v.formDisplay.preferredFacilityName}"/>.  </span>
+                    <br/><span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;;margin-left: 100px; margin-right:50px; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin"><ui:outputText value="{!v.formDisplay.contactName}"/> called the Kindred Contact Center today seeking to arrange services for <ui:outputText value="{!v.formDisplay.patientName}"/>. <br/></span>
+                    <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;;margin-left: 100px; margin-right:25px; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">Please review the Service Recommendation information below and have someone reach out to the contact to further discuss her/his </span>
+                    <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;;margin-left: 100px; margin-right:50px; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">interest in arranging services.</span></p>
+                <table align="center" border="1" cellpadding="0" cellspacing="0" class="MsoTableGrid" style="border-style: none; border-color: inherit; border-width: medium; border-collapse: collapse; mso-border-alt: solid windowtext .5pt; mso-yfti-tbllook: 1184; mso-padding-alt: 0in 5.4pt 0in 5.4pt; width: 798px; margin-left: 300px;">
+                    <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes">
+                        <td style="width: 467.5pt; border: solid windowtext 1.0pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Date / Time Call Ended: &nbsp;&nbsp;&nbsp;<lightning:input type="datetime-local" value="{!v.formCallEndTime}"/></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 1">
+                        <td style="width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; background: #DEEAF6; mso-background-themecolor: accent1; mso-background-themetint: 51; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Contact Name / Relationship / Number: &nbsp;&nbsp;&nbsp; <ui:outputText value="{!v.formDisplay.contactName}"/> / <ui:inputText value="{!v.contactRelationship}"/> / <ui:outputText value="{!v.formDisplay.contactPhone}"/></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 2">
+                        <td style="width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Patient Name / Age / DOB: &nbsp;&nbsp;&nbsp; <ui:outputText value="{!v.formDisplay.patientName}"/> / <ui:outputText value="{!v.formDisplay.patientAge}"/> / <ui:outputText value="{!v.formDisplay.patientBirthDate}"/> </span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 3">
+                        <td style="width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; background: #DEEAF6; mso-background-themecolor: accent1; mso-background-themetint: 51; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Address: &nbsp;&nbsp;&nbsp;<ui:outputText value="{!v.formDisplay.patientStreet}"/> &nbsp;&nbsp;&nbsp;<ui:outputText value="{!v.formDisplay.patientCity}"/> &nbsp;&nbsp;&nbsp;<ui:outputText value="{!v.activePatient.State__c}"/> &nbsp;&nbsp;&nbsp;<ui:outputText value="{!v.formDisplay.patientZip}"/></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 4">
+                        <td style="width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Phone Number: &nbsp;&nbsp;&nbsp;<ui:outputText value="{!v.formDisplay.patientPhone}"/></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 5">
+                        <td style="width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; background: #DEEAF6; mso-background-themecolor: accent1; mso-background-themetint: 51; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    SSN: &nbsp;&nbsp;&nbsp;<ui:inputText value="{!v.formSSN}"/></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 6">
+                        <td style="width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Insurance Information: &nbsp;&nbsp;&nbsp;<ui:outputText value="{!v.formDisplay.assessmentPayor}"/> &nbsp; <ui:outputText value="{!v.formDisplay.assessmentMemberID}"/> &nbsp; <ui:outputText value="{!v.formDisplay.assessmentSubscriberName}"/>
+                                    <br/>
+                                    <ui:outputText value="{!v.formDisplay.assessmentSecondaryPayor}"/> &nbsp; <ui:outputText value="{!v.formDisplay.assessmentSecondaryMemberID}"/> &nbsp; <ui:outputText value="{!v.formDisplay.assessmentSecondarySubscriberName}"/>
+                                </span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 7">
+                        <td style="width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; background: #DEEAF6; mso-background-themecolor: accent1; mso-background-themetint: 51; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Current DX / Medical HX: &nbsp;&nbsp;&nbsp;<ui:inputText value="{!v.formDXHX}"/></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 8">
+                        <td style="width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Current Situation / Clinical Concerns: &nbsp;&nbsp;&nbsp;<ui:inputText value="{!v.formSituationConcerns}"/></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 9">
+                        <td style="width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; background: #DEEAF6; mso-background-themecolor: accent1; mso-background-themetint: 51; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Patient’s current inpatient location and anticipated DC date: &nbsp;&nbsp;&nbsp;<ui:inputText value="{!v.formLocationAndDate}"/>
+                                </span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 10">
+                        <td style="width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt; line-height: normal">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Preferred Kindred Location (Name/Address/Phone #): &nbsp;&nbsp;&nbsp;<ui:outputText value="{!v.formDisplay.preferredFacilityNameAddressPhone}"/></span></p>
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt; line-height: normal">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin"></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 11">
+                        <td style="width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; background: #DEEAF6; mso-background-themecolor: accent1; mso-background-themetint: 51; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Physician Name / Specialty / Phone #: &nbsp;&nbsp;&nbsp;<ui:inputText value="{!v.formPhysicianSpecialtyPhone}"/></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 12">
+                        <td style="width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Case Manager Name / Phone #: &nbsp;&nbsp;&nbsp;<ui:outputText value="{!v.formDisplay.formUserName}"/> / &nbsp;&nbsp;&nbsp;<ui:outputText value="{!v.formDisplay.formUserPhone}"/></span></p>
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <i style="mso-bidi-font-style: normal">
+                                    <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                        *If applicable</span></i><span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin"></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 13; mso-yfti-lastrow: yes">
+                        <td style="width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; background: #DEEAF6; mso-background-themecolor: accent1; mso-background-themetint: 51; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    **Urgent need identified**: &nbsp;&nbsp;&nbsp;<ui:inputText value="{!v.formUrgentNeed}"/></span></p>
+                        </td>
+                    </tr>
+                </table>
+                <p class="MsoNormal">
+                    <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin"></span></p>
+                <p class="MsoNormal" style="text-align: left; margin-left: 200px; margin-right: 200px;">
+                    <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;;margin-left: 100px; margin-right: 200px; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin; mso-bidi-font-family: Calibri; mso-bidi-theme-font: minor-latin">
+                        Please keep me updated regarding any progress and/or outcomes for this Service Recommendation.  Should you have any questions, </span> <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;;margin-left: 100px; margin-right: 200px; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin; mso-bidi-font-family: Calibri; mso-bidi-theme-font: minor-latin">please contact me at your convenience.<br/> 
+                    </span><span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;;margin-left: 100px; margin-right: 200px; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin; mso-bidi-font-family: Calibri; mso-bidi-theme-font: minor-latin">Thank you!</span>
+                </p>
+                
+            </body>
+        </div>
+    </aura:if>
+    
+    <aura:if isTrue="{!v.showHHForm}">
+        <div id="OverlapBS" style="background-color:white">
+            <head>
+                <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+                <title>Home health Status Report</title>
+            </head>
+            <body>
+                <p align="right" class="MsoNormal" style="text-align: right; width: 260px; height: 70px; margin-left: 860px;">
+                    <img src="{!$Resource.kindredLogo}"/>
+                </p>
+                <p align="center" class="MsoNormal" style="text-align: center">
+                    <b style="mso-bidi-font-weight: normal">
+                        <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin; mso-no-proof: yes">
+                            Home Health</span><span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin"> 
+                        Status Report</span></b></p>
+                <p class="MsoNormal" style="text-align: left; width: 795px; margin-left: 1.16in">
+                    <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;;margin-left: 187px; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                        Hello, <b style="mso-bidi-font-weight: normal"></b></span></p>
+                <p class="MsoNormal" style="text-align: left; margin-left: 200px; margin-right:250px">
+                    <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;;margin-left: 100px; margin-right:50px; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                        I am forwarding information regarding a Service Recommendation for <ui:outputText value="{!v.formDisplay.preferredFacilityName}"/>.  </span>
+                    <br/><span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;;margin-left: 100px; margin-right:50px; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin"><ui:outputText value="{!v.formDisplay.contactName}"/> called the Kindred Contact Center today seeking to arrange services for <ui:outputText value="{!v.formDisplay.patientName}"/>. <br/></span>
+                    <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;;margin-left: 100px; margin-right:25px; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">Please review the Service Recommendation information below and have someone reach out to the contact to further discuss her/his </span>
+                    <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;;margin-left: 100px; margin-right:50px; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">interest in arranging services.</span></p>
+                <table align="center" border="1" cellpadding="0" cellspacing="0" class="MsoTableGrid" style="border-style: none; border-color: inherit; border-width: medium; border-collapse: collapse; mso-border-alt: solid windowtext .5pt; mso-yfti-tbllook: 1184; mso-padding-alt: 0in 5.4pt 0in 5.4pt; width: 798px; margin-left: 300px;">
+                    <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes">
+                        <td style="width: 467.5pt; border: solid windowtext 1.0pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Date / Time Call Ended: &nbsp;&nbsp;&nbsp;<lightning:input type="datetime-local" value="{!v.formCallEndTime}"/></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 1">
+                        <td style="width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; background: #DEEAF6; mso-background-themecolor: accent1; mso-background-themetint: 51; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Contact Name / Relationship / Number: &nbsp;&nbsp;&nbsp; <ui:outputText value="{!v.formDisplay.contactName}"/> / <ui:inputText value="{!v.contactRelationship}"/> / <ui:outputText value="{!v.formDisplay.contactPhone}"/></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 2">
+                        <td style="width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Patient Name / Age / DOB: &nbsp;&nbsp;&nbsp; <ui:outputText value="{!v.formDisplay.patientName}"/> / <ui:outputText value="{!v.formDisplay.patientAge}"/> / <ui:outputText value="{!v.formDisplay.patientBirthDate}"/> </span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 3">
+                        <td style="width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; background: #DEEAF6; mso-background-themecolor: accent1; mso-background-themetint: 51; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Patient ID # in KindredLink (if available): &nbsp;&nbsp;&nbsp;<ui:inputText value="{!v.formKindredLink}"/> </span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 3">
+                        <td style="width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Address: &nbsp;&nbsp;&nbsp;<ui:outputText value="{!v.formDisplay.patientStreet}"/> &nbsp;&nbsp;&nbsp;<ui:outputText value="{!v.formDisplay.patientCity}"/> &nbsp;&nbsp;&nbsp;<ui:outputText value="{!v.formDisplay.patientState}"/> &nbsp;&nbsp;&nbsp;<ui:outputText value="{!v.formDisplay.patientZip}"/></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 4">
+                        <td style="width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt;background: #DEEAF6; mso-background-themecolor: accent1; mso-background-themetint: 51;" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Phone Number: &nbsp;&nbsp;&nbsp;<ui:outputText value="{!v.formDisplay.patientPhone}"/></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 5">
+                        <td style="width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    SSN: &nbsp;&nbsp;&nbsp;<ui:inputText value="{!v.formSSN}"/></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 6">
+                        <td style="width: 467.5pt; background: #DEEAF6; mso-background-themecolor: accent1; mso-background-themetint: 51;;border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Insurance Information: &nbsp;&nbsp;&nbsp;<ui:outputText value="{!v.formDisplay.assessmentPayor}"/> &nbsp; <ui:outputText value="{!v.formDisplay.assessmentMemberID}"/> &nbsp; <ui:outputText value="{!v.formDisplay.assessmentSubscriberName}"/>
+                                    <br/>
+                                    <ui:outputText value="{!v.formDisplay.assessment.SecondaryPayor}"/> &nbsp; <ui:outputText value="{!v.formDisplay.assessment.SecondaryMemberID}"/> &nbsp; <ui:outputText value="{!v.assessment.SecondarySubscriberName}"/>
+                                </span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 7">
+                        <td style="width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Current DX / Medical HX: &nbsp;&nbsp;&nbsp;<ui:inputText value="{!v.formDXHX}"/></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 8">
+                        <td style="width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt;background: #DEEAF6; mso-background-themecolor: accent1; mso-background-themetint: 51;" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Current Situation / Clinical Concerns: &nbsp;&nbsp;&nbsp;<ui:inputText value="{!v.formSituationConcerns}"/></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 8">
+                        <td style="width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Services Requested (all that apply): &nbsp;&nbsp;&nbsp;<ui:inputText value="{!v.formServicesRequested}"/>
+                                    <br/>
+                                    If SN, specify: &nbsp;&nbsp;&nbsp;<ui:inputText value="{!v.formSpecifySN}"/>
+                                </span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 10">
+                        <td style="width: 467.5pt; background: #DEEAF6; mso-background-themecolor: accent1; mso-background-themetint: 51;;border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt; line-height: normal">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Preferred Kindred Location (Name/Address/Phone #): &nbsp;&nbsp;&nbsp;<ui:outputText value="{!v.formDisplay.preferredFacilityNameAddressPhone}"/></span></p>
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt; line-height: normal">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin"></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 11">
+                        <td style="width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Physician Name / Specialty / Phone #: &nbsp;&nbsp;&nbsp;<ui:inputText value="{!v.formPhysicianSpecialtyPhone}"/></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes">
+                        <td style="width: 467.5pt; background: #DEEAF6; mso-background-themecolor: accent1; mso-background-themetint: 51;;border: solid windowtext 1.0pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Date last seen by physician: &nbsp;&nbsp;&nbsp;<lightning:input type="datetime-local" value="{!v.formLastPhysicianDate}"/></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 11">
+                        <td style="width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt;  padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Consent obtained to contact MD for orders: &nbsp;&nbsp;&nbsp;<ui:inputCheckbox value="{!v.formPhysicianConsent}"/></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 11">
+                        <td style="width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; background: #DEEAF6; mso-background-themecolor: accent1; mso-background-themetint: 51; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Physician F2F completed within last 90 Days: &nbsp;&nbsp;&nbsp;<ui:inputText value="{!v.formPhysicianF2F}"/></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 11">
+                        <td style="width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Homebound Status Verified: &nbsp;&nbsp;&nbsp;<ui:inputText value="{!v.formHomeboundStatus}"/></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 12">
+                        <td style="width: 467.5pt; background: #DEEAF6; mso-background-themecolor: accent1; mso-background-themetint: 51; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Case Manager Name / Phone #: &nbsp;&nbsp;&nbsp;<ui:outputText value="{!v.formDisplay.formUserName}"/> / &nbsp;&nbsp;&nbsp;<ui:outputText value="{!v.formDisplay.formUserPhone}"/></span></p>
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <i style="mso-bidi-font-style: normal">
+                                    <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                        *If applicable</span></i><span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin"></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 13; mso-yfti-lastrow: yes">
+                        <td style="width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt;  padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    **Urgent need identified**: &nbsp;&nbsp;&nbsp;<ui:inputText value="{!v.formUrgentNeed}"/></span></p>
+                        </td>
+                    </tr>
+                </table>
+                <p class="MsoNormal">
+                    <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin"></span></p>
+                <p class="MsoNormal" style="text-align: left; margin-left: 200px; margin-right: 200px;">
+                    <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;;margin-left: 100px; margin-right: 200px; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin; mso-bidi-font-family: Calibri; mso-bidi-theme-font: minor-latin">
+                        Please keep me updated regarding any progress and/or outcomes for this Service Recommendation.  Should you have any questions, </span> <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;;margin-left: 100px; margin-right: 200px; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin; mso-bidi-font-family: Calibri; mso-bidi-theme-font: minor-latin">please contact me at your convenience.<br/> 
+                    </span><span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;;margin-left: 100px; margin-right: 200px; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin; mso-bidi-font-family: Calibri; mso-bidi-theme-font: minor-latin">Thank you!</span>
+                </p>
+                
+            </body>
+        </div>
+    </aura:if>
+    
+    
+    <aura:if isTrue="{!v.showHPForm}">
+        <div id="OverlapBS" style="background-color:white">
+            <head>
+                <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+                <title>Hospice Status Report</title>
+            </head>
+            <body>
+                <p align="right" class="MsoNormal" style="text-align: right; width: 260px; height: 70px; margin-left: 860px;">
+                    <img src="{!$Resource.kindredLogo}"/>
+                </p>
+                <p align="center" class="MsoNormal" style="text-align: center">
+                    <b style="mso-bidi-font-weight: normal">
+                        <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin; mso-no-proof: yes">
+                            Hospice</span><span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin"> 
+                        Status Report</span></b></p>
+                <p class="MsoNormal" style="text-align: left; width: 795px; margin-left: 1.16in">
+                    <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;;margin-left: 187px; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                        Hello, <b style="mso-bidi-font-weight: normal"></b></span></p>
+                <p class="MsoNormal" style="text-align: left; margin-left: 200px; margin-right:250px">
+                    <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;;margin-left: 100px; margin-right:50px; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                        I am forwarding information regarding a Service Recommendation for <ui:outputText value="{!v.formDisplay.preferredFacilityName}"/>.  </span>
+                    <br/><span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;;margin-left: 100px; margin-right:50px; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin"><ui:outputText value="{!v.contactName}"/> called the Kindred Contact Center today seeking to arrange services for <ui:outputText value="{!v.patientName}"/>. <br/></span>
+                    <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;;margin-left: 100px; margin-right:25px; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">Please review the Service Recommendation information below and have someone reach out to the contact to further discuss her/his </span>
+                    <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;;margin-left: 100px; margin-right:50px; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">interest in arranging services.</span></p>
+                <table align="center" border="1" cellpadding="0" cellspacing="0" class="MsoTableGrid" style="border-style: none; border-color: inherit; border-width: medium; border-collapse: collapse; mso-border-alt: solid windowtext .5pt; mso-yfti-tbllook: 1184; mso-padding-alt: 0in 5.4pt 0in 5.4pt; width: 798px; margin-left: 300px;">
+                    <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes">
+                        <td style="width: 467.5pt; border: solid windowtext 1.0pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Date / Time Call Ended: &nbsp;&nbsp;&nbsp;<lightning:input type="datetime-local" value="{!v.formCallEndTime}"/></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 1">
+                        <td style="width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; background: #DEEAF6; mso-background-themecolor: accent1; mso-background-themetint: 51; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Contact Name / Relationship / Number: &nbsp;&nbsp;&nbsp; <ui:outputText value="{!v.formDisplay.contactName}"/> / <ui:inputText value="{!v.contactRelationship}"/> / <ui:outputText value="{!v.formDisplay.contactPhone}"/></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 2">
+                        <td style="width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Patient Name / Age / DOB: &nbsp;&nbsp;&nbsp; <ui:outputText value="{!v.formDisplay.patientName}"/> / <ui:outputText value="{!v.formDisplay.patientAge}"/> / <ui:outputText value="{!v.formDisplay.patientBirthDate}"/> </span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 3">
+                        <td style="background: #DEEAF6; mso-background-themecolor: accent1; width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Address: &nbsp;&nbsp;&nbsp;<ui:outputText value="{!v.formDisplay.patientStreet}"/> &nbsp;&nbsp;&nbsp;<ui:outputText value="{!v.formDisplay.patientCity}"/> &nbsp;&nbsp;&nbsp;<ui:outputText value="{!v.formDisplay.patientState}"/> &nbsp;&nbsp;&nbsp;<ui:outputText value="{!v.formDisplay.patientZip}"/></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 4">
+                        <td style="width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt; mso-background-themetint: 51;" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Phone Number: &nbsp;&nbsp;&nbsp;<ui:outputText value="{!v.formDisplay.patientPhone}"/></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 5">
+                        <td style="background: #DEEAF6; mso-background-themecolor: accent1; width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    SSN: &nbsp;&nbsp;&nbsp;<ui:inputText value="{!v.formSSN}"/></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 6">
+                        <td style="width: 467.5pt; mso-background-themetint: 51;;border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Insurance Information: &nbsp;&nbsp;&nbsp;<ui:outputText value="{!v.formDisplay.assessmentPayor}"/> &nbsp; <ui:outputText value="{!v.formDisplay.assessmentMemberID}"/> &nbsp; <ui:outputText value="{!v.formDisplay.assessmentSubscriberName}"/>
+                                    <br/>
+                                    <ui:outputText value="{!v.formDisplay.assessmentSecondaryPayor}"/> &nbsp; <ui:outputText value="{!v.formDisplay.assessmentSecondaryMemberID}"/> &nbsp; <ui:outputText value="{!v.formDisplay.assessmentSecondarySubscriberName}"/>
+                                </span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 7">
+                        <td style="background: #DEEAF6; mso-background-themecolor: accent1; width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Current DX / Medical HX: &nbsp;&nbsp;&nbsp;<ui:inputText value="{!v.formDXHX}"/></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 8">
+                        <td style="width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt;" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Current Situation / Clinical Concerns: &nbsp;&nbsp;&nbsp;<ui:inputText value="{!v.formSituationConcerns}"/></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 10">
+                        <td style="width: 467.5pt; background: #DEEAF6; mso-background-themecolor: accent1; mso-background-themetint: 51;;border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt; line-height: normal">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Preferred Kindred Location (Name/Address/Phone #): &nbsp;&nbsp;&nbsp;<ui:outputText value="{!v.formDisplay.preferredFacilityNameAddressPhone}"/></span></p>
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt; line-height: normal">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin"></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 11">
+                        <td style="width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Physician Name / Specialty / Phone #: &nbsp;&nbsp;&nbsp;<ui:inputText value="{!v.formPhysicianSpecialtyPhone}"/></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes">
+                        <td style="width: 467.5pt; background: #DEEAF6; mso-background-themecolor: accent1; mso-background-themetint: 51;;border: solid windowtext 1.0pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Date last seen by physician: &nbsp;&nbsp;&nbsp;<lightning:input type="datetime-local" value="{!v.formLastPhysicianDate}"/></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 11">
+                        <td style="width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt;  padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Consent obtained to contact MD for orders: &nbsp;&nbsp;&nbsp;<ui:inputCheckbox value="{!v.formPhysicianConsent}"/></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 12">
+                        <td style="width: 467.5pt; background: #DEEAF6; mso-background-themecolor: accent1; mso-background-themetint: 51; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Case Manager Name / Phone #: &nbsp;&nbsp;&nbsp;<ui:outputText value="{!v.formDisplay.formUserName}"/> / &nbsp;&nbsp;&nbsp;<ui:outputText value="{!v.formDisplay.formUserPhone}"/></span></p>
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <i style="mso-bidi-font-style: normal">
+                                    <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                        *If applicable</span></i><span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin"></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 13; mso-yfti-lastrow: yes">
+                        <td style="width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt;  padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    **Urgent need identified**: &nbsp;&nbsp;&nbsp;<ui:inputText value="{!v.formUrgentNeed}"/></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 13; mso-yfti-lastrow: yes">
+                        <td style="background: #DEEAF6; mso-background-themecolor: accent1; width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt;  padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    <span style="font-weight:bold">If request is for a hospice travel contact, please complete the fields below: </span>&nbsp;&nbsp;&nbsp;<ui:inputText value="{!v.formUrgentNeed}"/></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 13; mso-yfti-lastrow: yes">
+                        <td style="width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt;  padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Current Hospice Provider (Company Name/Contact Name/Phone Number): &nbsp;&nbsp;&nbsp;<ui:inputText value="{!v.formCurrentHospiceProvider}"/></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 13; mso-yfti-lastrow: yes">
+                        <td style="background: #DEEAF6; mso-background-themecolor: accent1; width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt;  padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Full Address of Patient Travel Destination: &nbsp;&nbsp;&nbsp;<ui:inputText value="{!v.formPatientDestination}"/></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 13; mso-yfti-lastrow: yes">
+                        <td style="width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt;  padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Dates of Planned Travel: &nbsp;&nbsp;&nbsp;<ui:inputText value="{!v.formPlannedTravelDates}"/></span></p>
+                        </td>
+                    </tr>
+                </table>
+                <p class="MsoNormal">
+                    <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin"></span></p>
+                <p class="MsoNormal" style="text-align: left; margin-left: 200px; margin-right: 200px;">
+                    <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;;margin-left: 100px; margin-right: 200px; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin; mso-bidi-font-family: Calibri; mso-bidi-theme-font: minor-latin">
+                        Please keep us updated regarding any progress and/or outcomes for this referral.  Should you have any questions, </span> <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;;margin-left: 100px; margin-right: 200px; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin; mso-bidi-font-family: Calibri; mso-bidi-theme-font: minor-latin">please contact me at your convenience.<br/> 
+                    </span><span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;;margin-left: 100px; margin-right: 200px; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin; mso-bidi-font-family: Calibri; mso-bidi-theme-font: minor-latin">Thank you!</span>
+                </p>
+                
+            </body>
+        </div>
+    </aura:if>
+    
+    
+    <aura:if isTrue="{!v.showPalliativeForm}">
+        <div id="OverlapBS" style="background-color:white">
+            <head>
+                <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+                <title>Palliative Care Status Report</title>
+            </head>
+            <body>
+                <p align="right" class="MsoNormal" style="text-align: right; width: 260px; height: 70px; margin-left: 860px;">
+                    <img src="{!$Resource.kindredLogo}"/>
+                </p>
+                <p align="center" class="MsoNormal" style="text-align: center">
+                    <b style="mso-bidi-font-weight: normal">
+                        <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin; mso-no-proof: yes">
+                            Palliative Care</span><span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin"> 
+                        Status Report</span></b></p>
+                <p class="MsoNormal" style="text-align: left; width: 795px; margin-left: 1.16in">
+                    <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;;margin-left: 187px; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                        Hello, <b style="mso-bidi-font-weight: normal"></b></span></p>
+                <p class="MsoNormal" style="text-align: left; margin-left: 200px; margin-right:250px">
+                    <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;;margin-left: 100px; margin-right:50px; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                        I am forwarding information regarding a Service Recommendation for <ui:outputText value="{!v.preferredFacilityName}"/>.  </span>
+                    <br/><span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;;margin-left: 100px; margin-right:50px; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin"><ui:outputText value="{!v.contactName}"/> called the Kindred Contact Center today seeking to arrange services for <ui:outputText value="{!v.patientName}"/>. <br/></span>
+                    <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;;margin-left: 100px; margin-right:25px; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">Please review the Service Recommendation information below and have someone reach out to the contact to further discuss her/his </span>
+                    <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;;margin-left: 100px; margin-right:50px; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">interest in arranging services.</span></p>
+                <table align="center" border="1" cellpadding="0" cellspacing="0" class="MsoTableGrid" style="border-style: none; border-color: inherit; border-width: medium; border-collapse: collapse; mso-border-alt: solid windowtext .5pt; mso-yfti-tbllook: 1184; mso-padding-alt: 0in 5.4pt 0in 5.4pt; width: 798px; margin-left: 300px;">
+                    <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes">
+                        <td style="width: 467.5pt; border: solid windowtext 1.0pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Date / Time Call Ended: &nbsp;&nbsp;&nbsp;<lightning:input type="datetime-local" value="{!v.formCallEndTime}"/></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 1">
+                        <td style="width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; background: #DEEAF6; mso-background-themecolor: accent1; mso-background-themetint: 51; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Contact Name / Relationship / Number: &nbsp;&nbsp;&nbsp; <ui:outputText value="{!v.contactName}"/> / <ui:inputText value="{!v.contactRelationship}"/> / <ui:outputText value="{!v.activeContact.Phone}"/></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 2">
+                        <td style="width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Patient Name / Age / DOB: &nbsp;&nbsp;&nbsp; <ui:outputText value="{!v.patientName}"/> / <ui:outputText value="{!v.patientAge}"/> / <ui:outputText value="{!v.activePatient.Date_of_Birth__c}"/> </span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 3">
+                        <td style="background: #DEEAF6; mso-background-themecolor: accent1; width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Address: &nbsp;&nbsp;&nbsp;<ui:outputText value="{!v.activePatient.Street__c}"/> &nbsp;&nbsp;&nbsp;<ui:outputText value="{!v.activePatient.City__c}"/> &nbsp;&nbsp;&nbsp;<ui:outputText value="{!v.activePatient.State__c}"/> &nbsp;&nbsp;&nbsp;<ui:outputText value="{!v.activePatient.Postal_Code__c}"/></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 4">
+                        <td style="width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt; mso-background-themetint: 51;" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Phone Number: &nbsp;&nbsp;&nbsp;<ui:outputText value="{!v.activePatient.Phone__c}"/></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 5">
+                        <td style="background: #DEEAF6; mso-background-themecolor: accent1; width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    SSN: &nbsp;&nbsp;&nbsp;<ui:inputText value="{!v.formSSN}"/></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 6">
+                        <td style="width: 467.5pt; mso-background-themetint: 51;;border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Insurance Information: &nbsp;&nbsp;&nbsp;<ui:outputText value="{!v.activeAssessment.Payor__c}"/> &nbsp; <ui:outputText value="{!v.activeAssessment.Member_ID__c}"/> &nbsp; <ui:outputText value="{!v.activeAssessment.Subscriber_Name__c}"/>
+                                    <br/>
+                                    <ui:outputText value="{!v.activeAssessment.Secondary_Payor__c}"/> &nbsp; <ui:outputText value="{!v.activeAssessment.Secondary_Member_ID__c}"/> &nbsp; <ui:outputText value="{!v.activeAssessment.Secondary_Subscriber_Name__c}"/>
+                                </span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 7">
+                        <td style="background: #DEEAF6; mso-background-themecolor: accent1; width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Current DX / Medical HX: &nbsp;&nbsp;&nbsp;<ui:inputText value="{!v.formDXHX}"/></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 8">
+                        <td style="width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt;" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Current Situation / Clinical Concerns: &nbsp;&nbsp;&nbsp;<ui:inputText value="{!v.formSituationConcerns}"/></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 10">
+                        <td style="width: 467.5pt; background: #DEEAF6; mso-background-themecolor: accent1; mso-background-themetint: 51;;border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt; line-height: normal">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Preferred Kindred Location (Name/Address/Phone #): &nbsp;&nbsp;&nbsp;<ui:outputText value="{!v.preferredFacilityNameAddressPhone}"/></span></p>
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt; line-height: normal">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin"></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 11">
+                        <td style="width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Physician Name / Specialty / Phone #: &nbsp;&nbsp;&nbsp;<ui:inputText value="{!v.formPhysicianSpecialtyPhone}"/></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes">
+                        <td style="width: 467.5pt; background: #DEEAF6; mso-background-themecolor: accent1; mso-background-themetint: 51;;border: solid windowtext 1.0pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Date last seen by physician: &nbsp;&nbsp;&nbsp;<lightning:input type="datetime-local" value="{!v.formLastPhysicianDate}"/></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 11">
+                        <td style="width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt;  padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Consent obtained to contact MD for orders: &nbsp;&nbsp;&nbsp;<ui:inputCheckbox value="{!v.formPhysicianConsent}"/></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 12">
+                        <td style="width: 467.5pt; background: #DEEAF6; mso-background-themecolor: accent1; mso-background-themetint: 51; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Case Manager Name / Phone #: &nbsp;&nbsp;&nbsp;<ui:outputText value="{!v.formUserName}"/> / &nbsp;&nbsp;&nbsp;<ui:outputText value="{!v.formUserPhone}"/></span></p>
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <i style="mso-bidi-font-style: normal">
+                                    <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                        *If applicable</span></i><span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin"></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 13; mso-yfti-lastrow: yes">
+                        <td style="width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt;  padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    **Urgent need identified**: &nbsp;&nbsp;&nbsp;<ui:inputText value="{!v.formUrgentNeed}"/></span></p>
+                        </td>
+                    </tr>
+                </table>
+                <p class="MsoNormal">
+                    <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin"></span></p>
+                <p class="MsoNormal" style="text-align: left; margin-left: 200px; margin-right: 200px;">
+                    <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;;margin-left: 100px; margin-right: 200px; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin; mso-bidi-font-family: Calibri; mso-bidi-theme-font: minor-latin">
+                        Please keep me updated regarding any progress and/or outcomes for this Service Recommendation.  Should you have any questions, </span> <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;;margin-left: 100px; margin-right: 200px; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin; mso-bidi-font-family: Calibri; mso-bidi-theme-font: minor-latin">please contact me at your convenience.<br/> 
+                    </span><span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;;margin-left: 100px; margin-right: 200px; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin; mso-bidi-font-family: Calibri; mso-bidi-theme-font: minor-latin">Thank you!</span>
+                </p>
+                
+            </body>
+        </div>
+    </aura:if>
+    
+    
+    <aura:if isTrue="{!v.showPHCAForm}">
+        <div id="OverlapBS" style="background-color:white">
+            <head>
+                <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+                <title>PHCA / CC Status Report</title>
+            </head>
+            <body>
+                <p align="right" class="MsoNormal" style="text-align: right; width: 260px; height: 70px; margin-left: 860px;">
+                    <img src="{!$Resource.kindredLogo}"/>
+                </p>
+                <p align="center" class="MsoNormal" style="text-align: center">
+                    <b style="mso-bidi-font-weight: normal">
+                        <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin; mso-no-proof: yes">
+                            PHCA / CC</span><span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin"> 
+                        Status Report</span></b></p>
+                <p class="MsoNormal" style="text-align: left; width: 795px; margin-left: 1.16in">
+                    <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;;margin-left: 187px; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                        Hello, <b style="mso-bidi-font-weight: normal"></b></span></p>
+                <p class="MsoNormal" style="text-align: left; margin-left: 200px; margin-right:250px">
+                    <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;;margin-left: 100px; margin-right:50px; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                        I am forwarding information regarding a Service Recommendation for <ui:outputText value="{!v.preferredFacilityName}"/>.  </span>
+                    <br/><span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;;margin-left: 100px; margin-right:50px; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin"><ui:outputText value="{!v.contactName}"/> called the Kindred Contact Center today seeking to arrange services for <ui:outputText value="{!v.patientName}"/>. <br/></span>
+                    <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;;margin-left: 100px; margin-right:25px; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">Please review the Service Recommendation information below and have someone reach out to the contact to further discuss her/his </span>
+                    <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;;margin-left: 100px; margin-right:50px; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">interest in arranging services.</span></p>
+                <table align="center" border="1" cellpadding="0" cellspacing="0" class="MsoTableGrid" style="border-style: none; border-color: inherit; border-width: medium; border-collapse: collapse; mso-border-alt: solid windowtext .5pt; mso-yfti-tbllook: 1184; mso-padding-alt: 0in 5.4pt 0in 5.4pt; width: 798px; margin-left: 300px;">
+                    <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes">
+                        <td style="width: 467.5pt; border: solid windowtext 1.0pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Date / Time Call Ended: &nbsp;&nbsp;&nbsp;<lightning:input type="datetime-local" value="{!v.formCallEndTime}"/></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 1">
+                        <td style="width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; background: #DEEAF6; mso-background-themecolor: accent1; mso-background-themetint: 51; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Contact Name / Relationship / Number: &nbsp;&nbsp;&nbsp; <ui:outputText value="{!v.contactName}"/> / <ui:inputText value="{!v.contactRelationship}"/> / <ui:outputText value="{!v.activeContact.Phone}"/></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 2">
+                        <td style="width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Contact Email Address (if provided): &nbsp;&nbsp;&nbsp; <ui:outputText value="{!v.activeContact.Email}"/> </span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 2">
+                        <td style="width: 467.5pt; background: #DEEAF6; mso-background-themecolor: accent1; mso-background-themetint: 51; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Patient Name / Age / DOB: &nbsp;&nbsp;&nbsp; <ui:outputText value="{!v.patientName}"/> / <ui:outputText value="{!v.patientAge}"/> / <ui:outputText value="{!v.activePatient.Date_of_Birth__c}"/> </span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 3">
+                        <td style="width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Address: &nbsp;&nbsp;&nbsp;<ui:outputText value="{!v.activePatient.Street__c}"/> &nbsp;&nbsp;&nbsp;<ui:outputText value="{!v.activePatient.City__c}"/> &nbsp;&nbsp;&nbsp;<ui:outputText value="{!v.activePatient.State__c}"/> &nbsp;&nbsp;&nbsp;<ui:outputText value="{!v.activePatient.Postal_Code__c}"/></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 4">
+                        <td style="background: #DEEAF6; mso-background-themecolor: accent1; mso-background-themetint: 51; width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt; mso-background-themetint: 51;" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Phone Number: &nbsp;&nbsp;&nbsp;<ui:outputText value="{!v.activePatient.Phone__c}"/></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 8">
+                        <td style="width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt;" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Current Situation / Concerns: &nbsp;&nbsp;&nbsp;<ui:inputText value="{!v.formSituationConcerns}"/></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 10">
+                        <td style="width: 467.5pt; background: #DEEAF6; mso-background-themecolor: accent1; mso-background-themetint: 51; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt; line-height: normal">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Preferred Kindred Location (Name/Address/Phone #): &nbsp;&nbsp;&nbsp;<ui:outputText value="{!v.preferredFacilityNameAddressPhone}"/></span></p>
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt; line-height: normal">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin"></span></p>
+                        </td>
+                    </tr>
+                </table>
+                <p class="MsoNormal">
+                    <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin"></span></p>
+                <p class="MsoNormal" style="text-align: left; margin-left: 200px; margin-right: 200px;">
+                    <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;;margin-left: 100px; margin-right: 200px; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin; mso-bidi-font-family: Calibri; mso-bidi-theme-font: minor-latin">
+                        Please keep me updated regarding any progress and/or outcomes for this Service Recommendation.  Should you have any questions, </span> <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;;margin-left: 100px; margin-right: 200px; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin; mso-bidi-font-family: Calibri; mso-bidi-theme-font: minor-latin">please contact me at your convenience.<br/> 
+                    </span><span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;;margin-left: 100px; margin-right: 200px; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin; mso-bidi-font-family: Calibri; mso-bidi-theme-font: minor-latin">Thank you!</span>
+                </p>
+                
+            </body>
+        </div>
+    </aura:if>
+    
+    <aura:if isTrue="{!v.showIHPCForm}">
+        <div id="OverlapBS" style="background-color:white">
+            <head>
+                <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+                <title>IHPC Status Report</title>
+            </head>
+            <body>
+                <p align="right" class="MsoNormal" style="text-align: right; width: 260px; height: 70px; margin-left: 860px;">
+                    <img src="{!$Resource.kindredLogo}"/>
+                </p>
+                <p align="center" class="MsoNormal" style="text-align: center">
+                    <b style="mso-bidi-font-weight: normal">
+                        <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin; mso-no-proof: yes">
+                            IHPC Status</span><span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin"> 
+                        Status Report</span></b></p>
+                <p class="MsoNormal" style="text-align: left; width: 795px; margin-left: 1.16in">
+                    <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;;margin-left: 187px; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                        Hello, <b style="mso-bidi-font-weight: normal"></b></span></p>
+                <p class="MsoNormal" style="text-align: left; margin-left: 200px; margin-right:250px">
+                    <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;;margin-left: 100px; margin-right:50px; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                        I am forwarding information regarding a potential IHPC referral for <ui:outputText value="{!v.preferredFacilityName}"/>.  </span>
+                    <br/><span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;;margin-left: 100px; margin-right:50px; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin"><ui:outputText value="{!v.contactName}"/> called the Kindred Contact Center today seeking to arrange services for <ui:outputText value="{!v.patientName}"/>. <br/></span>
+                    <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;;margin-left: 100px; margin-right:25px; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">Please review the Service Recommendation information below and have someone reach out to the contact to further discuss her/his </span>
+                    <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;;margin-left: 100px; margin-right:50px; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">interest in arranging services.</span></p>
+                <table align="center" border="1" cellpadding="0" cellspacing="0" class="MsoTableGrid" style="border-style: none; border-color: inherit; border-width: medium; border-collapse: collapse; mso-border-alt: solid windowtext .5pt; mso-yfti-tbllook: 1184; mso-padding-alt: 0in 5.4pt 0in 5.4pt; width: 798px; margin-left: 300px;">
+                    <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes">
+                        <td style="width: 467.5pt; border: solid windowtext 1.0pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Date / Time Call Ended: &nbsp;&nbsp;&nbsp;<lightning:input type="datetime-local" value="{!v.formCallEndTime}"/></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 1">
+                        <td style="width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; background: #DEEAF6; mso-background-themecolor: accent1; mso-background-themetint: 51; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Contact Name / Relationship / Number: &nbsp;&nbsp;&nbsp; <ui:outputText value="{!v.contactName}"/> / <ui:inputText value="{!v.contactRelationship}"/> / <ui:outputText value="{!v.activeContact.Phone}"/></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 2">
+                        <td style="width: 467.5pt; background: #DEEAF6; mso-background-themecolor: accent1; mso-background-themetint: 51; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Patient Name / Age / DOB: &nbsp;&nbsp;&nbsp; <ui:outputText value="{!v.patientName}"/> / <ui:outputText value="{!v.patientAge}"/> / <ui:outputText value="{!v.activePatient.Date_of_Birth__c}"/> </span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 3">
+                        <td style="background: #DEEAF6; mso-background-themecolor: accent1; mso-background-themetint: 51; width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Address: &nbsp;&nbsp;&nbsp;<ui:outputText value="{!v.activePatient.Street__c}"/> &nbsp;&nbsp;&nbsp;<ui:outputText value="{!v.activePatient.City__c}"/> &nbsp;&nbsp;&nbsp;<ui:outputText value="{!v.activePatient.State__c}"/> &nbsp;&nbsp;&nbsp;<ui:outputText value="{!v.activePatient.Postal_Code__c}"/></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 4">
+                        <td style="width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt; mso-background-themetint: 51;" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Phone Number: &nbsp;&nbsp;&nbsp;<ui:outputText value="{!v.activePatient.Phone__c}"/></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 6">
+                        <td style="width: 467.5pt; background: #DEEAF6; mso-background-themecolor: accent1; mso-background-themetint: 51; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Insurance Information: &nbsp;&nbsp;&nbsp;<ui:outputText value="{!v.activeAssessment.Payor__c}"/> &nbsp; <ui:outputText value="{!v.activeAssessment.Member_ID__c}"/> &nbsp; <ui:outputText value="{!v.activeAssessment.Subscriber_Name__c}"/>
+                                    <br/>
+                                    <ui:outputText value="{!v.activeAssessment.Secondary_Payor__c}"/> &nbsp; <ui:outputText value="{!v.activeAssessment.Secondary_Member_ID__c}"/> &nbsp; <ui:outputText value="{!v.activeAssessment.Secondary_Subscriber_Name__c}"/>
+                                </span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 8">
+                        <td style="width: 467.5pt; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt;" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Current Situation / Concerns: &nbsp;&nbsp;&nbsp;<ui:inputText value="{!v.formSituationConcerns}"/></span></p>
+                        </td>
+                    </tr>
+                    <tr style="mso-yfti-irow: 10">
+                        <td style="width: 467.5pt; background: #DEEAF6; mso-background-themecolor: accent1; mso-background-themetint: 51; border: solid windowtext 1.0pt; border-top: none; mso-border-top-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; padding: 0in 5.4pt 0in 5.4pt" valign="top" width="779">
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt; line-height: normal">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin">
+                                    Preferred Kindred Location (Name/Address/Phone #/SAP#): &nbsp;&nbsp;&nbsp;<ui:outputText value="{!v.preferredFacilityNameAddressPhone}"/></span></p>
+                            <p class="MsoNormal" style="margin-bottom: 0in; margin-bottom: .0001pt; line-height: normal">
+                                <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin"></span></p>
+                        </td>
+                    </tr>
+                </table>
+                <p class="MsoNormal">
+                    <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin"></span></p>
+                <p class="MsoNormal" style="text-align: left; margin-left: 200px; margin-right: 200px;">
+                    <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;;margin-left: 100px; margin-right: 200px; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin; mso-bidi-font-family: Calibri; mso-bidi-theme-font: minor-latin">
+                        Please keep me updated regarding any progress and/or outcomes for this Service Recommendation.  Should you have any questions, </span> <span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;;margin-left: 100px; margin-right: 200px; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin; mso-bidi-font-family: Calibri; mso-bidi-theme-font: minor-latin">please contact me at your convenience.<br/> 
+                    </span><span style="font-family: &quot;Calibri Light&quot;,&quot;sans-serif&quot;;margin-left: 100px; margin-right: 200px; mso-ascii-theme-font: major-latin; mso-hansi-theme-font: major-latin; mso-bidi-font-family: Calibri; mso-bidi-theme-font: minor-latin">Thank you!</span>
+                </p>
+                
+            </body>
+        </div>
+    </aura:if>    
+        
+    <table>
+    	<tr>
+        	<td>
+                <lightning:button label="Save and Print" onclick="{!c.saveAndPrintForm}" />
+            </td>
+        </tr>
+    </table>
+    </div>
+</aura:component>

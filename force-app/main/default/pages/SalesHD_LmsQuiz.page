@@ -1,0 +1,400 @@
+<apex:page showHeader="false" controller="SalesHD_LMS" standardStylesheets="false" sidebar="false" applyHtmlTag="false" applyBodyTag="false" docType="html-5.0">
+
+<html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<head>
+	<title>LMS Quiz</title>
+	<apex:stylesheet value="{!URLFOR($Resource.LightningDesign, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"
+	integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous"/>
+	<link rel="stylesheet" href="https://cdn.linearicons.com/free/1.0.0/icon-font.min.css"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1,minimum-scale=1, maximum-scale=1, user-scalable=no"/>
+</head>
+<style>
+html, body, .container-fluid {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+  -webkit-overflow-scrolling:auto;
+}
+.container{
+	padding: 0px;
+}
+.btn{
+	font-size: 30px !important;
+	color: white !important;
+	border-radius: 10px;
+}
+h1{
+	color: #007EF5;
+	background-color: #fff;
+	padding: 3px !important;
+	margin-top: 10px !important;
+	border-radius: 19px;
+	font-size: 25px !important;
+	font-weight: bold !important;
+}
+.disabled{
+	cursor: default !important;
+}
+.card{
+	font-size: 25px;
+	border-radius: 20px;
+}
+.correct{
+	color: #5ada67 !important;
+}
+.incorrect{
+	color: #f14f4c !important;
+}
+.modal{
+	font-size: 18px;
+}
+.modal-title{
+	font-size: 25px !important;
+}
+.question-card{
+	font-size: 18px;
+	margin-bottom: 20px;
+}
+.question-card .card-title{
+	font-size: 25px;
+	font-weight: bold;
+}
+.question-card .radio-input{
+	display: inline-block;
+}
+.card-title input{
+	border: none;
+	border-bottom: 2px solid #16325c !important;
+	color: #16325c !important;
+}
+.card-title input:focus{
+	outline: none;
+}
+.unanswered{
+	border-color: #f14f4c;
+}
+.question-card .answer{
+	padding-left: 10px;
+	display: inline-block;
+}
+#quiz-container, #answer-container{
+	display: none;
+}
+#ready-container{
+	margin-top: 20%;
+}
+#continue{
+	margin-bottom: 20px;
+}
+#timer{
+	text-align: center;
+	display: none;
+	font-size: 30px;
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	color: white;
+}
+</style>
+<body>
+
+	<!-- REQUIRED SLDS WRAPPER -->
+	<div class="LightningDesign">
+		<div class="slds-spinner_container" id="spinner" style="position:fixed; width:100vw; height:100vh;">
+			<div class="slds-spinner slds-spinner--large slds-spinner--brand">
+				<div class="slds-spinner__dot-a"></div>
+				<div class="slds-spinner__dot-b"></div>
+			</div>
+		</div>
+
+		<div class="container" id="ready-container">
+			<div class="row">
+				<div class="col-8 offset-2 align-self-center">
+					<div class="card text-center">
+						<div class="card-header" id="quiz-title">
+
+						</div>
+						<div class="card-body">
+							<p class="card-text">In this assignment, you are to answer quiz questions. When you are ready to start the assignment, click the button below.</p>
+							<button id="start" href="#" class="btn btn-primary" style="margin-top:20px;">Start the Quiz</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="container" id="quiz-container">
+			<div class="row" style="padding-top:7%;">
+				<div class="col" id="questions">
+
+				</div>
+			</div>
+			<div class="row">
+				<div class="col">
+					<button type="button" class="btn btn-secondary btn-lg btn-block disabled" id="continue">Submit Quiz <span class="lnr lnr-arrow-right"></span></button>
+				</div>
+			</div>
+		</div>
+
+		<div class="container" id="answer-container">
+			<div class="row" style="padding-top:7%;">
+				<div class="col" id="answers">
+
+				</div>
+			</div>
+			<div class="row">
+				<div class="col">
+					<button type="button" class="btn btn-primary btn-lg btn-block" id="backHome">Back to LMS <span class="lnr lnr-home"></span></button>
+				</div>
+			</div>
+		</div>
+
+		<div class="container">
+			<div class="row">
+				<div class="col bg-primary" id="timer">
+
+				</div>
+			</div>
+		</div>
+
+		<div class="modal fade" id="areyousure">
+			<div class="modal-dialog modal-dialog-centered" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h1 class="modal-title">Have you finished the quiz?</h1>
+					</div>
+					<div class="modal-body">
+						By clicking yes, you are submitting your quiz answers for review.
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">NO</button>
+						<button type="button" class="btn btn-primary" id="yesHome">YES</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+	<!-- / REQUIRED SLDS WRAPPER -->
+
+</body>
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"
+integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script src="//code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>
+
+<script>
+
+var quizTime, isTimed;
+var canContinue = false, started = false;
+$(document).ready(function(){
+
+	SalesHD_LMS.checkCompleted(getUrlParam('assignmentId'), function(callback, event){
+		var assignment = JSON.parse(callback);
+		$("#quiz-title").text(assignment.name + ' ' + assignment.type);
+		if(assignment.complete){
+			canContinue = true;
+			started = false;
+			$("#ready-container").hide();
+			var answers = JSON.parse(assignment.answerJson);
+			for(var i in answers){
+				$("#answers").append(showAnswer(answers[i]));
+			}
+
+			$("#answer-container").show();
+		}
+		$("#spinner").hide();
+	}, {escape:false});
+
+	getQuestions();
+
+	$("#continue").click(function(){
+		if(canContinue){
+			$("#areyousure").modal("show");
+		} else{
+			$(".question-card").not(".answered").addClass("unanswered");
+		}
+	});
+
+	$("#yesHome").click(function(){
+		submitQuiz();
+	});
+
+	$("#backHome").click(function(){
+		window.location.href = '/apex/SalesHD_LMS';
+	});
+
+
+	$("#start").click(function(){
+		SalesHD_LMS.startAssignment(getUrlParam('assignmentId'), function(callback, event){
+			started = true;
+			var data = JSON.parse(callback);
+			if(data.timed && data.seconds){
+				countdownTimeStart(data.seconds);
+				$("#timer").show();
+			}
+			$("#ready-container").hide();
+			$("#quiz-container").show();
+		}, {escape:false});
+	});
+});
+
+function submitQuiz(){
+	var jsonPayload = '{';
+	$(".question-card").each(function(index){
+		var userAnswer = '';
+		if($(this).find(".radio-input:checked").siblings("p").text()) userAnswer = $(this).find(".radio-input:checked").siblings("p").text();
+		else if($(this).find("input:text").val()) userAnswer = $(this).find("input:text").val()
+		jsonPayload += '"'+(index+1)+'" : "'+userAnswer+'", ';
+	});
+	jsonPayload = jsonPayload.substring(0, jsonPayload.length - 2).replace(/(?:\r\n|\r|\n)/g, '');
+	jsonPayload += '}';
+	SalesHD_LMS.submitQuiz(getUrlParam('assignmentId'), jsonPayload, function(callback, event){
+		var answers = JSON.parse(callback);
+		for(var i in answers){
+			$("#answers").append(showAnswer(answers[i]));
+		}
+		if(timer){
+			clearInterval(timer);
+		}
+		$("#areyousure").modal('hide');
+		$("#quiz-container").hide();
+		$("#timer").hide();
+		$("#answer-container").show();
+	}, {escape:false});
+}
+
+function getUrlParam(parameter){
+	var urlparameter;
+	if(window.location.href.indexOf(parameter) > -1){
+		urlparameter = getUrlVars()[parameter];
+	}
+	return urlparameter;
+}
+
+function getUrlVars() {
+	var vars = {};
+	var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+		vars[key] = value;
+	});
+	return vars;
+}
+
+var timer;
+function countdownTimeStart(s){
+
+	var countDownDate = new Date().getTime() + s*1000;
+
+	var now = new Date().getTime();
+	var distance = countDownDate - now;
+	var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+	var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+	var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+	document.getElementById("timer").innerHTML = '<b>'+hours + "h "
+	+ minutes + "m " + seconds + "s </b>";
+
+	// Update the count down every 1 second
+	timer = setInterval(function() {
+		var now = new Date().getTime();
+
+		// Find the distance between now an the count down date
+		var distance = (countDownDate+1000) - now;
+
+		if(((distance-1000)/(quizTime*1000))<=0.2){
+			$("#timer").removeClass("bg-primary").addClass("bg-danger");
+		}
+
+		// Time calculations for days, hours, minutes and seconds
+		var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+		var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+		var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+		// Output the result in an element with id="demo"
+		document.getElementById("timer").innerHTML = '<b>'+hours + "h "
+		+ minutes + "m " + seconds + "s </b>";
+
+		// If the count down is over, write some text
+		if (distance < 0) {
+			clearInterval(timer);
+			document.getElementById("timer").innerHTML = '<b><i class="fa fa-thumbs-o-down" aria-hidden="true"></i> Your time has expired.</b> The quiz will now auto-submit.';
+			submitQuiz();
+		}
+		// Get todays date and time
+
+
+
+	}, 1000);
+}
+
+function getQuestions(){
+	SalesHD_LMS.getQuestions(getUrlParam('assignmentId'), function(callback, event){
+		var data = JSON.parse(callback);
+		var html = '';
+		isTimed = false;
+		quizTime = 10;
+		if(data.isTimed){
+			quizTime = data.quizTime;
+		}
+		for(var question of data.questions){
+			html += '<div class="card question-card"><div class="card-body">'+
+			'<h5 class="card-title">'+question.question.replace('<i/>', '<input type="text" />')+'</h5>';
+			question.answers.sort(function(a, b){return 0.5 - Math.random()});
+			for(var answer of question.answers){
+				html += '<div><input class="radio-input" type="radio" value="1"/><p class="answer">'+answer+'</p></div>';
+			}
+			html += '</div></div>';
+		}
+		$("#questions").html(html);
+		$(".question-card .radio-input").click(function(){
+			$(this).siblings(".radio-input").prop('checked',false);
+			$(this).prop('checked',true);
+		});
+		$(".question-card .answer").click(function(){
+			$(this).closest(".question-card").removeClass("unanswered").addClass("answered").find(".radio-input").prop('checked',false);
+			$(this).siblings(".radio-input").closest(".radio-input").prop('checked',true);
+			if($("#questions .question-card").length == $("#questions .answered").length){
+				$("#continue").removeClass("disabled").removeClass("btn-secondary").addClass("btn-primary");
+				canContinue = true;
+			}
+		});
+		$(".question-card input:text").keyup(function(){
+			$(this).closest(".question-card").removeClass("unanswered").addClass("answered");
+			if($("#questions .question-card").length == $("#questions .answered").length){
+				$("#continue").removeClass("disabled").removeClass("btn-secondary").addClass("btn-primary");
+				canContinue = true;
+			}
+		});
+
+		$(".question-card .radio-input").click(function(){
+			$(this).closest(".question-card").removeClass("unanswered").addClass("answered").find(".radio-input").prop('checked',false);
+			$(this).prop('checked',true);
+			if($("#questions .question-card").length == $("#questions .answered").length){
+				$("#continue").removeClass("disabled").removeClass("btn-secondary").addClass("btn-primary");
+				canContinue = true;
+			}
+		});
+	}, {escape:false});
+}
+
+function showAnswer(answer){
+	var html = '<div class="card question-card"><div class="card-body">';
+	if(answer.correct) html += '<h5 class="card-title correct"><i class="fa fa-check-circle" aria-hidden="true"></i> '+answer.question+'</h5>';
+	else html += '<h5 class="card-title incorrect"><i class="fa fa-times-circle" aria-hidden="true"></i> '+answer.question+'</h5>';
+	html += '<div><p class="answer" style="padding-left:0px;"><b>Correct Answer</b> '+answer.answer+'</p></div>'+
+	'<div><p class="answer" style="padding-left:0px;"><b>Your Choice</b> '+answer.userGuess+'</p></div>'+
+	'</div></div>';
+	return html;
+}
+
+$(window).on("beforeunload", function() {
+	if(!canContinue && started) submitQuiz();
+});
+
+</script>
+</html>
+</apex:page>

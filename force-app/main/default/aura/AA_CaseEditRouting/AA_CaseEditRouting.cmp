@@ -1,0 +1,28 @@
+<aura:component controller="AA_CaseEntryController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,lightning:isUrlAddressable,lightning:actionOverride" access="global" >
+	
+    <aura:registerEvent name="idEvent" type="c:AA_LacunaCaseID"/>
+    
+    <aura:attribute name="recordType" type="id"/>
+    <aura:attribute name="afterHours" type="id"/>
+    <aura:attribute name="generalCase" type="id"/>
+    <aura:attribute name="showGeneral" type="boolean" default="false"/>
+    <aura:attribute name="showAfterH" type="boolean" default="false"/>
+    <aura:attribute name="storeID" type="Id"/>
+    
+    <lightning:workspaceAPI aura:id="workspace" />
+    <lightning:navigation aura:id="navService"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <div style="background-color:white">
+    <div>
+        <aura:if isTrue="{!v.showGeneral}">
+        <c:AA_LacunaInterfaceComponent recordId="{!v.storeID}"/>
+    </aura:if>
+    
+    <aura:if isTrue="{!v.showAfterH}">
+    	<c:AA_AfterHoursCase recordId="{!v.storeID}"/>
+    </aura:if>
+    </div>
+    </div>
+</aura:component>

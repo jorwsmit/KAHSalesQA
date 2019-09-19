@@ -1,0 +1,350 @@
+<apex:page controller="TBN_NewAffiliatedContactController" standardStylesheets="true" sidebar="false" showheader="false" docType="html-5.0" cache="false">
+
+    <apex:includeScript value="{!URLFOR($Resource.TBN_Supporting_JS_CSS, '/jQuery-1.11.3.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.TBN_Supporting_JS_CSS, '/jquery-ui-1.11.3.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.TBN_Supporting_JS_CSS, '/PracticeAccount/connection.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.TBN_Supporting_JS_CSS, '/PracticeAccount/publisher.js')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.TBN_Supporting_JS_CSS, '/jqueryCss.css')}"/>
+    
+    <script>
+         
+        function getSelectedValue(input, textid) {
+            
+            document.getElementById(textid).value = input.value;
+            $('[id$=NextBtn]').removeAttr('disabled');
+        } 
+        
+        function hideError() {
+            
+             $('[id$=tempError]').hide();
+             $('[id$=saveButton]').removeAttr('disabled');
+             
+        }
+        
+    </script>
+    <style>
+        .dateFormat {
+            display:none!important;
+        }
+        
+        .lookupIconOn, .lookupIcon{
+            margin-left: -31px;
+            background-color: white;
+        }
+    </style>
+    
+        <apex:stylesheet value="{!URLFOR($Resource.TBN_Slds_Static_Resource, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+          <div class="slds" >
+             <div class="slds-notify_container" id="idPageMessage">
+                <apex:outputPanel id="tempError">
+                    <script>
+                        var temp = '{! !isFormDisplay}';
+                        if( ( document.getElementById("{!$Component.myform.pageMessage}") != null && 
+                              document.getElementById("{!$Component.myform.pageMessage}").textContent != '' ) || temp == 'true' ) {
+                             $('[id$=tempError]').show();
+                        }
+                    </script>
+                    <apex:outputPanel id="ErrDisplay" style="display: none;">
+                        <div class="slds-notify slds-notify--alert slds-theme--warning" role="alert">
+                            <span class="slds-assistive-text">Info</span>
+                            <h2>
+                                <span class="slds-avatar slds-avatar--x-small">
+                                    <img src="{!URLFOR($Resource.TBN_Slds_Static_Resource, '/assets/icons/utility/warning_60.png')}" alt="error" />
+                                </span>
+                                <span id="errorMessage">
+                                    <script>
+                                        if(temp == 'true') {
+                                            console.log('if 1');
+                                            $('[id$=ErrDisplay]').css('display','block');
+                                            $("#errorMessage").html("<b>Please specify Id in the URL</b>");
+                                        }
+                                        else if(( document.getElementById("{!$Component.myform.pageMessage}") != null && 
+                                                  document.getElementById("{!$Component.myform.pageMessage}").textContent != '' ) ) {
+                                            $('[id$=ErrDisplay]').css('display','block');
+                                            $("#errorMessage").html("<b>"+document.getElementById("{!$Component.myform.pageMessage}").textContent+"</b>");
+                                        }
+                                        else {
+                                              $('[id$=tempError]').hide();
+                                              $('[id$=ErrDisplay]').css('display','none');
+                                        }
+                                    </script>
+                                </span>
+                            </h2>
+                        </div>
+                    </apex:outputPanel>
+                </apex:outputPanel>
+            </div>
+
+            <apex:form id="myform" rendered="{!isFormDisplay}">
+                <apex:outputPanel style="display:none;" id="validationMessage"> 
+                    <apex:pageMessages id="pageMessage"/>
+                </apex:outputPanel>
+                
+                <apex:actionStatus id="pageStatus">
+                    <apex:facet name="start">
+                        <apex:outputPanel >
+                            <div class="slds-spinner_container">
+                              <div class="slds-spinner--brand slds-spinner slds-spinner--medium" aria-hidden="false" role="alert">
+                                <div class="slds-spinner__dot-a"></div>
+                                <div class="slds-spinner__dot-b"></div>
+                              </div>
+                            </div>
+                        </apex:outputPanel>            
+                    </apex:facet>
+                </apex:actionStatus>
+                
+                <div id="noRecord" style="display : {!If(lstWrapperPracticeAccount.size == 0, 'block', 'none')}">  <label class="slds-text-heading--medium slds-text-align--center"> No Records Found </label></div>
+                <div id="accountPanel" class="slds-card">
+                <apex:outputPanel rendered="{!showAccount == true}">
+                    <div class="slds-card__header slds-grid">
+                        <div class="slds-media__body">
+                            <h2 class="slds-text-heading--small slds-truncate"><b>Select Practice Account:</b></h2>
+                        </div>
+                    </div>
+                    <div class="slds-card__body" id="cardBody">
+                        <table class="slds-table slds-table--bordered slds-max-medium-table--stacked-horizontal slds-no-row-hover">
+                            <!-- style="max-height: 350px; height: 350px; overflow-y:scroll;" -->
+                            <tbody id="tableBody">
+                                <apex:repeat value="{!lstWrapperPracticeAccount}" var="act">
+                                    <tr class="slds-hint-parent" style="text-align: left;">
+                                        <td class="slds-size--1-of-4" style="text-align: left; ">
+                                            <label class="slds-radio" for="{!act.acctId}">
+                                                <div style="display:flex;">
+                                                    <span style="float:left">
+                                                        <input type="radio" name="chosen" id="{!act.acctId}" value="{!act.acctId}" onclick="getSelectedValue(this,'{!$Component.RadioButtonValue}');"/> 
+                                                        <script>
+                                                            var isCurrentAcct = '{!act.isCurrentAcct}';
+                                                            
+                                                            if(isCurrentAcct == 'true') {
+                                                                
+                                                                 $('[id$='+'{!act.acctId}'+']').attr('checked','checked');
+                                                                 $('[id$=NextBtn]').removeAttr('disabled');
+                                                            }
+                                                        </script>
+                                                        <span class="slds-radio--faux"></span>
+                                                    </span>
+                                                    
+                                                    <span style="float:left; padding-left:10px;">
+                                                        <span class="slds-form-element__label" id="address" style="text-align: left;word-break: break-all">
+                                                            <b>{!act.Name}</b>
+                                                            <apex:outputPanel rendered="{!OR((act.acctStreet != null), (act.acctCity != null), (act.acctState != null), (act.acctPostalcode != null))}">
+                                                                <br/>
+                                                                {!act.acctStreet} <br/>
+                                                                {!act.acctCity}&nbsp;{!act.acctState}&nbsp;{!act.acctPostalcode}
+                                                            </apex:outputPanel>
+                                                        </span>
+                                                    </span>
+                                                </div>
+                                            </label>
+                                        </td>
+                                    </tr>
+                                </apex:repeat> 
+                            </tbody>
+                        </table>
+                    </div>
+                    <apex:inputHidden value="{!strSelectedAccount}" id="RadioButtonValue" />
+                    <apex:outputPanel id="tstpopup">
+                                Choose an option to proceed. <br/>
+                                Do you have any additional Soft Contacts to add at this time?<br/><br/><br/>
+                            <apex:commandButton value="Yes" action="{!showContactPanel}" styleclass="slds-button slds-button--neutral"/>
+                            <apex:commandButton value="No" action="{!createPracticeAccountWithout}" styleclass="slds-button slds-button--neutral"/>
+                            <br/><br/>
+                            <apex:commandButton oncomplete="setTimeout('invokeCancel();', 2000);" action="{!dummyCancel}" id="cancel1"  styleclass="slds-button slds-button--neutral cancelblock" 
+                                                      value="Cancel" onclick="this.disabled=true;" rerender="scriptsPanel"/>
+                        </apex:outputPanel>
+                        </apex:outputPanel>
+                </div>
+                <div id="contactPanel" styleClass="slds-form-element">
+                <apex:outputPanel rendered="{!showContact == true}">
+                    <div class="slds-card">
+                        <div class="slds-card__header slds-grid" style="padding-bottom: 10px;">
+                            <div class="slds-media__body">
+                                <h2 class="slds-text-heading--small slds-truncate"><b>Enter New Soft Contact Details</b></h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-form-element slds-p-top--medium slds-p-left--medium slds-p-right--medium slds-size--4-of-4 slds-small-size--3-of-3 slds-medium-size--1-of-3 slds-large-size--1-of-3">
+                    <label class="slds-form-element__label" style="align:center;" for="contactFName" > <b>First Name</b> </label>
+                        <div class="slds-form-element__control">
+                            <apex:inputText id="contactFName" styleClass="slds-input" value="{!objNewContact.FirstName}" onfocus="hideError();"/>
+                        </div>
+                   </div>
+                   <div class="slds-form-element slds-p-top--medium slds-p-left--medium slds-p-right--medium slds-size--4-of-4 slds-small-size--3-of-3 slds-medium-size--1-of-3 slds-large-size--1-of-3">
+                    <label class="slds-form-element__label " style="align:center;" for="contactLName" > <b>Last Name</b> </label>
+                        <div class="slds-form-element__control">
+                            <apex:inputText id="contactLName" styleClass="slds-input" value="{!objNewContact.LastName}" onfocus="hideError();"/>
+                        </div>
+                  </div>
+                  <apex:repeat value="{!$ObjectType.Contact.FieldSets.New_Affiliated_Contact}" var="field">
+                        <apex:outputPanel rendered="{!field.label != 'Full Name'}">
+                            <div class="slds-form-element slds-p-top--medium slds-p-left--medium slds-p-right--medium slds-size--4-of-4 slds-small-size--3-of-3 slds-medium-size--1-of-3 slds-large-size--1-of-3" >
+                                <label class="slds-form-element__label " style="align:center;" for="contactFields" > <b>{!field.label}</b> </label>
+                                <div class="slds-form-element__control" id="{!objNewContact[field.fieldPath]}">
+                                    <apex:inputField id="inputFieldSet"  styleClass="{!If( field.type != 'boolean', 'slds-input', '')}" value="{!objNewContact[field.fieldPath]}" onfocus="hideError();" />
+                                </div>
+                            </div>
+                        </apex:outputPanel>
+                 </apex:repeat>
+                 <apex:outputPanel >
+                    <apex:commandButton styleclass="slds-button slds-button--neutral slds-m-left--small slds-m-top--x-large" value="Previous" action="{!showAccountPanel}"/>
+                    <apex:commandButton oncomplete="setTimeout('invokeCancel();', 2000);" action="{!dummyCancel}" styleclass="slds-button slds-button--neutral slds-m-left--small slds-m-top--x-large cancelblock" 
+                                                        value="Cancel" id="cancelButton" onclick="this.disabled=true;"  rerender="scriptsPanel"/> 
+                    <apex:commandButton action="{!createPracticeAccount}" styleclass="slds-button slds-button--neutral slds-m-left--small slds-m-top--x-large" rerender="tempError, scriptsPanel, pageMessage"
+                    value="Save and New" status="pageStatus" oncomplete="this.form.reset();return false;"/>
+                    <apex:commandButton action="{!createContactOnly}" styleclass="slds-button slds-button--neutral slds-m-left--small slds-m-top--x-large" rerender="tempError, scriptsPanel, pageMessage"
+                    value="Save And Finish" id="saveButton" onclick="this.disabled=true;" status="pageStatus" oncomplete="invokeRedirectToContact();"/>
+                 </apex:outputPanel>
+            </apex:outputPanel>
+            </div>
+         </apex:form>
+    </div>
+    <apex:outputPanel id="scriptsPanel">
+        <script>
+            //onWinResize();
+            if(window.attachEvent) {
+            
+                window.attachEvent('onresize', function() {
+                    onWinResize();
+                });
+            }
+            else if(window.addEventListener) {
+            
+                window.addEventListener('resize', function() {
+                    onWinResize();
+                }, true);
+            }
+            else {
+                //The browser does not support Javascript event binding
+                //onWinResize()
+            }
+            
+            onWinResize();
+            
+            function onWinResize() {
+            
+               if(window.innerWidth > 475) {
+                    
+                    $('[id$=contactForm]').addClass('slds-form--vertical slds-p-left--xx-large');
+                    $('[id$=contactButtons]').addClass('slds-form--vertical slds-p-left--xx-large');
+                }
+                else {
+                    
+                    $('[id$=contactForm]').addClass('slds-form--vertical');
+                    $('[id$=contactButtons]').addClass('slds-form-element slds-container--small slds-p-top--medium');
+                }
+                
+                var newHeight = window.innerHeight * .1;
+                $('[id$=tableBody]').find("tr:last > td").attr('style','text-align: left; padding-bottom: ' + newHeight + 'px;');
+            }
+            
+            $( document ).ready(function() {
+                
+                 /*Salesforce1 - page automatically scrolls to top when user taps on a page element on iOS devices only*/
+                    var ua=navigator.userAgent; 
+                    if((ua.indexOf('Salesforce')!=-1)&&(ua.indexOf('iPhone')!=-1||ua.indexOf('iPad')!=-1)&&(ua.indexOf('Safari')==-1)){ 
+                        function IOS_SCROLL_BOOTSTRAP() { 
+                            var children = Array.prototype.slice.call(document.body.children), 
+                            placeholder = document.createElement('section'), 
+                            fragment = document.createDocumentFragment(), 
+                            styles, 
+                            width, 
+                            height; 
+                            children.forEach(function(c){fragment.appendChild(c);}); 
+                            placeholder.appendChild(fragment); 
+                            styles = [ 
+                            'width:100%;', 
+                            'height:', (window.screen.height - 42), 'px;', 
+                            'position: absolute; overflow: auto; -webkit-overflow-scrolling: touch' 
+                            ].join(''); 
+                            placeholder.style.cssText = styles; 
+                            document.body.appendChild(placeholder); 
+                        } 
+                        window.addEventListener('load', function (e) { 
+                            IOS_SCROLL_BOOTSTRAP(); 
+                        }); 
+                } 
+                
+                var isRadioBtnSelected = false;
+                $("input[type=radio]").each(function() {
+                    
+                    if($(this).is(':checked')) {
+                        
+                        isRadioBtnSelected = true;
+                    }
+                });
+                
+                if(!isRadioBtnSelected)
+                    $('[id$=NextBtn]').attr('disabled', 'disabled');
+                    
+            });
+            
+            
+                
+            function invokeCancel() {
+                    
+                try {
+                    // Go back to the Contact detail page
+                    if(  (typeof sforce != 'undefined') && sforce && (!!sforce.one) ) {
+                        
+                        // Salesforce1 navigation
+                        //sforce.one.navigateToSObject('{!JSENCODE(objCurrentContact.Id)}','detail');
+                        //sforce.one.navigateToSObject('{!JSENCODE(objCurrentContact.Id)}');
+                        Sfdc.canvas.publisher.publish({name: "publisher.close", payload:{ refresh:"false"}});
+                    }
+                    else {
+                        // Set the window's URL using a Visualforce expression
+                        window.location.href = '/{!JSENCODE(objCurrentContact.Id)}';
+                    }
+                }
+                catch(err) {
+                    
+                    alert('An error has occured in the page: ' + err.message + '/n Please try again in sometime.'+'{!JSENCODE(objCurrentContact.Id)}');
+                }
+            }
+            
+            function invokeRedirectToContact() {
+                
+                try {
+                    
+                    if(document.getElementById("{!$Component.myform.pageMessage}").textContent == '') {
+                        // Go back to the Contact detail page
+                        if( (typeof sforce != 'undefined') && sforce && (!!sforce.one) ) {
+                            // Salesforce1 navigation
+                            sforce.one.navigateToSObject('{!JSENCODE(objNewContact.Id)}');
+                        }
+                        else {
+                            // Set the window's URL using a Visualforce expression
+                            window.location.href = '/{!JSENCODE(objNewContact.Id)}';
+                        }
+                    }
+                }
+                catch(err) {
+                    
+                    alert('An error has occured in the page: ' + err.message + '/n Please try again in sometime.');
+                }
+            }
+            
+            function invokeRedirectToPractice() {
+                try{
+                    if(document.getElementById("{!$Component.myform.pageMessage}").textContent == '') {
+                        // Go back to the Contact detail page
+                        if( (typeof sforce != 'undefined') && sforce && (!!sforce.one) ) {
+                            // Salesforce1 navigation
+                            sforce.one.navigateToSObject('{!JSENCODE(objNewAccount)}');
+                            }
+                        else{
+                            // Set the window's URL using a Visualforce expression
+                            window.location.href = '/{!JSENCODE(objNewAccount)}';
+                            }
+                        }
+                    }
+                catch(err) {
+                    alert('An error has occured in the page: ' + err.message + '/n Please try again in sometime.');
+                    }
+                }
+            
+            // remove slds-input class from lookup fields
+            $('[Id$=inputFieldSet_lkwgt]').removeClass('slds-input');
+        </script>
+   </apex:outputPanel>
+</apex:page>

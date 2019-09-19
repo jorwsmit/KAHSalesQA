@@ -1,0 +1,273 @@
+
+        .marginTop {
+            
+            /*margin-top: 15px;*/
+             margin-bottom: 25px;
+        }
+        
+        .inputFieldWidth {
+        
+            width: 75% !important;
+        }
+        
+        .smallMarginLeft {
+        
+            margin-left: 1% !important;
+        }
+        
+        .smallMarginTop {
+            
+            margin-top: 2% !important;
+        }
+        
+        .smallMarginBottom{
+            margin-bottom: 100px;
+        }
+		
+        .tabsFont {
+            
+            font-weight: bolder;
+            font-size: medium;
+        }
+        
+        .ui-autocomplete {
+            
+            max-height: 300px !important;
+            height: auto !important;
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            /*position: relative;*/
+        }
+        
+        .formElementsWidth {
+            
+            /*width: 60% !important;*/
+            width: 400px !important;
+        }
+        
+        .formElementsRoleWidth {
+            
+            width: 105% !important;
+        }
+        
+        .mediumMarginTop {
+            
+            margin-top: 5% !important;
+        }
+        .marginLeft {
+        
+            margin-left:4%;
+        }
+		
+        #OverlapBS label {
+         
+            font-size: small;
+        }
+        
+         #OverlapBS .table>thead>tr>th {
+            vertical-align: middle;
+        }
+        
+        .referralTable {
+            
+            width: 100% !important;
+        }
+        
+        .ui-menu {
+            
+            width: 50%;
+            max-width: 350px !important;
+        }
+        
+        .tabHeight {
+            
+            //height: 450px;
+        }
+        
+        .selectOptionWidth {
+        
+            width: 100px !important;
+        }
+        
+        /* rows hidden by filtering (needed for child rows) */
+        .tablesorter .filtered {
+            display: none;
+        }
+        
+        /* ajax error row */
+        .tablesorter .tablesorter-errorRow td {
+            text-align: center;
+            cursor: pointer;
+            background-color: #e6bf99;
+        }
+        
+        .tablesorter-header {
+            background-image: url("data:image/gif;base64,R0lGODlhFQAJAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAkAAAIXjI+AywnaYnhUMoqt3gZXPmVg94yJVQAAOw==");
+            background-repeat: no-repeat;
+            background-position: right center;
+            padding: 4px 18px 4px 4px;
+            /*white-space: normal;*/
+            cursor: pointer;
+        }
+        
+        .tablesorter-filter-row .disabled {
+            display: none;
+        }
+        /*.overlayDialog  {
+        
+        width :170px;
+        
+        }*/
+        
+        div.scroll {
+        background-color: white;
+        max-height: 400px;
+        overflow-y: auto; 
+        }
+    
+        #referralTable, #referralsAssignTable {
+            
+            min-width: 1110px;
+        }
+        
+       .tablesorter {
+       
+            width: auto;
+        }
+        .tablesorter .tablesorter-filter {
+        
+            width: 50px;
+        }
+		
+		.tablesorter-filter {
+            
+            width: 100px !important;
+			border-radius: 4px;
+			height: 26px;
+        }
+        
+        
+        .middleAlign {
+            
+            vertical-align: middle;
+		}
+		
+        .width50 {
+            
+            max-width: 75px !important;
+            width: 75% !important;
+        }
+		
+        .width100 {
+            
+            max-width: 110px !important;
+            width: 85% !important;
+        }
+        
+        .width150 {
+            
+            max-width: 180 px !important;
+            width: 78% !important;
+        }
+        
+        .HMSAlign {
+            text-align: right;
+            padding-right: 2% !important;
+        }
+        
+        .HMS2Align {
+            text-align: right;
+            padding-right: 2.4% !important;
+        }
+        
+        .HMS1Align {
+            
+            text-align: right;
+            padding-right: 2% !important;
+        }
+        
+        .lookups {
+            
+            width: 75%;
+            height: 34px;
+            padding: 6px 12px;
+            font-size: 14px;
+            line-height: 1.42857143;
+            color: #555;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        
+        .tdBgColor {
+            
+            background-color: #f6f6f6;
+        }
+		
+		.form-item-container {
+            
+            background-color: #fff;
+            background-image: none;
+            color: #555;
+        }
+        
+        .autocomplete-list, .form-item-container .list-inline input {
+            
+            box-shadow: 0 1px 1px rgba(0,0,0,.075) inset;
+        }
+        
+        .tableFilter { 
+            
+            border-radius: 4px;
+            height: 26px;
+        }
+        
+		#referralsTableForSort_paginate {
+            
+            display: none;
+        }
+        
+        .dataTables_empty {
+            
+            display: none;
+        }
+            
+        .parentDisable{
+          
+            pointer-events: none;
+            z-index:10;
+            opacity:0.3;
+        }
+            
+        .customPopup {
+            background-color: white;
+            left: 35%;
+            padding: 10px;  
+            position: absolute;
+            z-index: 9999;
+            border-radius: 3px !important;
+            width: 30%;
+            font-size: inherit;
+            top:12%;
+        }
+        
+        .input-xlarge {
+            
+            line-height: 2 !important;
+        }
+		
+		.dataTables_info{
+            
+            display:none !important;
+            visibility:hidden !important;
+        }
+        .dataTables_length{
+            
+            display:none !important;
+            visibility:hidden !important;
+        }
+        .dataTables_filter{
+            
+            display:none !important;
+            visibility:hidden !important;
+        }
+		

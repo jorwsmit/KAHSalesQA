@@ -1,0 +1,136 @@
+<apex:page standardController="Sales_Performance__c" sidebar="false" showHeader="false">
+    <head>
+        <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.1.1/Chart.min.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
+    </head>
+    <style>
+
+        #centerText {
+            width: 100%;
+            height: 40px;
+            position: absolute;
+            top: 50%;
+            left: 0;
+            margin-top: -10px;
+            line-height:19px;
+            text-align: center;
+        }
+
+        #centerme {
+            margin: 0 auto;
+            width: 85%;
+        }
+    </style>
+
+    <body>
+        <div id="centerme">
+            <div style="margin-left: 113px;" id="title"></div>
+            <div style="width: 256; height: 256; float: left; position: relative;">
+                <div id="centerText">
+                    <h4 style="margin: 0px;" id="percent"></h4>
+                </div>
+                <canvas id="mycanvas" width="300" height="150"></canvas>
+            </div>
+         </div>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+        <script>
+        $(document).ready(function(){
+            var ctx = $("#mycanvas").get(0).getContext("2d");
+            var target;
+            var actual;
+            if ('{!Sales_Performance__c.RecordType.Name}' == 'KAH'){
+                document.getElementById("title").innerHTML = '<h5>HP Admits</h5>';
+                if ('{!Sales_Performance__c.KAH_HP_Admit_Target__c}'.length != 0) target = parseFloat('{!Sales_Performance__c.KAH_HP_Admit_Target__c}');
+                else target = 0;
+
+                if ('{!Sales_Performance__c.KAH_HP_Total_Admits__c}'.length != 0) actual = parseFloat('{!Sales_Performance__c.KAH_HP_Total_Admits__c}');
+                else actual = 0;
+
+            } else {
+                document.getElementById("title").innerHTML = '<h4>Revenue</h4>';
+                if ('{!Sales_Performance__c.Targeted_Revenue__c}'.length != 0) target = parseFloat('{!Sales_Performance__c.Targeted_Revenue__c}');
+                else target = 0;
+
+                if ('{!Sales_Performance__c.Actual_Revenue__c}'.length != 0) actual = parseFloat('{!Sales_Performance__c.Actual_Revenue__c}');
+                else actual = 0;
+            }
+
+
+            var color;
+            var percentage = (actual/target)*100;
+            if(percentage.toString().indexOf('.') >= 0)   document.getElementById("percent").innerHTML =
+                percentage.toString().substring(0, percentage.toString().indexOf('.')+2)+'%';
+            else document.getElementById("percent").innerHTML = percentage.toString()+'.0%';
+
+
+            if (percentage > 105){
+                color = "cornflowerblue";
+            } else if (percentage >= 100){
+                color = "#8efb6a";
+            } else if (percentage >= 85){
+                color = "#ffe44d";
+            } else {
+                color = "#f07b6e";
+            }
+
+            var data = [
+                {
+                    value: Math.round(actual * 100) / 100,
+                    color: color,
+                    label: "Actual"
+                }
+            ];
+
+            var targetLessActual = 0;
+            if((target - actual)>0){
+                targetLessActual = target - actual;
+                targetLessActual = Math.round(targetLessActual * 100) / 100;
+                var targetData = {
+                    value: targetLessActual,
+                    color: "lightgrey",
+                    label: "To Goal"
+                };
+                data.push(targetData);
+            }
+
+            var toolTip;
+
+            if ('{!Sales_Performance__c.RecordType.Name}' == 'KAH') toolTip = "<%= label %>: <%= addCommas(value) %>";
+            else toolTip = "<%= label %>: $<%= addCommas(value) %>";
+
+            var options = {
+                responsive: true,
+                maintainAspectRatio: false,
+                tooltipTemplate: toolTip,
+                onAnimationComplete: function(){this.showTooltip(this.segments, true);},
+                tooltipEvents: [],
+                showTooltips: true,
+                tooltipFillColor: "rgba(0,0,0,0.6)",
+                tooltipCaretSize: 4,
+                tooltipXPadding: 3,
+                tooltipYPadding: 3,
+                tooltipFontSize: 10
+            }
+
+            var chart = new Chart(ctx).Doughnut(data, options);
+
+        });
+
+        function addCommas(nStr)
+        {
+            nStr += '';
+            x = nStr.split('.');
+            x1 = x[0];
+            x2 = x.length > 1 ? '.' + x[1] : '';
+            var rgx = /(\d+)(\d{3})/;
+            while (rgx.test(x1)) {
+                x1 = x1.replace(rgx, '$1' + ',' + '$2');
+            }
+            return x1 + x2;
+        }
+
+        </script>
+
+    </body>
+</apex:page>

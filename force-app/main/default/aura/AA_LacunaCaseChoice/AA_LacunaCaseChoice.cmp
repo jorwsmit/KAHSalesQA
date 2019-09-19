@@ -1,0 +1,52 @@
+<aura:component controller="AA_CaseEntryController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,lightning:isUrlAddressable,lightning:actionOverride" access="global" >
+    
+    <aura:attribute name="choiceList" type="sObject[]"/>
+    <aura:attribute name="afterHours" type="id"/>
+    <aura:attribute name="generalCase" type="id"/>
+    <aura:attribute name="showGeneral" type="boolean" default="false"/>
+    <aura:attribute name="showAfterH" type="boolean" default="false"/>
+    <aura:attribute name="storeID" type="id"/>
+    <aura:attribute name="showChoice" type="boolean" default="true"/>
+    
+    <lightning:workspaceAPI aura:id="workspace" />
+    <lightning:navigation aura:id="navService"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <div style="background-color:white">
+    <div>
+        <aura:if isTrue="{!v.showChoice}">
+        	<ui:outputText value="Please select the type of case to create"/>
+        <aura:if isTrue="{!v.choiceList != null}">
+        <table>
+            <thead>
+                <tr class="slds-text-title--caps">
+                    <th scope="row" >
+                        <span title="Name">Case Type:</span> 
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <aura:iteration items="{!v.choiceList}" var="add">  
+                    <aura:if isTrue="{!add != null}">
+                        <tr>
+                            <th scope="row">
+                                <ui:outputURL title="{!add.Id}" label="{!add.Name}" click="{!c.openPage}"/>
+                            </th>
+                        </tr>
+                    </aura:if>
+                </aura:iteration>
+            </tbody>
+        </table>
+        </aura:if>
+        </aura:if>
+        <aura:if isTrue="{!v.showGeneral}">
+        	<c:AA_LacunaInterfaceComponent />
+    	</aura:if>
+    
+    	<aura:if isTrue="{!v.showAfterH}">
+    		<c:AA_AfterHoursCase recordTypeId="{!v.storeID}" />
+    	</aura:if>
+    </div>
+    </div>
+</aura:component>

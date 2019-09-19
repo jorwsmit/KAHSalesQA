@@ -1,0 +1,441 @@
+<aura:component controller="AA_ReferralSourceAuditReporting" implements="force:appHostable,flexipage:availableForAllPageTypes,force:hasRecordId" access="global">
+    <aura:attribute name="tableData" type="sObject[]" description="Used to store the values for the Audit List"/>
+    <aura:attribute name="selRoles" type="string[]" />
+    <aura:attribute name="selRoles2" type="string[]" />
+    <aura:attribute name="selRoles3" type="string[]" />
+    <aura:attribute name="selRoles4" type="string[]" />
+    <aura:attribute name="selRoles5" type="string[]" />
+    <aura:attribute name="selRoles6" type="string[]" />
+    <aura:attribute name="currentList" type="string"/>
+    <aura:attribute name="roleName" type="string"/>
+    <aura:attribute name="accountFilter" type="string"/>
+    <aura:attribute name="contactFilter" type="string"/>
+    <aura:attribute name="unityFilter" type="string"/>
+    <aura:attribute name="horizonFilter" type="string"/>
+    <aura:attribute name="sfIDFilter" type="ID"/>
+    <aura:attribute name="selectList" type="List" default="[]"/>
+    <aura:attribute name="selDteFrom" type="String"/>
+    <aura:attribute name="selDteTo" type="String"/>
+    <aura:attribute name="selectedListUser" type="string"/>
+    <aura:attribute name="selectedUser" type="sObject"/>
+    <aura:attribute name="currentUser" type="User"/>
+    <aura:attribute name="btnDisabled" type="boolean" default="true"/>
+    <aura:attribute name="btn2Disabled" type="boolean" default="true"/>
+    <aura:attribute name="isAsc" type="boolean" default="true"/> 
+    <aura:attribute name="sortField" type="string"/>
+    <aura:attribute name="searchString" type="string"/>
+    
+    <aura:attribute name="Spinner" type="boolean" default="false"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <aura:if isTrue="{!v.Spinner}">
+        <div aura:id="spinnerId" class="slds-spinner_container">
+            <div class="slds-spinner--brand  slds-spinner slds-spinner--large slds-is-relative" role="alert">
+                <span class="slds-assistive-text">Loading</span>
+                <div class="slds-spinner__dot-a"></div>
+                <div class="slds-spinner__dot-b"></div>
+            </div>
+        </div>
+    </aura:if>
+    <div class ="slds-col paddingleft paddingTop">
+        <br/>
+        <table width="100%" class="smallMarginLeft smallMarginTop smallMarginBottom" >
+                    <tr width="100%">
+                        <td>
+                            <div class="slds-form-element reportDiv paddingleft">
+                                <div class="slds-form-element__label">Account Name:</div>
+                                <div>
+                                    <ui:inputText aura:id="inputAccountName" value="{!v.accountFilter}"/> 
+                                </div>	
+                            </div>
+                        </td>
+                        <td>
+                            <div class="slds-form-element reportDiv paddingleft">
+                                <div class="slds-form-element__label">Contact Name:</div>
+                                <div>
+                                    <ui:inputText aura:id="inputContactName" value="{!v.contactFilter}"/> 
+                                </div>	
+                            </div>
+                        </td>
+                        <td>
+                            <div class="slds-form-element reportDiv paddingleft">
+                                <div class="slds-form-element__label">Unity ID:</div>
+                                <div>
+                                    <ui:inputText aura:id="inputUnityID" value="{!v.unityFilter}"/> 
+                                </div>	
+                            </div>
+                        </td>
+                        <td>
+                            <div class="slds-form-element reportDiv paddingleft">
+                                <div class="slds-form-element__label">Horizon ID:</div>
+                                <div>
+                                    <ui:inputText aura:id="inputHorizon" value="{!v.horizonFilter}"/> 
+                                </div>	
+                            </div>
+                        </td>
+                        <td>
+                            <div class="slds-form-element reportDiv paddingleft">
+                                <div class="slds-form-element__label">Salesforce ID:</div>
+                                <div>
+                                    <ui:inputText aura:id="inputSalesforceID" value="{!v.sfIDFilter}"/> 
+                                </div>	
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+        <br/>
+        <table>
+            <tr width="50%">
+        <td>
+                            <div class="slds-form-element__label"> Date Range From:</div>
+                                <div>
+                                    <ui:inputDate aura:id="InputDteFrom" class="field" value="{!v.selDteFrom}" displayDatePicker="true" /> 
+                                </div>
+                        </td>
+                        <td>
+                            <div class="slds-form-element reportDiv paddingleft">
+                                <div class="slds-form-element__label"> Date Range To:</div>
+                                <div>
+                                    <ui:inputDate aura:id="InputDteTo" class="field" value="{!v.selDteTo}" displayDatePicker="true" /> 
+                                </div>	
+                            </div>
+                        </td>
+                <td><span style="color:white">_________________________________</span></td>
+                <td><span style="color:white">__________________________________</span></td>
+            </tr>
+        </table>
+	</div>
+    <br/>
+    If no dates are chosen the range defaults to the current month for roles and all-time for Individuals.
+    <br/>
+    <lightning:TabSet>
+        <lightning:Tab label="User Search" aura:id="userTab" onactive="{!c.onTabChange}">
+            <ui:inputText label="Filter the list below by name or PERNER with this field, or select from the available options: " value="{!v.searchString}" change="{!c.searchUsers}"/>
+            <lightning:combobox aura:id="inputSelectUser" name="users" value="inProgress" placeholder="Select Individual" options="{!v.selectList}" onchange="{!c.onSet}" aria-autocomplete="list"/>
+            <br/>
+            <ui:button label="Reset User List Filter" press="{!c.resetUserList}"/>
+        </lightning:Tab>
+        <lightning:Tab label="Role Search" aura:id="roleTab" onactive="{!c.onTabChange}">
+    <div class="slds-form-element__label">Select the role you would like to review the weekly assignments/unassignments for:</div>
+    <br/>
+    <div>
+    <div class="slds-form-element reportDiv paddingleft" style="width: 200px">
+            <div class="slds-form-element__label">Primary Role:</div>
+            <div>
+                <ui:inputSelect class="slds-select" aura:id="InputSelectRole" change="{!c.getSubRoles}">
+                    <aura:iteration items="{!v.selRoles}" var="roleVal"> 
+                        <ui:inputSelectOption text="{!roleVal}"/> 
+                    </aura:iteration>
+                </ui:inputSelect>
+                <br/>
+            </div>
+        <br/>
+        <aura:if isTrue="{!v.selRoles2.length > 1}">
+        	<div class="slds-form-element__label">Sub Role :</div>
+            	<div>
+                	<ui:inputSelect class="slds-select" aura:id="InputSelectRole2" change="{!c.getSubRoles}">
+                    	<aura:iteration items="{!v.selRoles2}" var="roleVal2"> 
+                        	<ui:inputSelectOption text="{!roleVal2}"/> 
+                    	</aura:iteration>
+                	</ui:inputSelect>
+                	<br/>
+            	</div>
+        	<br/>
+        </aura:if>
+        <aura:if isTrue="{!v.selRoles3.length > 1}">
+        <div class="slds-form-element__label">Sub Role 2:</div>
+            <div>
+                <ui:inputSelect class="slds-select" aura:id="InputSelectRole3" change="{!c.getSubRoles}">
+                    <aura:iteration items="{!v.selRoles3}" var="roleVal3"> 
+                        <ui:inputSelectOption text="{!roleVal3}"/> 
+                    </aura:iteration>
+                </ui:inputSelect>
+                <br/>
+            </div>
+        <br/>
+        </aura:if>
+        <aura:if isTrue="{!v.selRoles4.length > 1}">
+        <div class="slds-form-element__label">Sub Role 3:</div>
+            <div>
+                <ui:inputSelect class="slds-select" aura:id="InputSelectRole4" change="{!c.getSubRoles}">
+                    <aura:iteration items="{!v.selRoles4}" var="roleVal4"> 
+                        <ui:inputSelectOption text="{!roleVal4}"/> 
+                    </aura:iteration>
+                </ui:inputSelect>
+                <br/>
+            </div>
+        <br/>
+        </aura:if>
+        <aura:if isTrue="{!v.selRoles5.length > 1}">
+        <div class="slds-form-element__label">Sub Role 4:</div>
+            <div>
+                <ui:inputSelect class="slds-select" aura:id="InputSelectRole5" change="{!c.getSubRoles}">
+                    <aura:iteration items="{!v.selRoles5}" var="roleVal5"> 
+                        <ui:inputSelectOption text="{!roleVal5}"/> 
+                    </aura:iteration>
+                </ui:inputSelect>
+                <br/>
+            </div>
+        <br/>
+        </aura:if>
+        <aura:if isTrue="{!v.selRoles6.length > 1}">
+        <div class="slds-form-element__label">Sub Role 5:</div>
+            <div>
+                <ui:inputSelect class="slds-select" aura:id="InputSelectRole6" change="{!c.getSubRoles}">
+                    <aura:iteration items="{!v.selRoles6}" var="roleVal6"> 
+                        <ui:inputSelectOption text="{!roleVal6}"/> 
+                    </aura:iteration>
+                </ui:inputSelect>
+                <br/>
+            </div>
+        </aura:if>
+        </div>
+    </div>
+            </lightning:Tab>
+    </lightning:TabSet>
+    <br/>
+    <div class="slds-col paddingleft paddingTop">
+        <div class="slds-form-element">
+            
+            <lightning:button aura:id="reportButton" label="Get Report" onclick="{!c.runReport}" disabled="{!v.btnDisabled}"/>
+            &nbsp;<lightning:button aura:id="exportButton" label="Export" onclick="{!c.downloadCsv}" disabled="{!v.btn2Disabled}"/>
+        </div>
+    </div>
+    
+    
+    <br/>
+    
+    <div>
+        <aura:if isTrue="{!v.tableData != null}">
+            <aura:iteration items="{!v.tableData}" var="con">
+            	<table class="slds-table slds-table--bordered slds-table--cell-buffer">
+                	<thead>
+                    	<tr class="slds-text-title--caps">
+                        	<th scope="row">
+                            	<div class="slds-truncate" title="{!con.user.Name}">User: <ui:outputURL value="{!'/'+con.user.Id}" label="{!con.user.Name}" target="_blank"/></div>
+                        	</th>
+                    	</tr>
+                	</thead>
+            	</table>
+                <lightning:tabset >
+                <lightning:tab label="Added" aura:id="addedTab">
+                <table class="slds-table slds-table--bordered slds-table--cell-buffer">
+                    <thead>
+                        <tr class="slds-text-title--caps">
+                            <th scope="row" onclick="{!c.sortEffective}">
+                                <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                    <span class="slds-assistive-text">Sort</span>
+                                    <span title="Name">Effective Date</span> &nbsp; <img src="{!$Resource.sortIcon}"/> 
+                                </a>
+                            </th>
+                            <th scope="row" onclick="{!c.sortEST}">
+                                <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                    <span class="slds-assistive-text">Sort</span>
+                                    <span title="Name">Date/Time Requested (EST)</span> &nbsp; <img src="{!$Resource.sortIcon}"/> 
+                                </a>
+                            </th>
+                            <th scope="row" onclick="{!c.sortName}">
+                                <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                    <span class="slds-assistive-text">Sort</span>
+                                    <span title="Name">Audit Record</span> &nbsp; <img src="{!$Resource.sortIcon}"/> 
+                                </a>
+                            </th>
+                            <th scope="row" onclick="{!c.sortAccount}">
+                                <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                    <span class="slds-assistive-text">Sort</span>
+                                    <span title="Name">Account</span> &nbsp; <img src="{!$Resource.sortIcon}"/> 
+                                </a>
+                            </th>
+                            <th scope="row" onclick="{!c.sortAccountId}">
+                                <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                    <span class="slds-assistive-text">Sort</span>
+                                    <span title="Name">Account Id</span> &nbsp; <img src="{!$Resource.sortIcon}"/> 
+                                </a>
+                            </th>
+                            <th scope="row" onclick="{!c.sortContact}">
+                                <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                    <span class="slds-assistive-text">Sort</span>
+                                    <span title="Name">Contact</span> &nbsp; <img src="{!$Resource.sortIcon}"/> 
+                                </a>
+                            </th>
+                            <th scope="row" onclick="{!c.sortContactId}">
+                                <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                    <span class="slds-assistive-text">Sort</span>
+                                    <span title="Name">Contact Id</span> &nbsp; <img src="{!$Resource.sortIcon}"/> 
+                                </a>
+                            </th>
+                            <th scope="row" onclick="{!c.sortHorizon}">
+                                <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                    <span class="slds-assistive-text">Sort</span>
+                                    <span title="Name">Horizon ID</span> &nbsp; <img src="{!$Resource.sortIcon}"/> 
+                                </a>
+                            </th>
+                            <th scope="row" onclick="{!c.sortUnity}">
+                                <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                    <span class="slds-assistive-text">Sort</span>
+                                    <span title="Name">Unity ID</span> &nbsp; <img src="{!$Resource.sortIcon}"/> 
+                                </a>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <aura:iteration items="{!con.addLst}" var="add">  
+                            <aura:if isTrue="{!add != null}">
+                                <tr>
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!add.Effective_Date__c}"><ui:outputDate value="{!add.Effective_Date__c}" format="MM/dd/yyyy"/></div>
+                                    </th>
+                                    
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!add.EST__c}"><ui:outputDateTime value="{!add.EST__c}" format="MM/dd/yyyy hh:mm a"/></div>
+                                    </th>
+                                    
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!add.Name}"><ui:outputURL value="{!'/'+add.Id}" label="{!add.Id}" target="_blank"/></div>
+                                    </th>
+                                    
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!add.Account__r.Name}"><ui:outputURL value="{!'/'+add.Account__r.Id}" label="{!add.Account__r.Name}" target="_blank"/></div>
+                                    </th>
+                                    
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!add.Account__r.Id}"><ui:outputText value="{!add.Account__r.Id}" /></div>
+                                    </th>
+                                    
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!add.Contact__r.Name}"><ui:outputURL value="{!'/'+add.Contact__r.Id}" label="{!add.Contact__r.Name}" target="_blank"/></div>
+                                    </th>
+                                    
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!add.Contact__r.Id}"><ui:outputText  value="{!add.Contact__r.Id}"/></div>
+                                    </th>
+                                    
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!add.Horizon_ID__c}">{!add.Horizon_ID__c} </div>
+                                    </th>  
+                                    
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!add.Unity_ID__c}">{!add.Unity_ID__c}</div>
+                                    </th>
+                                    
+                                </tr>
+                            </aura:if>
+                        </aura:iteration>
+                    </tbody>
+                </table>
+                </lightning:tab>
+                <lightning:tab label="Deleted" aura:id="deletedTab">
+                <table class="slds-table slds-table--bordered slds-table--cell-buffer">
+                    <thead>
+                        <tr class="slds-text-title--caps">
+                            <th scope="row" onclick="{!c.sortEffective}">
+                                <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                    <span class="slds-assistive-text">Sort</span>
+                                    <span title="Name">Effective Date</span> &nbsp; <img src="{!$Resource.sortIcon}"/> 
+                                </a>
+                            </th>
+                            <th scope="row" onclick="{!c.sortEST}">
+                                <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                    <span class="slds-assistive-text">Sort</span>
+                                    <span title="Name">Date/Time Requested (EST)</span> &nbsp; <img src="{!$Resource.sortIcon}"/> 
+                                </a>
+                            </th>
+                            <th scope="row" onclick="{!c.sortName}">
+                                <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                    <span class="slds-assistive-text">Sort</span>
+                                    <span title="Name">Audit Record</span> &nbsp; <img src="{!$Resource.sortIcon}"/> 
+                                </a>
+                            </th>
+                            <th scope="row" onclick="{!c.sortAccount}">
+                                <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                    <span class="slds-assistive-text">Sort</span>
+                                    <span title="Name">Account</span> &nbsp; <img src="{!$Resource.sortIcon}"/> 
+                                </a>
+                            </th>
+                            <th scope="row" onclick="{!c.sortAccountId}">
+                                <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                    <span class="slds-assistive-text">Sort</span>
+                                    <span title="Name">Account Id</span> &nbsp; <img src="{!$Resource.sortIcon}"/> 
+                                </a>
+                            </th>
+                            <th scope="row" onclick="{!c.sortContact}">
+                                <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                    <span class="slds-assistive-text">Sort</span>
+                                    <span title="Name">Contact</span> &nbsp; <img src="{!$Resource.sortIcon}"/> 
+                                </a>
+                            </th>
+                            <th scope="row" onclick="{!c.sortContactId}">
+                                <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                    <span class="slds-assistive-text">Sort</span>
+                                    <span title="Name">Contact Id</span> &nbsp; <img src="{!$Resource.sortIcon}"/> 
+                                </a>
+                            </th>
+                            <th scope="row" onclick="{!c.sortHorizon}">
+                                <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                    <span class="slds-assistive-text">Sort</span>
+                                    <span title="Name">Horizon ID</span> &nbsp; <img src="{!$Resource.sortIcon}"/> 
+                                </a>
+                            </th>
+                            <th scope="row" onclick="{!c.sortUnity}">
+                                <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                    <span class="slds-assistive-text">Sort</span>
+                                    <span title="Name">Unity ID</span> &nbsp; <img src="{!$Resource.sortIcon}"/> 
+                                </a>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <aura:iteration items="{!con.delLst}" var="del">  
+                            <aura:if isTrue="{!del != null}">
+                                <tr>
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!del.Effective_Date__c}"><ui:outputDate value="{!del.Effective_Date__c}" format="MM/dd/yyyy"/></div>
+                                    </th>
+                                    
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!del.EST__c}"><ui:outputDateTime value="{!del.EST__c}" format="MM/dd/yyyy hh:mm a"/></div>
+                                    </th>
+                                    
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!del.Name}"><ui:outputURL value="{!'/'+del.Id}" label="{!del.Name}" target="_blank"/></div>
+                                    </th>
+                                    
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!del.Account__r.Name}"><ui:outputURL value="{!'/'+del.Account__r.Id}" label="{!del.Account__r.Name}" target="_blank"/></div>
+                                    </th>
+                                    
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!del.Account__r.Id}"><ui:outputText value="{!del.Account__r.Id}" /></div>
+                                    </th>
+                                    
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!del.Contact__r.Name}"><ui:outputURL value="{!'/'+del.Contact__r.Id}" label="{!del.Contact__r.Name}" target="_blank"/></div>
+                                    </th>
+                                    
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!del.Contact__r.Id}"><ui:outputText  value="{!del.Contact__r.Id}"/></div>
+                                    </th>
+                                    
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!del.Horizon_ID__c}">{!del.Horizon_ID__c} </div>
+                                    </th>  
+                                    
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!del.Unity_ID__c}">{!del.Unity_ID__c}</div>
+                                    </th>
+                                    
+                                </tr>
+                            </aura:if>
+                        </aura:iteration>
+                    </tbody>
+                </table>
+                </lightning:tab>
+                </lightning:tabset>
+                <br/>
+                <br/>
+                <br/>
+            </aura:iteration>
+        </aura:if>
+    </div>
+</aura:component>

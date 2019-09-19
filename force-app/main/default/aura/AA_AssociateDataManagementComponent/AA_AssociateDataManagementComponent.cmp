@@ -1,0 +1,1900 @@
+<aura:component controller="AA_AssociateDataManagementController" implements="force:appHostable,flexipage:availableForAllPageTypes,force:hasRecordId" access="global" >
+    <aura:attribute name="isAsc" type="string" description="boolean variable to pass sorting condition to apex class"/> 
+    <aura:attribute name="isAsc2" type="string" description="boolean variable to pass sorting condition to apex class"/> 
+    <aura:attribute name="tableData" type="string[]" description="Used to store the values for the Referrals List"/>
+    <aura:attribute name="paginationList" type="string[]" description="Used to store the values for the Referrals List for pagination display"/>
+    <aura:attribute name="tableData2" type="string[]" description="Used to store the values for the Reassignment List"/>
+    <aura:attribute name="paginationList2" type="string[]" description="Used to store the values for the Reassignments List for pagination display"/>
+    <aura:attribute name="pageSize" type="Integer" default="20"/>
+    <aura:attribute name="pageSize2" type="Integer" default="20"/>
+    <aura:attribute name="totalSize" type="Integer"/>
+    <aura:attribute name="totalSize2" type="Integer"/>
+    <aura:attribute name="start" type="Integer" />
+    <aura:attribute name="end" type="Integer"/>
+    <aura:attribute name="start2" type="Integer" />
+    <aura:attribute name="end2" type="Integer"/>
+    
+    <aura:attribute name="strSelectedDistance" type="string" description="Holds the selected distance filter"/>
+    <aura:attribute name="strSelectedSource" type="string" description="Holds the selected Source system filter"/>
+    <aura:attribute name="strSelectedState" type="string" description="Holds the selected State Filter"/>
+    <aura:attribute name="strReassignUser" type="string" description="Holds the selected user for the Reassignment process"/>
+    <aura:attribute name="loggedInUser" type="User" description="Holds the currently logged in user"/>
+    <aura:attribute name="loggedInUserStr" type="string"/>	
+    
+    <aura:attribute name="customPermissions" type="sObject"/>
+    
+    <aura:attribute name="showSelectedUser" type="boolean"/>
+    <aura:attribute name="userList" type="User[]"/>
+    <aura:attribute name="userList2" type="User[]"/>
+    <aura:attribute name="selectList" type="string[]"/>
+    <aura:attribute name="selectList2" type="string[]"/>
+    <aura:attribute name="selectedUser" type="sObject"/>
+    <aura:attribute name="selectedUserLatitude" type="string"/>
+    <aura:attribute name="selectedUserLongitude" type="string"/>
+    <aura:attribute name="selectedUserLocation" type="string"/>
+    <aura:attribute name="selectedFromUser" type="sObject"/>
+    <aura:attribute name="accountList" type="Account[]"/>
+    <aura:attribute name="accSelectList" type="string[]"/>
+    <aura:attribute name="roleList" type="string[]"/>
+    <aura:attribute name="businessList" type="string[]"/>
+    <aura:attribute name="stateSelectList" type="string[]"/>
+    <aura:attribute name="statusSelectList" type="string[]"/>
+    <aura:attribute name="srcSelectList" type="string[]"/>
+    <aura:attribute name="distSelectList" type="string[]"/>
+    <aura:attribute name="typeSelectList" type="string[]"/>
+    <aura:attribute name="totalAssignments" type="integer"/>
+    <aura:attribute name="totalReassignments" type="integer"/>
+    <aura:attribute name="selectedUserRole" type="string"/>
+    <aura:attribute name="selectedUserRoleID" type="ID"/>
+    <aura:attribute name="strSelectedUser" type="string"/>
+    <aura:attribute name="checkedItems" type="String[]" access="public"/>
+    <aura:attribute name="checkedItems2" type="String[]" access="public"/>
+    <aura:attribute name="selectedListUser" type="string"/>
+    <aura:attribute name="selectedFromListUser" type="string"/>
+    
+    <aura:attribute name="distFilter" type="string" default="Currently Assigned"/>
+    <aura:attribute name="srcFilter" type="string" default="All"/>
+    <aura:attribute name="steFilter" type="string" default="None"/>
+    <aura:attribute name="statFilter" type="string" default="All"/>
+    
+    <aura:attribute name="showUserList" type="boolean" default="true"/>
+    
+    <aura:attribute name="recentActivity" type="string"/>
+    
+    <aura:attribute name="distanceFilter" type="string"/>
+    <aura:attribute name="sourceFilter" type="string"/>
+    <aura:attribute name="activeFilter" type="string"/>
+    <aura:attribute name="StateFilter" type="string"/> 
+    <aura:attribute name="nameFilter" type="string"/>
+    <aura:attribute name="npiFilter" type="string" />
+    <aura:attribute name="sfIDFilter" type="string"/>
+    <aura:attribute name="addressFilter" type="string"/>
+    <aura:attribute name="cityFilter" type="string"/>
+    <aura:attribute name="stFilter" type="string" />
+    <aura:attribute name="zipFilter" type="string"/>
+    <aura:attribute name="specialtyFilter" type="string"/>
+    <aura:attribute name="hhYTDAdmitFilter" type="string"/>
+    <aura:attribute name="hhPYAdmitFilter" type="string"/>
+    <aura:attribute name="hpYTDAdmitFilter" type="string"/>
+    <aura:attribute name="hpPYAdmitFilter" type="string"/>
+    <aura:attribute name="hdYTDAdmitFilter" type="string"/>
+    <aura:attribute name="hdPYAdmitFilter" type="string"/>
+    <aura:attribute name="hhPPSYTDAdmitFilter" type="string"/>
+    <aura:attribute name="hhPPSPYAdmitFilter" type="string"/>
+    <aura:attribute name="hhYTDReferralFilter" type="string"/>
+    <aura:attribute name="hhDiscQualAdmitYTDFilter" type="string"/>
+    <aura:attribute name="hpQualifiedYTDAdmitFilter" type="string"/>
+    <aura:attribute name="hpQualifiedPYAdmitFilter" type="string"/>
+    <aura:attribute name="hpYTDReferralFilter" type="string"/>
+    <aura:attribute name="hpLengthFilter" type="string"/>
+    
+    <aura:attribute name="sourceFilter2" type="string"/>
+    <aura:attribute name="activeFilter2" type="string"/>
+    <aura:attribute name="StateFilter2" type="string"/> 
+    <aura:attribute name="nameFilter2" type="string"/>
+    <aura:attribute name="npiFilter2" type="string" />
+    <aura:attribute name="sfIDFilter2" type="string"/>
+    <aura:attribute name="addressFilter2" type="string"/>
+    <aura:attribute name="cityFilter2" type="string"/>
+    <aura:attribute name="stFilter2" type="string" />
+    <aura:attribute name="zipFilter2" type="string"/>
+    <aura:attribute name="specialtyFilter2" type="string"/>
+    <aura:attribute name="hhYTDAdmitFilter2" type="string"/>
+    <aura:attribute name="hhPYAdmitFilter2" type="string"/>
+    <aura:attribute name="hpYTDAdmitFilter2" type="string"/>
+    <aura:attribute name="hpPYAdmitFilter2" type="string"/>
+    <aura:attribute name="hdYTDAdmitFilter2" type="string"/>
+    <aura:attribute name="hdPYAdmitFilter2" type="string"/>
+    <aura:attribute name="hhPPSYTDAdmitFilter2" type="string"/>
+    <aura:attribute name="hhPPSPYAdmitFilter2" type="string"/>
+    <aura:attribute name="hhYTDReferralFilter2" type="string"/>
+    <aura:attribute name="hhDiscQualAdmitYTDFilter2" type="string"/>
+    <aura:attribute name="hpQualifiedYTDAdmitFilter2" type="string"/>
+    <aura:attribute name="hpQualifiedPYAdmitFilter2" type="string"/>
+    <aura:attribute name="hpYTDReferralFilter2" type="string"/>
+    <aura:attribute name="hpLengthFilter2" type="string"/>
+    
+    <aura:attribute name="newSelectRole" type="string"/>
+    
+    <aura:attribute name="filters" type="string[]"/>
+    <aura:attribute name="sortField" type="string"/>
+    <aura:attribute name="sortField2" type="string"/>
+    
+    <aura:attribute name="sortAsc" type="Boolean"/>
+    <aura:attribute name="sortAsc2" type="Boolean"/>
+    
+    <aura:attribute name="showFromSelection" type="boolean"/>
+    
+    <aura:attribute name="modalList" type="sObject[]"/>
+    <aura:attribute name="selectedItemID" type="string"/>
+    <aura:attribute name="showModal" type="boolean"/>
+    
+    <aura:attribute name="userRoleList" type="List"/>
+    <aura:attribute name="newRole" type="string"/>
+    <aura:attribute name="showWarning" type="boolean"/>
+    <aura:attribute name="showRemoveWarning3" type="boolean" default="false"/>
+    <aura:attribute name="transferButton" type="boolean" default="true"/>
+    <aura:attribute name="massTransferButton" type="boolean" default="true"/>
+    
+    <aura:attribute name="salesRepName" type="string"/>
+    
+    <aura:attribute name="nameListFilter" type="string"/>
+    <aura:attribute name="nameListFilter2" type="string"/>
+    <aura:attribute name="showNameFilter" type="boolean" default="true"/>
+    <aura:attribute name="facilityListFilter" type="string"/>
+    
+    <aura:attribute name="checked1" type="string"/>
+    <aura:attribute name="checked2" type="string"/>
+    <aura:attribute name="placeholdID" type="string"/>
+    <aura:attribute name="removeName" type="string"/>
+    
+    <aura:attribute name="showRemoveWarning" type="boolean" default="false"/>
+    <aura:attribute name="showRemoveWarning2" type="boolean" default="false"/>
+    
+    <aura:attribute name="Spinner" type="boolean" default="false"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <aura:if isTrue="{!v.Spinner}">
+        <div aura:id="spinnerId" class="slds-spinner_container">
+            <div class="slds-spinner--brand  slds-spinner slds-spinner--large slds-is-relative" role="alert">
+                <span class="slds-assistive-text">Loading</span>
+                <div class="slds-spinner__dot-a"></div>
+                <div class="slds-spinner__dot-b"></div>
+            </div>
+        </div>
+    </aura:if>
+    
+    <div id="OverlapBS" style="background-color:white">
+        <div id="divFormId">
+            <div >
+                <table  style="width:30%">
+                    <tr>
+                        <td>
+                            <div id="userSearchTextPanelDiv"> 
+                                <div class="input-group formElementsWidth">
+                                    <aura:if isTrue="{!v.showFromSelection}">
+                                        <table>
+                                            <td>
+                                                
+                                                From this User:     
+                                                <ui:inputText label="Filter the list below by name or PERNER with this field, or select from the available options: " value="{!v.nameListFilter2}" blur="{!c.searchUsers2}" disabled="{!v.customPermissions.isSalesRep == true}"/>
+                                                <ui:inputSelect class="slds-select custom-background" aura:id="inputSelectUser2" change="{!c.onSet2}" disabled="{!v.customPermissions.reassign == false}">
+                                                    <aura:iteration items="{!v.selectList2}" var="usrLst2" indexVar="index"> 
+                                                        <aura:if isTrue="{!index ==0}" >
+                                                                <ui:inputSelectOption text="{!usrLst2}" value="true"/>
+                                                                <aura:set attribute="else">
+                                                                    <ui:inputSelectOption text="{!usrLst2}"/>
+                                                                </aura:set>
+                                                            </aura:if> 
+                                                    </aura:iteration>
+                                                </ui:inputSelect>
+                                                <br/>
+                                                <ui:button label="Reset User List Filter" press="{!c.resetUserList2}" disabled="{!v.customPermissions.isSalesRep == true}"/>
+                                                
+                                            </td>
+                                        </table>
+                                        <br/>    
+                                    </aura:if>
+                                    <table  style="width:60%">
+                                        <tr>
+                                            <td>
+                                                <aura:if isTrue="{!v.customPermissions.isSalesRep}">
+                                                    <ui:outputText value="{!v.salesRepName}"/>
+                                                </aura:if>
+                                                <aura:if isTrue="{!v.showUserList}">
+                                                <aura:if isTrue="{!v.showFromSelection}">To this User:</aura:if>
+                                                <aura:if isTrue="{!v.showNameFilter}"><ui:inputText label="Filter the list below by name or PERNER with this field, or select from the available options: " value="{!v.nameListFilter}" blur="{!c.searchUsers}" disabled="{!v.customPermissions.isSalesRep == true}"/></aura:if>
+                                                    <ui:inputSelect class="slds-select custom-background" aura:id="inputSelectUser" change="{!c.onSet}" disabled="{!v.customPermissions.isSalesRep == true}">
+                                                        <aura:iteration items="{!v.selectList}" var="usrLst" indexVar="index"> 
+                                                            <aura:if isTrue="{!index ==0}" >
+                                                                <ui:inputSelectOption text="{!usrLst}" value="true"/>
+                                                                <aura:set attribute="else">
+                                                                    <ui:inputSelectOption text="{!usrLst}"/>
+                                                                </aura:set>
+                                                            </aura:if>
+                                                        </aura:iteration>
+                                                    </ui:inputSelect>
+                                                <br/>
+                                                <aura:if isTrue="{!v.showNameFilter}">
+                                                    <ui:button label="Reset User List Filter" press="{!c.resetUserList}" disabled="{!v.customPermissions.isSalesRep == true}"/>
+                                                </aura:if>
+                                                </aura:if>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <br/>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <aura:If isTrue="{!v.showSelectedUser}">
+                <lightning:tabset selectedTabId="referral">
+                    <lightning:tab label="Details" aura:id="detailTab" onactive="{!c.onTabChange}">
+                        
+                        <aura:if isTrue="{!v.showRemoveWarning3}">
+                            <div role="dialog" tabindex="-1" aria-labelledby="header99" class="slds-modal slds-fade-in-open ">
+                            <div class="slds-modal__container">
+                                <div class="slds-modal__content slds-p-around--medium">
+                                Are you sure you want to proceed with the user record update?
+                                    <br/>
+                                </div>
+                                <footer class="slds-modal__footer">
+                                    <button class="slds-button slds-button_neutral" onclick="{!c.hideWarning3}">Cancel</button>
+                                    <button class="slds-button slds-button_brand" onclick="{!c.getChangedInfo}">Proceed</button>
+                                </footer>
+                            </div>
+                            </div>
+                            <div class="slds-backdrop slds-backdrop--open"></div>
+                        </aura:if>
+                        
+                        <div id="Details" class="tab-pane fade in active marginTop tabHeight">
+                            <input type="hidden" value="{!v.selectedUser.uID}" id="theHiddenInputForUserId"/>
+                            <table width="60%" class="smallMarginLeft smallMarginTop smallMarginBottom" >
+                                <tr width="100%">
+                                    <td width="50%">
+                                        <div style="height: 70px;width: 55%;">
+                                            <div>
+                                                <ui:outputText value="Last Name"/><br/>
+                                                <ui:outputText value="{!v.selectedUser.lastName}"/>
+                                            </div>
+                                        </div>  
+                                    </td>
+                                </tr>
+                                <tr width="100%">
+                                    <td width="50%">
+                                        <div style="height: 70px;width: 55%;">
+                                            <div>
+                                                <ui:outputText value="First Name"/><br/>
+                                                <ui:outputText value="{!v.selectedUser.firstName}"/>
+                                            </div>
+                                        </div>  
+                                    </td>
+                                </tr>
+                                
+                                <tr width="100%">
+                                    <td width="50%">
+                                        <div style="height: 70px;width: 55%;">
+                                            <div>
+                                                <ui:outputText value="User Name"/><br/>
+                                                <ui:outputText value="{!v.selectedUser.userName}"/>
+                                            </div>
+                                        </div>  
+                                    </td>
+                                </tr>
+                                <tr width="100%">
+                                    <td width="50%">
+                                        <div style="height: 70px;width: 20%;">
+                                            <div>
+                                                <ui:outputText value="Line of Business"/><br/>
+                                                <ui:inputSelect class="slds-select custom-background" aura:id="inputSelectBusiness" disabled="{!v.customPermissions.userCreate == false}">
+                                                    <aura:iteration items="{!v.businessList}" var="busLst" indexVar="index">
+                                                        <ui:inputSelectOption text="{!busLst}" />
+                                                    </aura:iteration>
+                                                </ui:inputSelect>
+                                            </div>
+                                        </div>  
+                                    </td>
+                                </tr>
+                                <tr width="100%">
+                                    <td width="50%">
+                                        <div style="height: 70px;width: 55%;">
+                                            <div>
+                                                <ui:outputText value="PERNER"/><br/>
+                                                <ui:outputText value="{!v.selectedUser.perner}"/>
+                                            </div>
+                                        </div>  
+                                    </td>
+                                </tr>
+                                <tr width="100%">
+                                    <td width="50%">
+                                        <div style="height: 70px;width: 55%;">
+                                            <div>
+                                                <ui:outputText value="Title"/><br/>
+                                                <ui:inputText value="{!v.selectedUser.title}" aura:id="inputTitle" disabled="{!v.customPermissions.userCreate == false}"/>
+                                            </div>
+                                        </div>  
+                                    </td>
+                                </tr>
+                                <tr width="100%">
+                                    <td width="50%">
+                                        <div style="height: 70px;width: 55%;">
+                                            <div>
+                                                <ui:outputText value="Phone"/><br/>
+                                                <ui:inputText value="{!v.selectedUser.phone}" aura:id="inputPhone" disabled="{!v.customPermissions.userCreate == false}"/>
+                                            </div>
+                                        </div>  
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>
+                                        <div style="height:70px; width: 30%;">
+                                            <ui:outputText value="Home Facility"/>
+                                            <aura:if isTrue="{v.selectedUser.location == undefined}">
+                                                <div class="alert alert-warning alert-dismissible" role="alert" style="width: 41%;margin-left: 30%;margin-bottom:-1%;margin-top: 1%;">
+                                                    <strong>
+                                                        <div>There is currently no Home Facility assigned for the selected user, please configure Home Facility or request that your manager do so.</div>
+                                                    </strong>  
+                                                </div>
+                                            </aura:if>
+                                            <div>
+                                                <aura:if isTrue="{!v.customPermissions.userCreate}">
+                                                <ui:inputText label="Filter the list below by name or facility number with this field, or select from the available options: " value="{!v.facilityListFilter}" blur="{!c.searchAccounts}" disabled="{!v.customPermissions.isSalesRep == true}"/>
+                                                    </aura:if>
+                                                <ui:inputSelect class="slds-select custom-background" aura:id="inputSelectAccount" disabled="{!v.customPermissions.userCreate == false}">
+                                                    <aura:iteration items="{!v.accSelectList}" var="accLst" > 
+                                                        <ui:inputSelectOption text="{!accLst}"/> 
+                                                    </aura:iteration>
+                                                </ui:inputSelect>
+                                                <br/>
+                                                <aura:if isTrue="{!v.customPermissions.userCreate}">
+                                                <ui:button label="Reset Account List Filter" press="{!c.resetAccountList}" disabled="{!v.customPermissions.userCreate == false}"/>
+                                                </aura:if>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <aura:if isTrue="{!v.customPermissions.userCreate}">
+                            <lightning:button label="Submit" onclick="{!c.showUserWarning3}" disabled="{!v.customPermissions.userCreate == false}"/>
+                            </aura:if>
+                        </div>
+                    </lightning:tab>
+                    <lightning:tab label="Organization Alignment" onactive="{!c.getRoleList}" aura:id="orgTab">
+                        <div id="OrganizationAlignment" class="tab-pane fade marginTop tabHeight">
+                            
+                            <div styleclass="smallMarginLeft" style="padding-top: 30px;" id="CurrentId" layout="block">
+                                <input type="hidden" id="userRole_Hidden" value="{!v.selectedUserRoleID}"/>
+                                <h2 style="font-size: 16px;"> Current Role : {!v.selectedUserRole}</h2>
+                            </div>
+                            <div>
+                                <table>
+                                    <thead><tr>Division</tr></thead>
+                                    <tbody>
+                                        <aura:iteration items="{!v.userRoleList}" var="userRecord">
+                                            <tr>
+                                                <td>
+                                                    <ui:inputSelect class="slds-select custom-background" aura:id="inputSelectRole" change="{!c.fetchDependentRoles}" disabled="{!v.customPermissions.orgAlignment == false}">
+                                                        <aura:iteration items="{!userRecord.roles}" var="roleLst" indexVar="shownRole">
+                                                            <ui:inputSelectOption text="{!roleLst}" />
+                                                        </aura:iteration>
+                                                    </ui:inputSelect> 
+                                                </td>
+                                                &nbsp;&nbsp;&nbsp;
+                                                <td>
+                                                    {!userRecord.users} 
+                                                </td>    
+                                            </tr>
+                                            <br/>    
+                                        </aura:iteration>
+                                    </tbody>
+                                </table>
+                                <br/>
+                                <br/>
+                                <aura:if isTrue="{!v.customPermissions.userRequest}">
+                                    <lightning:button label="Submit" onclick="{!c.changeRole}"/>
+                                </aura:if>    
+                            </div>
+                        </div>
+                    </lightning:tab>
+                    <lightning:tab label="Referral Sources" onactive="{!c.checkOptions}" id="referral" aura:id="referralTab">
+                        
+                        <aura:if isTrue="{!v.showModal}">
+                            <div role="dialog" tabindex="-1" aria-labelledby="header99" class="slds-modal slds-fade-in-open ">
+                                <div class="slds-modal__container">
+                                    <div class="slds-modal__header">
+                                        <button class="slds-button slds-modal__close slds-button--icon-inverse" title="Close" onclick="{!c.hideModal}">
+                                            X
+                                            <span class="slds-assistive-text">Close</span>
+                                        </button>
+                                        <h2 id="header99" class="slds-text-heading--medium">Current Team</h2>
+                                    </div>
+                                    <div class="slds-modal__content slds-p-around--medium">
+                                        <aura:if isTrue="{!v.modalList != null}">
+                                            <table>
+                                                <aura:iteration items="{!v.modalList}" var="item">
+                                                    <tr>
+                                                        <ui:outputURL value="{!'/'+item.personID}" label="{!item.name}" target="_blank"/>
+                                                    </tr>
+                                                </aura:iteration>
+                                            </table>
+                                        </aura:if>
+                                        <aura:if isTrue="{!v.modalList == null}">
+                                            No current team assigned
+                                        </aura:if>
+                                    </div>
+                                    <div class="slds-modal__footer">
+                                        <button class="slds-button slds-button--neutral" onclick="{!c.hideModal}" >Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="slds-backdrop slds-backdrop--open"></div>
+                        </aura:if>
+                        
+                        <aura:if isTrue="{!v.showRemoveWarning}">
+                            <div role="dialog" tabindex="-1" aria-labelledby="header99" class="slds-modal slds-fade-in-open ">
+                            <div class="slds-modal__container">
+                                <footer class="slds-modal__footer">
+                                    <p>This will remove all current referral sources from the selected user above.</p>
+                                    <p>Are you sure you want to proceed?</p>
+                                    <button class="slds-button slds-button_neutral" onclick="{!c.hideWarning}">Cancel</button>
+                                    <button class="slds-button slds-button_brand" onclick="{!c.removeUserAssignments}">Proceed</button>
+                                </footer>
+                            </div>
+                            </div>
+                            <div class="slds-backdrop slds-backdrop--open"></div>
+                        </aura:if>
+                        
+                        <aura:if isTrue="{!v.showRemoveWarning2}">
+                            <div role="dialog" tabindex="-1" aria-labelledby="header99" class="slds-modal slds-fade-in-open ">
+                            <div class="slds-modal__container">
+                                <div class="slds-modal__content slds-p-around--medium">
+                                Are you sure you want to remove <ui:outputText value="{!v.removeName}"/> from the territory assignment?
+                                    <br/>
+                                </div>
+                                <footer class="slds-modal__footer">
+                                    <button class="slds-button slds-button_neutral" onclick="{!c.hideWarning2}">Cancel</button>
+                                    <button class="slds-button slds-button_brand" onclick="{!c.removeAssignmentConfirm}">Proceed</button>
+                                </footer>
+                            </div>
+                            </div>
+                            <div class="slds-backdrop slds-backdrop--open"></div>
+                        </aura:if>
+                        
+                        <div id="referralSourceAssignment" class="tab-pane fade marginTop tabHeight" onkeyup="{!c.formPress}">
+                            <div class="form-group smallMarginLeft smallMarginTop">
+                                <table width="100%" id="referralsAssignTable">
+                                    <tr>
+                                        <td width="75%" Id="lstOptions">
+                                            <table class = "browserWidthlstOptions" width="100%">
+                                                <tr class = "browserWidthlstOptions" width="60%">
+                                                    <td width="18%" class = "browserWidth">
+                                                        <label for="selectedReferralFilter">View</label>
+                                                        <ui:inputSelect class="slds-select custom-background" aura:id="InputSelectDistance" change="{!c.setDist}">
+                                                            <aura:iteration items="{!v.distSelectList}" var="distLst" > 
+                                                                <ui:inputSelectOption text="{!distLst}"/> 
+                                                            </aura:iteration>
+                                                        </ui:inputSelect>
+                                                    </td>
+                                                    <td width="2%" style="min-width: 25px;">&nbsp;</td>
+                                                    <td width="18%" class ="browserWidth">
+                                                        <label for="sourceSystemPicklist">Source System</label>
+                                                        <ui:inputSelect class="slds-select custom-background" aura:id="InputSelectSource" change="{!c.setSrc}">
+                                                            <aura:iteration items="{!v.srcSelectList}" var="srcLst" > 
+                                                                <ui:inputSelectOption text="{!srcLst}"/> 
+                                                            </aura:iteration>
+                                                        </ui:inputSelect>
+                                                    </td>
+                                                    
+                                                    <td width="2%" style="min-width: 25px;">&nbsp;</td>
+                                                    <td width="18%" class ="browserWidth">
+                                                        <label for="secPicklist">Active / Not Active</label>
+                                                        <ui:inputSelect class="slds-select custom-background" aura:id="InputSelectStatus" change="{!c.setStat}">
+                                                            <aura:iteration items="{!v.statusSelectList}" var="stsLst"> 
+                                                                <ui:inputSelectOption text="{!stsLst}"/> 
+                                                            </aura:iteration>
+                                                        </ui:inputSelect>
+                                                    </td>
+                                                    
+                                                    <td width="2%" style="min-width: 25px;">&nbsp;</td>
+                                                    <td width="18%">
+                                                        <label for="statePicklist">State</label>
+                                                        <div class="form-item-container">
+                                                            <ui:inputSelect class="slds-select custom-background" aura:id="InputSelectState" change="{!c.setSte}">
+                                                                <aura:iteration items="{!v.stateSelectList}" var="stateLst" > 
+                                                                    <ui:inputSelectOption text="{!stateLst}"/> 
+                                                                </aura:iteration>
+                                                            </ui:inputSelect>
+                                                        </div>
+                                                    </td>
+                                                    <td width="42%">&nbsp;</td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                        <td width="44%">&nbsp;</td>
+                                        <td width="20%" colspan="2"></td> 
+                                    </tr>
+                                    <tr><td>
+                                        &nbsp;
+                                        </td> </tr>
+                                </table>
+                            </div>
+                            <br/>
+                            
+                            <div id="referralTableDiv">
+                                <div>
+                                    <aura:if isTrue="{!v.showWarning}"><div style="width: 800px"><span style="color:red">Please note that when using the search all view, we recommend that you apply additional filters to help processing time and narrow results.  Maximum allowable results are limited to 2000 records, and processing may take up to a minute or more on slower connections without adequate filtering.</span><br/><br/></div></aura:if>
+                                    <aura:if isTrue="{!v.totalAssignments > 1500}">
+                                        <div style="width: 800px"><span style="color:red">Please note.  The selected user has a large number of referrals.  Maximum allowable results are limited to 2000 records, and processing may take up to a minute or more, or not complete properly on slower connections without adequate filtering, please apply at least one filter before proceeding or you may not get a result.</span><br/><br/></div>
+                                    </aura:if>
+                                    <lightning:button label="Search" onclick="{!c.getReferrals}"/>
+                                    <lightning:button label="Reset" onclick="{!c.resetFilters}"/>
+                                </div><br/>
+                                <div id="refSourcesTotalAssignmentTd" style="float: left;">
+                                    <div id="totalAssignedOP">
+                                        Total Assigned: <span id ="referralAssignmentCount" style="font-weight: bold; font-size:large">{!v.totalAssignments}</span>
+                                    </div>
+                                    <br/>
+                                	<aura:if isTrue="{!v.customPermissions.canRemoveAll}">
+                                	<lightning:button label="Remove all Assignments" onclick="{!c.showWarning}"/>
+                                    <br/>
+                                    <br/>
+                                    </aura:if>
+                                    <aura:if isTrue="{!v.recentActivity != null}">
+                                        <div style="background-color: #42f474; opacity:100" aura:id="changeIt" >
+                                        <ui:outputText value="Recent Activity: "/>
+                                        <span style="font-weight:bold"><ui:outputText value="{!v.recentActivity}"/></span>
+                                            </div>
+                                    </aura:if>
+                                    
+                                </div>
+                                <br/>
+                                <br/>
+                                <br/>
+                                <br/>
+                                <br/>
+                                <br/>
+                                <br/>
+                                <div>
+                                <lightning:tabset >
+                                    <lightning:tab label="Demographic">
+                                        <table class="slds-table slds-table--bordered slds-table--cell-buffer">
+                                            <thead>
+                                                <tr class="slds-text-title--caps">
+                                                    <th class="slds-is-sortable slds-text-title--caps" scope="col">
+                                                        <!--<a href="javascript:void(0);" class="slds-th__action slds-text-link-reset">
+                                                            <span title="Select All">Select All</span>&nbsp;
+                                                        </a>-->
+                                                    </th>
+                                                    
+                                                    <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortName}">
+                                                        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                            <span class="slds-assistive-text">Sort</span>
+                                                            <span title="Name">Name</span> &nbsp; <img src="{!$Resource.sortIcon}"/> 
+                                                        </a>
+                                                        <br/>
+                                                    </th>
+                                                    
+                                                    <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortNPI}">
+                                                        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                            <span class="slds-assistive-text">Sort</span>
+                                                            <span title="NPI">NPI</span> &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                        </a>
+                                                        <br/>
+                                                    </th>
+                                                    
+                                                    <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortAddress}">
+                                                        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                            <span class="slds-assistive-text">Sort</span>
+                                                            <span title="Address">Address</span> &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                        </a>
+                                                        <br/>
+                                                    </th>
+                                                    
+                                                    <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortCity}">
+                                                        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                            <span class="slds-assistive-text">Sort</span>
+                                                            <span title="City">City</span> &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                        </a>
+                                                        <br/>
+                                                    </th>
+                                                    
+                                                    <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortState}">
+                                                        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                            <span class="slds-assistive-text">Sort</span>
+                                                            <span title="State">State</span> &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                        </a>
+                                                        <br/>
+                                                    </th> 
+                                                    
+                                                    <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortZip}">
+                                                        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                            <span class="slds-assistive-text">Sort</span>
+                                                            <span title="Zip">Zip</span> &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                        </a>
+                                                        <br/>
+                                                    </th> 
+                                                    
+                                                    <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortType}">
+                                                        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                            <span class="slds-assistive-text">Sort</span>
+                                                            <span title="Type">Type</span> &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                        </a>
+                                                        <br/>
+                                                    </th>
+                                                    
+                                                    <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortSpecialty}">
+                                                        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                            <span class="slds-assistive-text">Sort</span>
+                                                            <span title="Specialty">Specialty</span> &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                        </a>
+                                                        <br/>
+                                                    </th>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                    <th>
+                                                        <!--<ui:inputCheckbox change="{!c.selectAll}" aura:id="checkbox"/>-->
+                                                    </th>
+                                                    <th>
+                                                        <ui:inputText value="{!v.nameFilter}" keyup="{!c.formPress}"/>
+                                                    </th>
+                                                    <th>
+                                                        <ui:inputText value="{!v.npiFilter}" keyup="{!c.formPress}"/>
+                                                    </th>
+                                                    <th>
+                                                        <ui:inputText value="{!v.addressFilter}" keyup="{!c.formPress}"/>
+                                                    </th>
+                                                    <th>
+                                                        <ui:inputText value="{!v.cityFilter}" keyup="{!c.formPress}"/>
+                                                    </th>
+                                                    <th>
+                                                        <ui:inputText value="{!v.stFilter}" keyup="{!c.formPress}"/>
+                                                    </th>
+                                                    <th>
+                                                        <ui:inputText value="{!v.zipFilter}" keyup="{!c.formPress}"/>
+                                                    </th>
+                                                    <th>
+                                                        <ui:inputSelect class="slds-select custom-background" aura:id="InputSelectType">
+                                                                <aura:iteration items="{!v.typeSelectList}" var="t" > 
+                                                                    <ui:inputSelectOption text="{!t}"/> 
+                                                                </aura:iteration>
+                                                            </ui:inputSelect>
+                                                    </th>
+                                                    <th>
+                                                        <ui:inputText value="{!v.specialtyFilter}"/>	
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <aura:iteration items="{!v.paginationList}" var="con">  
+                                                    <aura:if isTrue="{!con != null}">
+                                                        <tr>
+                                                            <th scope="row">
+                                                                <ui:inputCheckbox name="{!con.name}" aura:id="abox" text="{!con.itemID}" value="{!con.selected}" change="{!c.onCheck}"/>
+                                                            </th>
+                                                            
+                                                            <th scope="row">
+                                                                <div class="slds-truncate" title="{!con.name}"><ui:outputURL value="{!'/'+con.itemID}" label="{!con.name}" target="_blank"/>&nbsp;&nbsp;&nbsp; <aura:if isTrue="{!con.teamCount > 0}"><lightning:buttonIcon iconName="utility:people" variant="bare" onclick="{!c.getTeam}" alternativeText="{!con.itemID}" /></aura:if></div>
+                                                            </th>
+                                                            
+                                                            <th scope="row">
+                                                                <div class="slds-truncate" title="{!con.NPI__c}">{!con.npi}</div>
+                                                            </th>
+                                                            
+                                                            <th scope="row">
+                                                                <div class="slds-truncate" title="{!con.MailingStreet}">{!con.shippingStreet}</div>
+                                                            </th>
+                                                            
+                                                            <th scope="row">
+                                                                <div class="slds-truncate" title="{!con.MailingCity}">{!con.shippingCity}</div>
+                                                            </th>
+                                                            
+                                                            <th scope="row">
+                                                                <div class="slds-truncate" title="{!con.MailingState}">{!con.shippingState} </div>
+                                                            </th>  
+                                                            
+                                                            <th scope="row">
+                                                                <div class="slds-truncate" title="{!con.ShippingPostalCode}">{!con.shippingPostalCode}</div>
+                                                            </th>
+                                                            
+                                                            <th scope="row">
+                                                                <div class="slds-truncate" title="{!con.accType}">{!con.accType}</div>
+                                                            </th>
+                                                            
+                                                            <th scope="row">
+                                                                <div class="slds-truncate" title="{!con.Specialty}">{!con.specialty}</div>
+                                                            </th>
+                                                        </tr>
+                                                    </aura:if>
+                                                </aura:iteration>
+                                            </tbody>
+                                        </table>
+                                    </lightning:tab>
+                                    <lightning:tab label="Metric Totals">
+                                        <table class="slds-table slds-table--bordered slds-table--cell-buffer">
+                                            <thead>
+                                                <tr class="slds-text-title--caps">
+                                                    <th class="slds-is-sortable slds-text-title--caps" scope="col">
+                                                        <!--<a href="javascript:void(0);" class="slds-th__action slds-text-link-reset">
+                                                            <span title="Select All">Select All</span>
+                                                        </a>-->
+                                                    </th>
+                                                    
+                                                    <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortName}">
+                                                        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                            <span class="slds-assistive-text">Sort</span>
+                                                            <span title="Name">Name</span>   &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                        </a>
+                                                        <br/>
+                                                    </th>
+                                                    
+                                                    <th class="slds-is-sortable slds-text-title--caps" style="background-color:#E3E4E6" scope="col" onclick="{!c.sortHHYTDAdmits}">
+                                                        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                            <span class="slds-assistive-text">Sort</span>
+                                                            <span title="HH YTD Admits">HH <br/> YTD <br/> Admits</span> &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                        </a>
+                                                    </th>
+                                                    
+                                                    <th class="slds-is-sortable slds-text-title--caps" style="background-color:#E3E4E6" scope="col" onclick="{!c.sortHHPYAdmits}">
+                                                        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                            <span class="slds-assistive-text">Sort</span>
+                                                            <span title="PY Admits">PY <br/> Admits</span> &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                        </a>
+                                                    </th>
+                                                    
+                                                    <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortHPYTDAdmits}">
+                                                        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                            <span class="slds-assistive-text">Sort</span>
+                                                            <span title="HP YTD Admits">HP<br/> YTD <br/> Admits</span> &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                        </a>
+                                                    </th> 
+                                                    
+                                                    <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortHPPYAdmits}">
+                                                        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                            <span class="slds-assistive-text">Sort</span>
+                                                            <span title="PY Admits">PY <br/> Admits</span> &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                        </a>
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th>
+                                                        <!--<ui:inputCheckbox change="{!c.selectAll}" aura:id="checkbox"/>-->
+                                                    </th>
+                                                    <th>
+                                                        <ui:inputText value="{!v.nameFilter}" keyup="{!c.formPress}"/>
+                                                    </th>
+                                                    <th style="background-color:#E3E4E6">
+                                                        
+                                                    </th>
+                                                    <th style="background-color:#E3E4E6">
+                                                        
+                                                    </th>
+                                                    <th>
+                                                        
+                                                    </th>
+                                                    <th>
+                                                        
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <aura:iteration items="{!v.paginationList}" var="con">  
+                                                    <aura:if isTrue="{!con != null}">
+                                                        <tr>
+                                                            <th scope="row">
+                                                                <ui:inputCheckbox name="{!con.name}" aura:id="abox" text="{!con.itemID}" value="{!con.selected}" change="{!c.onCheck}"/>
+                                                            </th>
+                                                            
+                                                            <th scope="row">
+                                                                <div class="slds-truncate" title="{!con.name}"><ui:outputURL value="{!'/'+con.itemID}" label="{!con.name}" target="_blank"/> &nbsp;&nbsp;&nbsp; <aura:if isTrue="{!con.teamCount > 0}"><lightning:buttonIcon iconName="utility:people" variant="bare" onclick="{!c.getTeam}" alternativeText="{!con.itemID}" /></aura:if></div>
+                                                            </th>
+                                                            
+                                                            <th scope="row" style="background-color:#E3E4E6">
+                                                                <div class="slds-truncate" title="{!con.KAH_HH_Admits_YTD__c}">{!con.hhYTDAdmit}</div>
+                                                            </th>
+                                                            
+                                                            <th scope="row" style="background-color:#E3E4E6">
+                                                                <div class="slds-truncate" title="{!con.HH_Admits_PY__c}">{!con.hhPYAdmit}</div>
+                                                            </th>
+                                                            
+                                                            <th scope="row">
+                                                                <div class="slds-truncate" title="{!con.KAH_HP_Admits_YTD__c}">{!con.hpYTDAdmit}</div>
+                                                            </th>  
+                                                            
+                                                            <th scope="row">
+                                                                <div class="slds-truncate" title="{!con.HP_Admits_PY__c}">{!con.hpPYAdmit}</div>
+                                                            </th>
+                                                        </tr>
+                                                    </aura:if>
+                                                </aura:iteration>
+                                            </tbody>
+                                        </table>
+                                    </lightning:tab>
+                                    <lightning:tab label="Home Health">
+                                        <table class="slds-table slds-table--bordered slds-table--cell-buffer">
+                                            <thead>
+                                                <tr class="slds-text-title--caps">
+                                                    <th class="slds-is-sortable slds-text-title--caps" scope="col">
+                                                        <!--<a href="javascript:void(0);" class="slds-th__action slds-text-link-reset">
+                                                            <span title="Select All">Select All</span>
+                                                        </a>-->
+                                                    </th>
+                                                    
+                                                    <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortName}">
+                                                        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                            <span class="slds-assistive-text">Sort</span>
+                                                            <span title="Name">Name</span>   &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                        </a>
+                                                        <br/>
+                                                    </th>
+                                                    
+                                                    <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortPPSYTDAdmitsHH}">
+                                                        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                            <span class="slds-assistive-text">Sort</span>
+                                                            <span title="PPS YTD Admits">PPS <br/> YTD <br/> Admits</span> &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                        </a>
+                                                    </th>
+                                                    
+                                                    <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortPPSPYHH}">
+                                                        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                            <span class="slds-assistive-text">Sort</span>
+                                                            <span title="PPS PY Admits">PPS PY <br/>Admits</span> &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                        </a>
+                                                    </th>
+                                                    
+                                                    <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortYTDReferralsHH}">
+                                                        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                            <span class="slds-assistive-text">Sort</span>
+                                                            <span title="YTD Referrals">YTD <br/> Referrals</span> &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                        </a>
+                                                        <br/>
+                                                    </th>
+                                                    
+                                                    <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortDiscQualYTDAdmitsHH}">
+                                                        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                            <span class="slds-assistive-text">Sort</span>
+                                                            <span title="Disc. Qual. YTD Admits">Disc. Qual.<br/> YTD Admits</span> &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                        </a>
+                                                    </th>
+                                                    
+                                                    <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortDiscQualPYAdmitsHH}">
+                                                        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                            <span class="slds-assistive-text">Sort</span>
+                                                            <span title="Disc. Qual. PY Admits">Disc. Qual.<br/> PY Admits</span> &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                        </a>
+                                                    </th>
+                                                    
+                                                    
+                                                </tr>
+                                                <tr>
+                                                    <th>
+                                                        <!--<ui:inputCheckbox change="{!c.selectAll}" aura:id="checkbox"/>-->
+                                                    </th>
+                                                    <th>
+                                                        <ui:inputText value="{!v.nameFilter}" keyup="{!c.formPress}"/>
+                                                    </th>
+                                                    <th>
+                                                        
+                                                    </th>
+                                                    <th>
+                                                        
+                                                    </th>
+                                                    <th>
+                                                        
+                                                    </th>
+                                                    <th>
+                                                        
+                                                    </th>
+                                                    <th>
+                                                        
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <aura:iteration items="{!v.paginationList}" var="con">  
+                                                    <aura:if isTrue="{!con != null}">
+                                                        <tr>
+                                                            <th scope="row">
+                                                                <ui:inputCheckbox name="{!con.name}" aura:id="abox" text="{!con.itemID}" value="{!con.selected}" change="{!c.onCheck}"/>
+                                                            </th>
+                                                            
+                                                            <th scope="row">
+                                                                <div class="slds-truncate" title="{!con.name}"><ui:outputURL value="{!'/'+con.itemID}" label="{!con.name}" target="_blank"/>&nbsp;&nbsp;&nbsp; <aura:if isTrue="{!con.teamCount > 0}"><lightning:buttonIcon iconName="utility:people" variant="bare" onclick="{!c.getTeam}" alternativeText="{!con.itemID}" /></aura:if></div>
+                                                            </th>
+                                                            
+                                                            <th scope="row">
+                                                                <div class="slds-truncate" title="{!con.KAH_HH_PPS_Admits_YTD__c}">{!con.hhYTDPPSAdmit}</div>
+                                                            </th>
+                                                            
+                                                            <th scope="row">
+                                                                <div class="slds-truncate" title="{!con.KAH_HH_PPS_Prior_Year_Admits_Prior__c}">{!con.hhPYPPSAdmit}</div>
+                                                            </th>
+                                                            
+                                                            <th scope="row">
+                                                                <div class="slds-truncate" title="{!con.hhYTDRefer}">{!con.hhYTDRefer}</div>
+                                                            </th>
+                                                            
+                                                            <th scope="row">
+                                                                <div class="slds-truncate" title="{!con.hhDiscQualYTDAdmit}">{!con.hhDiscQualYTDAdmit}</div>
+                                                            </th>
+                                                            
+                                                            <th scope="row">
+                                                                <div class="slds-truncate" title="{!con.hhDiscQualPYAdmit}">{!con.hhDiscQualPYAdmit}</div>
+                                                            </th>
+                                                        </tr>
+                                                    </aura:if>
+                                                </aura:iteration>
+                                            </tbody>
+                                        </table>
+                                    </lightning:tab>
+                                    <lightning:tab label="Hospice">
+                                        <table class="slds-table slds-table--bordered slds-table--cell-buffer">
+                                            <thead>
+                                                <tr class="slds-text-title--caps">
+                                                    <th class="slds-is-sortable slds-text-title--caps" scope="col">
+                                                        <!--<a href="javascript:void(0);" class="slds-th__action slds-text-link-reset">
+                                                            <span title="Select All">Select All</span>
+                                                        </a>-->
+                                                    </th>
+                                                    
+                                                    <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortName}">
+                                                        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                            <span class="slds-assistive-text">Sort</span>
+                                                            <span title="Name">Name</span>   &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                        </a>
+                                                        <br/>
+                                                    </th>
+                                                    
+                                                    <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortQualYTDAdmitsHP}">
+                                                        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                            <span class="slds-assistive-text">Sort</span>
+                                                            <span title="Qualified YTD Admits">Qualified <br/> YTD <br/> Admits</span> &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                        </a>
+                                                    </th>
+                                                    
+                                                    <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortQualPYAdmitsHP}">
+                                                        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                            <span class="slds-assistive-text">Sort</span>
+                                                            <span title="Qualified PY Admits">Qualified<br/> PY Admits</span> &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                        </a>
+                                                    </th>
+                                                    
+                                                    <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortYTDReferHP}">
+                                                        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                            <span class="slds-assistive-text">Sort</span>
+                                                            <span title="YTD Referrals">YTD <br/> Referrals</span> &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                        </a>
+                                                        <br/>
+                                                    </th>
+                                                    
+                                                    <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortYTDAdmitsHP}">
+                                                        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                            <span class="slds-assistive-text">Sort</span>
+                                                            <span title="YTD Admits">YTD <br/> Admits</span> &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                        </a>
+                                                        <br/>
+                                                    </th> 
+                                                    
+                                                    <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortStayLengthHP}">
+                                                        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                            <span class="slds-assistive-text">Sort</span>
+                                                            <span title="Length of Stay">Length <br/> of Stay</span> &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                        </a>
+                                                        <br/>
+                                                    </th>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                    <th>
+                                                        <!--<ui:inputCheckbox change="{!c.selectAll}" aura:id="checkbox"/>-->
+                                                    </th>
+                                                    <th>
+                                                        <ui:inputText value="{!v.nameFilter}" keyup="{!c.formPress}"/>
+                                                    </th>
+                                                    <th>
+                                                        
+                                                    </th>
+                                                    <th>
+                                                        
+                                                    </th>
+                                                    <th>
+                                                        
+                                                    </th>
+                                                    <th>
+                                                        
+                                                    </th>
+                                                    <th>
+                                                        
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <aura:iteration items="{!v.paginationList}" var="con">  
+                                                    <aura:if isTrue="{!con != null}">
+                                                        <tr>
+                                                            <th scope="row">
+                                                                <ui:inputCheckbox name="{!con.name}" aura:id="abox" text="{!con.itemID}" value="{!con.selected}" change="{!c.onCheck}"/>
+                                                            </th>
+                                                            
+                                                            <th scope="row">
+                                                                <div class="slds-truncate" title="{!con.name}"><ui:outputURL value="{!'/'+con.itemID}" label="{!con.name}" target="_blank"/>&nbsp;&nbsp;&nbsp; <aura:if isTrue="{!con.teamCount > 0}"><lightning:buttonIcon iconName="utility:people" variant="bare" onclick="{!c.getTeam}" alternativeText="{!con.itemID}" /></aura:if></div>
+                                                            </th>
+                                                            
+                                                            <th scope="row">
+                                                                <div class="slds-truncate" title="{!con.KAH_HP_Qualified_Admits_YTD__c}">{!con.hpQualYTDAdmit}</div>
+                                                            </th>
+                                                            
+                                                            <th scope="row">
+                                                                <div class="slds-truncate" title="{!con.KAH_HP_Qualified_Admits_PY__c}">{!con.hpQualPYAdmit}</div>
+                                                            </th>
+                                                            
+                                                            <th scope="row">
+                                                                <div class="slds-truncate" title="{!con.KAH_HP_Referrals_YTD__c}">{!con.hpYTDRefer}</div>
+                                                            </th>
+                                                            
+                                                            <th scope="row">
+                                                                <div class="slds-truncate" title="{!con.KAH_HP_Admits_YTD__c}">{!con.hpYTDAdmit}</div>
+                                                            </th>
+                                                            
+                                                            <th scope="row">
+                                                                <div class="slds-truncate" title="{!con.KAH_Length_of_Stay__c}">{!con.lengthOfStay}</div>
+                                                            </th>  
+                                                            
+                                                        </tr>
+                                                    </aura:if>
+                                                </aura:iteration>
+                                            </tbody>
+                                        </table>
+                                    </lightning:tab>
+                                    <lightning:tab label="System IDs">
+                                        <table class="slds-table slds-table--bordered slds-table--cell-buffer">
+                                            <thead>
+                                                <tr class="slds-text-title--caps">
+                                                    <th class="slds-is-sortable slds-text-title--caps" scope="col">
+                                                        <!--<a href="javascript:void(0);" class="slds-th__action slds-text-link-reset">
+                                                            <span title="Select All">Select All</span>
+                                                        </a>-->
+                                                    </th>
+                                                    
+                                                    <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortName}">
+                                                        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                            <span class="slds-assistive-text">Sort</span>
+                                                            <span title="Name">Name</span>   &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                        </a>
+                                                        <br/>
+                                                    </th>
+                                                    
+                                                    <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortSFIDs}">
+                                                        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                            <span class="slds-assistive-text">Sort</span>
+                                                            <span title="SFID">SFID</span> &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                        </a>
+                                                        <br/>
+                                                    </th>
+                                                    
+                                                    <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortNPIIDs}">
+                                                        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                            <span class="slds-assistive-text">Sort</span>
+                                                            <span title="NPI ID">NPI ID</span> &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                        </a>
+                                                        <br/>
+                                                    </th>
+                                                    
+                                                    <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortHCHBHHID}">
+                                                        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                            <span class="slds-assistive-text">Sort</span>
+                                                            <span title="HMS ID">HCHB HH ID</span> &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                        </a>
+                                                        <br/>
+                                                    </th>
+                                                    
+                                                    <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortHCHBHPID}">
+                                                        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                            <span class="slds-assistive-text">Sort</span>
+                                                            <span title="HMS ID">HCHB HP ID</span> &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                        </a>
+                                                        <br/>
+                                                    </th>
+                                                    
+                                                    <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortHMSIDs}">
+                                                        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                            <span class="slds-assistive-text">Sort</span>
+                                                            <span title="HMS ID">HMS ID</span> &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                        </a>
+                                                        <br/>
+                                                    </th>
+                                                    
+                                                    <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortHorizonIDs}">
+                                                        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                            <span class="slds-assistive-text">Sort</span>
+                                                            <span title="Horizon ID">Horizon ID</span> &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                        </a>
+                                                    </th>
+                                                    
+                                                    <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortUnityIDs}">
+                                                        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                            <span class="slds-assistive-text">Sort</span>
+                                                            <span title="Unity ID">Unity ID</span> &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                        </a>
+                                                    </th>
+                                                    
+                                                    <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortAssignedTime}">
+                                                        <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                            <span class="slds-assistive-text">Sort</span>
+                                                            <span title="Assigned Time">Assigned Time (EST)</span> &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                        </a>
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th>
+                                                        <!--<ui:inputCheckbox change="{!c.selectAll}" aura:id="checkbox"/>-->
+                                                    </th>
+                                                    <th>
+                                                        <ui:inputText value="{!v.nameFilter}" keyup="{!c.formPress}"/>
+                                                    </th>
+                                                    <th>
+                                                        <ui:inputText value="{!v.sfIDFilter}" keyup="{!c.formPress}"/>
+                                                    </th>
+                                                    <th>
+                                                        <ui:inputText value="{!v.npiFilter}" keyup="{!c.formPress}"/>
+                                                    </th>
+                                                    <th>
+                                                        
+                                                    </th>
+                                                    <th>
+                                                        
+                                                    </th>
+                                                    <th>
+                                                        
+                                                    </th>
+                                                    <th>
+                                                        
+                                                    </th>
+                                                    <th>
+                                                        
+                                                    </th>
+                                                    <th>
+                                                        
+                                                    </th>
+                                                    <th>
+                                                        
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <aura:iteration items="{!v.paginationList}" var="con">  
+                                                    <aura:if isTrue="{!con != null}">
+                                                        <tr>
+                                                            <th scope="row">
+                                                                <ui:inputCheckbox name="{!con.name}" aura:id="abox" text="{!con.itemID}" value="{!con.selected}" change="{!c.onCheck}"/>
+                                                            </th>
+                                                            
+                                                            <th scope="row">
+                                                                <div class="slds-truncate" title="{!con.Name}"><ui:outputURL value="{!'/'+con.itemID}" label="{!con.name}" target="_blank"/>&nbsp;&nbsp;&nbsp; <aura:if isTrue="{!con.teamCount > 0}"><lightning:buttonIcon iconName="utility:people" variant="bare" onclick="{!c.getTeam}" alternativeText="{!con.itemID}" /></aura:if></div>
+                                                            </th>
+                                                            
+                                                            <th scope="row">
+                                                                <div class="slds-truncate" title="{!con.Id}">{!con.itemID}</div>
+                                                            </th>
+                                                            
+                                                            <th scope="row">
+                                                                <div class="slds-truncate" title="{!con.NPI__c}">{!con.npi}</div>
+                                                            </th>
+                                                            
+                                                            <th scope="row">
+                                                                <div class="slds-truncate" title="{!con.HCHB_HH_ID__c}">{!con.hchbhh}</div>
+                                                            </th>
+                                                            
+                                                            <th scope="row">
+                                                                <div class="slds-truncate" title="{!con.HCHB_HP_ID__c}">{!con.hchbhp}</div>
+                                                            </th>
+                                                            
+                                                            <th scope="row">
+                                                                <div class="slds-truncate" title="{!con.HMS_POID__c}">{!con.hms}</div>
+                                                            </th>
+                                                            
+                                                            <th scope="row">
+                                                                <div class="slds-truncate" title="{!con.Horizon_ID__c}">{!con.horizon}</div>
+                                                            </th>  
+                                                            
+                                                            <th scope="row">
+                                                                <div class="slds-truncate" title="{!con.Unity_ID__c}">{!con.unity}</div>
+                                                            </th>
+                                                            
+                                                            <th scope="row">
+                                                                <aura:if isTrue="{!con.selected}">
+                                                                <div class="slds-truncate" title="{!con.CreatedDate}"><ui:outputDate value="{!con.assignedTime}"/></div>
+                                                                </aura:if>
+                                                            </th>
+                                                        </tr>
+                                                    </aura:if>
+                                                </aura:iteration>
+                                            </tbody>
+                                        </table>
+                                    </lightning:tab>
+                                </lightning:tabset>
+                                </div>
+                                <lightning:button label="Previous" disabled="{!v.start == 0}"  onclick="{!c.previous}" />
+                                <lightning:button label="Next" disabled="{!v.end >= v.totalSize}" onclick="{!c.next}" /><br/>
+                                <br/>
+                                <br/>
+                            </div>
+                        </div>
+                    </lightning:tab>
+                    <aura:if isTrue="{!v.customPermissions.reassign}">
+                        <lightning:tab label="Reassign Referral Sources" aura:id="reassignTab" onactive="{!c.onTabChange}">
+                            <div id="referralSourceAssignment" class="tab-pane fade marginTop tabHeight">
+                                <br/>
+                                
+                                <div id="reassignTableDiv">
+                                    <div>
+                                        <lightning:button label="Mass Transfer" onclick="{!c.massTransfer}" disabled="{!v.massTransferButton}"/>
+                                    </div>
+                                    <br/>
+                                    <div class="form-group smallMarginLeft smallMarginTop">
+                                        <div id="refSourcesTotalReAssignmentTd" style="float: left;padding-right: 5%;">
+                                            <div id="totalAssignedOP">
+                                                Total Assigned: <span id ="referralReassignmentAssignmentCount" style="font-weight: bold; font-size:large">{!v.totalReassignments}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <br/>
+                                    <br/>
+                                    <lightning:button label="Reset" onclick="{!c.resetFilters2}"/>
+                                    <br/>
+                                    <br/>
+                                    <lightning:tabset >
+                                        <lightning:tab label="Demographic">
+                                            <table class="slds-table slds-table--bordered slds-table--cell-buffer">
+                                                <thead>
+                                                    <tr class="slds-text-title--caps">
+                                                        <th class="slds-is-sortable slds-text-title--caps" scope="col">
+                                                            <!--<a href="javascript:void(0);" class="slds-th__action slds-text-link-reset">
+                                                                <span title="Select All">Select All</span>&nbsp;
+                                                            </a>-->
+                                                        </th>
+                                                        
+                                                        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortName2}">
+                                                            <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                                <span class="slds-assistive-text">Sort</span>
+                                                                <span title="accountName">Name</span>   &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                            </a>
+                                                            <br/>
+                                                        </th>
+                                                        
+                                                        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortNPI2}">
+                                                            <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                                <span class="slds-assistive-text">Sort</span>
+                                                                <span title="ownerName">NPI</span> &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                            </a>
+                                                            <br/>
+                                                        </th>
+                                                        
+                                                        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortAddress2}">
+                                                            <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                                <span class="slds-assistive-text">Sort</span>
+                                                                <span title="activity">Address</span> &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                            </a>
+                                                            <br/>
+                                                        </th>
+                                                        
+                                                        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortCity2}">
+                                                            <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                                <span class="slds-assistive-text">Sort</span>
+                                                                <span title="Department">City</span> &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                            </a>
+                                                            <br/>
+                                                        </th>
+                                                        
+                                                        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortState2}">
+                                                            <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                                <span class="slds-assistive-text">Sort</span>
+                                                                <span title="Department">State</span> &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                            </a>
+                                                            <br/>
+                                                        </th> 
+                                                        
+                                                        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortZip2}">
+                                                            <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                                <span class="slds-assistive-text">Sort</span>
+                                                                <span title="Department">Zip</span> &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                            </a>
+                                                            <br/>
+                                                        </th> 
+                                                        
+                                                        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortType2}">
+                                                            <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                                <span class="slds-assistive-text">Sort</span>
+                                                                <span title="Department">Type</span> &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                            </a>
+                                                            <br/>
+                                                        </th>
+                                                        
+                                                        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortSpecialty2}">
+                                                            <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                                <span class="slds-assistive-text">Sort</span>
+                                                                <span title="Department">Specialty</span> &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                            </a>
+                                                            <br/>
+                                                        </th>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>
+                                                            <!--<ui:inputCheckbox change="{!c.selectAll2}" aura:id="checkbox2"/>-->
+                                                        </th>
+                                                        <th>
+                                                            <ui:inputText value="{!v.nameFilter2}" blur="{!c.formPress2}"/>
+                                                        </th>
+                                                        <th>
+                                                            <ui:inputText value="{!v.npiFilter2}" blur="{!c.formPress2}"/>
+                                                        </th>
+                                                        <th>
+                                                            <ui:inputText value="{!v.addressFilter2}" blur="{!c.formPress2}"/>
+                                                        </th>
+                                                        <th>
+                                                            <ui:inputText value="{!v.cityFilter2}" blur="{!c.formPress2}"/>
+                                                        </th>
+                                                        <th>
+                                                            <ui:inputText value="{!v.stFilter2}" blur="{!c.formPress2}"/>
+                                                        </th>
+                                                        <th>
+                                                            <ui:inputText value="{!v.zipFilter2}" blur="{!c.formPress2}"/>
+                                                        </th>
+                                                        <th>
+                                                            <ui:inputSelect class="slds-select custom-background" aura:id="InputSelectType2" blur="{!c.formPress2}">
+                                                                <ui:inputSelectOption text="All" label="All"/>
+                                                                <ui:inputSelectOption text="Account" label="Account"/>
+                                                                <ui:inputSelectOption text="Contact" label="Contact"/>
+                                                            </ui:inputSelect>
+                                                        </th>
+                                                        <th>
+                                                            <ui:inputText value="{!v.specialtyFilter2}" blur="{!c.formPress2}"/>	
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <aura:iteration items="{!v.paginationList2}" var="con">  
+                                                        <aura:if isTrue="{!con != null}">
+                                                            <tr>
+                                                                <th scope="row">
+                                                                    <ui:inputCheckbox aura:id="rebox" text="{!con.itemID}" value="{!con.selected}" change="{!c.onCheck2}"/>
+                                                                </th>
+                                                                
+                                                                <th scope="row">
+                                                                    <div class="slds-truncate" title="{!con.name}"><ui:outputURL value="{!'/'+con.itemID}" label="{!con.name}" target="_blank"/></div>
+                                                                </th>
+                                                                
+                                                                <th scope="row">
+                                                                    <div class="slds-truncate" title="{!con.NPI__c}">{!con.npi}</div>
+                                                                </th>
+                                                                
+                                                                <th scope="row">
+                                                                    <div class="slds-truncate" title="{!con.MailingStreet}">{!con.shippingStreet}</div>
+                                                                </th>
+                                                                
+                                                                <th scope="row">
+                                                                    <div class="slds-truncate" title="{!con.MailingCity}">{!con.shippingCity}</div>
+                                                                </th>
+                                                                
+                                                                <th scope="row">
+                                                                    <div class="slds-truncate" title="{!con.MailingState}">{!con.shippingState} </div>
+                                                                </th>  
+                                                                
+                                                                <th scope="row">
+                                                                    <div class="slds-truncate" title="{!con.ShippingPostalCode}">{!con.shippingPostalCode}</div>
+                                                                </th>
+                                                                
+                                                                <th scope="row">
+                                                                    <div class="slds-truncate" title="{!con.type}">{!con.accType}</div>
+                                                                </th>
+                                                                
+                                                                <th scope="row">
+                                                                    <div class="slds-truncate" title="{!con.specialty}">{!con.specialty}</div>
+                                                                </th>
+                                                                
+                                                            </tr>
+                                                        </aura:if>
+                                                    </aura:iteration>
+                                                </tbody>
+                                            </table>
+                                        </lightning:tab>
+                                        <lightning:tab label="Metric Totals">
+                                            <table class="slds-table slds-table--bordered slds-table--cell-buffer">
+                                                <thead>
+                                                    <tr class="slds-text-title--caps">
+                                                        <th class="slds-is-sortable slds-text-title--caps" scope="col">
+                                                            <!--<a href="javascript:void(0);" class="slds-th__action slds-text-link-reset">
+                                                                <span class="slds-truncate" title="select">Select All</span>
+                                                            </a>-->
+                                                        </th>
+                                                        
+                                                        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortName2}">
+                                                            <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                                <span class="slds-assistive-text">Sort</span>
+                                                                <span title="Name">Name</span>  &nbsp; <img src="{!$Resource.sortIcon}"/> 
+                                                            </a>
+                                                            <br/>
+                                                        </th>
+                                                        
+                                                        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortHHYTDAdmits2}">
+                                                            <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                                <span class="slds-assistive-text">Sort</span>
+                                                                <span title="activity">HH <br/> YTD <br/> Admits</span> &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                            </a>
+                                                        </th>
+                                                        
+                                                        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortHHPYAdmits2}">
+                                                            <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                                <span class="slds-assistive-text">Sort</span>
+                                                                <span title="Department">PY <br/> Admits</span> &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                            </a>
+                                                        </th>
+                                                        
+                                                        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortHPYTDAdmits2}">
+                                                            <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                                <span class="slds-assistive-text">Sort</span>
+                                                                <span title="Department">HP<br/> YTD <br/> Admits</span> &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                            </a>
+                                                        </th> 
+                                                        
+                                                        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortHPPYAdmits2}">
+                                                            <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                                <span class="slds-assistive-text">Sort</span>
+                                                                <span title="Department">PY <br/> Admits</span> &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                            </a>
+                                                        </th>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>
+                                                            <!--<ui:inputCheckbox change="{!c.selectAll2}" aura:id="checkbox2"/>-->
+                                                        </th>
+                                                        <th>
+                                                            <ui:inputText value="{!v.nameFilter2}" blur="{!c.formPress2}"/>
+                                                        </th>
+                                                        <th>
+                                                            
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <aura:iteration items="{!v.paginationList2}" var="con">  
+                                                        <aura:if isTrue="{!con != null}">
+                                                            <tr>
+                                                                <th scope="row">
+                                                                    <ui:inputCheckbox aura:id="rebox" text="{!con.itemID}" value="{!con.selected}" change="{!c.onCheck2}"/>
+                                                                </th>
+                                                                
+                                                                <th scope="row">
+                                                                    <div class="slds-truncate" title="{!con.name}"><ui:outputURL value="{!'/'+con.itemID}" label="{!con.name}" target="_blank"/></div>
+                                                                </th>
+                                                                
+                                                                <th scope="row">
+                                                                    <div class="slds-truncate" title="{!con.KAH_HH_Admits_YTD__c}">{!con.hhYTDAdmit}</div>
+                                                                </th>
+                                                                
+                                                                <th scope="row">
+                                                                    <div class="slds-truncate" title="{!con.HH_Admits_PY__c}">{!con.hhPYAdmit}</div>
+                                                                </th>
+                                                                
+                                                                <th scope="row">
+                                                                    <div class="slds-truncate" title="{!con.KAH_HP_Admits_YTD__c}">{!con.hpYTDAdmit}</div>
+                                                                </th>  
+                                                                
+                                                                <th scope="row">
+                                                                    <div class="slds-truncate" title="{!con.HP_Admits_PY__c}">{!con.hpPYAdmit}</div>
+                                                                </th>
+                                                                
+                                                            </tr>
+                                                        </aura:if>
+                                                    </aura:iteration>
+                                                </tbody>
+                                            </table>
+                                        </lightning:tab>
+                                        <lightning:tab label="Home Health">
+                                            <table class="slds-table slds-table--bordered slds-table--cell-buffer">
+                                                <thead>
+                                                    <tr class="slds-text-title--caps">
+                                                        <th class="slds-is-sortable slds-text-title--caps" scope="col">
+                                                            <!--<a href="javascript:void(0);" class="slds-th__action slds-text-link-reset">
+                                                                <span title="select">Select All</span>
+                                                            </a>-->
+                                                        </th>
+                                                        
+                                                        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortName2}">
+                                                            <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                                <span class="slds-assistive-text">Sort</span>
+                                                                <span title="accountName">Name</span>   &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                            </a>
+                                                            <br/>
+                                                        </th>
+                                                        
+                                                        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortPPSYTDAdmitsHH2}">
+                                                            <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                                <span class="slds-assistive-text">Sort</span>
+                                                                <span title="ownerName">PPS <br/> YTD <br/> Admits</span> &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                            </a>
+                                                        </th>
+                                                        
+                                                        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortPPSPYHH2}">
+                                                            <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                                <span class="slds-assistive-text">Sort</span>
+                                                                <span title="activity">PPS PY<br/> Admits</span> &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                            </a>
+                                                        </th>
+                                                        
+                                                        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortYTDReferralsHH2}">
+                                                            <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                                <span class="slds-assistive-text">Sort</span>
+                                                                <span title="Department">YTD <br/> Referrals</span> &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                            </a>
+                                                            <br/>
+                                                        </th>
+                                                        
+                                                        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortDiscQualYTDAdmitsHH2}">
+                                                            <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                                <span class="slds-assistive-text">Sort</span>
+                                                                <span title="Department">Disc. Qual.<br/> YTD Admits</span> &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                            </a>
+                                                        </th>
+                                                        
+                                                        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortDiscQualPYAdmitsHH2}">
+                                                            <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                                <span class="slds-assistive-text">Sort</span>
+                                                                <span title="Department">Disc. Qual.<br/> PY Admits</span> &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                            </a>
+                                                        </th>
+                                                        
+                                                        
+                                                    </tr>
+                                                    <tr>
+                                                        <th>
+                                                            <!--<ui:inputCheckbox change="{!c.selectAll2}" aura:id="checkbox2"/>-->
+                                                        </th>
+                                                        <th>
+                                                            <ui:inputText value="{!v.nameFilter2}" blur="{!c.formPress2}"/>
+                                                        </th>
+                                                        <th>
+                                                            
+                                                        </th>
+                                                        <th>
+                                                            
+                                                        </th>
+                                                        <th>
+                                                            <ui:inputText value="{!v.hhYTDReferralFilter2}" blur="{!c.formPress2}"/>
+                                                        </th>
+                                                        <th>
+                                                            
+                                                        </th>
+                                                        <th>
+                                                            
+                                                        </th>
+                                                        
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <aura:iteration items="{!v.paginationList2}" var="con">  
+                                                        <aura:if isTrue="{!con != null}">
+                                                            <tr>
+                                                                <th scope="row">
+                                                                    <ui:inputCheckbox aura:id="rebox" text="{!con.itemID}" value="{!con.selected}" change="{!c.onCheck2}"/>
+                                                                </th>
+                                                                
+                                                                <th scope="row">
+                                                                    <div class="slds-truncate" title="{!con.name}"><ui:outputURL value="{!'/'+con.itemID}" label="{!con.name}" target="_blank"/></div>
+                                                                </th>
+                                                                
+                                                                <th scope="row">
+                                                                    <div class="slds-truncate" title="{!con.KAH_HH_PPS_Admits_YTD__c}">{!con.hhYTDPPSAdmit}</div>
+                                                                </th>
+                                                                
+                                                                <th scope="row">
+                                                                    <div class="slds-truncate" title="{!con.KAH_HH_PPS_Prior_Year_Admits_Prior__c}">{!con.hhPYPPSAdmit}</div>
+                                                                </th>
+                                                                
+                                                                <th scope="row">
+                                                                    <div class="slds-truncate" title="{!con.hhYTDRefer}">{!con.hhYTDRefer}</div>
+                                                                </th>
+                                                                
+                                                                <th scope="row">
+                                                                    <div class="slds-truncate" title="{!con.hhDiscQualYTDAdmit}">{!con.hhDiscQualYTDAdmit}</div>
+                                                                </th>
+                                                                
+                                                                <th scope="row">
+                                                                    <div class="slds-truncate" title="{!con.hhDiscQualPYAdmit}">{!con.hhDiscQualPYAdmit}</div>
+                                                                </th>
+                                                                
+                                                            </tr>
+                                                        </aura:if>
+                                                    </aura:iteration>
+                                                </tbody>
+                                            </table>
+                                        </lightning:tab>
+                                        <lightning:tab label="Hospice">
+                                            <table class="slds-table slds-table--bordered slds-table--cell-buffer">
+                                                <thead>
+                                                    <tr class="slds-text-title--caps">
+                                                        <th class="slds-is-sortable slds-text-title--caps" scope="col">
+                                                            <!--<a href="javascript:void(0);" class="slds-th__action slds-text-link-reset">
+                                                                <span title="select">Select All</span>
+                                                                <ui:inputCheckbox change="{!c.selectAll2}"/>
+                                                            </a>-->
+                                                        </th>
+                                                        
+                                                        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortName}">
+                                                            <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                                <span class="slds-assistive-text">Sort</span>
+                                                                <span title="accountName">Name</span>   &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                            </a>
+                                                        </th>
+                                                        
+                                                        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortQualYTDAdmitsHP2}">
+                                                            <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                                <span class="slds-assistive-text">Sort</span>
+                                                                <span title="ownerName">Qualified <br/> YTD <br/> Admits</span> &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                            </a>
+                                                        </th>
+                                                        
+                                                        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortQualPYAdmitsHP2}">
+                                                            <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                                <span class="slds-assistive-text">Sort</span>
+                                                                <span title="activity">Qualified<br/> PY Admits</span> &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                            </a>
+                                                        </th>
+                                                        
+                                                        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortYTDReferHP2}">
+                                                            <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                                <span class="slds-assistive-text">Sort</span>
+                                                                <span title="Department">YTD <br/> Referrals</span> &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                            </a>
+                                                        </th>
+                                                        
+                                                        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortYTDAdmitsHP2}">
+                                                            <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                                <span class="slds-assistive-text">Sort</span>
+                                                                <span title="Department">YTD <br/> Admits</span> &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                            </a>
+                                                        </th> 
+                                                        
+                                                        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortStayLengthHP2}">
+                                                            <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                                <span class="slds-assistive-text">Sort</span>
+                                                                <span title="Department">Length <br/> of Stay</span> &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                            </a>
+                                                        </th>
+                                                        
+                                                    </tr>
+                                                    <tr>
+                                                        <th>
+                                                            <!--<ui:inputCheckbox change="{!c.selectAll2}" aura:id="checkbox2"/>-->
+                                                        </th>
+                                                        <th>
+                                                            <ui:inputText value="{!v.nameFilter2}"/>
+                                                        </th>
+                                                        <th>
+                                                            
+                                                        </th>
+                                                        <th>
+                                                            
+                                                        </th>
+                                                        <th>
+                                                            <ui:inputText value="{!v.hpYTDReferralFilter2}"/>
+                                                        </th>
+                                                        <th>
+                                                            <ui:inputText value="{!v.hpYTDAdmitFilter2}"/>
+                                                        </th>
+                                                        <th>
+                                                            
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <aura:iteration items="{!v.paginationList2}" var="con">  
+                                                        <aura:if isTrue="{!con != null}">
+                                                            <tr>
+                                                                <th scope="row">
+                                                                    <ui:inputCheckbox aura:id="rebox" text="{!con.itemID}" value="{!con.selected}" change="{!c.onCheck2}"/>
+                                                                </th>
+                                                                
+                                                                <th scope="row">
+                                                                    <div class="slds-truncate" title="{!con.name}"><ui:outputURL value="{!'/'+con.itemID}" label="{!con.name}" target="_blank"/></div>
+                                                                </th>
+                                                                
+                                                                <th scope="row">
+                                                                    <div class="slds-truncate" title="{!con.KAH_HP_Qualified_Admits_YTD__c}">{!con.hpQualYTDAdmit}</div>
+                                                                </th>
+                                                                
+                                                                <th scope="row">
+                                                                    <div class="slds-truncate" title="{!con.KAH_HP_Qualified_Admits_PY__c}">{!con.hpQualPYAdmit}</div>
+                                                                </th>
+                                                                
+                                                                <th scope="row">
+                                                                    <div class="slds-truncate" title="{!con.KAH_HP_Referrals_YTD__c}">{!con.hpYTDRefer}</div>
+                                                                </th>
+                                                                
+                                                                <th scope="row">
+                                                                    <div class="slds-truncate" title="{!con.KAH_HP_Admits_YTD__c}">{!con.hpYTDAdmit}</div>
+                                                                </th>
+                                                                
+                                                                <th scope="row">
+                                                                    <div class="slds-truncate" title="{!con.KAH_Length_of_Stay__c}">{!con.lengthOfStay}</div>
+                                                                </th>  
+                                                                
+                                                            </tr>
+                                                        </aura:if>
+                                                    </aura:iteration>
+                                                </tbody>
+                                            </table>
+                                        </lightning:tab>
+                                        <lightning:tab label="System IDs">
+                                            <table class="slds-table slds-table--bordered slds-table--cell-buffer">
+                                                <thead>
+                                                    <tr class="slds-text-title--caps">
+                                                        <th class="slds-is-sortable slds-text-title--caps" scope="col">
+                                                            <!--<a href="javascript:void(0);" class="slds-th__action slds-text-link-reset">
+                                                                <span title="select">Select All</span>
+                                                            </a>-->
+                                                        </th>
+                                                        
+                                                        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortName2}">
+                                                            <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                                <span class="slds-assistive-text">Sort</span>
+                                                                <span title="accountName">Name</span>   &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                            </a>
+                                                        </th>
+                                                        
+                                                        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortSFIDs2}">
+                                                            <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                                <span class="slds-assistive-text">Sort</span>
+                                                                <span title="ownerName">SFID</span> &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                            </a>
+                                                        </th>
+                                                        
+                                                        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortNPIIDs2}">
+                                                            <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                                <span class="slds-assistive-text">Sort</span>
+                                                                <span title="activity">NPI ID</span> &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                            </a>
+                                                        </th>
+                                                        
+                                                        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortHCHBHHID2}">
+                                                            <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                                <span class="slds-assistive-text">Sort</span>
+                                                                <span title="Department">HCHB HH ID</span> &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                            </a>
+                                                        </th>
+                                                        
+                                                        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortHCHBHPID2}">
+                                                            <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                                <span class="slds-assistive-text">Sort</span>
+                                                                <span title="Department">HCHB HP ID</span> &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                            </a>
+                                                        </th>
+                                                        
+                                                        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortHMSIDs2}">
+                                                            <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                                <span class="slds-assistive-text">Sort</span>
+                                                                <span title="Department">HMS ID</span> &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                            </a>
+                                                        </th>
+                                                        
+                                                        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortHorizonIDs2}">
+                                                            <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                                <span class="slds-assistive-text">Sort</span>
+                                                                <span title="Department">Horizon ID</span> &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                            </a>
+                                                        </th>
+                                                        
+                                                        <th class="slds-is-sortable slds-text-title--caps" scope="col" onclick="{!c.sortUnityIDs2}">
+                                                            <a href="javascript:void(0);" class="slds-th__action slds-text-link--reset">
+                                                                <span class="slds-assistive-text">Sort</span>
+                                                                <span title="Department">Unity ID</span> &nbsp; <img src="{!$Resource.sortIcon}"/>
+                                                            </a>
+                                                        </th>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>
+                                                            <!--<ui:inputCheckbox change="{!c.selectAll2}" aura:id="checkbox2"/>-->
+                                                        </th>
+                                                        <th>
+                                                            <ui:inputText value="{!v.nameFilter2}" blur="{!c.formPress2}"/>
+                                                        </th>
+                                                        <th>
+                                                            <ui:inputText value="{!v.sfIDFilter2}" blur="{!c.formPress2}"/>
+                                                        </th>
+                                                        <th>
+                                                            <ui:inputText value="{!v.npiFilter2}" blur="{!c.formPress2}"/>
+                                                        </th>
+                                                        <th>
+                                                            <ui:inputText value="{!v.hmsFilter2}" blur="{!c.formPress2}"/>
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <aura:iteration items="{!v.paginationList2}" var="con">  
+                                                        <aura:if isTrue="{!con != null}">
+                                                            <tr>
+                                                                <th scope="row">
+                                                                    <ui:inputCheckbox aura:id="rebox" text="{!con.itemID}" value="{!con.selected}" change="{!c.onCheck2}"/>
+                                                                </th>
+                                                                
+                                                                <th scope="row">
+                                                                    <div class="slds-truncate" title="{!con.Name}"><ui:outputURL value="{!'/'+con.itemID}" label="{!con.name}" target="_blank"/></div>
+                                                                </th>
+                                                                
+                                                                <th scope="row">
+                                                                    <div class="slds-truncate" title="{!con.Id}">{!con.itemID}</div>
+                                                                </th>
+                                                                
+                                                                <th scope="row">
+                                                                    <div class="slds-truncate" title="{!con.NPI__c}">{!con.npi}</div>
+                                                                </th>
+                                                                
+                                                                <th scope="row">
+                                                                    <div class="slds-truncate" title="{!con.HCHB_HH_ID__c}">{!con.hchbhh}</div>
+                                                                </th>
+                                                                
+                                                                <th scope="row">
+                                                                    <div class="slds-truncate" title="{!con.HCHB_HP_ID__c}">{!con.hchbhp}</div>
+                                                                </th>
+                                                                
+                                                                <th scope="row">
+                                                                    <div class="slds-truncate" title="{!con.HMS_POID__c}">{!con.hms}</div>
+                                                                </th>
+                                                                
+                                                                <th scope="row">
+                                                                    <div class="slds-truncate" title="{!con.Horizon_ID__c}">{!con.horizon}</div>
+                                                                </th>  
+                                                                
+                                                                <th scope="row">
+                                                                    <div class="slds-truncate" title="{!con.Unity_ID__c}">{!con.unity}</div>
+                                                                </th>
+                                                            </tr>
+                                                        </aura:if>
+                                                    </aura:iteration>
+                                                </tbody>
+                                            </table>
+                                        </lightning:tab>
+                                    </lightning:tabset>
+                                    <lightning:button label="Previous" disabled="{!v.start2 == 0}"  onclick="{!c.previous2}" />
+                                    <lightning:button label="Next" disabled="{!v.end2 >= v.totalSize2}" onclick="{!c.next2}" /><br/>
+                                </div>
+                                
+                                <div id="noRreferralsMsg" style="display:none;">
+                                    <div class="alert alert-warning alert-dismissible" role="alert" style="width:30%; margin-left: 35%; margin-bottom:-1%; margin-top: 1%;">
+                                        <strong><ui:outputText value="{!v.s2PageNoRecordsForAppliedFilters}" /></strong>
+                                    </div>  
+                                </div>
+                                
+                                <div id="noHomeFacilityMsg" style="display:none;">
+                                    <aura:renderIf isTrue="{!v.objS2CustomPermissions == true}">
+                                        <div class="alert alert-warning alert-dismissible" role="alert" style="width: 41%;margin-left: 30%;margin-bottom:-1%;margin-top: 1%;">
+                                            <strong>
+                                                <div>There is no Home Facility for selected user, Configure Home Facility by clicking <a href="#Details" data-toggle="tab" onclick="showDetalisTab(); loading(); detailsSelect(); setTimeout('stoploading()',1000);"><b>here</b></a>.</div>
+                                            </strong>  
+                                        </div>  
+                                    </aura:renderIf>
+                                    
+                                    <aura:renderIf isTrue="{!v.objS2CustomPermissions == true}">
+                                        <div class="alert alert-warning alert-dismissible" role="alert" style="width: 41%;margin-left: 30%;margin-bottom:-1%;margin-top: 1%;">
+                                            <strong>
+                                                <ui:outputText value="{!v.s2PageNoHomeFacilityContactSupport}" />
+                                            </strong>  
+                                        </div>
+                                    </aura:renderIf>
+                                </div>
+                            </div>                        
+                        </lightning:tab>
+                    </aura:if>
+                </lightning:tabset>
+            </aura:If>
+        </div>
+    </div>
+</aura:component>

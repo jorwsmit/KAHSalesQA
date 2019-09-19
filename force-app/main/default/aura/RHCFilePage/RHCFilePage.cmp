@@ -1,0 +1,173 @@
+<aura:component controller="AA_RHC_FileList" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global" >
+	
+    <aura:attribute name="toolkitFileList" type="ContentVersion[]" access="public"/>
+    <aura:attribute name="collateralFileList" type="ContentVersion[]" access="public"/>
+    <aura:attribute name="contractFileList" type="ContentVersion[]" access="public"/>
+    <aura:attribute name="whitePageFileList" type="ContentVersion[]" access="public"/>
+    <aura:attribute name="howToFileList" type="ContentVersion[]" access="public"/>
+    <aura:attribute name="showContracts" type="boolean" access="public"/>
+    <aura:attribute name="showWhite" type="boolean" access="public"/>
+    <aura:attribute name="showToolkit" type="boolean" access="public"/>
+    <aura:attribute name="showCollateral" type="boolean" access="public"/>
+    <aura:attribute name="showHowTo" type="boolean" access="public"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.getList}" description="Initialization process." />
+    <aura:handler event="aura:waiting" action="{!c.showSpinner}"/>
+    <aura:handler event="aura:doneWaiting" action="{!c.hideSpinner}"/>
+    
+    <div >
+        <ui:button press="{!c.toggleCollapse}" label="Best Practice Sales Toolkit" />
+        <aura:renderIf isTrue="{!v.showToolkit == true}">
+        <aura:iteration items="{!v.toolkitFileList}" var="file">
+        	<div class="slds-file slds-file_card">
+    
+        	<figure style="height: 100px; width:50px">
+                <a href="{!'/' + file.ContentDocumentId}">
+          			<img src="{!$Resource.fileIcon}"/>
+      			</a>
+            <figcaption class="slds-file__title slds-file__title_card">
+        	<div class="slds-media slds-media_small slds-media_center">
+          		<div class="slds-media__figure slds-line-height_reset">
+              		<span class="slds-icon_container" title="item">
+                    	<span class="slds-assistive-text">{!file.FileType}</span>
+            		</span>
+            	</div>
+          		<div class="slds-media__body">
+            		<span class="slds-file__text slds-truncate">{!file.Title} ({!file.FileType})</span>
+          		</div>
+        
+        	</div>
+      		</figcaption>
+    		</figure>
+        
+  			</div>
+        </aura:iteration>
+        </aura:renderIf>
+	</div>
+    <br/>
+    <div >
+        <ui:button press="{!c.toggleCollapse}" label="Collateral" />
+        <aura:renderIf isTrue="{!v.showCollateral == true}">
+        <aura:iteration items="{!v.collateralFileList}" var="file">
+        	<div class="slds-file slds-file_card">
+    
+        	<figure style="height: 100px; width:50px">
+                <a href="{!'/' + file.ContentDocumentId}">
+          			<img src="{!$Resource.fileIcon}"/>
+      			</a>
+            <figcaption class="slds-file__title slds-file__title_card">
+        	<div class="slds-media slds-media_small slds-media_center">
+          		<div class="slds-media__figure slds-line-height_reset">
+              		<span class="slds-icon_container" title="item">
+                    	<span class="slds-assistive-text">{!file.FileType}</span>
+            		</span>
+            	</div>
+          		<div class="slds-media__body">
+            		<span class="slds-file__text slds-truncate">{!file.Title} ({!file.FileType})</span>
+          		</div>
+        
+        	</div>
+      		</figcaption>
+    		</figure>
+        
+  			</div>
+        </aura:iteration>
+        </aura:renderIf>
+	</div>
+    <br/>
+    <div >
+        <ui:button press="{!c.toggleCollapse}" label="Contract Files" />
+        <aura:renderIf isTrue="{!v.showContracts == true}">
+        <aura:iteration items="{!v.contractFileList}" var="file">
+        	<div class="slds-file slds-file_card">
+    
+        	<figure style="height: 100px; width:50px">
+                <a href="{!'/' + file.ContentDocumentId}">
+          			<img src="{!$Resource.fileIcon}"/>
+      			</a>
+            <figcaption class="slds-file__title slds-file__title_card">
+        	<div class="slds-media slds-media_small slds-media_center">
+          		<div class="slds-media__figure slds-line-height_reset">
+              		<span class="slds-icon_container" title="item">
+                    	<span class="slds-assistive-text">{!file.FileType}</span>
+            		</span>
+            	</div>
+          		<div class="slds-media__body">
+            		<span class="slds-file__text slds-truncate">{!file.Title} ({!file.FileType})</span>
+          		</div>
+        
+        	</div>
+      		</figcaption>
+    		</figure>
+        
+  			</div>
+        </aura:iteration>
+        </aura:renderIf>
+	</div>
+    <br/>
+    <div>
+        <ui:button press="{!c.toggleCollapse}" label="White Paper Files" />
+  		<aura:renderIf isTrue="{!v.showWhite == true}">
+        <aura:iteration items="{!v.whitePageFileList}" var="file">
+        <div class="slds-file slds-file_card">
+    
+        <figure style="height: 100px; width:50px">
+      <a href="{!'/' + file.ContentDocumentId}">
+          			<img src="{!$Resource.fileIcon}"/>
+      			</a>
+      <figcaption class="slds-file__title slds-file__title_card">
+        <div class="slds-media slds-media_small slds-media_center">
+          
+            <div class="slds-media__figure slds-line-height_reset">
+              	<span class="slds-icon_container" title="item">
+                    <span class="slds-assistive-text">{!file.FileType}</span>
+            	</span>
+            
+          </div>
+          <div class="slds-media__body">
+            <span class="slds-file__text slds-truncate">{!file.Title} ({!file.FileType})</span>
+          </div>
+        
+        </div>
+      </figcaption>
+    </figure>
+        
+  </div>
+        </aura:iteration>
+        </aura:renderIf>
+</div>
+    
+    <br/>
+    <div>
+        <ui:button press="{!c.toggleCollapse}" label="SF How To" />
+  		<aura:renderIf isTrue="{!v.showHowTo == true}">
+        <aura:iteration items="{!v.howToFileList}" var="file">
+        <div class="slds-file slds-file_card">
+    
+        <figure style="height: 100px; width:50px">
+      <a href="{!'/' + file.ContentDocumentId}">
+          			<img src="{!$Resource.fileIcon}"/>
+      			</a>
+      <figcaption class="slds-file__title slds-file__title_card">
+        <div class="slds-media slds-media_small slds-media_center">
+          
+            <div class="slds-media__figure slds-line-height_reset">
+              	<span class="slds-icon_container" title="item">
+                    <span class="slds-assistive-text">{!file.FileType}</span>
+            	</span>
+            
+          </div>
+          <div class="slds-media__body">
+            <span class="slds-file__text slds-truncate">{!file.Title} ({!file.FileType})</span>
+          </div>
+        
+        </div>
+      </figcaption>
+    </figure>
+        
+  </div>
+        </aura:iteration>
+        </aura:renderIf>
+</div>
+    
+</aura:component>

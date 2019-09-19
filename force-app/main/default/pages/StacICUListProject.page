@@ -1,0 +1,145 @@
+<apex:page standardController="Account" sidebar="false" showHeader="false" extensions="StacICUProjectExt">
+<html lang="en">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1,minimum-scale=1, maximum-scale=1, user-scalable=no"/>
+<!-- Bootstrap -->
+<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" rel="stylesheet" media="screen"/>
+<style>
+.just-padding {
+    padding: 15px;
+}
+
+.table-striped>thead>tr>th, .table-striped>tbody>tr>th, .table-striped>tfoot>tr>th, .table-striped>thead>tr>td, .table-striped>tbody>tr>td, .table-striped>tfoot>tr>td{
+    padding: 1px;
+}
+
+.table {
+     margin-bottom: 0px;
+ }
+</style>
+</head>
+<body>
+
+<!--Div where totals will be populated-->
+<div class="just-padding">
+<div class="panel panel-default">
+    <!-- Default panel contents -->
+    <div class="panel-heading" id="header" style="padding:1px; height:30px"></div>
+
+    <div id="ICUs"></div>
+</div>
+</div>
+
+<!--Javascript-->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+<script>
+//on load run loadCol()
+$( document ).ready(function() {
+    loadCol();
+});
+
+//loadCol ----> populates html by calling getIcuHTML and then places the html in the ICUs div
+function loadCol(){
+    //initiate var html
+    var htmlHeader = "";
+    var htmlIcu = "";
+    
+    //javascript remoting into StacICUProjectExt for query against current account
+    StacICUProjectExt.query('{!Account.Id}', function(result, event){
+        //populate header html
+        htmlHeader = getHeaderHTML('{!Account.ICU_CCU_Total__c}', result.length);
+        if (result.length > 0){
+        htmlIcu += '<table class="table table-striped">'+
+                   '<thead>'+
+                   '<tr>'+
+                   '<th style="font-size:12px; padding:1px;">ICS Code</th>'+
+                   '<th style="font-size:12px; padding:1px;">Discharge Volume</th>'+
+                   '<th style="font-size:12px; padding:1px;">Units</th>'+
+                   '</tr>'+
+                   '</thead>'+
+                   '<tbody>';
+    
+        }
+        
+        for (var i=0; i<result.length; i++){
+            //store query record result in r
+            var r = result[i];
+            
+            //populate ICU html
+            htmlIcu = getIcuHTML(htmlIcu, r.ICU_Code__c, r.Discharge_Volume__c, r.Unit__c);
+        }
+        
+        if  (result.length > 0) {
+            htmlIcu += '</tbody>'+
+                       '</table>';
+        }
+        
+        //set Header and ICUs html
+        document.getElementById("header").innerHTML = htmlHeader;
+        document.getElementById("ICUs").innerHTML = htmlIcu;
+          
+    }, {escape:true}); 
+    
+}
+
+//getIcuHTML ----> populates html
+function getIcuHTML(html, name, ICU, units){
+    if(ICU != ""){
+        
+        if(units == null){
+            var unit = '<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span> No Data Available';
+        } else {
+            var unit = units;
+        }
+        
+        if(ICU == null){
+            var dischargeVolume = '<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span> No Data Available';
+        } else {
+            var dischargeVolume = ICU.toString();
+            if(dischargeVolume.length==4){
+                dischargeVolume = dischargeVolume.substring(0,1)+","+dischargeVolume.substring(1,dischargeVolume.length);
+            } else if(dischargeVolume.length==5){
+                dischargeVolume = dischargeVolume.substring(0,2)+","+dischargeVolume.substring(2,dischargeVolume.length);
+            } else if(dischargeVolume.length==6){
+                dischargeVolume = dischargeVolume.substring(0,3)+","+dischargeVolume.substring(3,dischargeVolume.length);
+            }
+        }
+           
+        html += '<tr>'+
+                '<td style="font-size:12px;">'+name+'</td>'+
+                '<td style="font-size:12px;">'+dischargeVolume+'</td>'+
+                '<td style="font-size:12px;">'+unit+'</td>'+
+                '</tr>';
+                     
+    }
+    return html;
+}
+
+//getHeaderHTML ----> populates html
+function getHeaderHTML(total, queryLength){
+    var html = "";
+    if(total != "" || queryLength > 0){
+        if(total == "") total = '<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span> No Data Available';
+        
+        
+        if(total.length==4){
+            total = total.substring(0,1)+","+total.substring(1,total.length);
+        } else if(total.length==5){
+            total = total.substring(0,2)+","+total.substring(2,total.length);
+        } else if(total.length==6){
+            total = total.substring(0,3)+","+total.substring(3,total.length);
+        }
+        
+        html += '<div class="col-xs-12 col-sm-12 col-md-12">'+
+        '<h4 style="font-size:15px;"><b style="color:#428bca;">Total ICS Discharge Volume </b>'+total+'</h4></div>';
+    
+    } else {
+        html += '<div class="alert alert-info" role="alert"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span><b> ICU data for this account is not yet available! </b>Please check again soon, or contact your supervisor for more information.</div>';
+    }
+    return html;
+}
+</script>
+</body>
+</html>
+</apex:page>

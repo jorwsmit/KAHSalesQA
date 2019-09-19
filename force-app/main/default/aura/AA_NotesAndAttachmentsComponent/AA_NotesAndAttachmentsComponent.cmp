@@ -1,0 +1,44 @@
+<aura:component controller="AA_NotesAndAttachmentViewer" implements="flexipage:availableForRecordHome,force:hasRecordId" access="global" >
+	
+    <aura:attribute name="recordId" type="Id" access="public"/>
+    <aura:attribute name="itemList" type="string[]"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <span style="font-weight:bold">Legacy Notes and Attachments</span><br/>
+    <div class="slds-grid slds-wrap" id="reportSec">
+        <div class="slds-grid paddingTop">
+            <div class="slds-col slds-size--1-of-1 slds-small-size--1-of-1 slds-medium-size--1-of-2">
+                <div class="slds-form-element discussionDiv">
+                    <table class="slds-table slds-table--bordered slds-table--cell-buffer" width="500px">
+                        <thead>
+                            <tr class="slds-text-title--caps">
+                                <th class="slds-is-sortable slds-text-title--caps" scope="col" >
+                                    <span class="slds-truncate" title="oppStage">Name</span>  
+                                </th>
+                                
+                                <th class="slds-is-sortable slds-text-title--caps" scope="col">
+                                    <span class="slds-truncate" title="oppAmt">Type</span>
+                                </th>
+                                
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <aura:iteration items="{!v.itemList}" var="att">
+                                <tr>    
+                                <th scope="row">
+                                    <div class="slds-truncate" title="{!att.itemName}"><ui:outputURL value="{!'/'+att.itemID}" label="{!att.itemName}" target="_blank"/></div>
+                                    </th>
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!att.itemType}">{!att.itemType}</div>
+                                    </th>
+                                    </tr>
+                             </aura:iteration>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</aura:component>
