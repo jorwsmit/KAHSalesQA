@@ -1006,10 +1006,19 @@ global class Sales_FCRcontroller {
     public static Integer numberFilled = 0;
     public static Integer sectionNumberFilled = 0;
     @RemoteAction global static String getSummary(Id fcrId){
+      return summaryHtml(fcrId, false);
+    }
 
+    public String summaryPdfHtml {get; set;}
+
+    public void getSummaryPdf(){
+      summaryPdfHtml = summaryHtml(thisFcr.Id, true);
+    }
+
+    public static String summaryHtml(Id fcrId, Boolean isPdf){
       String html = '';
       String complete = '<div class="bold">';
-      for(Field_Coaching_Report__c fcr : [select OwnerId, Owner.Name, RecordTypeId, Date__c, Status__c, Completed_Date__c, Length_of_Field_Ride__c, Sales_CR_KAH_1_A__c,
+      for(Field_Coaching_Report__c fcr : [select OwnerId, Owner.Name, owner.profile.name, RecordTypeId, Date__c, Status__c, Completed_Date__c, Length_of_Field_Ride__c, Sales_CR_KAH_1_A__c,
       Sales_CR_KAH_1_B__c,Sales_CR_KAH_1_C__c,Sales_CR_KAH_1_D__c,Sales_CR_KAH_2_A__c,Sales_CR_KAH_2_B__c,Sales_CR_KAH_2_C__c,
       Sales_CR_KAH_2_D__c,Sales_CR_KAH_3_A__c,Sales_CR_KAH_3_B__c,Sales_CR_KAH_3_C__c,Sales_CR_KAH_3_D__c,Sales_CR_KAH_4_A__c,
       Sales_CR_KAH_4_B__c,Sales_CR_KAH_4_C__c,Sales_CR_KAH_4_D__c,Sales_CR_KAH_5_A__c,Sales_CR_KAH_5_B__c,Sales_CR_KAH_5_C__c,
@@ -1029,8 +1038,10 @@ global class Sales_FCRcontroller {
       Sales_Name__c, Sales_Email__c from Field_Coaching_Report__c where Id = :fcrId]){
         if(fcr.Status__c == 'Completed') complete = '<div class="bold" style="color:#89b983;"><i class="fa fa-check-circle"></i> ';
         else{
-          if(UserInfo.getUserId() != fcr.OwnerId) html += '<div id="backButton" class="blue" style="cursor:pointer;border-radius:25px;color:white;padding:5px;text-align:center;" onclick="backSave(true, \''+System.URL.getSalesforceBaseURL().toExternalForm()+'/apex/Sales_FCR?fcrId='+fcr.Id+'&userId='+fcr.OwnerId+'\')"><i class="fa fa-chevron-left"></i> Back</div>';
-          else html += '<div id="backButton" class="blue" style="cursor:pointer;border-radius:25px;color:white;padding:5px;text-align:center;" onclick="backSave(false, \''+System.URL.getSalesforceBaseURL().toExternalForm()+'/apex/Sales_FCR?fcrId='+fcr.Id+'&userId='+fcr.OwnerId+'\')"><i class="fa fa-chevron-left"></i> Back</div>';
+          if(!isPdf){
+            if(UserInfo.getUserId() != fcr.OwnerId || (fcr.owner.profile.name!='Sales: KAH Sales Associate' && UserInfo.getUserId() == fcr.OwnerId)) html += '<div id="backButton" class="blue" style="cursor:pointer;border-radius:25px;color:white;padding:5px;text-align:center;" onclick="backSave(true, \''+System.URL.getSalesforceBaseURL().toExternalForm()+'/apex/Sales_FCR?fcrId='+fcr.Id+'&userId='+fcr.OwnerId+'\')"><i class="fa fa-chevron-left"></i> Back</div>';
+            else html += '<div id="backButton" class="blue" style="cursor:pointer;border-radius:25px;color:white;padding:5px;text-align:center;" onclick="backSave(false, \''+System.URL.getSalesforceBaseURL().toExternalForm()+'/apex/Sales_FCR?fcrId='+fcr.Id+'&userId='+fcr.OwnerId+'\')"><i class="fa fa-chevron-left"></i> Back</div>';
+          }
         }
         String summaryName = fcr.Owner.Name;
           if(fcr.Sales_Name__c!=null) summaryName = fcr.Sales_Name__c;
@@ -1417,7 +1428,7 @@ global class Sales_FCRcontroller {
           if(fcr.Sales_FCR_KAH_4_Actions_2_Date__c!=null) date2 = ' value="'+String.valueOf(fcr.Sales_FCR_KAH_4_Actions_2_Date__c.format())+'"';
 
           html += '<div class="line"></div>';
-          if(UserInfo.getUserId() != fcr.OwnerId){
+          if(UserInfo.getUserId() != fcr.OwnerId || (fcr.owner.profile.name!='Sales: KAH Sales Associate' && UserInfo.getUserId() == fcr.OwnerId)){
             html += '<div class="fieldTitle bold">SALES LEADER\'S COMMENTS</div>'+
             '<div class="fieldTitle regular">Leader\'s Comments <span onclick="$(\'#leaderEdit\').slideDown();$(\'#leaderField\').slideUp();" class="edit blue leader-edit"><i class="fa fa-pencil" aria-hidden="true"></i></span></div>'+
             '<div class="fieldInput thin"><div id="leaderField">'+nullTextCheck(fcr.Sales_FCR_KAH_4_Leader_Text__c)+'</div><div id="leaderEdit" style="display:none;"><textarea type="text">'+textAreas(fcr.Sales_FCR_KAH_4_Leader_Text__c)+'</textarea>'+
@@ -1445,24 +1456,29 @@ global class Sales_FCRcontroller {
             '<div class="fieldInput thin"><div id="leaderAction2">'+nullTextCheck(fcr.Sales_FCR_KAH_4_Leader_Actions_2__c)+'</div></div>'+
             '<div id="followup2">'+completedText2+'</div>';
           }
+          
 
-          if(UserInfo.getUserId() == fcr.OwnerId){
-            html += '<div class="line"></div><div class="fieldTitle bold">SALES ASSOCIATE\'S COMMENTS</div><div class="fieldTitle regular">Associate\'s Comments <span onclick="$(\'#saEdit\').slideDown();$(\'#saField\').slideUp();" class="edit blue"><i class="fa fa-pencil" aria-hidden="true"></i></span></div>'+
-            '<div class="fieldInput thin"><div id="saField">'+nullTextCheck(fcr.Sales_FCR_KAH_4_Rep_Text__c)+'</div><div id="saEdit" style="display:none;"><textarea type="text">'+textAreas(fcr.Sales_FCR_KAH_4_Rep_Text__c)+'</textarea>'+
-            '<div id="saSave" class="edit blue" onclick="save(false);">SAVE</div></div></div>';
+          if(!isPdf){
 
-            if(!fcr.Sales_KAH_SA_Acknowledged__c){
-              html += '<div style="margin-top: 20px;" class="fieldTitle regular" id="acknowledgedText">By clicking the button below, you are acknowledging that you thoroughly reviewed this field coaching report.</div><div class="acknowledgeButton blue">Acknowledge</div>';
+          
+            if(UserInfo.getUserId() == fcr.OwnerId && fcr.owner.profile.name == 'Sales: KAH Associate'){
+              html += '<div class="line"></div><div class="fieldTitle bold">SALES ASSOCIATE\'S COMMENTS</div><div class="fieldTitle regular">Associate\'s Comments <span onclick="$(\'#saEdit\').slideDown();$(\'#saField\').slideUp();" class="edit blue"><i class="fa fa-pencil" aria-hidden="true"></i></span></div>'+
+              '<div class="fieldInput thin"><div id="saField">'+nullTextCheck(fcr.Sales_FCR_KAH_4_Rep_Text__c)+'</div><div id="saEdit" style="display:none;"><textarea type="text">'+textAreas(fcr.Sales_FCR_KAH_4_Rep_Text__c)+'</textarea>'+
+              '<div id="saSave" class="edit blue" onclick="save(false);">SAVE</div></div></div>';
+
+              if(!fcr.Sales_KAH_SA_Acknowledged__c){
+                html += '<div style="margin-top: 20px;" class="fieldTitle regular" id="acknowledgedText">By clicking the button below, you are acknowledging that you thoroughly reviewed this field coaching report.</div><div class="acknowledgeButton blue">Acknowledge</div>';
+              } else {
+                html += '<div style="margin-top: 20px;" class="fieldTitle regular">You have acknowledged that you thoroughly reviewed this field coaching report.</div><div style="cursor: default;" class="acknowledgeButton green"><i class="fa fa-thumbs-o-up" aria-hidden="true"></i> Acknowledged</div>';
+              }
+
             } else {
-              html += '<div style="margin-top: 20px;" class="fieldTitle regular">You have acknowledged that you thoroughly reviewed this field coaching report.</div><div style="cursor: default;" class="acknowledgeButton green"><i class="fa fa-thumbs-o-up" aria-hidden="true"></i> Acknowledged</div>';
-            }
+              html += '<div class="line"></div><div class="fieldTitle bold">SALES ASSOCIATE\'S COMMENTS</div><div class="fieldTitle regular">Associate\'s Comments</div>'+
+              '<div class="fieldInput thin"><div id="saField">'+nullTextCheck(fcr.Sales_FCR_KAH_4_Rep_Text__c)+'</div></div>';
 
-          } else {
-            html += '<div class="line"></div><div class="fieldTitle bold">SALES ASSOCIATE\'S COMMENTS</div><div class="fieldTitle regular">Associate\'s Comments</div>'+
-            '<div class="fieldInput thin"><div id="saField">'+nullTextCheck(fcr.Sales_FCR_KAH_4_Rep_Text__c)+'</div></div>';
-
-            if(fcr.Sales_KAH_SA_Acknowledged__c){
-              html += '<div style="margin-top: 20px;" class="fieldTitle regular">'+summaryName+' has acknowledged that they thoroughly reviewed this field coaching report.</div><div style="cursor: default;" class="acknowledgeButton green"><i class="fa fa-thumbs-o-up" aria-hidden="true"></i> Acknowledged</div>';
+              if(fcr.Sales_KAH_SA_Acknowledged__c){
+                html += '<div style="margin-top: 20px;" class="fieldTitle regular">'+summaryName+' has acknowledged that they thoroughly reviewed this field coaching report.</div><div style="cursor: default;" class="acknowledgeButton green"><i class="fa fa-thumbs-o-up" aria-hidden="true"></i> Acknowledged</div>';
+              }
             }
           }
 
@@ -1576,7 +1592,7 @@ global class Sales_FCRcontroller {
             html+='</div>';
           } else html += '<div class="fieldInput regular">0</div>';
           html += '<div class="line"></div>';
-          if(UserInfo.getUserId() != fcr.OwnerId){
+          if(UserInfo.getUserId() != fcr.OwnerId || (fcr.owner.profile.name!='Sales: KAH Sales Associate' && UserInfo.getUserId() == fcr.OwnerId)){
             html += '<div class="fieldTitle bold">SALES LEADER\'S COMMENTS</div>'+
             '<div class="fieldTitle regular">Leader\'s Comments <span onclick="$(\'#leaderEdit\').slideDown();$(\'#leaderField\').slideUp();" class="edit blue leader-edit"><i class="fa fa-pencil" aria-hidden="true"></i></span></div>'+
             '<div class="fieldInput thin"><div id="leaderField">'+nullTextCheck(fcr.Sales_FCR_KAH_4_Leader_Text__c)+'</div><div id="leaderEdit" style="display:none;"><textarea type="text">'+textAreas(fcr.Sales_FCR_KAH_4_Leader_Text__c)+'</textarea>'+
@@ -1604,7 +1620,8 @@ global class Sales_FCRcontroller {
             '<div class="fieldInput thin"><div id="leaderAction2">'+nullTextCheck(fcr.Sales_FCR_KAH_4_Leader_Actions_2__c)+'</div></div>'+
             '<div id="followup2">'+completedText2+'</div>';
           }
-          if(UserInfo.getUserId() == fcr.OwnerId){
+          
+          if(UserInfo.getUserId() == fcr.OwnerId && fcr.owner.profile.name=='Sales: KAH Sales Associate'){
             html += '<div class="line"></div><div class="fieldTitle bold">SALES ASSOCIATE\'S COMMENTS</div><div class="fieldTitle regular">Associate\'s Comments <span onclick="$(\'#saEdit\').slideDown();$(\'#saField\').slideUp();" class="edit blue"><i class="fa fa-pencil" aria-hidden="true"></i></span></div>'+
             '<div class="fieldInput thin"><div id="saField">'+nullTextCheck(fcr.Sales_FCR_KAH_4_Rep_Text__c)+'</div><div id="saEdit" style="display:none;"><textarea type="text">'+textAreas(fcr.Sales_FCR_KAH_4_Rep_Text__c)+'</textarea>'+
             '<div id="saSave" class="edit blue" onclick="save(false);">SAVE</div></div></div>';
@@ -1716,7 +1733,6 @@ global class Sales_FCRcontroller {
           '</div><div class="fieldInput thin" style="margin-bottom:0px;">'+completedDate(fcr.Completed_Date__c)+'</div></div></div>';
         }
       }
-
       return html;
     }
 
@@ -1964,11 +1980,11 @@ global class Sales_FCRcontroller {
 
     @RemoteAction global static String saveSummaryText(Id fcrId, List<String> input, Boolean isLeader){
       for(Integer i=0; i<input.size(); i++) if(input[i] == '') input[i] = null;
-      List<Field_Coaching_Report__c> fcrs = [select Id, Sales_FCR_KAH_4_Rep_Text__c, Sales_FCR_KAH_4_Leader_Text__c,
+      List<Field_Coaching_Report__c> fcrs = [select Id,  owner.profile.name, Sales_FCR_KAH_4_Rep_Text__c, Sales_FCR_KAH_4_Leader_Text__c,
       Sales_FCR_KAH_4_Leader_Actions_1__c, Sales_FCR_KAH_4_Leader_Actions_2__c, Sales_FCR_KAH_4_Actions_1_Date__c, Sales_KAH_SA_Acknowledged__c, Sales_KAH_SA_Acknowledged_Date__c,
       Sales_FCR_KAH_4_Actions_2_Date__c, OwnerId, Sales_FCR_KAH_4_Actions_1_Completed__c, Sales_FCR_KAH_4_Actions_2_Completed__c from Field_Coaching_Report__c where Id = :fcrId];
       for(Field_Coaching_Report__c fcr : fcrs){
-        if(isLeader && UserInfo.getUserId() != fcr.OwnerId){
+        if(isLeader && (UserInfo.getUserId() != fcr.OwnerId || (fcr.owner.profile.name!='Sales: KAH Sales Associate' && UserInfo.getUserId() == fcr.OwnerId))){
           fcr.Sales_FCR_KAH_4_Leader_Text__c = String.valueOf(escapeJSON(input[0]));
           fcr.Sales_FCR_KAH_4_Leader_Actions_1__c = String.valueOf(escapeJSON(input[1]));
           fcr.Sales_FCR_KAH_4_Leader_Actions_2__c = String.valueOf(escapeJSON(input[2]));
@@ -2045,8 +2061,15 @@ global class Sales_FCRcontroller {
     @RemoteAction global static void completedEmail(Id usrId, String fcrType,
     String fcrId, Boolean isPrivate, String salesName, String salesEmail){
 
-      List<User> u = [select Id, Email, Name, UserRoleId from user where id = :usrId];
+      List<User> u = [select Id, Email, Name, UserRoleId, profile.name from user where id = :usrId];
       String subject='', color='';
+      
+      Messaging.EmailFileAttachment efa = new Messaging.EmailFileAttachment();
+      Boolean attachPdf = false;
+      PageReference pageRef = new PageReference('/apex/Sales_FcrPdf');
+      pageRef.getParameters().put('id', fcrId);
+      Blob pdf = Test.isRunningTest() ? Blob.valueOf('UNIT.TEST') : pageRef.getContent();
+
       if(fcrType==kahSa.Id){
         subject = 'Pre-ride Self Assessment';
         color = '#ddae4f';
@@ -2057,9 +2080,15 @@ global class Sales_FCRcontroller {
         subject = 'Competency Rating';
         color = '#bf4c4c';
       }else if(fcrType==kahFcr.Id){
+        efa.setFileName('Field Coaching Report (SalesPro) - '+salesName+' '+Date.valueOf(System.now()).format()+'.pdf');
+        efa.setBody(pdf);
+        attachPdf = true;
         subject = 'Field Coaching Report (SalesPro)';
         color = '#bf4c4c';
       }else if(fcrType==kahFcrAf.Id){
+        efa.setFileName('Field Coaching Report (TAF) - '+salesName+' '+Date.valueOf(System.now()).format()+'.pdf');
+        efa.setBody(pdf);
+        attachPdf = true;
         subject = 'Field Coaching Report (TAF)';
         color = '#bf4c4c';
       }
@@ -2067,13 +2096,15 @@ global class Sales_FCRcontroller {
       Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
 
       List<User> toUsers = new List<User>();
-      toUsers.addAll(getManagers(u[0].UserRoleId));
-      if (!toUsers.isEmpty()) toUsers.addAll(getManagers(toUsers[0].userRoleId));
+      if (u[0].profile.name!='Sales: KAH Manager') toUsers.addAll(getManagers(u[0].UserRoleId));
+      if (!toUsers.isEmpty() && u[0].profile.name!='Sales: KAH Manager') toUsers.addAll(getManagers(toUsers[0].userRoleId));
       if(!isPrivate) toUsers.addAll(u);
+
+      if(attachPdf) mail.setFileAttachments(new Messaging.EmailFileAttachment[] {efa});
 
       List<String> emailAddresses = new List<String>();
       for(User usr : toUsers) emailAddresses.add(usr.Email);
-      // emailAddresses.add(salesEmail);
+      emailAddresses.add(salesEmail);
       mail.setToAddresses(emailAddresses);
 
       mail.setReplyTo(UserInfo.getUserEmail());
